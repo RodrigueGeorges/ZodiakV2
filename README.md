@@ -1,2 +1,2 @@
-# ZodiakV2
+# zodiak
 
