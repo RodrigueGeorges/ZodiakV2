@@ -7,14 +7,16 @@
     "dev": "vite",
     "serve:functions": "netlify functions:serve",
     "build": "tsc && vite build",
-    "build:prod": "npx tsc && vite build --mode production",
+    "clean": "rimraf dist",
+    "build:prod": "npm run clean && npx tsc && vite build --mode production",
     "build:staging": "tsc && vite build --mode staging",
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "analyze": "vite build --mode analyze"
+    "analyze": "vite build --mode analyze",
+    "postbuild": "node check-dist.js"
   },
   "dependencies": {
     "@netlify/functions": "^2.4.1",
@@ -68,6 +70,7 @@
     "jest-environment-jsdom": "^30.0.4",
     "msw": "^2.2.1",
     "postcss": "^8.4.35",
+    "rimraf": "^6.0.1",
     "rollup-plugin-visualizer": "^5.12.0",
     "tailwindcss": "^3.4.1",
     "terser": "^5.27.2",
