@@ -35,20 +35,14 @@
   headers = {Content-Type = "application/javascript"}
 
 [[redirects]]
-  from = "/assets/*.js"
+  from = "/*.css"
   to = "/assets/:splat"
   status = 200
-  headers = {Content-Type = "application/javascript"}
+  headers = {Content-Type = "text/css"}
 
 [[redirects]]
   from = "/*.mjs"
   to = "/:splat"
-  status = 200
-  headers = {Content-Type = "application/javascript"}
-
-[[redirects]]
-  from = "/assets/*.mjs"
-  to = "/assets/:splat"
   status = 200
   headers = {Content-Type = "application/javascript"}
 
