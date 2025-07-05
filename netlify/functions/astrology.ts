@@ -119,8 +119,9 @@ export const handler: Handler = async (event, _context) => {
       };
     }
 
-    // 1. Get access token
-    const tokenRes = await fetch(`${baseUrl}/auth/access-token`, {
+    // Correction : URL d'authentification séparée
+    const authUrl = 'https://api.prokerala.com/auth/access-token';
+    const tokenRes = await fetch(authUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
