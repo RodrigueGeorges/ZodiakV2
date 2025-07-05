@@ -119,8 +119,8 @@ export const handler: Handler = async (event, _context) => {
       };
     }
 
-    // Correction : URL d'authentification séparée
-    const authUrl = 'https://api.prokerala.com/auth/access-token';
+    // Correction : URL d'authentification Prokerala
+    const authUrl = 'https://api.prokerala.com/token';
     const tokenRes = await fetch(authUrl, {
       method: 'POST',
       headers: {
