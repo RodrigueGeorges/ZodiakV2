@@ -11,7 +11,7 @@ class OpenAIService {
   private static readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
   private static readonly CACHE = new Map<string, { data: unknown; timestamp: number }>();
   private static readonly config: OpenAIConfig = {
-    apiKey: process.env.VITE_OPENAI_API_KEY as string,
+    apiKey: import.meta.env.VITE_OPENAI_API_KEY as string,
     model: 'gpt-4',
     maxTokens: 1000
   };
@@ -23,17 +23,17 @@ class OpenAIService {
     energy: "L'alignement des planètes vous apporte une belle vitalité. C'est une excellente journée pour démarrer de nouvelles activités physiques ou pour vous consacrer à des projets qui vous passionnent et rechargent vos batteries."
   };
 
-  private static getFromCache<T>(key: string): T | null {
-    const cached = this.CACHE.get(key);
+  private static getFromCache<T>(key: string | number): T | null {
+    const cached = this.CACHE.get(String(key));
     if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
       return cached.data as T;
     }
-    this.CACHE.delete(key);
+    this.CACHE.delete(String(key));
     return null;
   }
 
-  private static setInCache<T>(key: string, data: T): void {
-    this.CACHE.set(key, {
+  private static setInCache<T>(key: string | number, data: T): void {
+    this.CACHE.set(String(key), {
       data,
       timestamp: Date.now()
     });
@@ -85,7 +85,7 @@ class OpenAIService {
     try {
       // Check cache first
       const cacheKey = `guidance_${JSON.stringify(natalChart)}_${JSON.stringify(transits)}`;
-      const cached = this.getFromCache<typeof this.DEFAULT_GUIDANCE>(cacheKey);
+      const cached = this.getFromCache<typeof this.DEFAULT_GUIDANCE>(String(cacheKey));
       if (cached) return cached;
 
       const prompt = this.buildPrompt(natalChart, transits);
@@ -93,7 +93,7 @@ class OpenAIService {
       
       try {
         const guidance = JSON.parse(response);
-        this.setInCache(cacheKey, guidance);
+        this.setInCache(String(cacheKey), guidance);
         return guidance;
       } catch (error) {
         console.error('Error parsing OpenAI response:', error);
@@ -177,17 +177,17 @@ class OpenAIService {
 
     try {
       const cacheKey = `interpretation_${JSON.stringify(natalChart)}`;
-      const cached = this.getFromCache<string>(cacheKey);
-      if (cached) {
+      const cachedInterpretation = this.getFromCache<string>(String(cacheKey));
+      if (cachedInterpretation) {
         console.log('Returning cached interpretation');
-        return cached;
+        return cachedInterpretation;
       }
       
       console.log('Generating new interpretation');
       const prompt = this.buildNatalChartInterpretationPrompt(natalChart);
       const interpretation = await this.callOpenAI(prompt);
       
-      this.setInCache(cacheKey, interpretation);
+      this.setInCache(String(cacheKey), interpretation);
       return interpretation;
 
     } catch (error) {
@@ -202,18 +202,18 @@ class OpenAIService {
     }
 
     try {
-      const cacheKey = `summary_${firstName}_${JSON.stringify(natalChart)}`;
-      const cached = this.getFromCache<string>(cacheKey);
-      if (cached) {
+      const cacheKey = `summary_${JSON.stringify(natalChart)}_${firstName}`;
+      const cachedSummary = this.getFromCache<string>(String(cacheKey));
+      if (cachedSummary) {
         console.log('Returning cached summary');
-        return cached;
+        return cachedSummary;
       }
       
       console.log('Generating new summary');
       const prompt = this.buildNatalSummaryPrompt(natalChart, firstName);
       const summary = await this.callOpenAI(prompt);
       
-      this.setInCache(cacheKey, summary);
+      this.setInCache(String(cacheKey), summary);
       return summary;
 
     } catch (error) {
