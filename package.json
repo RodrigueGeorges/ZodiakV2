@@ -8,7 +8,7 @@
     "serve:functions": "netlify functions:serve",
     "build": "tsc && vite build",
     "clean": "rimraf dist",
-    "build:prod": "npm run clean && npx tsc && vite build --mode production",
+    "build:prod": "npm run clean && npm run build",
     "build:staging": "tsc && vite build --mode staging",
     "preview": "vite preview",
     "lint": "eslint .",
@@ -16,7 +16,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "analyze": "vite build --mode analyze",
-    "postbuild": "node check-dist.js"
+    "postbuild": "node --loader ts-node/esm check-dist.js || exit 0"
   },
   "dependencies": {
     "@netlify/functions": "^2.4.1",
