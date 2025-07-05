@@ -55,7 +55,9 @@ const fetchPlaces = async (query: string): Promise<Place[]> => {
     return [];
   }
 
-  const response = await fetch(`/api/places?q=${encodeURIComponent(query)}`);
+  // Utilisation directe de l'API Nominatim
+  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&limit=5`;
+  const response = await fetch(url);
   if (!response.ok) {
     throw new Error('La recherche de lieux a échoué');
   }
@@ -111,7 +113,8 @@ export function usePlaceSearch(query: string, delay = 300) {
 
 export async function getCoordsFromPlaceString(placeString: string): Promise<{ latitude: number; longitude: number } | null> {
   try {
-    const response = await fetch(`/api/places?q=${encodeURIComponent(placeString)}&limit=1`);
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(placeString)}&format=json&addressdetails=1&limit=1`;
+    const response = await fetch(url);
     if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
 
     const data = await response.json();
