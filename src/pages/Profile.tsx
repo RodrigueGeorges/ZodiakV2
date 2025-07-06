@@ -172,6 +172,10 @@ export function Profile() {
     </AnimatePresence>
   );
 
+  console.log('isAuthLoading:', isAuthLoading);
+  console.log('user:', user);
+  console.log('profile:', profile);
+
   if (isAuthLoading) {
     return <LoadingScreen />;
   }

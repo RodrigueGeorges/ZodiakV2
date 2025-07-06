@@ -57,7 +57,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const setData = async (session: AuthSession | null) => {
       setIsLoading(true);
       if (session?.user) {
-        StorageService.clearUserCache(session.user.id);
         const { data, error } = await supabase.auth.getUser();
         if (error || !data.user) {
           await supabase.auth.signOut();
@@ -101,8 +100,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.log('Auth state changed:', event, session?.user?.id);
       
       if (event === 'SIGNED_OUT') {
-        // Token invalide ou expiré
         navigate('/login', { replace: true });
+      }
+      
+      if (event === 'SIGNED_IN' && session?.user) {
+        StorageService.clearUserCache(session.user.id);
       }
       
       setData(session);
