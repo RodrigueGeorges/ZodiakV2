@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [hasClearedCache, setHasClearedCache] = useState(false);
   const navigate = useNavigate();
 
   const refreshProfile = async () => {
@@ -35,29 +34,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return null;
   };
 
-  const _handleAuthStateChange = async (event: string, _session: AuthSession | null) => {
-    if (event === 'SIGNED_IN' && _session?.user) {
-      setUser(_session.user);
-      setIsAuthenticated(true);
-      await loadProfile(_session.user.id);
-    } else if (event === 'SIGNED_OUT') {
-      setUser(null);
-      setIsAuthenticated(false);
-      setProfile(null);
-      StorageService.clearUserCache(_session?.user?.id || '');
-    }
-    setIsLoading(false);
-  };
-
   const loadProfile = async (userId: string) => {
-    const userProfile = await StorageService.getProfile(userId);
-    setProfile(userProfile);
+    try {
+      // Essayer d'abord le cache local
+      let userProfile = await StorageService.getProfile(userId);
+      
+      // Si pas en cache, récupérer depuis Supabase
+      if (!userProfile) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', userId)
+          .single();
+        
+        if (!profileError && profileData) {
+          userProfile = profileData;
+          StorageService.saveProfile(userProfile);
+        }
+      }
+      
+      setProfile(userProfile);
+      return userProfile;
+    } catch (error) {
+      console.error('Error loading profile:', error);
+      setProfile(null);
+      return null;
+    }
   };
 
-  useEffect(() => {
-    const setData = async (session: AuthSession | null) => {
-      setIsLoading(true);
-      if (session?.user) {
+  const handleAuthStateChange = async (event: string, _session: AuthSession | null) => {
+    console.log('Auth state changed:', event, _session?.user?.id);
+    
+    setIsLoading(true);
+    
+    try {
+      if (event === 'SIGNED_IN' && _session?.user) {
+        // Vérifier que l'utilisateur est toujours valide
         const { data, error } = await supabase.auth.getUser();
         if (error || !data.user) {
           await supabase.auth.signOut();
@@ -68,49 +80,89 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setIsLoading(false);
           return;
         }
-        setSession(session);
-        setUser(session.user);
+        
+        setSession(_session);
+        setUser(_session.user);
         setIsAuthenticated(true);
-        let userProfile = await StorageService.getProfile(session.user.id);
-        if (!userProfile) {
-          const { data: profileData, error: profileError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-          if (!profileError && profileData) {
-            userProfile = profileData;
-            StorageService.saveProfile(userProfile);
-          }
-        }
-        setProfile(userProfile);
-      } else {
+        
+        // Charger le profil
+        await loadProfile(_session.user.id);
+        
+        // Nettoyer le cache utilisateur
+        StorageService.clearUserCache(_session.user.id);
+        
+      } else if (event === 'SIGNED_OUT') {
         setSession(null);
         setUser(null);
         setProfile(null);
         setIsAuthenticated(false);
-      }
-      setIsLoading(false);
-    };
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setData(session);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session?.user?.id);
-      
-      if (event === 'SIGNED_OUT') {
+        
+        // Nettoyer le cache
+        if (_session?.user?.id) {
+          StorageService.clearUserCache(_session.user.id);
+        }
+        
+        // Rediriger vers login
         navigate('/login', { replace: true });
       }
+    } catch (error) {
+      console.error('Error handling auth state change:', error);
+      // En cas d'erreur, déconnecter l'utilisateur
+      await supabase.auth.signOut();
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Initialiser l'état d'authentification
+    const initializeAuth = async () => {
+      setIsLoading(true);
       
-      if (event === 'SIGNED_IN' && session?.user && !hasClearedCache) {
-        StorageService.clearUserCache(session.user.id);
-        setHasClearedCache(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          const { data, error } = await supabase.auth.getUser();
+          if (error || !data.user) {
+            await supabase.auth.signOut();
+            setSession(null);
+            setUser(null);
+            setProfile(null);
+            setIsAuthenticated(false);
+            setIsLoading(false);
+            return;
+          }
+          
+          setSession(session);
+          setUser(session.user);
+          setIsAuthenticated(true);
+          await loadProfile(session.user.id);
+        } else {
+          setSession(null);
+          setUser(null);
+          setProfile(null);
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+        setSession(null);
+        setUser(null);
+        setProfile(null);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
       }
-      
-      setData(session);
-    });
+    };
+
+    initializeAuth();
+
+    // Écouter les changements d'état d'authentification
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange);
 
     return () => {
       subscription.unsubscribe();
@@ -118,8 +170,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [navigate]);
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    navigate('/', { replace: true });
+    try {
+      await supabase.auth.signOut();
+      // La redirection sera gérée par handleAuthStateChange
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   const value = {

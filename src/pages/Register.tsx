@@ -6,9 +6,13 @@ import { supabase } from '../lib/supabase';
 import Logo from '../components/Logo';
 import StarryBackground from '../components/StarryBackground';
 import { cn } from '../lib/utils';
+import { useAuth } from '../lib/hooks/useAuth';
+import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 
 export default function Register() {
   const navigate = useNavigate();
+  const { isLoading } = useAuth();
+  const { shouldRedirect } = useAuthRedirect();
   const [authMode, setAuthMode] = useState<'sms' | 'email'>('email');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,7 +29,7 @@ export default function Register() {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/login`
+          emailRedirectTo: `${window.location.origin}/register/complete`
         }
       });
       
@@ -48,6 +52,15 @@ export default function Register() {
       setEmailError(error instanceof Error ? error.message : 'Erreur lors de l\'inscription');
     }
   };
+
+  if (isLoading) {
+    return <div className="text-center text-white py-8">Chargement...</div>;
+  }
+
+  // Si l'utilisateur est authentifié, il sera redirigé automatiquement
+  if (shouldRedirect) {
+    return <div className="text-center text-white py-8">Redirection...</div>;
+  }
 
   return (
     <div className="min-h-screen overflow-hidden relative">

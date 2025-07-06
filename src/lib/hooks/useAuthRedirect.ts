@@ -1,35 +1,61 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { SuperAuthService } from '../auth';
-import { StorageService } from '../storage';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from './useAuth';
 
 export function useAuthRedirect() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated, isLoading, profile, user } = useAuth();
 
   useEffect(() => {
-    const checkAuthAndRedirect = async () => {
-      const currentUser = SuperAuthService.getCurrentUser();
-      
-      if (currentUser) {
-        const profile = StorageService.getProfile(currentUser.id);
-        
-        if (profile) {
-          // Si l'utilisateur a un profil, rediriger vers sa guidance
-          navigate(`/guidance/${currentUser.id}`, { replace: true });
-        } else {
-          // Si l'utilisateur n'a pas de profil, restaurer le formulaire d'inscription
-          const savedData = StorageService.getFormData();
-          if (savedData) {
-            // Reprendre l'inscription là où elle s'était arrêtée
-            navigate('/', { replace: true });
-          } else {
-            // Commencer une nouvelle inscription
-            navigate('/', { replace: true });
-          }
-        }
-      }
-    };
+    // Ne rien faire pendant le chargement
+    if (isLoading) return;
 
-    checkAuthAndRedirect();
-  }, [navigate]);
+    const currentPath = location.pathname;
+    
+    // Routes publiques qui ne nécessitent pas de redirection
+    const publicRoutes = ['/', '/login', '/register', '/register/complete'];
+    const isPublicRoute = publicRoutes.includes(currentPath);
+
+    if (!isAuthenticated) {
+      // Utilisateur non authentifié
+      if (!isPublicRoute) {
+        // Rediriger vers login si sur une route privée
+        navigate('/login', { 
+          replace: true,
+          state: { 
+            from: location,
+            message: 'Veuillez vous connecter pour accéder à cette page.' 
+          }
+        });
+      }
+      return;
+    }
+
+    // Utilisateur authentifié
+    if (!profile) {
+      // Utilisateur authentifié mais pas de profil complet
+      if (currentPath !== '/register/complete') {
+        navigate('/register/complete', { 
+          replace: true,
+          state: { 
+            from: location,
+            message: 'Veuillez compléter votre profil pour continuer.' 
+          }
+        });
+      }
+      return;
+    }
+
+    // Utilisateur authentifié avec profil complet
+    if (isPublicRoute) {
+      // Rediriger vers le profil si sur une route publique
+      navigate('/profile', { replace: true });
+    }
+  }, [isAuthenticated, isLoading, profile, user, navigate, location]);
+
+  return {
+    shouldRedirect: !isLoading && isAuthenticated && !profile,
+    redirectTo: !isAuthenticated ? '/login' : !profile ? '/register/complete' : '/profile'
+  };
 }

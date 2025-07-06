@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/hooks/useAuth.tsx';
+import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 import { supabase } from '../lib/supabase';
 import InteractiveCard from '../components/InteractiveCard';
 import Logo from '../components/Logo';
@@ -13,6 +14,7 @@ import type { NatalChart } from '../lib/astrology';
 export default function RegisterComplete() {
   const navigate = useNavigate();
   const { user, isLoading, refreshProfile, profile } = useAuth();
+  const { shouldRedirect } = useAuthRedirect();
   const [form, setForm] = useState({
     name: '',
     phone: '',
@@ -29,9 +31,6 @@ export default function RegisterComplete() {
   const [placeStatus, setPlaceStatus] = useState({ loading: false, error: null as string | null, valid: false });
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      navigate('/login', { replace: true });
-    }
     // Pré-fill form with existing profile data
     if (user && profile) {
       setForm(prevForm => ({
@@ -48,7 +47,7 @@ export default function RegisterComplete() {
         setPlaceStatus({ loading: false, error: null, valid: true });
       }
     }
-  }, [isLoading, user, navigate, profile]);
+  }, [user, profile]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,6 +123,16 @@ export default function RegisterComplete() {
 
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-cosmic-900 text-white">Chargement...</div>;
+  }
+
+  // Si l'utilisateur n'est pas authentifié, il sera redirigé automatiquement
+  if (!user) {
+    return <div className="min-h-screen flex items-center justify-center bg-cosmic-900 text-white">Redirection...</div>;
+  }
+
+  // Si l'utilisateur a déjà un profil complet, il sera redirigé automatiquement
+  if (shouldRedirect) {
+    return <div className="min-h-screen flex items-center justify-center bg-cosmic-900 text-white">Redirection...</div>;
   }
 
   return (

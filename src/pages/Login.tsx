@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import InteractiveCard from '../components/InteractiveCard';
 import PhoneAuth from '../components/PhoneAuth';
@@ -8,23 +8,17 @@ import Logo from '../components/Logo';
 import StarryBackground from '../components/StarryBackground';
 import { cn } from '../lib/utils';
 import { useAuth } from '../lib/hooks/useAuth';
+import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 
 export default function Login() {
   const navigate = useNavigate();
+  const { isLoading } = useAuth();
+  const { shouldRedirect } = useAuthRedirect();
   const [authMode, setAuthMode] = useState<'sms' | 'email'>('email');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { isAuthenticated, profile } = useAuth();
-
-  useEffect(() => {
-    if (isAuthenticated && profile) {
-      navigate('/profile', { replace: true });
-    } else if (isAuthenticated && !profile) {
-      navigate('/register/complete', { replace: true });
-    }
-  }, [isAuthenticated, profile, navigate]);
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +36,7 @@ export default function Login() {
       
       if (data.user) {
         console.log('Connexion réussie pour:', data.user.email);
-        // La redirection est gérée globalement par useAuth
+        // La redirection est gérée par useAuthRedirect
       }
     } catch (err) {
       console.error('Erreur inattendue:', err);
@@ -52,8 +46,13 @@ export default function Login() {
     }
   };
 
-  if (isAuthenticated && !profile) {
-    return <div className="text-center text-white py-8">Chargement de votre profil...</div>;
+  if (isLoading) {
+    return <div className="text-center text-white py-8">Chargement...</div>;
+  }
+
+  // Si l'utilisateur est authentifié, il sera redirigé automatiquement
+  if (shouldRedirect) {
+    return <div className="text-center text-white py-8">Redirection...</div>;
   }
 
   return (
