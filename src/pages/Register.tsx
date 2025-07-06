@@ -44,6 +44,7 @@ export default function Register() {
         setEmailInfo('Inscription réussie ! Vérifiez votre boîte mail pour confirmer votre adresse avant de vous connecter.');
         setEmail('');
         setPassword('');
+        navigate('/register/confirmation');
       } else {
         setEmailError("Erreur lors de l'inscription - aucun utilisateur créé");
       }

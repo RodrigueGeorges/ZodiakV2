@@ -31,6 +31,9 @@ export default function RegisterComplete() {
   const [loading, setLoading] = useState(false);
   const [placeStatus, setPlaceStatus] = useState({ loading: false, error: null as string | null, valid: false });
 
+  const params = new URLSearchParams(window.location.search);
+  const justSignedUp = params.get('justSignedUp');
+
   useEffect(() => {
     // Pré-fill form with existing profile data
     if (user && profile) {
@@ -51,10 +54,10 @@ export default function RegisterComplete() {
   }, [user, profile]);
 
   useEffect(() => {
-    if (profile) {
+    if (profile && !justSignedUp) {
       navigate('/profile', { replace: true });
     }
-  }, [profile, navigate]);
+  }, [profile, navigate, justSignedUp]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

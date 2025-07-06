@@ -7,6 +7,9 @@ export function useAuthRedirect() {
   const location = useLocation();
   const { isAuthenticated, isLoading, profile, user } = useAuth();
 
+  const params = new URLSearchParams(window.location.search);
+  const justSignedUp = params.get('justSignedUp');
+
   useEffect(() => {
     // Ne rien faire pendant le chargement
     if (isLoading) return;
@@ -35,7 +38,7 @@ export function useAuthRedirect() {
     // Utilisateur authentifié
     if (!profile) {
       // Utilisateur authentifié mais pas de profil complet
-      if (currentPath !== '/register/complete') {
+      if (currentPath !== '/register/complete' && !justSignedUp) {
         navigate('/register/complete', { 
           replace: true,
           state: { 
@@ -52,7 +55,7 @@ export function useAuthRedirect() {
       // Rediriger vers le profil si sur une route publique
       navigate('/profile', { replace: true });
     }
-  }, [isAuthenticated, isLoading, profile, user, navigate, location]);
+  }, [isAuthenticated, isLoading, profile, user, navigate, location, justSignedUp]);
 
   return {
     shouldRedirect: !isLoading && isAuthenticated && !profile,
