@@ -61,19 +61,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     try {
       if (event === 'SIGNED_IN' && _session?.user) {
-        const { data, error } = await supabase.auth.getUser();
-        if (error || !data.user) {
-          setSession(null);
-          setUser(null);
-          setProfile(null);
-          setIsAuthenticated(false);
-          return;
-        }
         setSession(_session);
         setUser(_session.user);
         setIsAuthenticated(true);
         await loadProfile(_session.user.id);
         StorageService.clearUserCache(_session.user.id);
+        return;
       } else if (event === 'SIGNED_OUT') {
         setSession(null);
         setUser(null);
@@ -108,17 +101,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const { data: { session } } = await supabase.auth.getSession();
         if (didTimeout) return;
         if (session?.user) {
-          const { data, error } = await supabase.auth.getUser();
-          if (error || !data.user) {
-            await supabase.auth.signOut();
-            setSession(null);
-            setUser(null);
-            setProfile(null);
-            setIsAuthenticated(false);
-            setIsLoading(false);
-            clearTimeout(timeout);
-            return;
-          }
           setSession(session);
           setUser(session.user);
           setIsAuthenticated(true);
