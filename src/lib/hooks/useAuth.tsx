@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [hasClearedCache, setHasClearedCache] = useState(false);
   const navigate = useNavigate();
 
   const refreshProfile = async () => {
@@ -103,8 +104,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         navigate('/login', { replace: true });
       }
       
-      if (event === 'SIGNED_IN' && session?.user) {
+      if (event === 'SIGNED_IN' && session?.user && !hasClearedCache) {
         StorageService.clearUserCache(session.user.id);
+        setHasClearedCache(true);
       }
       
       setData(session);
