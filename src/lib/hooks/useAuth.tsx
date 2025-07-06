@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .single();
         if (!profileError && profileData) {
           userProfile = profileData;
-          StorageService.saveProfile(userProfile);
+          await StorageService.saveProfile(userProfile);
         }
       }
       setProfile(userProfile ?? null);
@@ -60,13 +60,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     try {
       if (event === 'SIGNED_IN' && _session?.user) {
+        // Vérifier que l'utilisateur est toujours valide
         const { data, error } = await supabase.auth.getUser();
         if (error || !data.user) {
-          await supabase.auth.signOut();
+          console.warn('[useAuth] Session invalide, déconnexion...');
           setSession(null);
           setUser(null);
           setProfile(null);
           setIsAuthenticated(false);
+          // Ne pas appeler signOut() ici pour éviter les boucles
           return;
         }
         setSession(_session);
@@ -82,14 +84,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (_session?.user?.id) {
           StorageService.clearUserCache(_session.user.id);
         }
-        navigate('/login', { replace: true });
+        // Ne pas naviguer ici, laisser useAuthRedirect gérer
       }
     } catch (error) {
-      await supabase.auth.signOut();
+      console.error('[useAuth] Erreur lors du changement d\'état:', error);
       setSession(null);
       setUser(null);
       setProfile(null);
       setIsAuthenticated(false);
+      // Ne pas appeler signOut() ici pour éviter les boucles
     } finally {
       setIsLoading(false);
     }

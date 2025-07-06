@@ -44,9 +44,7 @@ const PhoneAuth = forwardRef<HTMLInputElement, PhoneAuthProps>(function PhoneAut
     return cleaned.length === 10 && cleaned.startsWith('06');
   };
 
-  const generateCode = () => {
-    return Math.floor(100000 + Math.random() * 900000).toString();
-  };
+
 
   const sendVerificationCode = async () => {
     if (!validatePhone(phone)) {
@@ -65,7 +63,7 @@ const PhoneAuth = forwardRef<HTMLInputElement, PhoneAuthProps>(function PhoneAut
         },
         body: JSON.stringify({
           phone: cleanedPhone,
-          message: `Votre code de vérification Zodiak est : ${generateCode()}. Valide pendant 10 minutes.`
+          message: `Votre code de vérification Zodiak est : {code}. Valide pendant 10 minutes.`
         })
       });
 

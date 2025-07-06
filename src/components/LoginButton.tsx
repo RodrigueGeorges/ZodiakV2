@@ -8,7 +8,7 @@ import { StorageService } from '../lib/storage';
 import { supabase } from '../lib/supabase';
 import { ButtonZodiak } from './ButtonZodiak';
 import PhoneAuth from './PhoneAuth';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../lib/hooks/useAuth';
 
 interface LoginButtonProps {
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -70,11 +70,11 @@ function LoginButton({
         console.log('Profil sauvegardé dans le localStorage:', profile);
         setIsOpen(false);
         showToast('Connexion réussie', 'success');
-        navigate(`/guidance/${userId}`);
+        // La redirection sera gérée par useAuthRedirect
       } else {
         setIsOpen(false);
         showToast('Profil non trouvé, veuillez compléter votre inscription.', 'info');
-        navigate('/register');
+        // La redirection sera gérée par useAuthRedirect
       }
       console.log('Session dans le localStorage:', localStorage.getItem('auth_session'));
     } catch (error) {
@@ -136,11 +136,11 @@ function LoginButton({
           StorageService.saveProfile(profile);
           setIsOpen(false);
           showToast('Connexion réussie', 'success');
-          navigate(`/guidance/${data.user.id}`);
+          // La redirection sera gérée par useAuthRedirect
         } else {
           setIsOpen(false);
           showToast('Profil non trouvé, veuillez compléter votre inscription.', 'info');
-          navigate('/register');
+          // La redirection sera gérée par useAuthRedirect
         }
       }
     } catch (error) {

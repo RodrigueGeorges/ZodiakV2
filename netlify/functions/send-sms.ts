@@ -1,4 +1,10 @@
 import { Handler } from '@netlify/functions';
+import { createClient } from '@supabase/supabase-js';
+
+const _supabase = createClient(
+  process.env.VITE_SUPABASE_URL!,
+  process.env.VITE_SUPABASE_ANON_KEY!
+);
 
 export const handler: Handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -9,14 +15,34 @@ export const handler: Handler = async (event) => {
   }
 
   try {
-    const { to, text, from } = JSON.parse(event.body || '{}');
+    const { phone, message } = JSON.parse(event.body || '{}');
 
-    if (!to || !text) {
+    if (!phone || !message) {
       return {
         statusCode: 400,
         body: JSON.stringify({ error: 'Missing required parameters' })
       };
     }
+
+    // Générer un code de vérification
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Sauvegarder le code dans la base de données
+    const { error: dbError } = await _supabase
+      .from('sms_verifications')
+      .insert({
+        phone,
+        code,
+        expires_at: expiresAt.toISOString()
+      });
+
+    if (dbError) {
+      throw new Error('Erreur lors de la sauvegarde du code');
+    }
+
+    // Préparer le message avec le code
+    const smsText = message.replace('{code}', code);
 
     // Appel direct à l'API Brevo
     const response = await fetch('https://api.brevo.com/v3/transactionalSMS/sms', {
@@ -24,12 +50,12 @@ export const handler: Handler = async (event) => {
       headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'api-key': process.env.VITE_BREVO_API_KEY
+        'api-key': process.env.VITE_BREVO_API_KEY || ''
       },
       body: JSON.stringify({
-        sender: from || 'Zodiak',
-        recipient: to,
-        content: text
+        sender: 'Zodiak',
+        recipient: phone,
+        content: smsText
       })
     });
 

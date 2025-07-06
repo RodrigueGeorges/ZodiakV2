@@ -24,19 +24,40 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    // Pour l'instant, on simule une vérification simple
-    // En production, vous devriez vérifier le code dans une base de données
-    if (code === '123456') {
-      // Code de test accepté
+    // Vérifier le code dans la base de données
+    const { data: verificationData, error: verificationError } = await _supabase
+      .from('sms_verifications')
+      .select('*')
+      .eq('phone', phone)
+      .eq('code', code)
+      .eq('expires_at', new Date().toISOString(), 'gt')
+      .single();
+
+    if (verificationError || !verificationData) {
       return {
-        statusCode: 200,
+        statusCode: 400,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          success: true,
-          message: 'Code vérifié avec succès'
+          success: false,
+          error: 'Code incorrect ou expiré'
         })
       };
     }
+
+    // Supprimer le code utilisé
+    await _supabase
+      .from('sms_verifications')
+      .delete()
+      .eq('id', verificationData.id);
+
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        success: true,
+        message: 'Code vérifié avec succès'
+      })
+    };
 
     // Code incorrect
     return {
