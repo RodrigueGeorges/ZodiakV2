@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { FormattedGuidanceText } from '../components/FormattedGuidanceText';
+import FormattedGuidanceText from '../components/FormattedGuidanceText';
 import LoadingScreen from '../components/LoadingScreen';
 
 export default function GuidanceAccess() {
