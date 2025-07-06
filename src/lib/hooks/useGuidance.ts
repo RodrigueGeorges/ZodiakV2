@@ -71,34 +71,39 @@ export function useGuidance(): UseGuidanceReturn {
       return;
     }
 
-    // Vérifier si on a déjà tenté aujourd'hui
-    if (hasAttemptedToday) {
-      console.log('⚠️ Guidance déjà tentée aujourd\'hui, pas de nouvelle tentative');
-      toast.error('Une guidance a déjà été générée aujourd\'hui. Réessayez demain.');
-      return;
-    }
-
     setLoading(true);
     setError(null);
 
     try {
+      // Vérifier si une guidance existe déjà pour aujourd'hui
+      const existingGuidance = await StorageService.getDailyGuidance(user.id, today);
+      if (existingGuidance) {
+        setGuidance({
+          summary: existingGuidance.summary,
+          love: typeof existingGuidance.love === 'string' 
+            ? { text: existingGuidance.love, score: 75 } 
+            : existingGuidance.love as { text: string; score: number },
+          work: typeof existingGuidance.work === 'string' 
+            ? { text: existingGuidance.work, score: 75 } 
+            : existingGuidance.work as { text: string; score: number },
+          energy: typeof existingGuidance.energy === 'string' 
+            ? { text: existingGuidance.energy, score: 75 } 
+            : existingGuidance.energy as { text: string; score: number }
+        });
+        setLoading(false);
+        toast('Une guidance existe déjà pour aujourd\'hui.');
+        return;
+      }
+
       console.log('🚀 Génération d\'une nouvelle guidance...');
-      
-      // Vérifier d'abord si on a un thème natal
       if (!profile.natal_chart || typeof profile.natal_chart === 'string') {
         throw new Error('Thème natal non disponible. Veuillez compléter votre profil.');
       }
-
-      // Calculer les transits du jour (avec cache)
       const transits = await AstrologyService.calculateDailyTransits(today);
-      
-      // Générer la guidance avec OpenAI
       const guidanceData = await OpenAIService.generateGuidance(
         profile.natal_chart as NatalChart,
         transits
       );
-
-      // Sauvegarder dans Supabase
       const guidanceToSave: DailyGuidance = {
         id: crypto.randomUUID(),
         user_id: user.id,
@@ -109,18 +114,14 @@ export function useGuidance(): UseGuidanceReturn {
         energy: guidanceData.energy,
         created_at: new Date().toISOString()
       };
-
       const saved = await StorageService.saveDailyGuidance(guidanceToSave);
-      
       if (saved) {
         setGuidance(guidanceData);
-        setLastAttemptDate(today);
         console.log('✅ Guidance générée et sauvegardée avec succès');
         toast.success('Guidance générée avec succès !');
       } else {
         throw new Error('Erreur lors de la sauvegarde de la guidance');
       }
-
     } catch (error) {
       console.error('Erreur lors de la génération de la guidance:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
@@ -129,7 +130,7 @@ export function useGuidance(): UseGuidanceReturn {
     } finally {
       setLoading(false);
     }
-  }, [user?.id, profile, today, hasAttemptedToday]);
+  }, [user?.id, profile, today]);
 
   const refreshGuidance = useCallback(async () => {
     if (!user?.id) return;

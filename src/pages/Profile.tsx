@@ -190,11 +190,21 @@ export function Profile() {
       try {
         natalChart = JSON.parse(profile.natal_chart);
       } catch {
-        natalChart = null;
+        natalChart = profile.natal_chart;
       }
     } else {
       natalChart = profile.natal_chart;
     }
+  }
+
+  // Affichage debug du natalChart
+  if (natalChart) {
+    return (
+      <div style={{ color: 'white', padding: 20 }}>
+        <h2>Debug natalChart</h2>
+        <pre>{JSON.stringify(natalChart, null, 2)}</pre>
+      </div>
+    );
   }
 
   return (

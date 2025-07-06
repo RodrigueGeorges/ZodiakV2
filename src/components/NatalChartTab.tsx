@@ -49,35 +49,18 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
 
   useEffect(() => {
     const generateInterpretation = async () => {
-      // Ne pas générer si l'interprétation existe déjà
-      if (!natalChart || interpretation) {
+      // Optimisation : ne jamais appeler OpenAI si profile.natal_chart_interpretation existe déjà
+      if (!natalChart || profile.natal_chart_interpretation) {
+        setInterpretation(profile.natal_chart_interpretation || null);
         setIsLoading(false);
         return;
       }
-
-      // Vérifier si on a déjà tenté de générer aujourd'hui
-      const today = new Date().toISOString().split('T')[0];
-      const cacheKey = `interpretation_attempt_${profile.id}_${today}`;
-      const hasAttemptedToday = localStorage.getItem(cacheKey);
-      
-      if (hasAttemptedToday) {
-        console.log('⚠️ Interprétation déjà tentée aujourd\'hui');
-        setError('Interprétation non disponible. Réessayez demain.');
-        setIsLoading(false);
-        return;
-      }
-
       setIsLoading(true);
       setError(null);
-
       try {
-        // Marquer qu'on a tenté aujourd'hui
-        localStorage.setItem(cacheKey, 'true');
-        
         console.log('🔄 Génération de l\'interprétation du thème natal...');
         const generatedText = await OpenAIService.generateNatalChartInterpretation(natalChart);
         setInterpretation(generatedText);
-        
         const updatedProfile = { ...profile, natal_chart_interpretation: generatedText };
         await StorageService.saveProfile(updatedProfile);
         console.log('✅ Interprétation générée et sauvegardée');
@@ -88,9 +71,8 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
         setIsLoading(false);
       }
     };
-
     generateInterpretation();
-  }, [natalChart, interpretation, profile]);
+  }, [natalChart, profile]);
 
   if (!natalChart) {
     return (
