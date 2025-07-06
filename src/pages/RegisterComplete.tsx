@@ -10,10 +10,11 @@ import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import { getCoordsFromPlaceString, type Place } from '../lib/places';
 import { AstrologyService } from '../lib/astrology';
 import type { NatalChart } from '../lib/astrology';
+import LoadingScreen from '../components/LoadingScreen';
 
 export default function RegisterComplete() {
   const navigate = useNavigate();
-  const { user, isLoading, refreshProfile, profile } = useAuth();
+  const { user, profile, isLoading } = useAuth();
   const { shouldRedirect } = useAuthRedirect();
   const [form, setForm] = useState({
     name: '',
@@ -48,6 +49,12 @@ export default function RegisterComplete() {
       }
     }
   }, [user, profile]);
+
+  useEffect(() => {
+    if (profile) {
+      navigate('/profile', { replace: true });
+    }
+  }, [profile, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -122,118 +129,118 @@ export default function RegisterComplete() {
   };
 
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-cosmic-900 text-white">Chargement...</div>;
+    return <LoadingScreen message="Chargement de votre profil..." />;
   }
 
-  // Si l'utilisateur n'est pas authentifié, il sera redirigé automatiquement
-  if (!user) {
-    return <div className="min-h-screen flex items-center justify-center bg-cosmic-900 text-white">Redirection...</div>;
-  }
-
-  // Si l'utilisateur a déjà un profil complet, il sera redirigé automatiquement
-  if (shouldRedirect) {
-    return <div className="min-h-screen flex items-center justify-center bg-cosmic-900 text-white">Redirection...</div>;
-  }
-
-  return (
-    <div className="min-h-screen overflow-hidden relative">
-      <StarryBackground />
-      <div className="container mx-auto px-4 md:px-8 xl:px-12 2xl:px-24 py-8 md:py-12 lg:py-16">
-        <div className="max-w-md mx-auto mt-16">
-          <InteractiveCard className="p-6 md:p-8 xl:p-10 2xl:p-16">
-            <div className="mb-8 text-center">
-              <Logo />
-              <h2 className="text-2xl font-cinzel font-bold mt-4 mb-2">
-                Complétez votre profil
-              </h2>
-            </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Nom complet</label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={e => setForm({ ...form, name: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
-                  placeholder="Votre nom"
-                  required
-                />
+  // Si l'utilisateur est authentifié mais n'a pas de profil, afficher le formulaire de création de profil
+  if (user && !profile) {
+    return (
+      <div className="min-h-screen overflow-hidden relative">
+        <StarryBackground />
+        <div className="container mx-auto px-4 md:px-8 xl:px-12 2xl:px-24 py-8 md:py-12 lg:py-16">
+          <div className="max-w-md mx-auto mt-16">
+            <InteractiveCard className="p-6 md:p-8 xl:p-10 2xl:p-16">
+              <div className="mb-8 text-center">
+                <Logo />
+                <h2 className="text-2xl font-cinzel font-bold mt-4 mb-2">
+                  Complétez votre profil
+                </h2>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Numéro de téléphone</label>
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={e => setForm({ ...form, phone: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
-                  placeholder="+33612345678"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Date de naissance</label>
-                <input
-                  type="date"
-                  value={form.birthDate}
-                  onChange={e => setForm({ ...form, birthDate: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Heure de naissance</label>
-                <input
-                  type="time"
-                  value={form.birthTime}
-                  onChange={e => setForm({ ...form, birthTime: e.target.value, unknownTime: false })}
-                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
-                  placeholder="HH:mm"
-                  disabled={form.unknownTime}
-                />
-                <div className="flex items-center mt-1">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Nom complet</label>
                   <input
-                    type="checkbox"
-                    id="unknownTime"
-                    checked={form.unknownTime}
-                    onChange={e => setForm({ ...form, unknownTime: e.target.checked, birthTime: '' })}
-                    className="mr-2"
+                    type="text"
+                    value={form.name}
+                    onChange={e => setForm({ ...form, name: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    placeholder="Votre nom"
+                    required
                   />
-                  <label htmlFor="unknownTime" className="text-sm text-gray-400">Je ne connais pas l'heure</label>
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Lieu de naissance</label>
-                <PlaceAutocomplete
-                  value={form.birthPlace}
-                  onChange={(value, place) => setForm({ ...form, birthPlace: value, birthPlaceObj: place })}
-                  placeholder="Ville, Pays (ex: Paris, France)"
-                  onStatusChange={setPlaceStatus}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">Heure d'envoi de la guidance</label>
-                <input
-                  type="time"
-                  value={form.guidanceTime}
-                  onChange={e => setForm({ ...form, guidanceTime: e.target.value })}
-                  className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
-                  required
-                />
-                <span className="text-xs text-gray-400">Par défaut : 08:00</span>
-              </div>
-              {error && <div className="text-red-400 text-sm mb-2">{error}</div>}
-              {success && <div className="text-green-400 text-sm mb-2">{success}</div>}
-              <button
-                type="submit"
-                className="w-full py-2 rounded-lg bg-primary text-black font-semibold hover:bg-secondary transition-colors"
-                disabled={loading || !isFormValid()}
-              >
-                Compléter le profil
-              </button>
-            </form>
-          </InteractiveCard>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Numéro de téléphone</label>
+                  <input
+                    type="tel"
+                    value={form.phone}
+                    onChange={e => setForm({ ...form, phone: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    placeholder="+33612345678"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Date de naissance</label>
+                  <input
+                    type="date"
+                    value={form.birthDate}
+                    onChange={e => setForm({ ...form, birthDate: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Heure de naissance</label>
+                  <input
+                    type="time"
+                    value={form.birthTime}
+                    onChange={e => setForm({ ...form, birthTime: e.target.value, unknownTime: false })}
+                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    placeholder="HH:mm"
+                    disabled={form.unknownTime}
+                  />
+                  <div className="flex items-center mt-1">
+                    <input
+                      type="checkbox"
+                      id="unknownTime"
+                      checked={form.unknownTime}
+                      onChange={e => setForm({ ...form, unknownTime: e.target.checked, birthTime: '' })}
+                      className="mr-2"
+                    />
+                    <label htmlFor="unknownTime" className="text-sm text-gray-400">Je ne connais pas l'heure</label>
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Lieu de naissance</label>
+                  <PlaceAutocomplete
+                    value={form.birthPlace}
+                    onChange={(value, place) => setForm({ ...form, birthPlace: value, birthPlaceObj: place })}
+                    placeholder="Ville, Pays (ex: Paris, France)"
+                    onStatusChange={setPlaceStatus}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">Heure d'envoi de la guidance</label>
+                  <input
+                    type="time"
+                    value={form.guidanceTime}
+                    onChange={e => setForm({ ...form, guidanceTime: e.target.value })}
+                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    required
+                  />
+                  <span className="text-xs text-gray-400">Par défaut : 08:00</span>
+                </div>
+                {error && <div className="text-red-400 text-sm mb-2">{error}</div>}
+                {success && <div className="text-green-400 text-sm mb-2">{success}</div>}
+                <button
+                  type="submit"
+                  className="w-full py-2 rounded-lg bg-primary text-black font-semibold hover:bg-secondary transition-colors"
+                  disabled={loading || !isFormValid()}
+                >
+                  Compléter le profil
+                </button>
+              </form>
+            </InteractiveCard>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  // Si l'utilisateur n'est pas authentifié, afficher un message ou rediriger
+  if (!user) {
+    return <LoadingScreen message="Redirection..." />;
+  }
+
+  return null;
 } 
