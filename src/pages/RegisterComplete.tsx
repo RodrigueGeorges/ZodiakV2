@@ -11,19 +11,6 @@ import { getCoordsFromPlaceString, type Place } from '../lib/places';
 import { AstrologyService } from '../lib/astrology';
 import type { NatalChart } from '../lib/astrology';
 
-useEffect(() => {
-  if (window.location.hash.includes('access_token')) {
-    supabase.auth.getSessionFromUrl().then(({ data, error }) => {
-      if (error) {
-        console.error('Erreur magic link Supabase:', error);
-      } else if (data.session) {
-        // Session créée côté client, on peut rediriger ou rafraîchir
-        window.location.replace('/profile');
-      }
-    });
-  }
-}, []);
-
 export default function RegisterComplete() {
   const navigate = useNavigate();
   const { user, isLoading, refreshProfile, profile } = useAuth();
