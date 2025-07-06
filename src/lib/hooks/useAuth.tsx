@@ -43,13 +43,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .select('*')
           .eq('id', userId)
           .single();
+        console.log('[useAuth] Résultat requête Supabase:', { profileData, profileError });
         if (!profileError && profileData) {
           userProfile = profileData;
           StorageService.saveProfile(userProfile);
         }
       }
-      console.log('[useAuth] Profil récupéré:', userProfile);
+      console.log('[useAuth] Avant setProfile:', userProfile);
       setProfile(userProfile ?? null);
+      console.log('[useAuth] Après setProfile:', userProfile);
       return userProfile;
     } catch (error) {
       console.error('[useAuth] Erreur lors du chargement du profil:', error);
