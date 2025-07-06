@@ -19,7 +19,9 @@ export default function Login() {
   const { isAuthenticated, profile } = useAuth();
 
   useEffect(() => {
-    if (isAuthenticated && !profile) {
+    if (isAuthenticated && profile) {
+      navigate('/profile', { replace: true });
+    } else if (isAuthenticated && !profile) {
       navigate('/register/complete', { replace: true });
     }
   }, [isAuthenticated, profile, navigate]);

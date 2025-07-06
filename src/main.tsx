@@ -3,10 +3,14 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.tsx'
 import { AuthProvider } from './lib/hooks/useAuth'
+import { initializeApiSystems } from './lib/api/init'
 import './index.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
+
+// Initialiser les systèmes API au démarrage
+initializeApiSystems()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

@@ -1,4 +1,8 @@
 import { ApiError } from '../errors';
+import { ApiErrorHandler, type ApiResponse } from '../errors/ApiErrorHandler';
+import { ApiCache } from '../cache/CacheManager';
+import { ApiRateLimiter } from '../security/RateLimiter';
+import { ApiMonitor } from '../monitoring/ApiMonitor';
 import type { NatalChart } from '../astrology';
 
 interface OpenAIConfig {
@@ -8,8 +12,6 @@ interface OpenAIConfig {
 }
 
 class OpenAIService {
-  private static readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
-  private static readonly CACHE = new Map<string, { data: unknown; timestamp: number }>();
   private static readonly config: OpenAIConfig = {
     apiKey: import.meta.env.VITE_OPENAI_API_KEY as string,
     model: 'gpt-4',
@@ -23,85 +25,80 @@ class OpenAIService {
     energy: "L'alignement des planètes vous apporte une belle vitalité. C'est une excellente journée pour démarrer de nouvelles activités physiques ou pour vous consacrer à des projets qui vous passionnent et rechargent vos batteries."
   };
 
-  private static getFromCache<T>(key: string | number): T | null {
-    const cached = this.CACHE.get(String(key));
-    if (cached && Date.now() - cached.timestamp < this.CACHE_DURATION) {
-      return cached.data as T;
-    }
-    this.CACHE.delete(String(key));
-    return null;
-  }
-
-  private static setInCache<T>(key: string | number, data: T): void {
-    this.CACHE.set(String(key), {
-      data,
-      timestamp: Date.now()
-    });
-  }
-
-  private static async callOpenAI(prompt: string): Promise<string> {
+  private static async callOpenAI(prompt: string, userId?: string): Promise<string> {
     if (!this.config.apiKey) {
       console.warn('OpenAI API key not found, using default guidance');
       return JSON.stringify(this.DEFAULT_GUIDANCE);
     }
 
-    try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.config.apiKey}`
-        },
-        body: JSON.stringify({
-          model: this.config.model,
-          messages: [
-            {
-              role: 'system',
-              content: 'Tu es un astrologue professionnel qui fournit des conseils précis et personnalisés basés sur les positions planétaires.'
+    // Utiliser le rate limiting
+    return ApiRateLimiter.withRateLimit('openai', userId || 'anonymous', async () => {
+      // Utiliser le monitoring
+      return ApiMonitor.withMonitoring(
+        'openai',
+        '/v1/chat/completions',
+        'POST',
+        userId,
+        async () => {
+          const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${this.config.apiKey}`
             },
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          max_tokens: this.config.maxTokens,
-          temperature: 0.7
-        })
-      });
+            body: JSON.stringify({
+              model: this.config.model,
+              messages: [
+                {
+                  role: 'system',
+                  content: 'Tu es un astrologue professionnel qui fournit des conseils précis et personnalisés basés sur les positions planétaires.'
+                },
+                {
+                  role: 'user',
+                  content: prompt
+                }
+              ],
+              max_tokens: this.config.maxTokens,
+              temperature: 0.7
+            })
+          });
 
-      if (!response.ok) {
-        throw new ApiError('Erreur lors de l\'appel à OpenAI', response.status);
-      }
+          if (!response.ok) {
+            throw new ApiError('Erreur lors de l\'appel à OpenAI', 'OPENAI_ERROR');
+          }
 
-      const data = await response.json();
-      return data.choices[0].message.content;
-    } catch (error) {
-      console.error('Error calling OpenAI:', error);
-      throw error instanceof ApiError ? error : new ApiError('Erreur lors de la génération de la guidance', 500);
-    }
+          const data = await response.json();
+          return data.choices[0].message.content;
+        }
+      );
+    });
   }
 
-  static async generateGuidance(natalChart: NatalChart, transits: Record<string, unknown>) {
+  static async generateGuidance(natalChart: NatalChart, transits: Record<string, unknown>, userId?: string): Promise<ApiResponse<typeof this.DEFAULT_GUIDANCE>> {
     try {
-      // Check cache first
-      const cacheKey = `guidance_${JSON.stringify(natalChart)}_${JSON.stringify(transits)}`;
-      const cached = this.getFromCache<typeof this.DEFAULT_GUIDANCE>(String(cacheKey));
-      if (cached) return cached;
+      // const cacheKey = `guidance_${JSON.stringify(natalChart)}_${JSON.stringify(transits)}`; // supprimé car non utilisé
+      // Utiliser le cache centralisé
+      const guidance = await ApiCache.getCachedApiResponse(
+        'openai-guidance',
+        { natalChart, transits, userId },
+        async () => {
+          const prompt = this.buildPrompt(natalChart, transits);
+          const response = await this.callOpenAI(prompt, userId);
+          
+          try {
+            return JSON.parse(response);
+          } catch (error) {
+            console.error('Error parsing OpenAI response:', error);
+            return this.DEFAULT_GUIDANCE;
+          }
+        },
+        24 * 60 * 60 * 1000 // Cache 24h
+      );
 
-      const prompt = this.buildPrompt(natalChart, transits);
-      const response = await this.callOpenAI(prompt);
-      
-      try {
-        const guidance = JSON.parse(response);
-        this.setInCache(String(cacheKey), guidance);
-        return guidance;
-      } catch (error) {
-        console.error('Error parsing OpenAI response:', error);
-        return this.DEFAULT_GUIDANCE;
-      }
+      return ApiErrorHandler.createSuccessResponse(guidance);
     } catch (error) {
       console.error('Error generating guidance:', error);
-      return this.DEFAULT_GUIDANCE;
+      return ApiErrorHandler.handleApiError(error);
     }
   }
 
@@ -170,56 +167,63 @@ class OpenAIService {
     `;
   }
 
-  static async generateNatalChartInterpretation(natalChart: NatalChart): Promise<string> {
+  static async generateNatalChartInterpretation(natalChart: NatalChart, userId?: string): Promise<ApiResponse<string>> {
     if (!natalChart) {
-      throw new ApiError('Les données du thème natal sont requises.', 400);
+      return ApiErrorHandler.createErrorResponse('VALIDATION_ERROR', 'Les données du thème natal sont requises.');
     }
 
     try {
-      const cacheKey = `interpretation_${JSON.stringify(natalChart)}`;
-      const cachedInterpretation = this.getFromCache<string>(String(cacheKey));
-      if (cachedInterpretation) {
-        console.log('Returning cached interpretation');
-        return cachedInterpretation;
-      }
-      
-      console.log('Generating new interpretation');
-      const prompt = this.buildNatalChartInterpretationPrompt(natalChart);
-      const interpretation = await this.callOpenAI(prompt);
-      
-      this.setInCache(String(cacheKey), interpretation);
-      return interpretation;
+      const interpretation = await ApiCache.getCachedApiResponse(
+        'openai-interpretation',
+        { natalChart, userId },
+        async () => {
+          const prompt = this.buildNatalChartInterpretationPrompt(natalChart);
+          return await this.callOpenAI(prompt, userId);
+        },
+        7 * 24 * 60 * 60 * 1000 // Cache 7 jours
+      );
 
+      return ApiErrorHandler.createSuccessResponse(interpretation);
     } catch (error) {
       console.error('Erreur lors de la génération de l\'interprétation du thème natal:', error);
-      throw error instanceof ApiError ? error : new ApiError('Erreur interne du serveur', 500);
+      return ApiErrorHandler.handleApiError(error);
     }
   }
 
-  static async generateNatalSummary(natalChart: NatalChart, firstName: string): Promise<string> {
+  static async generateNatalSummary(natalChart: NatalChart, firstName: string, userId?: string): Promise<ApiResponse<string>> {
     if (!natalChart) {
-      throw new ApiError('Les données du thème natal sont requises.', 400);
+      return ApiErrorHandler.createErrorResponse('VALIDATION_ERROR', 'Les données du thème natal sont requises.');
     }
 
     try {
-      const cacheKey = `summary_${JSON.stringify(natalChart)}_${firstName}`;
-      const cachedSummary = this.getFromCache<string>(String(cacheKey));
-      if (cachedSummary) {
-        console.log('Returning cached summary');
-        return cachedSummary;
-      }
-      
-      console.log('Generating new summary');
-      const prompt = this.buildNatalSummaryPrompt(natalChart, firstName);
-      const summary = await this.callOpenAI(prompt);
-      
-      this.setInCache(String(cacheKey), summary);
-      return summary;
+      const summary = await ApiCache.getCachedApiResponse(
+        'openai-summary',
+        { natalChart, firstName, userId },
+        async () => {
+          const prompt = this.buildNatalSummaryPrompt(natalChart, firstName);
+          return await this.callOpenAI(prompt, userId);
+        },
+        7 * 24 * 60 * 60 * 1000 // Cache 7 jours
+      );
 
+      return ApiErrorHandler.createSuccessResponse(summary);
     } catch (error) {
       console.error('Erreur lors de la génération du résumé astrologique:', error);
-      throw error instanceof ApiError ? error : new ApiError('Erreur interne du serveur', 500);
+      return ApiErrorHandler.handleApiError(error);
     }
+  }
+
+  // Méthodes utilitaires pour la gestion du cache et du monitoring
+  static invalidateCache(pattern: string): void {
+    ApiCache.invalidateApiCache(pattern);
+  }
+
+  static getServiceMetrics(): ReturnType<typeof ApiMonitor.prototype.getServiceMetrics> {
+    return ApiMonitor.getInstance().getServiceMetrics('openai');
+  }
+
+  static getHealthStatus(): ReturnType<typeof ApiMonitor.prototype.getHealthStatus> {
+    return ApiMonitor.getInstance().getHealthStatus('openai');
   }
 }
 
