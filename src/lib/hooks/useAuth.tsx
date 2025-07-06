@@ -43,25 +43,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .select('*')
           .eq('id', userId)
           .single();
-        console.log('[useAuth] Résultat requête Supabase:', { profileData, profileError });
         if (!profileError && profileData) {
           userProfile = profileData;
           StorageService.saveProfile(userProfile);
         }
       }
-      console.log('[useAuth] Avant setProfile:', userProfile);
       setProfile(userProfile ?? null);
-      console.log('[useAuth] Après setProfile:', userProfile);
       return userProfile;
     } catch (error) {
-      console.error('[useAuth] Erreur lors du chargement du profil:', error);
       setProfile(null);
       return null;
     }
   };
 
   const handleAuthStateChange = async (event: string, _session: AuthSession | null) => {
-    console.log('[useAuth] Auth state changed:', event, _session?.user?.id);
     setIsLoading(true);
     try {
       if (event === 'SIGNED_IN' && _session?.user) {
@@ -72,7 +67,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setUser(null);
           setProfile(null);
           setIsAuthenticated(false);
-          setIsLoading(false);
           return;
         }
         setSession(_session);
@@ -91,7 +85,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         navigate('/login', { replace: true });
       }
     } catch (error) {
-      console.error('[useAuth] Erreur lors du changement d\'état d\'auth:', error);
       await supabase.auth.signOut();
       setSession(null);
       setUser(null);
