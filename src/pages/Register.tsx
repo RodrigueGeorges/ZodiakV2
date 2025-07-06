@@ -72,7 +72,7 @@ export default function Register() {
               >Email</button>
             </div>
             {authMode === 'sms' ? (
-              <PhoneAuth onSuccess={() => navigate('/register/complete')} />
+              <PhoneAuth onSuccess={() => navigate('/profile')} />
             ) : (
               <form onSubmit={handleEmailSignUp} className="space-y-4">
                 <div>

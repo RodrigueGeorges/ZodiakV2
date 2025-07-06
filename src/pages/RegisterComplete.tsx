@@ -102,7 +102,7 @@ export default function RegisterComplete() {
       setSuccess('Profil complété avec succès ! Redirection...');
       
       setTimeout(() => {
-        navigate('/guidance?tab=natal_chart', { replace: true });
+        navigate('/profile', { replace: true });
       }, 1000);
 
     } catch (err: unknown) {

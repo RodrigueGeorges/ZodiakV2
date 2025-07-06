@@ -138,7 +138,7 @@ export default function Home() {
                       >Email</button>
                     </div>
                     {authMode === 'sms' ? (
-                      <PhoneAuth onSuccess={() => navigate('/guidance')} />
+                      <PhoneAuth onSuccess={() => navigate('/profile')} />
                     ) : (
                       <form onSubmit={handleEmailAuth} className="space-y-4">
                         <div>

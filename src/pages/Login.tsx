@@ -52,6 +52,10 @@ export default function Login() {
     }
   };
 
+  if (isAuthenticated && !profile) {
+    return <div className="text-center text-white py-8">Chargement de votre profil...</div>;
+  }
+
   return (
     <div className="min-h-screen overflow-hidden relative">
       <StarryBackground />
@@ -75,7 +79,7 @@ export default function Login() {
               >Email</button>
             </div>
             {authMode === 'sms' ? (
-              <PhoneAuth onSuccess={() => navigate('/guidance')} />
+              <PhoneAuth onSuccess={() => navigate('/profile')} />
             ) : (
               <form onSubmit={handleEmailLogin} className="space-y-5">
                 <div>

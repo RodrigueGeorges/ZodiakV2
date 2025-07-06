@@ -57,6 +57,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const setData = async (session: AuthSession | null) => {
       setIsLoading(true);
       if (session?.user) {
+        StorageService.clearUserCache(session.user.id);
         const { data, error } = await supabase.auth.getUser();
         if (error || !data.user) {
           await supabase.auth.signOut();

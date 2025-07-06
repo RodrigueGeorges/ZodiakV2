@@ -3,6 +3,7 @@ import { createClient } from '@supabase/supabase-js';
 import { AstrologyService, NatalChart } from '../../src/lib/astrology';
 import type { Database, Profile } from '../../src/lib/types/supabase';
 import { toZonedTime, format } from 'date-fns-tz';
+import { randomUUID } from 'crypto';
 
 // Initialiser le client Supabase
 const supabase = createClient<Database>(
@@ -99,6 +100,15 @@ async function sendSms(phoneNumber: string, content: string): Promise<void> {
   console.log(`SMS envoyé avec succès à ${phoneNumber}`);
 }
 
+function generateShortCode(length = 6) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
 // --- Logique principale de la fonction ---
 
 const sendGuidanceSms = async (profile: Profile & { _guidanceDate?: string }) => {
@@ -117,25 +127,38 @@ const sendGuidanceSms = async (profile: Profile & { _guidanceDate?: string }) =>
     // 2. Générer la guidance personnalisée
     const guidance = await generateGuidanceForSms(profile.natal_chart as any, transits);
     
-    // 3. Formatter un message SMS plus détaillé
+    // 3. Générer un token unique et un code court unique
+    const token = randomUUID();
+    let shortCode;
+    let isUnique = false;
+    // Boucle pour garantir l'unicité du shortCode
+    while (!isUnique) {
+      shortCode = generateShortCode();
+      const { data: existing } = await supabase.from('guidance_token').select('id').eq('short_code', shortCode).maybeSingle();
+      if (!existing) isUnique = true;
+    }
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    await supabase.from('guidance_token').upsert({
+      user_id: profile.id,
+      token,
+      date: today,
+      expires_at: expiresAt,
+      short_code: shortCode
+    });
+    
+    // 4. Lien court
     const appUrl = process.env.URL || 'https://zodiak.netlify.app';
-    const smsContent = `✨ Bonjour ${profile.name || 'cher utilisateur'} !
+    const shortLink = `${appUrl}/g/${shortCode}`;
+    
+    // 5. Format du SMS enrichi
+    const dateFr = new Date(today).toLocaleDateString('fr-FR');
+    const mantra = guidance.mantra || 'Que les astres vous guident !';
+    const smsContent = `✨ Bonjour ${profile.name || 'cher utilisateur'} !\n\nTa guidance du ${dateFr} :\n🌞 ${guidance.summary}\n💖 Amour : ${guidance.love.text}\n💼 Travail : ${guidance.work.text}\n⚡ Énergie : ${guidance.energy.text}\n\n👉 Guidance complète (valable 24h) : ${shortLink}\n\n🌟 Mantra : “${mantra}”`;
 
-Votre guidance du jour :
-${guidance.summary}
-
-💖 Amour : ${guidance.love.text}
-💼 Travail : ${guidance.work.text}
-⚡ Énergie : ${guidance.energy.text}
-
-Découvrez votre guidance complète : ${appUrl}/guidance
-
-🌟 Que les astres vous guident !`;
-
-    // 4. Envoyer le SMS
+    // 6. Envoyer le SMS
     await sendSms(profile.phone, smsContent);
 
-    // 5. Sauvegarder la guidance dans la base de données pour la page web
+    // 7. Sauvegarder la guidance dans la base de données pour la page web
     await supabase
       .from('daily_guidance')
       .upsert({
@@ -147,7 +170,7 @@ Découvrez votre guidance complète : ${appUrl}/guidance
         energy: guidance.energy,
       });
 
-    // 6. Mettre à jour la date de dernière guidance envoyée
+    // 8. Mettre à jour la date de dernière guidance envoyée
     await supabase
       .from('profiles')
       .update({ 

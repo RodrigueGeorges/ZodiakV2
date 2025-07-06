@@ -14,6 +14,8 @@ import BottomNavBar from './components/BottomNavBar';
 import TopNavBar from './components/TopNavBar';
 import { useAuth } from './lib/hooks/useAuth';
 import PrivateRoute from './components/PrivateRoute';
+import GuidanceAccess from './pages/GuidanceAccess';
+import GuidanceShortRedirect from './pages/GuidanceShortRedirect';
 import './index.css';
 
 function App() {
@@ -33,6 +35,8 @@ function App() {
         <Route path="/subscribe" element={<Subscribe />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/test" element={<Test />} />
+        <Route path="/guidance/access" element={<GuidanceAccess />} />
+        <Route path="/g/:short" element={<GuidanceShortRedirect />} />
       </Routes>
       {user && <BottomNavBar />}
     </>
