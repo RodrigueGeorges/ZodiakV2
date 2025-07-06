@@ -70,7 +70,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setSession(session);
         setUser(session.user);
         setIsAuthenticated(true);
-        const userProfile = await StorageService.getProfile(session.user.id);
+        let userProfile = await StorageService.getProfile(session.user.id);
+        if (!userProfile) {
+          const { data: profileData, error: profileError } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+          if (!profileError && profileData) {
+            userProfile = profileData;
+            StorageService.saveProfile(userProfile);
+          }
+        }
         setProfile(userProfile);
       } else {
         setSession(null);

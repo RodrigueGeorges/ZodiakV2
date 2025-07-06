@@ -29,12 +29,17 @@ function BottomNavBar() {
               key={item.path}
               onClick={() => navigate(item.path)}
               className={cn(
-                'flex flex-col items-center gap-0.5 p-2 rounded-lg transition-all duration-200',
-                'text-gray-400 hover:text-white',
-                isActive && 'text-[#F5CBA7] bg-[#F5CBA7]/10'
+                'flex flex-col items-center gap-0.5 p-2 rounded-lg transition-all duration-200 outline-none',
+                'text-gray-400 hover:text-white focus:text-white',
+                'focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-gray-900',
+                isActive && 'text-[#F5CBA7] bg-[#F5CBA7]/10',
               )}
+              aria-label={item.label}
+              aria-current={isActive ? 'page' : undefined}
+              tabIndex={0}
+              role="link"
             >
-              <Icon className="w-5 h-5" />
+              <Icon className="w-5 h-5" aria-hidden="true" />
               <span className="text-xs font-medium leading-tight">{item.label}</span>
             </button>
           );

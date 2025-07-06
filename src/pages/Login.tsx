@@ -77,41 +77,46 @@ export default function Login() {
             {authMode === 'sms' ? (
               <PhoneAuth onSuccess={() => navigate('/guidance')} />
             ) : (
-              <form onSubmit={handleEmailLogin} className="space-y-4">
+              <form onSubmit={handleEmailLogin} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="login-email">Email</label>
                   <input
+                    id="login-email"
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                     placeholder="Votre email"
                     required
+                    autoComplete="email"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Mot de passe</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="login-password">Mot de passe</label>
                   <input
+                    id="login-password"
                     type="password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                     placeholder="Votre mot de passe"
                     required
+                    autoComplete="current-password"
                   />
                 </div>
-                {error && <div className="text-red-400 text-sm mb-2">{error}</div>}
+                {error && <div className="text-red-400 text-sm mb-2" role="alert" aria-live="assertive">{error}</div>}
                 <button
                   type="submit"
-                  className="w-full py-2 rounded-lg bg-primary text-black font-semibold hover:bg-secondary transition-colors"
+                  className="w-full py-2 rounded-lg bg-primary text-black font-semibold hover:bg-secondary focus:bg-secondary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none transition-colors"
                   disabled={loading}
+                  aria-busy={loading}
                 >
                   {loading ? 'Connexion...' : 'Se connecter'}
                 </button>
-                <div className="text-center">
+                <div className="text-center mt-2">
                   <button
                     type="button"
-                    className="text-sm text-blue-400 hover:text-blue-300 underline"
+                    className="text-sm text-blue-400 hover:text-blue-300 underline focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none"
                     onClick={() => {
                       if (email) {
                         supabase.auth.resetPasswordForEmail(email, {
