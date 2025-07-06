@@ -28,9 +28,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const refreshProfile = async () => {
     if (session?.user) {
-      const userProfile = await StorageService.getProfile(session.user.id);
-      setProfile(userProfile);
-      return userProfile;
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .single();
+      if (!profileError && profileData) {
+        setProfile(profileData);
+        await StorageService.saveProfile(profileData);
+        return profileData;
+      } else {
+        setProfile(null);
+        return null;
+      }
     }
     return null;
   };

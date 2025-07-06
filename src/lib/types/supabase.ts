@@ -68,7 +68,7 @@ export interface Database {
   }
 }
 
-export type Profile = Database['public']['Tables']['profiles']['Row']
+export type Profile = Database['public']['Tables']['profiles']['Row'] | null
 export type DailyGuidance = Database['public']['Tables']['daily_guidance']['Row']
 
 export interface InboundMessage {
