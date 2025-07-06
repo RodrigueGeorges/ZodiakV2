@@ -60,18 +60,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const handleAuthStateChange = async (event: string, _session: AuthSession | null) => {
     setIsLoading(true);
     try {
-      console.log('[useAuth] handleAuthStateChange event:', event, _session);
       if (event === 'SIGNED_IN' && _session?.user) {
-        // Vérifier que l'utilisateur est toujours valide
         const { data, error } = await supabase.auth.getUser();
-        console.log('[useAuth] getUser (onAuthStateChange):', data, error);
         if (error || !data.user) {
-          console.warn('[useAuth] Session invalide, déconnexion...');
           setSession(null);
           setUser(null);
           setProfile(null);
           setIsAuthenticated(false);
-          // Ne pas appeler signOut() ici pour éviter les boucles
           return;
         }
         setSession(_session);
@@ -87,38 +82,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (_session?.user?.id) {
           StorageService.clearUserCache(_session.user.id);
         }
-        // Ne pas naviguer ici, laisser useAuthRedirect gérer
       }
     } catch (error) {
-      console.error('[useAuth] Erreur lors du changement d\'état:', error);
       setSession(null);
       setUser(null);
       setProfile(null);
       setIsAuthenticated(false);
-      // Ne pas appeler signOut() ici pour éviter les boucles
     } finally {
       setIsLoading(false);
-      console.log('[useAuth] setIsLoading(false) (onAuthStateChange)');
     }
   };
 
   useEffect(() => {
-    console.log('[useAuth] Démarrage du useEffect');
+    let didTimeout = false;
     let timeout = setTimeout(() => {
+      didTimeout = true;
       setTimeoutError(true);
       setIsLoading(false);
       console.error('[useAuth] Timeout: impossible de contacter Supabase');
-    }, 8000);
+    }, 5000);
 
     const initializeAuth = async () => {
       setIsLoading(true);
       try {
-        console.log('[useAuth] Appel à supabase.auth.getSession()');
         const { data: { session } } = await supabase.auth.getSession();
-        console.log('[useAuth] Résultat getSession', session);
+        if (didTimeout) return;
         if (session?.user) {
           const { data, error } = await supabase.auth.getUser();
-          console.log('[useAuth] Résultat getUser', data, error);
           if (error || !data.user) {
             await supabase.auth.signOut();
             setSession(null);
@@ -140,15 +130,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setIsAuthenticated(false);
         }
       } catch (error) {
-        console.error('[useAuth] Erreur lors de l\'initialisation de l\'auth:', error);
         setSession(null);
         setUser(null);
         setProfile(null);
         setIsAuthenticated(false);
       } finally {
-        setIsLoading(false);
-        clearTimeout(timeout);
-        console.log('[useAuth] setIsLoading(false) (initializeAuth)');
+        if (!didTimeout) {
+          setIsLoading(false);
+          clearTimeout(timeout);
+        }
       }
     };
     initializeAuth();
@@ -182,7 +172,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   if (timeoutError) {
-    return <div style={{color: 'red'}}>Erreur : Impossible de contacter Supabase.<br/>Vérifie ta connexion ou la configuration du projet.</div>;
+    return (
+      <>
+        <div style={{color: 'red', padding: 16, textAlign: 'center'}}>
+          Erreur : Impossible de contacter Supabase.<br/>
+          Vérifie ta connexion ou la configuration du projet.<br/>
+          <span style={{fontSize: '0.9em', color: '#fff'}}>L'application fonctionne en mode déconnecté.</span>
+        </div>
+        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+      </>
+    );
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
