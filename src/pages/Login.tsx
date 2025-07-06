@@ -12,7 +12,7 @@ import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { isLoading } = useAuth();
+  const { isLoading, user } = useAuth();
   const { shouldRedirect } = useAuthRedirect();
   const [authMode, setAuthMode] = useState<'sms' | 'email'>('email');
   const [email, setEmail] = useState('');
@@ -46,7 +46,8 @@ export default function Login() {
     }
   };
 
-  if (isLoading) {
+  // Affiche le loader uniquement si on attend la session ET qu'on ne sait pas encore si l'utilisateur existe
+  if (isLoading && user === null) {
     return <div className="text-center text-white py-8">Chargement...</div>;
   }
 

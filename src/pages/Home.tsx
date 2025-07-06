@@ -13,7 +13,7 @@ import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 import CosmicLoader from '../components/CosmicLoader';
 
 export default function Home() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const { shouldRedirect } = useAuthRedirect();
   const navigate = useNavigate();
   const [authMode, setAuthMode] = useState<'sms' | 'email'>('email');
@@ -63,7 +63,8 @@ export default function Home() {
     }
   };
 
-  if (isLoading) {
+  // Affiche le loader uniquement si on attend la session ET qu'on ne sait pas encore si l'utilisateur existe
+  if (isLoading && user === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cosmic-900">
         <CosmicLoader />
