@@ -135,7 +135,19 @@ export default function RegisterComplete() {
     return <LoadingScreen message="Chargement de votre profil..." />;
   }
 
-  // Si l'utilisateur est authentifié mais n'a pas de profil, afficher le formulaire de création de profil
+  // Si l'utilisateur n'est PAS authentifié, redirige vers /login
+  if (!user) {
+    navigate('/login', { replace: true });
+    return null;
+  }
+
+  // Si l'utilisateur a déjà un profil, redirige vers /profile
+  if (user && profile) {
+    navigate('/profile', { replace: true });
+    return null;
+  }
+
+  // Si l'utilisateur est authentifié mais n'a pas de profil, afficher le formulaire
   if (user && !profile) {
     return (
       <div className="min-h-screen overflow-hidden relative">
@@ -238,11 +250,6 @@ export default function RegisterComplete() {
         </div>
       </div>
     );
-  }
-
-  // Si l'utilisateur n'est pas authentifié, afficher un message ou rediriger
-  if (!user) {
-    return <LoadingScreen message="Redirection..." />;
   }
 
   return null;
