@@ -291,8 +291,6 @@ export const handler: Handler = async (event, _context): Promise<any> => {
   };
 };
 
-// ... existing code ...
--async function _calculateNatalChart(_data: { birthDate: string; birthTime: string; birthPlace: string }): Promise<NatalChart> {
--  throw new Error('Not implemented');
--}
-// ... existing code ... 
+async function _calculateNatalChart(data: { birthDate: string; birthTime: string; birthPlace: string }): Promise<NatalChart> {
+  throw new Error('Not implemented');
+}
