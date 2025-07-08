@@ -1,4 +1,5 @@
 import { Handler } from '@netlify/functions';
+import { createClient } from '@supabase/supabase-js';
 
 interface AstrologyRequest {
   type: 'natal_chart' | 'transits';
@@ -64,231 +65,105 @@ export const handler: Handler = async (event, _context): Promise<any> => {
     'Content-Type': 'application/json',
   };
 
-  // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
-    return {
-      statusCode: 200,
-      headers,
-      body: '',
-    };
+    return { statusCode: 200, headers, body: '' };
   }
-
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers,
-      body: JSON.stringify({ error: 'Method not allowed' }),
-    };
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
   try {
     const request: AstrologyRequest = JSON.parse(event.body || '{}');
-    
     if (!request.birthDate || !request.birthTime || !request.birthPlace) {
-      return {
-        statusCode: 400,
-        headers,
-        body: JSON.stringify({ error: 'Missing required fields' }),
-      };
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing required fields' }) };
     }
 
-    // Créer une clé de cache unique
-    const cacheKey = `natal_${request.birthDate}_${request.birthTime}_${request.birthPlace}`;
-    
-    // Vérifier le cache d'abord
-    const cached = getFromCache(cacheKey);
-    if (cached) {
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify(cached),
-      };
+    // --- SUPABASE ---
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Supabase config missing' }) };
+    }
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    // Vérifier si le thème natal existe déjà (on suppose un profil unique par triplet naissance)
+    const { data: profiles, error: supaErr } = await supabase
+      .from('profiles')
+      .select('id, natal_chart')
+      .eq('birth_date', request.birthDate)
+      .eq('birth_time', request.birthTime)
+      .eq('birth_place', request.birthPlace)
+      .limit(1);
+    if (supaErr) {
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Supabase error', details: supaErr.message }) };
+    }
+    if (profiles && profiles.length > 0 && profiles[0].natal_chart) {
+      return { statusCode: 200, headers, body: JSON.stringify(profiles[0].natal_chart) };
     }
 
-    // console.log('🔄 Cache miss, calling Prokerala API...');
-
+    // --- PROKERALA ---
     const baseUrl = process.env.PROKERALA_BASE_URL;
     const clientId = process.env.PROKERALA_CLIENT_ID;
     const clientSecret = process.env.PROKERALA_CLIENT_SECRET;
-
     if (!baseUrl || !clientId || !clientSecret) {
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: 'Missing Prokerala configuration' }),
-      };
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Missing Prokerala configuration' }) };
     }
-
-    // Correction : URL d'authentification Prokerala
+    // Authentification
     const authUrl = 'https://api.prokerala.com/token';
     const tokenRes = await fetch(authUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        client_id: clientId,
-        client_secret: clientSecret,
-        grant_type: 'client_credentials',
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, grant_type: 'client_credentials' }),
     });
-
     if (!tokenRes.ok) {
       const errorText = await tokenRes.text();
-      console.error('Prokerala token error:', errorText);
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: 'Failed to get access token', details: errorText }),
-      };
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Failed to get access token', details: errorText }) };
     }
-
     const tokenData = await tokenRes.json();
     const accessToken = tokenData.access_token;
     if (!accessToken) {
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: 'No access token received', details: tokenData }),
-      };
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'No access token received', details: tokenData }) };
     }
-
-    // 2. Call Prokerala astrology API with Bearer token
+    // Appel API Prokerala (POST JSON)
     const [latitude, longitude] = request.birthPlace.split(',').map(s => s.trim());
     const datetime = `${request.birthDate}T${request.birthTime}Z`;
-    const coordinates = `${latitude},${longitude}`;
-    
-    // Create URL with profile parameters using bracket notation for nested objects
-    const url = new URL(`${baseUrl}/natal-chart`);
-    url.searchParams.append('profile[datetime]', datetime);
-    url.searchParams.append('profile[coordinates]', coordinates);
-    url.searchParams.append('chart_type', 'western');
-    url.searchParams.append('house_system', 'placidus');
-    url.searchParams.append('orb', 'default');
-    url.searchParams.append('birth_time_rectification', 'flat-chart');
-    url.searchParams.append('aspect_filter', 'major');
-    url.searchParams.append('la', 'en');
-    url.searchParams.append('ayanamsa', '0');
-    
-    // console.log('Prokerala URL:', url.toString());
-    // console.log('Access Token:', accessToken ? 'Present' : 'Missing');
-    
-    const response = await fetch(url.toString(), {
-      method: 'GET',
+    const prokeralaRes = await fetch(`${baseUrl}/v2/astrology/natal-chart`, {
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
-      }
+      },
+      body: JSON.stringify({
+        datetime,
+        latitude: parseFloat(latitude),
+        longitude: parseFloat(longitude),
+        house_system: 'placidus',
+        chart_type: 'western',
+      })
     });
-
-    // console.log('Response status:', response.status);
-    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Prokerala raw response:', errorText);
-      
-      return {
-        statusCode: 500,
-        headers,
-        body: JSON.stringify({ error: 'Astrology API error', details: errorText }),
-      };
+    if (!prokeralaRes.ok) {
+      const errorText = await prokeralaRes.text();
+      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Astrology API error', details: errorText }) };
     }
-
-    // Check if response is SVG (successful natal chart)
-    const responseText = await response.text();
-    
-    // If response starts with XML/SVG, it's a successful natal chart
-    if (responseText.trim().startsWith('<?xml') || responseText.trim().startsWith('<svg')) {
-      console.log('Received SVG natal chart, length:', responseText.length);
-      
-      // Parse the SVG to extract chart data and return structured JSON
-      // For now, return a structured response that matches what the frontend expects
-      const natalChartData = {
-        planets: [
-          { name: 'Soleil', longitude: 120, house: 1, sign: 'Gémeaux', retrograde: false },
-          { name: 'Lune', longitude: 90, house: 12, sign: 'Cancer', retrograde: false },
-          { name: 'Mercure', longitude: 125, house: 1, sign: 'Gémeaux', retrograde: false },
-          { name: 'Vénus', longitude: 150, house: 2, sign: 'Cancer', retrograde: false },
-          { name: 'Mars', longitude: 180, house: 3, sign: 'Lion', retrograde: false },
-          { name: 'Jupiter', longitude: 210, house: 4, sign: 'Vierge', retrograde: true },
-          { name: 'Saturne', longitude: 240, house: 5, sign: 'Balance', retrograde: true },
-          { name: 'Uranus', longitude: 270, house: 6, sign: 'Scorpion', retrograde: false },
-          { name: 'Neptune', longitude: 300, house: 7, sign: 'Sagittaire', retrograde: false },
-          { name: 'Pluton', longitude: 330, house: 8, sign: 'Capricorne', retrograde: false }
-        ],
-        houses: [
-          { number: 1, sign: 'Gémeaux', degree: 15 },
-          { number: 2, sign: 'Cancer', degree: 10 },
-          { number: 3, sign: 'Lion', degree: 5 },
-          { number: 4, sign: 'Vierge', degree: 0 },
-          { number: 5, sign: 'Balance', degree: 25 },
-          { number: 6, sign: 'Scorpion', degree: 20 },
-          { number: 7, sign: 'Sagittaire', degree: 15 },
-          { number: 8, sign: 'Capricorne', degree: 10 },
-          { number: 9, sign: 'Verseau', degree: 5 },
-          { number: 10, sign: 'Poissons', degree: 0 },
-          { number: 11, sign: 'Bélier', degree: 25 },
-          { number: 12, sign: 'Taureau', degree: 20 }
-        ],
-        ascendant: {
-          sign: 'Gémeaux',
-          degree: 15
-        },
-        svg: responseText // Include the SVG for future use if needed
-      };
-      
-      // Mettre en cache le résultat
-      setInCache(cacheKey, natalChartData);
-      
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify(natalChartData),
-      };
+    const natalChart = await prokeralaRes.json();
+    // Stocker dans Supabase (on met à jour le premier profil trouvé ou on en crée un si besoin)
+    let profileId = profiles && profiles.length > 0 ? profiles[0].id : undefined;
+    if (profileId) {
+      await supabase.from('profiles').update({ natal_chart: natalChart, updated_at: new Date().toISOString() }).eq('id', profileId);
+    } else {
+      await supabase.from('profiles').insert({
+        birth_date: request.birthDate,
+        birth_time: request.birthTime,
+        birth_place: request.birthPlace,
+        natal_chart: natalChart,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
     }
-
-    // Try to parse as JSON if not SVG
-    try {
-      const data = JSON.parse(responseText);
-      
-      // Mettre en cache le résultat
-      setInCache(cacheKey, data);
-      
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify(data),
-      };
-    } catch (error) {
-      // If JSON parsing fails, return the raw response
-      return {
-        statusCode: 200,
-        headers: {
-          ...headers,
-          'Content-Type': 'text/plain',
-        },
-        body: responseText,
-      };
-    }
-
+    return { statusCode: 200, headers, body: JSON.stringify(natalChart) };
   } catch (error) {
-    console.error('Astrology function error:', error);
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ 
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
-      }),
-    };
+    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }) };
   }
-  // Fallback explicite pour satisfaire TypeScript (ne devrait jamais être atteint)
-  return {
-    statusCode: 500,
-    headers,
-    body: JSON.stringify({ error: 'Unexpected error: no return in handler' }),
-  };
 };
 
 async function _calculateNatalChart(data: { birthDate: string; birthTime: string; birthPlace: string }): Promise<NatalChart> {
