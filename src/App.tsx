@@ -33,7 +33,7 @@ function App() {
         <Route path="/natal" element={<PrivateRoute><Natal /></PrivateRoute>} />
         <Route path="/register/complete" element={<RegisterComplete />} />
         <Route path="/subscribe" element={<Subscribe />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/zodiak-admin-astro" element={<Admin />} />
         <Route path="/test" element={<Test />} />
         <Route path="/guidance/access" element={<GuidanceAccess />} />
         <Route path="/g/:short" element={<GuidanceShortRedirect />} />

@@ -532,15 +532,30 @@ const sendGuidanceSms = async (profile: Profile & { _guidanceDate?: string }) =>
     const appUrl = process.env.URL || 'https://zodiak.netlify.app';
     const shortLink = `${appUrl}/g/${shortCode}`;
     
-    // 5. Format du SMS enrichi
-    const dateFr = new Date(today).toLocaleDateString('fr-FR');
-    const mantra = guidance.mantra || 'Que les astres vous guident !';
-    const smsContent = `✨ Bonjour ${profile.name || 'cher utilisateur'} !\n\nTa guidance du ${dateFr} :\n🌞 ${guidance.summary}\n💖 Amour : ${guidance.love.text}\n💼 Travail : ${guidance.work.text}\n⚡ Énergie : ${guidance.energy.text}\n\n👉 Guidance complète (valable 24h) : ${shortLink}\n\n🌟 Mantra : " ${mantra} "`;
+    // 5. Créer l'entrée de tracking
+    await supabase
+      .from('sms_tracking')
+      .insert({
+        user_id: profile.id,
+        short_code: shortCode,
+        token: token,
+        date: today,
+        sent_at: new Date().toISOString()
+      });
+    
+    // 6. Format du SMS avec teasing minimal et prénom personnalisé
+    const firstName = profile.name?.split(' ')[0] || 'cher utilisateur';
+    const smsContent = `✨ Bonjour ${firstName} !
 
-    // 6. Envoyer le SMS
+Découvre ta guidance du jour ! 🌟
+Les astres ont un message spécial pour toi 👇
+${shortLink}
+(Valable 24h)`;
+
+    // 7. Envoyer le SMS
     await sendSms(profile.phone, smsContent);
 
-    // 7. Sauvegarder la guidance dans la base de données pour la page web
+    // 8. Sauvegarder la guidance dans la base de données pour la page web
     await supabase
       .from('daily_guidance')
       .upsert({
@@ -552,7 +567,7 @@ const sendGuidanceSms = async (profile: Profile & { _guidanceDate?: string }) =>
         energy: guidance.energy,
       });
 
-    // 8. Mettre à jour la date de dernière guidance envoyée
+    // 9. Mettre à jour la date de dernière guidance envoyée
     await supabase
       .from('profiles')
       .update({ 

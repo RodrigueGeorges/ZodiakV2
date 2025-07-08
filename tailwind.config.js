@@ -1,80 +1,80 @@
 /** @type {import('tailwindcss').Config} */
-import { DESIGN_TOKENS } from './src/lib/constants/design';
-
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
-      colors: DESIGN_TOKENS.colors,
+      colors: {
+        primary: '#FFD700',
+        secondary: '#FF69B4',
+        cosmic: {
+          800: '#1a1a2e',
+          900: '#16213e',
+        }
+      },
       fontFamily: {
-        cinzel: [DESIGN_TOKENS.fonts.cinzel, 'serif'],
-        montserrat: [DESIGN_TOKENS.fonts.montserrat, 'sans-serif'],
-        'open-sans': [DESIGN_TOKENS.fonts.openSans, 'sans-serif'],
+        'cinzel': ['Cinzel', 'serif'],
+        'inter': ['Inter', 'sans-serif'],
       },
       animation: {
-        'spin-slow': 'spin-slow 20s linear infinite',
-        'reverse-spin': 'reverse-spin 20s linear infinite',
+        'fade-in': 'fade-in 0.6s ease-out',
+        'fade-in-up': 'fade-in-up 0.6s ease-out',
+        'pulse-slow': 'pulse-slow 3s ease-in-out infinite',
         'float': 'float 3s ease-in-out infinite',
-        'float-delayed': 'float 3s ease-in-out infinite 1.5s',
-        'float-reverse': 'float 3s ease-in-out infinite reverse',
-        'float-reverse-delayed': 'float 3s ease-in-out infinite reverse 1.5s',
-        'glow': 'glow 3s ease-in-out infinite',
-        'cosmic-pulse': 'cosmic-pulse 4s ease-in-out infinite',
-        'twinkle': 'twinkle 3s ease-in-out infinite',
+        'shimmer': 'shimmer 1.5s infinite',
       },
       keyframes: {
-        'spin-slow': {
-          '0%': { transform: 'rotate(0deg)' },
-          '100%': { transform: 'rotate(360deg)' }
+        'fade-in': {
+          '0%': { opacity: '0', transform: 'translateY(20px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        'reverse-spin': {
-          '0%': { transform: 'rotate(360deg)' },
-          '100%': { transform: 'rotate(0deg)' }
+        'fade-in-up': {
+          '0%': { opacity: '0', transform: 'translateY(30px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'pulse-slow': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.7' },
         },
         'float': {
-          '0%, 100%': { 
-            transform: 'translateY(0) rotate(0deg)',
-            filter: 'brightness(1)'
-          },
-          '50%': { 
-            transform: 'translateY(-10px) rotate(5deg)',
-            filter: 'brightness(1.3)'
-          }
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
         },
-        'glow': {
-          '0%, 100%': { 
-            filter: 'drop-shadow(0 0 15px #F5CBA7) brightness(1)',
-            transform: 'scale(1) rotate(0deg)'
-          },
-          '50%': { 
-            filter: 'drop-shadow(0 0 30px #F5CBA7) brightness(1.3)',
-            transform: 'scale(1.1) rotate(5deg)'
-          }
+        'shimmer': {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
         },
-        'cosmic-pulse': {
-          '0%, 100%': { 
-            transform: 'scale(1)',
-            opacity: '0.5',
-            filter: 'drop-shadow(0 0 5px #F5CBA7) brightness(1)'
-          },
-          '50%': { 
-            transform: 'scale(1.2)',
-            opacity: '1',
-            filter: 'drop-shadow(0 0 15px #F5CBA7) brightness(1.3)'
-          }
-        },
-        'twinkle': {
-          '0%, 100%': { 
-            opacity: '0.2',
-            transform: 'scale(0.8)'
-          },
-          '50%': { 
-            opacity: '1',
-            transform: 'scale(1.2)'
-          }
-        }
-      }
-    }
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(circle, transparent 0%, rgba(26, 26, 46, 0.4) 50%, rgba(22, 33, 62, 0.9) 100%)',
+        'gradient-primary': 'linear-gradient(135deg, #FFD700, #FF69B4)',
+      },
+      boxShadow: {
+        'glow': '0 0 20px rgba(255, 215, 0, 0.3)',
+        'glow-lg': '0 0 30px rgba(255, 215, 0, 0.4)',
+        'cosmic': '0 10px 25px rgba(0, 0, 0, 0.3)',
+      },
+      backdropBlur: {
+        'xs': '2px',
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
+      },
+      borderRadius: {
+        '4xl': '2rem',
+      },
+      zIndex: {
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        '100': '100',
+      },
+    },
   },
   plugins: [],
-};
+}

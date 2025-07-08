@@ -34,10 +34,12 @@ interface NatalSignatureProps {
 }
 
 function NatalSignature({ sunSign, moonSign, ascendantSign }: NatalSignatureProps) {
-  if (!sunSign || !moonSign || !ascendantSign) {
+  if (!sunSign || !moonSign || !ascendantSign || sunSign === 'Non disponible' || moonSign === 'Non disponible' || ascendantSign === 'Non disponible') {
     return (
-      <div className="p-4 bg-white/5 rounded-lg border border-white/10 mb-6 text-center text-red-400">
-        Thème natal incomplet ou non disponible.
+      <div className="p-4 bg-white/5 rounded-lg border border-white/10 mb-6 text-center text-red-400 animate-pulse">
+        <span className="block text-2xl mb-2">⚠️</span>
+        Thème natal incomplet ou non disponible.<br/>
+        <span className="text-gray-300 text-sm">Vérifiez vos informations de naissance ou réessayez plus tard.</span>
       </div>
     );
   }

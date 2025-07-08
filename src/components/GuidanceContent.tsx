@@ -1,231 +1,254 @@
-import { useState, useEffect } from 'react';
-import { Heart, Briefcase, Battery } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Calendar, Clock, RefreshCw, Heart, Briefcase, Battery } from 'lucide-react';
 import { DateTime } from 'luxon';
-import { toast } from 'react-hot-toast';
-import { useAuth } from '../lib/hooks/useAuth';
 import { useGuidance } from '../lib/hooks/useGuidance';
 import LoadingScreen from './LoadingScreen';
+import EmptyState from './EmptyState';
 import InteractiveCard from './InteractiveCard';
+import GuidanceScoreBadge from './GuidanceScoreBadge';
+import ShareButton from './ShareButton';
 import FormattedGuidanceText from './FormattedGuidanceText';
-import ShareModal from './ShareModal';
-import { cn } from '../lib/utils';
-import type { Json } from '../lib/types/supabase';
-import type { JSX } from 'react';
-import { motion } from 'framer-motion';
 import StarryBackground from './StarryBackground';
+import { getGuidanceText, getGuidanceScore, guidanceScoreConfig, getScoreLevel } from '../lib/utils/guidance';
 
-const getGuidanceText = (field: Json): string => {
-  if (typeof field === 'string') {
-    return field;
+// Animations
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
   }
-  if (typeof field === 'object' && field !== null && 'text' in field && typeof (field as { text: string }).text === 'string') {
-    return (field as { text: string }).text;
-  }
-  return '';
 };
 
-const getGuidanceScore = (field: Json): number => {
-  if (typeof field === 'object' && field !== null && 'score' in field && typeof (field as { score: number }).score === 'number') {
-    return (field as { score: number }).score;
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut"
+    }
   }
-  return 75; // Score par défaut
 };
 
-// Mantras/citations inspirantes (peuvent être enrichis)
-const MANTRAS = [
-  "Chaque jour est une nouvelle aventure cosmique.",
-  "Fais confiance à l'univers, il conspire en ta faveur.",
-  "Ta lumière intérieure est ta meilleure boussole.",
-  "Aujourd'hui, accueille le changement avec sérénité.",
-  "L'énergie du jour t'invite à rayonner !"
-];
-function getRandomMantra() {
-  return MANTRAS[Math.floor(Math.random() * MANTRAS.length)];
-}
-
-// Ajout d'une fonction utilitaire pour transformer le score en label, couleur, emoji
-function getScoreLevel(score: number) {
-  if (score >= 80) return { label: 'Excellente énergie', color: 'bg-green-600/80 text-white', emoji: '🌟' };
-  if (score >= 60) return { label: 'Bonne tendance', color: 'bg-yellow-500/80 text-black', emoji: '✨' };
-  if (score >= 40) return { label: 'À surveiller', color: 'bg-orange-500/80 text-black', emoji: '🟠' };
-  return { label: 'Attention', color: 'bg-red-600/80 text-white', emoji: '🔴' };
-}
-
-// Définir GuidanceData pour l'accès dynamique
 interface GuidanceData {
   summary: string;
   love: { text: string; score: number };
   work: { text: string; score: number };
   energy: { text: string; score: number };
+  mantra?: string;
 }
 
 function GuidanceContent(): JSX.Element {
-  const { user } = useAuth();
-  const [showShareModal, setShowShareModal] = useState(false);
+  const { guidance, loading, error, refreshGuidance } = useGuidance();
+  const [isRefreshingManual, setIsRefreshingManual] = useState(false);
 
-  // Utiliser le nouveau hook optimisé
-  const { guidance, loading, generateGuidance, refreshGuidance } = useGuidance();
-
-  const today = DateTime.now().toISODate();
-
-  useEffect(() => {
-    if (!loading && !guidance && user?.id) {
-      // Génère automatiquement la guidance du jour si elle n'existe pas
-      generateGuidance();
-    }
-  }, [loading, guidance, user?.id, generateGuidance]);
+  const today = DateTime.now().toISODate() || '';
 
   const handleRefreshGuidance = async () => {
-    if (!user?.id) {
-      toast.error('Vous devez être connecté pour actualiser la guidance');
-      return;
-    }
-
+    setIsRefreshingManual(true);
     try {
       await refreshGuidance();
-      toast.success('Guidance actualisée !');
-    } catch (error) {
-      console.error('Erreur lors de l\'actualisation:', error);
+    } finally {
+      setIsRefreshingManual(false);
     }
   };
 
-  const handleShare = () => {
-    setShowShareModal(true);
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-500';
-    if (score >= 60) return 'text-yellow-500';
-    return 'text-red-500';
-  };
-
-  const getScoreEmoji = (score: number) => {
-    if (score >= 80) return '🌟';
-    if (score >= 60) return '✨';
-    return '💫';
-  };
-
-  if (loading) {
+  if (loading && !guidance) {
     return <LoadingScreen message="Chargement de votre guidance..." />;
   }
 
   if (!guidance) {
-    return <div className="text-red-400 text-center mt-8">Aucune guidance disponible pour aujourd'hui.</div>;
-  }
-
-  // Affichage automatique de la guidance du jour si elle existe
-  if (guidance) {
-    const guidanceData = guidance as GuidanceData;
     return (
-      <div className="relative">
-        {/* Fond étoilé animé */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          <StarryBackground />
-          <div className="absolute inset-0 bg-gradient-radial from-transparent via-cosmic-800/40 to-cosmic-900/90" />
-        </div>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="space-y-6 relative z-10"
-        >
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-bold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">Votre Guidance</h2>
-              <span className="text-sm text-gray-300 bg-cosmic-800 px-2 py-1 rounded border border-white/10">
-                {DateTime.fromISO(today).toFormat('dd/MM/yyyy')}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <motion.button
-                onClick={handleRefreshGuidance}
-                className="px-3 py-1 text-gray-300 hover:text-primary transition-colors text-sm relative overflow-hidden"
-                title="Actualiser"
-                whileTap={{ scale: 0.95 }}
-                animate={loading ? { boxShadow: '0 0 16px 4px #F5CBA7' } : {}}
-              >
-                🔄 Actualiser
-              </motion.button>
-              <button
-                onClick={handleShare}
-                className="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-black rounded-lg hover:opacity-90 transition-all duration-200 text-sm font-semibold shadow-lg"
-              >
-                Partager
-              </button>
-            </div>
-          </div>
-          <div className="text-sm text-gray-400 text-right mb-2">
-            Dernière guidance reçue le {DateTime.fromISO(today).toFormat('dd/MM/yyyy')} à 08:00
-          </div>
-          {/* Résumé général - carte centrale immersive */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-          >
-            <InteractiveCard className="relative bg-gradient-to-br from-primary/90 to-secondary/80 border-primary/40 shadow-2xl rounded-3xl p-10 overflow-hidden flex flex-col items-center">
-              <div className="text-5xl mb-4">🔮</div>
-              <div className="text-3xl md:text-4xl font-cinzel text-primary drop-shadow-glow text-center mb-2 font-bold">
-                {guidanceData.summary}
-              </div>
-            </InteractiveCard>
-          </motion.div>
-          {/* Conseils détaillés */}
-          <div className="grid gap-4 md:grid-cols-3">
-            {[
-              { key: 'love', label: 'Amour', icon: <Heart className="w-6 h-6 text-pink-400 flex-shrink-0 mt-1" /> },
-              { key: 'work', label: 'Travail', icon: <Briefcase className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" /> },
-              { key: 'energy', label: 'Énergie', icon: <Battery className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" /> },
-            ].map(({ key, label, icon }, idx) => {
-              const score = getGuidanceScore(guidanceData[key]);
-              const { label: level, color, emoji } = getScoreLevel(score);
-              return (
-                <motion.div key={key} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 + idx * 0.1 }}>
-                  <InteractiveCard className="relative bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10 shadow-xl rounded-2xl p-6 flex flex-col gap-2">
-                    <div className="flex items-center gap-3 mb-2">
-                      {icon}
-                      <h3 className="font-semibold text-white font-cinzel text-lg">{label}</h3>
-                      <span className={`ml-auto px-3 py-1 rounded-full text-xs font-bold shadow-md ${color} flex items-center gap-1`}>
-                        {emoji} {level}
-                      </span>
-                    </div>
-                    <FormattedGuidanceText text={getGuidanceText(guidanceData[key]) || `Aucun conseil ${label.toLowerCase()} disponible.`} />
-                  </InteractiveCard>
-                </motion.div>
-              );
-            })}
-          </div>
-          {/* Mantra du jour (sans effet tournant/pulse) */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.5 }}>
-            <InteractiveCard className="bg-gradient-to-br from-yellow-400/30 to-orange-400/20 border-yellow-500/20 shadow-xl rounded-2xl p-6 flex flex-col items-center">
-              <div className="text-3xl mb-2">🧘‍♂️</div>
-              <h3 className="font-semibold text-white mb-2 font-cinzel">Mantra du Jour</h3>
-              <p className="text-gray-900 italic text-lg text-center font-medium">“{getRandomMantra()}”</p>
-            </InteractiveCard>
-          </motion.div>
-          {/* Modal de partage */}
-          <ShareModal open={showShareModal} onClose={() => setShowShareModal(false)} guidance={guidance} />
-        </motion.div>
-      </div>
+      <EmptyState
+        type="guidance"
+        title="Guidance Non Disponible"
+        message="Votre guidance quotidienne sera bientôt disponible. Les astres préparent quelque chose de spécial pour vous."
+        action={{
+          label: "Actualiser",
+          onClick: handleRefreshGuidance
+        }}
+      />
     );
   }
 
-  // Affichage si pas de guidance (première visite)
+  const guidanceData = guidance as GuidanceData;
+  
+  const dailyMantra = guidanceData.mantra || "Je m'ouvre aux belles surprises de l'univers et j'avance avec confiance.";
+
   return (
-    <div className="space-y-6">
-      <div className="text-center space-y-4">
-        <div className="text-6xl">✨</div>
-        <h2 className="text-2xl font-bold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">Bienvenue dans votre Guidance</h2>
-        <p className="text-gray-300 max-w-md mx-auto">
-          Votre guidance personnalisée est en cours de génération...
-        </p>
+    <div className="min-h-screen bg-cosmic-900 relative">
+      {/* Fond étoilé animé */}
+      <div className="absolute inset-0 pointer-events-none z-0">
+        <StarryBackground />
+        <div className="absolute inset-0 bg-gradient-radial from-transparent via-cosmic-800/40 to-cosmic-900/90" />
       </div>
-      <div className="flex justify-center">
-        <LoadingScreen message="Génération de votre guidance..." />
-      </div>
-      <div className="text-center text-sm text-gray-400">
-        La guidance est générée automatiquement dès que votre profil est complet.
-      </div>
+
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="relative z-10 container mx-auto px-4 md:px-8 py-8 space-y-8"
+      >
+        {/* En-tête avec navigation */}
+        <motion.div variants={itemVariants} className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl md:text-4xl font-bold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
+                Votre Guidance Quotidienne
+              </h1>
+              <div className="flex items-center gap-2 text-sm text-gray-300 bg-cosmic-800/80 px-3 py-2 rounded-full border border-white/10">
+                <Calendar className="w-4 h-4" />
+                <span>{DateTime.fromISO(today).toFormat('dd/MM/yyyy')}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3">
+            <motion.button
+              onClick={handleRefreshGuidance}
+              disabled={isRefreshingManual}
+              className="flex items-center gap-2 px-4 py-2 bg-cosmic-800/80 border border-primary/30 rounded-lg hover:bg-cosmic-800 transition-all duration-200 text-gray-300 hover:text-primary disabled:opacity-50"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              title="Actualiser la guidance"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshingManual ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Actualiser</span>
+            </motion.button>
+            
+            <ShareButton
+              title="Ma Guidance Quotidienne"
+              content={`${guidanceData.summary}\n\nAmour: ${getGuidanceText(guidanceData.love)}\nTravail: ${getGuidanceText(guidanceData.work)}\nÉnergie: ${getGuidanceText(guidanceData.energy)}\n\nMantra: "${dailyMantra}"`}
+              variant="default"
+            />
+          </div>
+        </motion.div>
+
+        {/* Informations de mise à jour */}
+        <motion.div variants={itemVariants} className="flex items-center justify-between text-sm text-gray-400 bg-cosmic-800/50 px-4 py-2 rounded-lg border border-white/10">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4" />
+            <span>Dernière mise à jour : {DateTime.fromISO(today).toFormat('dd/MM/yyyy')} à 08:00</span>
+          </div>
+        </motion.div>
+
+        {/* Résumé général - carte centrale immersive */}
+        <motion.div variants={itemVariants}>
+          <InteractiveCard className="relative bg-gradient-to-br from-primary/90 to-secondary/80 border-primary/40 shadow-2xl rounded-3xl p-8 md:p-12 overflow-hidden">
+            <div className="flex flex-col items-center text-center">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+                className="text-6xl mb-6"
+              >
+                🔮
+              </motion.div>
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-cinzel text-white drop-shadow-glow text-center mb-4 font-bold leading-tight">
+                {guidanceData.summary}
+              </h2>
+              <div className="flex items-center gap-2 text-white/80">
+                <span className="text-sm">Guidance générée par l'IA</span>
+                <span className="text-xs">✨</span>
+              </div>
+            </div>
+          </InteractiveCard>
+        </motion.div>
+
+        {/* Scores de guidance avec badges modernes */}
+        <motion.div variants={itemVariants}>
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            <GuidanceScoreBadge type="love" score={getGuidanceScore(guidanceData.love)} />
+            <GuidanceScoreBadge type="work" score={getGuidanceScore(guidanceData.work)} />
+            <GuidanceScoreBadge type="energy" score={getGuidanceScore(guidanceData.energy)} />
+          </div>
+        </motion.div>
+
+        {/* Conseils détaillés */}
+        <motion.div variants={itemVariants}>
+          <div className="grid gap-6 md:grid-cols-3">
+            {[
+              { key: 'love' as keyof GuidanceData, label: 'Amour & Relations', icon: <Heart className="w-8 h-8" />, config: guidanceScoreConfig.love },
+              { key: 'work' as keyof GuidanceData, label: 'Travail & Carrière', icon: <Briefcase className="w-8 h-8" />, config: guidanceScoreConfig.work },
+              { key: 'energy' as keyof GuidanceData, label: 'Énergie & Vitalité', icon: <Battery className="w-8 h-8" />, config: guidanceScoreConfig.energy },
+            ].map(({ key, label, icon, config }, idx) => (
+              <motion.div
+                key={key}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + idx * 0.1, duration: 0.6 }}
+                whileHover={{ y: -5 }}
+              >
+                <InteractiveCard className={`relative bg-gradient-to-br ${config.colors[getScoreLevel(getGuidanceScore(guidanceData[key]))]} shadow-xl rounded-2xl p-6 h-full flex flex-col`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="text-primary">
+                      {icon}
+                    </div>
+                    <h3 className="font-semibold text-white font-cinzel text-xl">{label}</h3>
+                  </div>
+                  
+                  <div className="flex-1">
+                    <FormattedGuidanceText 
+                      text={getGuidanceText(guidanceData[key]) || `Aucun conseil ${label.toLowerCase()} disponible pour aujourd'hui.`}
+                      className="text-gray-200 leading-relaxed text-base"
+                    />
+                  </div>
+                  
+                  <div className="mt-4 pt-4 border-t border-white/10">
+                    <ShareButton
+                      title={`Guidance ${label}`}
+                      content={`${label} : ${getGuidanceText(guidanceData[key])}`}
+                      variant="compact"
+                      className="w-full justify-center"
+                    />
+                  </div>
+                </InteractiveCard>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Mantra du jour */}
+        <motion.div
+          variants={itemVariants}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+        >
+          <InteractiveCard className="bg-gradient-to-br from-yellow-400/20 to-orange-400/20 border-yellow-500/30 shadow-xl rounded-2xl p-8 flex flex-col items-center">
+            <motion.div
+              animate={{ rotate: [0, 5, -5, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="text-4xl mb-4"
+            >
+              🧘‍♂️
+            </motion.div>
+            <h3 className="font-semibold text-white mb-4 font-cinzel text-xl">Mantra du Jour</h3>
+            <blockquote className="text-gray-900 italic text-lg md:text-xl text-center font-medium leading-relaxed">
+              "{dailyMantra}"
+            </blockquote>
+            <div className="mt-4 flex items-center gap-2">
+              <ShareButton
+                title="Mantra du Jour"
+                content={`Mantra du jour : "${dailyMantra}"`}
+                variant="compact"
+              />
+            </div>
+          </InteractiveCard>
+        </motion.div>
+
+        {/* Section d'aide et informations */}
+        <motion.div variants={itemVariants} className="text-center text-sm text-gray-400 space-y-2">
+          <p>Votre guidance est générée automatiquement chaque jour à 08:00</p>
+          <p>Basée sur votre thème natal et les transits planétaires actuels</p>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }
