@@ -9,7 +9,7 @@ import InteractiveCard from './InteractiveCard';
 import GuidanceScoreBadge from './GuidanceScoreBadge';
 import ShareButton from './ShareButton';
 import FormattedGuidanceText from './FormattedGuidanceText';
-import StarryBackground from './StarryBackground';
+import PageLayout from './PageLayout';
 import { getGuidanceText, getGuidanceScore, guidanceScoreConfig, getScoreLevel } from '../lib/utils/guidance';
 
 // Animations
@@ -78,69 +78,18 @@ function GuidanceContent(): JSX.Element {
   }
 
   const guidanceData = guidance as GuidanceData;
-  
   const dailyMantra = guidanceData.mantra || "Je m'ouvre aux belles surprises de l'univers et j'avance avec confiance.";
 
   return (
-    <div className="min-h-screen bg-cosmic-900 relative">
-      {/* Fond étoilé animé */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <StarryBackground />
-        <div className="absolute inset-0 bg-gradient-radial from-transparent via-cosmic-800/40 to-cosmic-900/90" />
-      </div>
-
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-        className="relative z-10 container mx-auto px-4 md:px-8 py-8 space-y-8"
-      >
-        {/* En-tête avec navigation */}
-        <motion.div variants={itemVariants} className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <h1 className="text-3xl md:text-4xl font-bold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
-                Votre Guidance Quotidienne
-              </h1>
-              <div className="flex items-center gap-2 text-sm text-gray-300 bg-cosmic-800/80 px-3 py-2 rounded-full border border-white/10">
-                <Calendar className="w-4 h-4" />
-                <span>{DateTime.fromISO(today).toFormat('dd/MM/yyyy')}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <motion.button
-              onClick={handleRefreshGuidance}
-              disabled={isRefreshingManual}
-              className="flex items-center gap-2 px-4 py-2 bg-cosmic-800/80 border border-primary/30 rounded-lg hover:bg-cosmic-800 transition-all duration-200 text-gray-300 hover:text-primary disabled:opacity-50"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              title="Actualiser la guidance"
-            >
-              <RefreshCw className={`w-4 h-4 ${isRefreshingManual ? 'animate-spin' : ''}`} />
-              <span className="hidden sm:inline">Actualiser</span>
-            </motion.button>
-            
-            <ShareButton
-              title="Ma Guidance Quotidienne"
-              content={`${guidanceData.summary}\n\nAmour: ${getGuidanceText(guidanceData.love)}\nTravail: ${getGuidanceText(guidanceData.work)}\nÉnergie: ${getGuidanceText(guidanceData.energy)}\n\nMantra: "${dailyMantra}"`}
-              variant="default"
-            />
-          </div>
-        </motion.div>
-
-        {/* Informations de mise à jour */}
-        <motion.div variants={itemVariants} className="flex items-center justify-between text-sm text-gray-400 bg-cosmic-800/50 px-4 py-2 rounded-lg border border-white/10">
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            <span>Dernière mise à jour : {DateTime.fromISO(today).toFormat('dd/MM/yyyy')} à 08:00</span>
-          </div>
-        </motion.div>
-
-        {/* Résumé général - carte centrale immersive */}
+    <PageLayout 
+      title="Guidance du jour"
+      subtitle="Vos conseils astrologiques personnalisés"
+      maxWidth="4xl"
+    >
+      <div className="space-y-8">
+        {/* Bloc résumé premium, unique, personnalisé */}
         <motion.div variants={itemVariants}>
-          <InteractiveCard className="relative bg-gradient-to-br from-primary/90 to-secondary/80 border-primary/40 shadow-2xl rounded-3xl p-8 md:p-12 overflow-hidden">
+          <InteractiveCard className="card-premium-glow max-w-3xl mx-auto">
             <div className="flex flex-col items-center text-center">
               <motion.div
                 initial={{ scale: 0 }}
@@ -192,20 +141,17 @@ function GuidanceContent(): JSX.Element {
                     </div>
                     <h3 className="font-semibold text-white font-cinzel text-xl">{label}</h3>
                   </div>
-                  
                   <div className="flex-1">
                     <FormattedGuidanceText 
                       text={getGuidanceText(guidanceData[key]) || `Aucun conseil ${label.toLowerCase()} disponible pour aujourd'hui.`}
                       className="text-gray-200 leading-relaxed text-base"
                     />
                   </div>
-                  
-                  <div className="mt-4 pt-4 border-t border-white/10">
+                  <div className="mt-4 flex justify-end">
                     <ShareButton
-                      title={`Guidance ${label}`}
-                      content={`${label} : ${getGuidanceText(guidanceData[key])}`}
+                      title={`Ma guidance ${label}`}
+                      content={getGuidanceText(guidanceData[key])}
                       variant="compact"
-                      className="w-full justify-center"
                     />
                   </div>
                 </InteractiveCard>
@@ -214,42 +160,42 @@ function GuidanceContent(): JSX.Element {
           </div>
         </motion.div>
 
-        {/* Mantra du jour */}
-        <motion.div
-          variants={itemVariants}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.6, duration: 0.8 }}
-        >
-          <InteractiveCard className="bg-gradient-to-br from-yellow-400/20 to-orange-400/20 border-yellow-500/30 shadow-xl rounded-2xl p-8 flex flex-col items-center">
-            <motion.div
-              animate={{ rotate: [0, 5, -5, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="text-4xl mb-4"
-            >
-              🧘‍♂️
-            </motion.div>
-            <h3 className="font-semibold text-white mb-4 font-cinzel text-xl">Mantra du Jour</h3>
-            <blockquote className="text-gray-900 italic text-lg md:text-xl text-center font-medium leading-relaxed">
-              "{dailyMantra}"
-            </blockquote>
-            <div className="mt-4 flex items-center gap-2">
-              <ShareButton
-                title="Mantra du Jour"
-                content={`Mantra du jour : "${dailyMantra}"`}
-                variant="compact"
-              />
+        {/* Mantra premium */}
+        <motion.div variants={itemVariants}>
+          <div className="w-full max-w-2xl mx-auto mt-8">
+            <div className="px-6 py-4 bg-gradient-to-r from-primary/30 to-secondary/30 rounded-xl shadow-inner text-lg font-cinzel text-center text-primary animate-pulse-slow">
+              {dailyMantra}
             </div>
-          </InteractiveCard>
+          </div>
         </motion.div>
 
-        {/* Section d'aide et informations */}
-        <motion.div variants={itemVariants} className="text-center text-sm text-gray-400 space-y-2">
-          <p>Votre guidance est générée automatiquement chaque jour à 08:00</p>
-          <p>Basée sur votre thème natal et les transits planétaires actuels</p>
+        {/* Infos et actions */}
+        <motion.div variants={itemVariants} className="flex items-center justify-between text-sm text-gray-400 bg-cosmic-800/50 px-4 py-2 rounded-lg border border-white/10 mt-8">
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4" />
+            <span>Dernière mise à jour : {DateTime.fromISO(today).toFormat('dd/MM/yyyy')} à 08:00</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <motion.button
+              onClick={handleRefreshGuidance}
+              disabled={isRefreshingManual}
+              className="btn-secondary"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              title="Actualiser la guidance"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshingManual ? 'animate-spin' : ''}`} />
+              <span className="hidden sm:inline">Actualiser</span>
+            </motion.button>
+            <ShareButton
+              title="Ma Guidance Quotidienne"
+              content={`${guidanceData.summary}\n\nAmour: ${getGuidanceText(guidanceData.love)}\nTravail: ${getGuidanceText(guidanceData.work)}\nÉnergie: ${getGuidanceText(guidanceData.energy)}\n\nMantra: \"${dailyMantra}\"`}
+              variant="default"
+            />
+          </div>
         </motion.div>
-      </motion.div>
-    </div>
+      </div>
+    </PageLayout>
   );
 }
 
