@@ -1,20 +1,10 @@
-import { ApiError } from '../errors';
 import { ApiErrorHandler, type ApiResponse } from '../errors/ApiErrorHandler';
 import { ApiCache } from '../cache/CacheManager';
-import { ApiRateLimiter } from '../security/RateLimiter';
 import { ApiMonitor } from '../monitoring/ApiMonitor';
 import type { NatalChart } from '../astrology';
 
-interface OpenAIConfig {
-  apiKey: string;
-  model: string;
-  maxTokens: number;
-}
-
 class OpenAIService {
-  private static readonly config: OpenAIConfig = {
-    apiKey: import.meta.env.VITE_OPENAI_API_KEY as string,
-    model: 'gpt-4',
+  private static readonly config = {
     maxTokens: 1000
   };
 
@@ -25,53 +15,30 @@ class OpenAIService {
     energy: "L'alignement des planètes vous apporte une belle vitalité. C'est une excellente journée pour démarrer de nouvelles activités physiques ou pour vous consacrer à des projets qui vous passionnent et rechargent vos batteries."
   };
 
-  private static async callOpenAI(prompt: string, userId?: string): Promise<string> {
-    if (!this.config.apiKey) {
-      console.warn('OpenAI API key not found, using default guidance');
+  private static async callOpenAI(prompt: string): Promise<string> {
+    try {
+      const response = await fetch('/.netlify/functions/openai', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt, maxTokens: this.config.maxTokens, temperature: 0.7 }),
+      });
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Erreur lors de l\'appel à la fonction OpenAI:', errorText);
+        return JSON.stringify(this.DEFAULT_GUIDANCE);
+      }
+      const data = await response.json();
+      if (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) {
+        return data.choices[0].message.content;
+      }
+      console.error('Réponse inattendue de la fonction OpenAI:', data);
+      return JSON.stringify(this.DEFAULT_GUIDANCE);
+    } catch (err) {
+      console.error('Exception lors de l\'appel à la fonction OpenAI:', err);
       return JSON.stringify(this.DEFAULT_GUIDANCE);
     }
-
-    // Utiliser le rate limiting
-    return ApiRateLimiter.withRateLimit('openai', userId || 'anonymous', async () => {
-      // Utiliser le monitoring
-      return ApiMonitor.withMonitoring(
-        'openai',
-        '/v1/chat/completions',
-        'POST',
-        userId,
-        async () => {
-          const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${this.config.apiKey}`
-            },
-            body: JSON.stringify({
-              model: this.config.model,
-              messages: [
-                {
-                  role: 'system',
-                  content: 'Tu es un astrologue professionnel qui fournit des conseils précis et personnalisés basés sur les positions planétaires.'
-                },
-                {
-                  role: 'user',
-                  content: prompt
-                }
-              ],
-              max_tokens: this.config.maxTokens,
-              temperature: 0.7
-            })
-          });
-
-          if (!response.ok) {
-            throw new ApiError('Erreur lors de l\'appel à OpenAI', 'OPENAI_ERROR');
-          }
-
-          const data = await response.json();
-          return data.choices[0].message.content;
-        }
-      );
-    });
   }
 
   static async generateGuidance(natalChart: NatalChart, transits: Record<string, unknown>, userId?: string): Promise<ApiResponse<typeof this.DEFAULT_GUIDANCE>> {
@@ -83,7 +50,7 @@ class OpenAIService {
         { natalChart, transits, userId },
         async () => {
           const prompt = this.buildPrompt(natalChart, transits);
-          const response = await this.callOpenAI(prompt, userId);
+          const response = await this.callOpenAI(prompt);
           
           try {
             return JSON.parse(response);
@@ -178,7 +145,7 @@ class OpenAIService {
         { natalChart, userId },
         async () => {
           const prompt = this.buildNatalChartInterpretationPrompt(natalChart);
-          return await this.callOpenAI(prompt, userId);
+          return await this.callOpenAI(prompt);
         },
         7 * 24 * 60 * 60 * 1000 // Cache 7 jours
       );
@@ -201,7 +168,7 @@ class OpenAIService {
         { natalChart, firstName, userId },
         async () => {
           const prompt = this.buildNatalSummaryPrompt(natalChart, firstName);
-          return await this.callOpenAI(prompt, userId);
+          return await this.callOpenAI(prompt);
         },
         7 * 24 * 60 * 60 * 1000 // Cache 7 jours
       );

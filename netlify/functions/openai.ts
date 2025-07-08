@@ -46,7 +46,7 @@ export const handler: Handler = async (event) => {
     }
 
     // Get API key from environment variables
-    const apiKey = process.env.VITE_OPENAI_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
 
     if (!apiKey) {
       return {
@@ -64,8 +64,12 @@ export const handler: Handler = async (event) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
+        model: 'gpt-4',
         messages: [
+          {
+            role: 'system',
+            content: 'Tu es un astrologue professionnel qui fournit des conseils précis et personnalisés basés sur les positions planétaires.'
+          },
           {
             role: 'user',
             content: prompt,

@@ -104,20 +104,32 @@ export function useGuidance(): UseGuidanceReturn {
         profile.natal_chart as NatalChart,
         transits
       );
+      // Vérification stricte des champs requis
+      if (!guidanceData || !guidanceData.success || !guidanceData.data) {
+        throw new Error('La génération de la guidance a échoué (données incomplètes ou erreur API). Veuillez réessayer plus tard.');
+      }
+      const { summary, love, work, energy } = guidanceData.data;
+      if (
+        typeof summary !== 'string' || summary.trim() === '' ||
+        typeof love !== 'string' || love.trim() === '' ||
+        typeof work !== 'string' || work.trim() === '' ||
+        typeof energy !== 'string' || energy.trim() === ''
+      ) {
+        throw new Error('La génération de la guidance a échoué (texte vide). Veuillez réessayer plus tard.');
+      }
       const guidanceToSave: DailyGuidance = {
         id: crypto.randomUUID(),
         user_id: user.id,
         date: today,
-        summary: guidanceData.summary,
-        love: guidanceData.love,
-        work: guidanceData.work,
-        energy: guidanceData.energy,
+        summary,
+        love,
+        work,
+        energy,
         created_at: new Date().toISOString()
       };
       const saved = await StorageService.saveDailyGuidance(guidanceToSave);
       if (saved) {
-        setGuidance(guidanceData);
-        // console.log('✅ Guidance générée et sauvegardée avec succès');
+        setGuidance(guidanceData.data);
         toast.success('Guidance générée avec succès !');
       } else {
         throw new Error('Erreur lors de la sauvegarde de la guidance');

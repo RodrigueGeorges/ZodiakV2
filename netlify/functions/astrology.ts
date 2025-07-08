@@ -56,7 +56,7 @@ function setInCache(key: string, data: NatalChart): void {
   // console.log('💾 Cached data for key:', key);
 }
 
-export const handler: Handler = async (event, _context) => {
+export const handler: Handler = async (event, _context): Promise<any> => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -274,7 +274,6 @@ export const handler: Handler = async (event, _context) => {
 
   } catch (error) {
     console.error('Astrology function error:', error);
-    
     return {
       statusCode: 500,
       headers,
@@ -284,8 +283,16 @@ export const handler: Handler = async (event, _context) => {
       }),
     };
   }
+  // Fallback explicite pour satisfaire TypeScript (ne devrait jamais être atteint)
+  return {
+    statusCode: 500,
+    headers,
+    body: JSON.stringify({ error: 'Unexpected error: no return in handler' }),
+  };
 };
 
-async function _calculateNatalChart(_data: { birthDate: string; birthTime: string; birthPlace: string }): Promise<NatalChart> {
-  // ...
-} 
+// ... existing code ...
+-async function _calculateNatalChart(_data: { birthDate: string; birthTime: string; birthPlace: string }): Promise<NatalChart> {
+-  throw new Error('Not implemented');
+-}
+// ... existing code ... 
