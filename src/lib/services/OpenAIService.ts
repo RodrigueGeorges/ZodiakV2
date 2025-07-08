@@ -117,20 +117,21 @@ class OpenAIService {
 
   private static buildNatalSummaryPrompt(natalChart: NatalChart, firstName: string): string {
     return `
-      Tu es un astrologue professionnel. En te basant sur le thème natal suivant, génère un résumé astrologique court et personnalisé (2-3 phrases maximum) qui capture l'essence de la personnalité de ${firstName}.
+      Tu es un astrologue visionnaire et conteur. En te basant sur le thème natal suivant, écris une "Signature Astrale" immersive et poétique pour ${firstName}, structurée ainsi :
 
-      Le résumé doit :
-      - Être adressé directement à ${firstName}
-      - Mentionner les 3 éléments clés : Soleil, Lune, Ascendant
-      - Être inspirant et positif
-      - Utiliser un ton chaleureux et accessible
-      - Ne pas dépasser 3 phrases
-      - Être en français
+      1. Accroche cosmique : Commence par une phrase qui transporte ${firstName} dans l'univers, évoquant la magie de sa naissance sous les étoiles (1 phrase, style poétique, avec un emoji d'étoile ou de galaxie).
+      2. Portrait en 3 astres : Pour chaque élément clé, écris une phrase personnalisée :
+         - ☀️ Soleil en {Soleil} : décris l'énergie centrale, la force de caractère ou la mission de vie.
+         - 🌙 Lune en {Lune} : décris la sensibilité, le monde intérieur, la façon d'aimer ou de ressentir.
+         - ✨ Ascendant en {Ascendant} : décris la première impression, le style, la façon d'avancer dans la vie.
+         (Chaque phrase commence par l'emoji correspondant, puis le nom du signe, puis la description.)
+      3. Mantra astral : Termine par une citation ou un mantra inspirant, unique à ce thème, à méditer chaque jour (entouré d'emojis, ex : "🌟 Je rayonne ma lumière unique 🌟").
+
+      Le ton doit être chaleureux, poétique, valorisant, et en français.
+      N'utilise pas de balises Markdown ni de formatage HTML.
 
       Voici les données du thème natal :
       ${JSON.stringify(natalChart, null, 2)}
-
-      Rédige uniquement le résumé, sans formatage supplémentaire.
     `;
   }
 

@@ -6,6 +6,7 @@ import InteractiveCard from './InteractiveCard';
 import NatalSignature from './NatalSignature';
 import CosmicLoader from './CosmicLoader';
 import type { Profile } from '../lib/types/supabase';
+import StarryBackground from './StarryBackground';
 
 interface NatalChartTabProps {
   profile: Profile;
@@ -25,6 +26,24 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
   const sunSign = natalChart?.planets?.find((p: { name: string; sign: string }) => p.name === 'Soleil')?.sign || 'N/A';
   const moonSign = natalChart?.planets?.find((p: { name: string; sign: string }) => p.name === 'Lune')?.sign || 'N/A';
   const ascendantSign = natalChart?.ascendant?.sign || 'N/A';
+
+  // Après avoir reçu astroSummary (texte généré par OpenAI), découper en parties : accroche, soleil, lune, ascendant, mantra
+  const [accroche, setAccroche] = useState<string | null>(null);
+  const [descSoleil, setDescSoleil] = useState<string | null>(null);
+  const [descLune, setDescLune] = useState<string | null>(null);
+  const [descAscendant, setDescAscendant] = useState<string | null>(null);
+  const [mantra, setMantra] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!astroSummary) return;
+    // Découpage naïf basé sur les emojis et la structure demandée dans le prompt
+    const lines = astroSummary.split('\n').map(l => l.trim()).filter(Boolean);
+    setAccroche(lines[0] || null);
+    setDescSoleil(lines.find(l => l.startsWith('☀️')) || null);
+    setDescLune(lines.find(l => l.startsWith('🌙')) || null);
+    setDescAscendant(lines.find(l => l.startsWith('✨')) || null);
+    setMantra(lines.find(l => l.includes('🌟')) || lines[lines.length-1] || null);
+  }, [astroSummary]);
 
   // On charge d'abord le résumé depuis Supabase si présent
   useEffect(() => {
@@ -93,6 +112,17 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
     };
     generateInterpretation();
   }, [natalChart, profile?.natal_chart_interpretation, profile]);
+
+  // Parsing de l'interprétation détaillée pour n'afficher que le champ 'data' si c'est un JSON
+  let interpretationText = interpretation;
+  try {
+    const parsed = JSON.parse(interpretation || '');
+    if (parsed && typeof parsed === 'object' && parsed.data) {
+      interpretationText = parsed.data;
+    }
+  } catch {
+    // Ce n'est pas du JSON, on garde tel quel
+  }
 
   if (!natalChart) {
     return (
@@ -185,7 +215,7 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
   }
 
   return (
-    <div className="space-y-6 pt-2 md:pt-6 min-h-[60vh] flex flex-col justify-start mt-2">
+    <div className="space-y-6 pt-2 md:pt-6 min-h-[30vh] flex flex-col justify-start">
       {/* En-tête avec signature astrale */}
       <div className="text-center mb-0 mt-0">
         <h2 className="text-2xl md:text-3xl font-cinzel font-bold mb-2 md:mb-4 bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
@@ -201,13 +231,49 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
 
       {/* Résumé astrologique */}
       {astroSummary && (
-        <InteractiveCard className="bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/20">
-          <div className="flex items-start gap-3">
-            <div className="text-2xl">✨</div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-white mb-2 font-cinzel">Votre Signature Astrale</h3>
-              <p className="text-gray-300 leading-relaxed">{astroSummary}</p>
+        <InteractiveCard className="relative bg-gradient-to-br from-cosmic-800/90 to-cosmic-900/90 border-primary/30 shadow-2xl rounded-3xl p-8 overflow-hidden animate-fade-in">
+          {/* Fond étoilé animé */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            <StarryBackground />
+            <div className="absolute inset-0 bg-gradient-radial from-transparent via-cosmic-800/40 to-cosmic-900/90" />
+          </div>
+          <div className="relative z-10 flex flex-col items-center gap-4">
+            {/* Accroche cosmique */}
+            {accroche && (
+              <div className="text-2xl md:text-3xl font-cinzel text-primary drop-shadow-glow text-center">
+                {accroche}
+              </div>
+            )}
+            {/* Portrait en 3 astres */}
+            <div className="flex flex-col md:flex-row gap-4 justify-center items-center mt-2">
+              {descSoleil && (
+                <div className="flex flex-col items-center">
+                  <span className="text-3xl">☀️</span>
+                  <span className="font-bold text-yellow-300">{sunSign}</span>
+                  <span className="text-center text-gray-200">{descSoleil.replace('☀️', '').trim()}</span>
+                </div>
+              )}
+              {descLune && (
+                <div className="flex flex-col items-center">
+                  <span className="text-3xl">🌙</span>
+                  <span className="font-bold text-blue-200">{moonSign}</span>
+                  <span className="text-center text-gray-200">{descLune.replace('🌙', '').trim()}</span>
+                </div>
+              )}
+              {descAscendant && (
+                <div className="flex flex-col items-center">
+                  <span className="text-3xl">✨</span>
+                  <span className="font-bold text-fuchsia-300">{ascendantSign}</span>
+                  <span className="text-center text-gray-200">{descAscendant.replace('✨', '').trim()}</span>
+                </div>
+              )}
             </div>
+            {/* Mantra */}
+            {mantra && (
+              <div className="mt-6 px-6 py-3 bg-gradient-to-r from-primary/30 to-secondary/30 rounded-xl shadow-inner text-lg font-cinzel text-center text-primary animate-pulse-slow">
+                {mantra}
+              </div>
+            )}
           </div>
         </InteractiveCard>
       )}
@@ -238,14 +304,14 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
       </div>
 
       {/* Interprétation détaillée */}
-      {interpretation && (
+      {interpretationText && (
         <InteractiveCard className="bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/20">
           <div className="flex items-start gap-3">
             <div className="text-2xl">📖</div>
             <div className="flex-1">
               <h3 className="font-semibold text-white mb-2 font-cinzel">Interprétation Détaillée</h3>
               <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
-                {interpretation}
+                {interpretationText}
               </div>
             </div>
           </div>
@@ -274,7 +340,13 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
                   
                   try {
                     const generatedText = await OpenAIService.generateNatalChartInterpretation(natalChart);
-                    setInterpretation(generatedText);
+                    if (generatedText && typeof generatedText === 'object' && 'success' in generatedText && generatedText.success && generatedText.data) {
+                      setInterpretation(generatedText.data);
+                    } else if (typeof generatedText === 'string') {
+                      setInterpretation(generatedText);
+                    } else {
+                      setInterpretation('Erreur lors de la génération de l\'interprétation.');
+                    }
                   } catch (err) {
                     setError(err instanceof Error ? err.message : 'Une erreur est survenue');
                   } finally {
@@ -319,6 +391,15 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
             </button>
           </div>
         </InteractiveCard>
+      )}
+
+      {/* Fallback si aucune donnée */}
+      {!astroSummary && allPlanets.length === 0 && !interpretationText && (
+        <div className="flex flex-col items-center justify-center py-12">
+          <div className="text-6xl mb-4">🌠</div>
+          <h3 className="text-xl font-cinzel font-bold mb-4 bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">Aucune donnée astrologique disponible</h3>
+          <p className="text-gray-400 mb-6">Complétez votre profil ou réessayez plus tard.</p>
+        </div>
       )}
     </div>
   );

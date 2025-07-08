@@ -12,6 +12,7 @@ import { cn } from '../lib/utils';
 import type { Json } from '../lib/types/supabase';
 import type { JSX } from 'react';
 import { motion } from 'framer-motion';
+import StarryBackground from './StarryBackground';
 
 const getGuidanceText = (field: Json): string => {
   if (typeof field === 'string') {
@@ -99,114 +100,128 @@ function GuidanceContent(): JSX.Element {
   // Affichage automatique de la guidance du jour si elle existe
   if (guidance) {
     return (
-      <motion.div
-        initial={{ opacity: 0, scale: 0.97 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="space-y-6"
-      >
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">Votre Guidance</h2>
-            <span className="text-sm text-gray-300 bg-cosmic-800 px-2 py-1 rounded border border-white/10">
-              {DateTime.fromISO(today).toFormat('dd/MM/yyyy')}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <motion.button
-              onClick={handleRefreshGuidance}
-              className="px-3 py-1 text-gray-300 hover:text-primary transition-colors text-sm relative overflow-hidden"
-              title="Actualiser"
-              whileTap={{ scale: 0.95 }}
-              animate={loading ? { boxShadow: '0 0 16px 4px #F5CBA7' } : {}}
-            >
-              🔄 Actualiser
-            </motion.button>
-            <button
-              onClick={handleShare}
-              className="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-black rounded-lg hover:opacity-90 transition-all duration-200 text-sm font-semibold shadow-lg"
-            >
-              Partager
-            </button>
-          </div>
+      <div className="relative">
+        {/* Fond étoilé animé */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <StarryBackground animated />
+          <div className="absolute inset-0 bg-gradient-radial from-transparent via-cosmic-800/40 to-cosmic-900/90" />
         </div>
-        <div className="text-sm text-gray-400 text-right mb-2">
-          Dernière guidance reçue le {DateTime.fromISO(today).toFormat('dd/MM/yyyy')} à 08:00
-        </div>
-        {/* Résumé général */}
-        <InteractiveCard className="bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/20">
-          <div className="flex items-start gap-3">
-            <div className="text-2xl">✨</div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-white mb-2 font-cinzel">Résumé du Jour</h3>
-              <FormattedGuidanceText text={guidance.summary} />
+        <motion.div
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="space-y-6 relative z-10"
+        >
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-bold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">Votre Guidance</h2>
+              <span className="text-sm text-gray-300 bg-cosmic-800 px-2 py-1 rounded border border-white/10">
+                {DateTime.fromISO(today).toFormat('dd/MM/yyyy')}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <motion.button
+                onClick={handleRefreshGuidance}
+                className="px-3 py-1 text-gray-300 hover:text-primary transition-colors text-sm relative overflow-hidden"
+                title="Actualiser"
+                whileTap={{ scale: 0.95 }}
+                animate={loading ? { boxShadow: '0 0 16px 4px #F5CBA7' } : {}}
+              >
+                🔄 Actualiser
+              </motion.button>
+              <button
+                onClick={handleShare}
+                className="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-black rounded-lg hover:opacity-90 transition-all duration-200 text-sm font-semibold shadow-lg"
+              >
+                Partager
+              </button>
             </div>
           </div>
-        </InteractiveCard>
-        {/* Conseils détaillés */}
-        <div className="grid gap-4 md:grid-cols-3">
-          <InteractiveCard className="bg-gradient-to-br from-pink-900/30 to-red-900/20 border-pink-500/20">
-            <div className="flex items-start gap-3">
-              <Heart className="w-6 h-6 text-pink-400 flex-shrink-0 mt-1" />
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-white font-cinzel">Amour</h3>
-                  <span className={cn("text-sm font-medium", getScoreColor(getGuidanceScore(guidance.love)))}>
-                    {getScoreEmoji(getGuidanceScore(guidance.love))} {getGuidanceScore(guidance.love)}%
-                  </span>
-                </div>
-                <FormattedGuidanceText text={getGuidanceText(guidance.love) || 'Aucun conseil amour disponible.'} />
-              </div>
-            </div>
-          </InteractiveCard>
-          <InteractiveCard className="bg-gradient-to-br from-blue-900/30 to-indigo-900/20 border-blue-500/20">
-            <div className="flex items-start gap-3">
-              <Briefcase className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-white font-cinzel">Travail</h3>
-                  <span className={cn("text-sm font-medium", getScoreColor(getGuidanceScore(guidance.work)))}>
-                    {getScoreEmoji(getGuidanceScore(guidance.work))} {getGuidanceScore(guidance.work)}%
-                  </span>
-                </div>
-                <FormattedGuidanceText text={getGuidanceText(guidance.work) || 'Aucun conseil travail disponible.'} />
-              </div>
-            </div>
-          </InteractiveCard>
-          <InteractiveCard className="bg-gradient-to-br from-green-900/30 to-emerald-900/20 border-green-500/20">
-            <div className="flex items-start gap-3">
-              <Battery className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
-              <div className="flex-1">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold text-white font-cinzel">Énergie</h3>
-                  <span className={cn("text-sm font-medium", getScoreColor(getGuidanceScore(guidance.energy)))}>
-                    {getScoreEmoji(getGuidanceScore(guidance.energy))} {getGuidanceScore(guidance.energy)}%
-                  </span>
-                </div>
-                <FormattedGuidanceText text={getGuidanceText(guidance.energy) || 'Aucun conseil énergie disponible.'} />
-              </div>
-            </div>
-          </InteractiveCard>
-        </div>
-        {/* Mantra du jour */}
-        <InteractiveCard className="bg-gradient-to-br from-yellow-900/30 to-orange-900/20 border-yellow-500/20">
-          <div className="flex items-start gap-3">
-            <div className="flex-1">
-              <h3 className="font-semibold text-white mb-2 font-cinzel">Mantra du Jour</h3>
-              <p className="text-gray-300 italic">"{getRandomMantra()}"</p>
-            </div>
+          <div className="text-sm text-gray-400 text-right mb-2">
+            Dernière guidance reçue le {DateTime.fromISO(today).toFormat('dd/MM/yyyy')} à 08:00
           </div>
-        </InteractiveCard>
-        {/* Modal de partage */}
-        {showShareModal && (
-          <ShareModal
-            isOpen={showShareModal}
-            onClose={() => setShowShareModal(false)}
-            guidance={getGuidanceText(guidance.summary)}
-            userName={(user && (user.profile?.name || user.name)) || 'Utilisateur'}
-          />
-        )}
-      </motion.div>
+          {/* Résumé général - carte centrale immersive */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+          >
+            <InteractiveCard className="relative bg-gradient-to-br from-cosmic-800/90 to-cosmic-900/90 border-primary/30 shadow-2xl rounded-3xl p-8 overflow-hidden animate-fade-in">
+              <div className="relative z-10 flex flex-col items-center gap-4">
+                <div className="text-2xl md:text-3xl font-cinzel text-primary drop-shadow-glow text-center mb-2">
+                  {guidance.summary}
+                </div>
+              </div>
+            </InteractiveCard>
+          </motion.div>
+          {/* Conseils détaillés */}
+          <div className="grid gap-4 md:grid-cols-3">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
+              <InteractiveCard className="bg-gradient-to-br from-pink-900/30 to-red-900/20 border-pink-500/20">
+                <div className="flex items-start gap-3">
+                  <Heart className="w-6 h-6 text-pink-400 flex-shrink-0 mt-1" />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-semibold text-white font-cinzel">Amour</h3>
+                      <span className={cn("text-sm font-medium", getScoreColor(getGuidanceScore(guidance.love)))}>
+                        {getScoreEmoji(getGuidanceScore(guidance.love))} {getGuidanceScore(guidance.love)}%
+                      </span>
+                    </div>
+                    <FormattedGuidanceText text={getGuidanceText(guidance.love) || 'Aucun conseil amour disponible.'} />
+                  </div>
+                </div>
+              </InteractiveCard>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.3 }}>
+              <InteractiveCard className="bg-gradient-to-br from-blue-900/30 to-indigo-900/20 border-blue-500/20">
+                <div className="flex items-start gap-3">
+                  <Briefcase className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-semibold text-white font-cinzel">Travail</h3>
+                      <span className={cn("text-sm font-medium", getScoreColor(getGuidanceScore(guidance.work)))}>
+                        {getScoreEmoji(getGuidanceScore(guidance.work))} {getGuidanceScore(guidance.work)}%
+                      </span>
+                    </div>
+                    <FormattedGuidanceText text={getGuidanceText(guidance.work) || 'Aucun conseil travail disponible.'} />
+                  </div>
+                </div>
+              </InteractiveCard>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }}>
+              <InteractiveCard className="bg-gradient-to-br from-green-900/30 to-emerald-900/20 border-green-500/20">
+                <div className="flex items-start gap-3">
+                  <Battery className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-semibold text-white font-cinzel">Énergie</h3>
+                      <span className={cn("text-sm font-medium", getScoreColor(getGuidanceScore(guidance.energy)))}>
+                        {getScoreEmoji(getGuidanceScore(guidance.energy))} {getGuidanceScore(guidance.energy)}%
+                      </span>
+                    </div>
+                    <FormattedGuidanceText text={getGuidanceText(guidance.energy) || 'Aucun conseil énergie disponible.'} />
+                  </div>
+                </div>
+              </InteractiveCard>
+            </motion.div>
+          </div>
+          {/* Mantra du jour (issu de la guidance si disponible, sinon fallback) */}
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.5 }}>
+            <InteractiveCard className="bg-gradient-to-br from-yellow-900/30 to-orange-900/20 border-yellow-500/20">
+              <div className="flex items-start gap-3">
+                <div className="flex-1">
+                  <h3 className="font-semibold text-white mb-2 font-cinzel">Mantra du Jour</h3>
+                  <p className="text-gray-300 italic text-lg">"
+                    {guidance.mantra || getRandomMantra()}"
+                  </p>
+                </div>
+              </div>
+            </InteractiveCard>
+          </motion.div>
+          {/* Modal de partage */}
+          <ShareModal open={showShareModal} onClose={() => setShowShareModal(false)} guidance={guidance} />
+        </motion.div>
+      </div>
     );
   }
 
