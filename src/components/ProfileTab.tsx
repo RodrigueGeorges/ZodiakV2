@@ -201,6 +201,26 @@ function ProfileTab({ profile, onLogout }: ProfileTabProps) {
           <NatalSignature sunSign={sunSign} moonSign={moonSign} ascendantSign={ascendantSign} />
         </div>
 
+        {/* Résumé et interprétation du thème natal */}
+        {(profile.natal_summary || profile.natal_chart_interpretation) && (
+          <div className="mb-8">
+            <InteractiveCard className="card-premium-glow max-w-3xl mx-auto text-center">
+              {profile.natal_summary && (
+                <div className="mb-4">
+                  <h3 className="text-xl md:text-2xl font-cinzel font-bold text-primary mb-2">Signature astrale</h3>
+                  <p className="text-lg text-white font-cinzel leading-relaxed">{profile.natal_summary}</p>
+                </div>
+              )}
+              {profile.natal_chart_interpretation && (
+                <div>
+                  <h3 className="text-xl md:text-2xl font-cinzel font-bold text-primary mb-2">Interprétation détaillée</h3>
+                  <p className="text-base text-gray-200 leading-relaxed whitespace-pre-line">{profile.natal_chart_interpretation}</p>
+                </div>
+              )}
+            </InteractiveCard>
+          </div>
+        )}
+
         <div className="grid gap-6 md:grid-cols-3">
           {/* Informations personnelles */}
           <div className="md:col-span-2">

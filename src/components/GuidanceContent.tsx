@@ -94,7 +94,7 @@ function GuidanceContent(): JSX.Element {
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
+                transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
                 className="text-6xl mb-6"
               >
                 🔮
@@ -134,7 +134,7 @@ function GuidanceContent(): JSX.Element {
                 transition={{ delay: 0.4 + idx * 0.1, duration: 0.6 }}
                 whileHover={{ y: -5 }}
               >
-                <InteractiveCard className={`relative bg-gradient-to-br ${config.colors[getScoreLevel(getGuidanceScore(guidanceData[key]))]} shadow-xl rounded-2xl p-6 h-full flex flex-col`}>
+                <InteractiveCard className="card-premium h-full flex flex-col">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="text-primary">
                       {icon}
@@ -170,7 +170,7 @@ function GuidanceContent(): JSX.Element {
         </motion.div>
 
         {/* Infos et actions */}
-        <motion.div variants={itemVariants} className="flex items-center justify-between text-sm text-gray-400 bg-cosmic-800/50 px-4 py-2 rounded-lg border border-white/10 mt-8">
+        <motion.div variants={itemVariants} className="flex items-center justify-between text-sm text-gray-400 bg-cosmic-800/80 px-4 py-2 rounded-lg border border-white/10 mt-8">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" />
             <span>Dernière mise à jour : {DateTime.fromISO(today).toFormat('dd/MM/yyyy')} à 08:00</span>

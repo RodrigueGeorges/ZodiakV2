@@ -135,7 +135,7 @@ export class CacheManager {
     let expiredCount = 0;
     let totalAge = 0;
 
-    for (const [key, entry] of this.cache.entries()) {
+    for (const [, entry] of this.cache.entries()) {
       const age = now - entry.timestamp;
       totalAge += age;
       
