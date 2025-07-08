@@ -71,6 +71,8 @@ export function Profile() {
     guidance_sms_time: '08:00',
   });
   const [selectedPlace, setSelectedPlace] = useState<Place | null>(null);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarError, setAvatarError] = useState<string | null>(null);
 
   // Calcul des jours restants d'essai
   const daysUntilTrialEnd = profile?.trial_ends_at 
@@ -192,6 +194,40 @@ export function Profile() {
     </AnimatePresence>
   );
 
+  // Fonction d'upload d'avatar
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAvatarError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setAvatarError('Format non supporté. Utilisez jpg, png ou webp.');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setAvatarError('Image trop lourde (max 2 Mo).');
+      return;
+    }
+    setAvatarUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user?.id || 'user'}_${Date.now()}.${fileExt}`;
+      const { data, error } = await supabase.storage.from('avatars').upload(fileName, file, { upsert: true });
+      if (error) throw error;
+      const { publicURL } = supabase.storage.from('avatars').getPublicUrl(fileName).data;
+      if (!publicURL) throw new Error('Erreur lors de la récupération de l’URL');
+      // Mettre à jour le profil
+      await supabase.from('profiles').update({ avatar_url: publicURL, updated_at: new Date().toISOString() }).eq('id', user?.id);
+      await refreshProfile();
+    } catch (err) {
+      setAvatarError(err instanceof Error ? err.message : 'Erreur lors de l’upload');
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
+  // Calcul des initiales pour l'avatar
+  const initials = (profile?.name || user?.email || 'U')[0]?.toUpperCase() + (profile?.name?.split(' ')[1]?.[0]?.toUpperCase() || '');
+
   if (isAuthLoading) {
     return <LoadingScreen />;
   }
@@ -220,418 +256,262 @@ export function Profile() {
     natalChart.ascendant.sign;
 
   return (
-    <motion.div 
-      className="min-h-screen bg-cosmic-900 relative"
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-    >
-      <StarryBackground />
-      {renderStatus()}
-
-      <div className="container mx-auto px-4 md:px-8 xl:px-12 2xl:px-24 py-12">
-        <div className="max-w-4xl xl:max-w-6xl 2xl:max-w-screen-xl mx-auto">
-          <motion.div 
-            variants={pageVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            className="space-y-6"
-          >
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              {/* Colonne principale */}
-              <div className="xl:col-span-2 space-y-6">
-                {hasFullNatal && natalChart && (
-                  <NatalSignature
-                    sunSign={natalChart.planets.find((p: Planet) => p.name === 'Soleil')?.sign || ''}
-                    moonSign={natalChart.planets.find((p: Planet) => p.name === 'Lune')?.sign || ''}
-                    ascendantSign={natalChart.ascendant.sign || ''}
-                  />
-                )}
-                {/* Informations personnelles */}
-                <motion.div
-                  variants={cardVariants}
-                  initial="initial"
-                  animate="animate"
-                  whileHover="hover"
-                  transition={{ delay: 0.1 }}
-                >
-                  <InteractiveCard className="p-6 xl:p-10 2xl:p-14 relative overflow-hidden">
-                    {/* Effet de fond subtil */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-50" />
-                    
-                    <div className="relative z-10">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 rounded-lg bg-gradient-to-r from-primary to-secondary">
-                          <User className="w-6 h-6 text-gray-900" />
-                        </div>
-                        <h2 className="text-xl font-semibold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
-                          Informations personnelles
-                        </h2>
-                        {!editMode && (
-                          <motion.button
-                            onClick={() => setEditMode(true)}
-                            className="ml-auto p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-primary/30"
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <Edit2 className="w-4 h-4 text-gray-400" />
-                          </motion.button>
-                        )}
-                      </div>
-                      
-                      <AnimatePresence mode="wait">
-                        {editMode ? (
-                          <motion.div 
-                            key="edit"
-                            variants={formVariants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                            className="space-y-4"
-                          >
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                  Nom complet
-                                </label>
-                                <input
-                                  type="text"
-                                  value={formData.name}
-                                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                  className={DESIGN_TOKENS.components.input.base}
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                  Téléphone
-                                </label>
-                                <input
-                                  type="tel"
-                                  value={formData.phone}
-                                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                  className={DESIGN_TOKENS.components.input.base}
-                                />
-                              </div>
-                            </div>
-                            
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                  Date de naissance
-                                </label>
-                                <input
-                                  type="date"
-                                  value={formData.birth_date}
-                                  onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
-                                  className={DESIGN_TOKENS.components.input.base}
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                  Heure de naissance
-                                </label>
-                                <input
-                                  type="time"
-                                  value={formData.birth_time}
-                                  onChange={(e) => setFormData({ ...formData, birth_time: e.target.value })}
-                                  className={DESIGN_TOKENS.components.input.base}
-                                />
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <label className="block text-sm font-medium text-gray-300 mb-2">
-                                Lieu de naissance
-                              </label>
-                              <PlaceAutocomplete
-                                value={formData.birth_place}
-                                onChange={(value, place) => {
-                                  setFormData({ ...formData, birth_place: value });
-                                  setSelectedPlace(place);
-                                }}
-                                placeholder="Lieu de naissance"
-                              />
-                            </div>
-                            
-                            <motion.div 
-                              className="flex justify-end gap-3 mt-6"
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: 0.3 }}
-                            >
-                              <motion.button 
-                                onClick={() => setEditMode(false)} 
-                                className="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-white/5 transition-all duration-200"
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                              >
-                                Annuler
-                              </motion.button>
-                              <motion.button 
-                                onClick={handleSave} 
-                                disabled={saving} 
-                                className="px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-black font-semibold hover:opacity-90 transition-all duration-200 shadow-lg flex items-center gap-2"
-                                whileHover={{ scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
-                              >
-                                {saving ? (
-                                  <>
-                                    <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
-                                    Sauvegarde...
-                                  </>
-                                ) : (
-                                  <>
-                                    <Save className="w-4 h-4" />
-                                    Sauvegarder
-                                  </>
-                                )}
-                              </motion.button>
-                            </motion.div>
-                          </motion.div>
-                        ) : (
-                          <motion.div 
-                            key="view"
-                            variants={formVariants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                            className="space-y-6"
-                          >
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              <div className="space-y-4">
-                                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                                  <p className="text-sm text-gray-400 mb-1">Nom complet</p>
-                                  <p className="text-lg text-white font-medium">{profile?.name}</p>
-                                </div>
-                                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                                  <p className="text-sm text-gray-400 mb-1">Téléphone</p>
-                                  <p className="text-lg text-white font-medium">{profile?.phone}</p>
-                                </div>
-                              </div>
-                              
-                              <div className="space-y-4">
-                                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                                  <p className="text-sm text-gray-400 mb-1">Date de naissance</p>
-                                  <p className="text-lg text-white font-medium">{formatDate(profile?.birth_date || '')}</p>
-                                </div>
-                                <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                                  <p className="text-sm text-gray-400 mb-1">Heure de naissance</p>
-                                  <p className="text-lg text-white font-medium">{formatTime(profile?.birth_time || '')}</p>
-                                </div>
-                              </div>
-                            </div>
-                            
-                            <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                              <p className="text-sm text-gray-400 mb-1">Lieu de naissance</p>
-                              <p className="text-lg text-white font-medium">{profile?.birth_place}</p>
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </InteractiveCard>
-                </motion.div>
-
-                {/* Notifications */}
-                <motion.div
-                  variants={cardVariants}
-                  initial="initial"
-                  animate="animate"
-                  whileHover="hover"
-                  transition={{ delay: 0.2 }}
-                >
-                  <InteractiveCard className="p-6 xl:p-10 2xl:p-14 relative overflow-hidden">
-                    {/* Effet de fond subtil */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-50" />
-                    
-                    <div className="relative z-10">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="p-2 rounded-lg bg-gradient-to-r from-primary to-secondary">
-                          <Bell className="w-6 h-6 text-gray-900" />
-                        </div>
-                        <h2 className="text-xl font-semibold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
-                          Notifications
-                        </h2>
-                      </div>
-                      
-                      <AnimatePresence mode="wait">
-                        {editMode ? (
-                          <motion.div 
-                            key="edit-notifications"
-                            variants={formVariants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                            className="space-y-4"
-                          >
-                            <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10">
-                              <label htmlFor="sms-enabled" className="text-gray-300 font-medium">
-                                Guidance par SMS quotidienne
-                              </label>
-                              <motion.button
-                                id="sms-enabled"
-                                onClick={() =>
-                                  setFormData(prev => ({ ...prev, daily_guidance_sms_enabled: !prev.daily_guidance_sms_enabled }))
-                                }
-                                className={cn(
-                                  'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none',
-                                  formData.daily_guidance_sms_enabled ? 'bg-gradient-to-r from-primary to-secondary' : 'bg-gray-600'
-                                )}
-                                whileTap={{ scale: 0.95 }}
-                              >
-                                <motion.span
-                                  className="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0"
-                                  animate={{
-                                    x: formData.daily_guidance_sms_enabled ? 20 : 0
-                                  }}
-                                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                                />
-                              </motion.button>
-                            </div>
-                            
-                            <AnimatePresence>
-                              {formData.daily_guidance_sms_enabled && (
-                                <motion.div
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: 'auto' }}
-                                  exit={{ opacity: 0, height: 0 }}
-                                  className="p-4 bg-white/5 rounded-lg border border-white/10"
-                                >
-                                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    Heure d'envoi
-                                  </label>
-                                  <input
-                                    type="time"
-                                    value={formData.guidance_sms_time}
-                                    onChange={(e) => setFormData({ ...formData, guidance_sms_time: e.target.value })}
-                                    className={DESIGN_TOKENS.components.input.base}
-                                  />
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </motion.div>
-                        ) : (
-                          <motion.div 
-                            key="view-notifications"
-                            variants={formVariants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                            className="space-y-4"
-                          >
-                            <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                              <div className="flex justify-between items-center">
-                                <p className="text-sm text-gray-400">Guidance par SMS</p>
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                  profile.daily_guidance_sms_enabled 
-                                    ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                                    : 'bg-gray-500/20 text-gray-400 border border-gray-500/30'
-                                }`}>
-                                  {profile.daily_guidance_sms_enabled ? 'Activée' : 'Désactivée'}
-                                </span>
-                              </div>
-                            </div>
-                            
-                            {profile.daily_guidance_sms_enabled && (
-                              <div className="p-4 bg-white/5 rounded-lg border border-white/10">
-                                <div className="flex justify-between items-center">
-                                  <p className="text-sm text-gray-400">Heure d'envoi</p>
-                                  <p className="text-lg text-white font-medium">{formatTime(profile.guidance_sms_time)}</p>
-                                </div>
-                              </div>
-                            )}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  </InteractiveCard>
-                </motion.div>
+    <div className="min-h-screen flex flex-col items-center justify-start bg-cosmic-950 pt-4 pb-12">
+      {/* Header moderne */}
+      <div className="w-full max-w-4xl mx-auto mb-8 flex flex-col md:flex-row items-center md:items-end gap-4">
+        <div className="flex items-center gap-4 flex-1">
+          <div className="relative group w-16 h-16">
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="Avatar" className="w-16 h-16 rounded-full object-cover border-4 border-cosmic-900 shadow-lg" />
+            ) : (
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-3xl font-bold text-cosmic-950 shadow-lg border-4 border-cosmic-900">
+                {initials}
               </div>
-
-              {/* Colonne de droite - Uniquement abonnement et déconnexion */}
-              <div className="space-y-6">
-                <motion.div
-                  variants={cardVariants}
-                  initial="initial"
-                  animate="animate"
-                  whileHover="hover"
-                  transition={{ delay: 0.3 }}
-                >
-                  <InteractiveCard className="p-6 relative overflow-hidden">
-                    {/* Effet de fond subtil */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 opacity-50" />
-                    
-                    <div className="relative z-10">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="p-2 rounded-lg bg-gradient-to-r from-primary to-secondary">
-                          <CreditCard className="w-6 h-6 text-gray-900" />
-                        </div>
-                        <h3 className="text-lg font-semibold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
-                          Abonnement
-                        </h3>
+            )}
+            {/* Bouton d'upload en overlay */}
+            <label className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer rounded-full">
+              <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleAvatarChange} disabled={avatarUploading} />
+              <span className="text-xs text-white bg-cosmic-900/80 px-2 py-1 rounded shadow">Changer ma photo</span>
+            </label>
+            {avatarUploading && <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full"><span className="text-white text-xs">Chargement...</span></div>}
+          </div>
+          <div>
+            <h1 className="text-3xl font-cinzel font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-1">Mon Profil</h1>
+            <div className="text-gray-400 text-sm">Bienvenue, {profile?.name || user?.email || 'Utilisateur'} !</div>
+            {avatarError && <div className="text-xs text-red-400 mt-1">{avatarError}</div>}
+          </div>
+        </div>
+        {/* Badge d'abonnement */}
+        {profile?.subscription_status && (
+          <span className={`px-4 py-1 rounded-full text-sm font-semibold shadow-md ${profile.subscription_status === 'trial' ? 'bg-yellow-500/80 text-black' : 'bg-green-600/80 text-white'}`}>
+            {profile.subscription_status === 'trial' ? 'Essai' : 'Abonné'}
+          </span>
+        )}
+      </div>
+      {/* Disposition responsive des cartes */}
+      <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row gap-8">
+        <div className="flex-1 min-w-0">
+          {/* Carte infos utilisateur */}
+          <InteractiveCard className="mb-8 shadow-xl rounded-2xl bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10">
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-primary to-secondary">
+                  <User className="w-6 h-6 text-gray-900" />
+                </div>
+                <h2 className="text-xl font-semibold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
+                  Informations personnelles
+                </h2>
+                {!editMode && (
+                  <motion.button
+                    onClick={() => setEditMode(true)}
+                    className="ml-auto p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all duration-200 border border-white/10 hover:border-primary/30"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Edit2 className="w-4 h-4 text-gray-400" />
+                  </motion.button>
+                )}
+              </div>
+              
+              <AnimatePresence mode="wait">
+                {editMode ? (
+                  <motion.div 
+                    key="edit"
+                    variants={formVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="space-y-4"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Nom complet
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className={DESIGN_TOKENS.components.input.base}
+                        />
                       </div>
-                      <div className="space-y-3">
-                        <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10">
-                          <span className="text-sm text-gray-400">Statut</span>
-                          <span className={`text-sm font-semibold px-2 py-1 rounded-full ${
-                            profile.subscription_status === 'active' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
-                            profile.subscription_status === 'trial' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' : 
-                            'bg-red-500/20 text-red-400 border border-red-500/30'
-                          }`}>
-                            {profile.subscription_status === 'active' ? 'Actif' :
-                             profile.subscription_status === 'trial' ? 'Essai' : 'Expiré'}
-                          </span>
-                        </div>
-                        {profile.subscription_status === 'trial' && (
-                          <motion.div 
-                            className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.2 }}
-                          >
-                            <span className="text-sm text-gray-400">Jours restants</span>
-                            <span className="text-sm font-semibold text-yellow-400">
-                              {daysUntilTrialEnd} jours
-                            </span>
-                          </motion.div>
-                        )}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Téléphone
+                        </label>
+                        <input
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          className={DESIGN_TOKENS.components.input.base}
+                        />
                       </div>
                     </div>
-                  </InteractiveCard>
-                </motion.div>
-                
-                <motion.div
-                  variants={cardVariants}
-                  initial="initial"
-                  animate="animate"
-                  whileHover="hover"
-                  transition={{ delay: 0.4 }}
-                >
-                  <InteractiveCard className="p-6 relative overflow-hidden">
-                    {/* Effet de fond subtil */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-red-600/5 opacity-50" />
                     
-                    <div className="relative z-10">
-                      <motion.button
-                        onClick={handleLogout}
-                        className="w-full py-3 px-4 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-all duration-200 flex items-center gap-3 border border-red-500/30 hover:border-red-500/50"
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Date de naissance
+                        </label>
+                        <input
+                          type="date"
+                          value={formData.birth_date}
+                          onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
+                          className={DESIGN_TOKENS.components.input.base}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Heure de naissance
+                        </label>
+                        <input
+                          type="time"
+                          value={formData.birth_time}
+                          onChange={(e) => setFormData({ ...formData, birth_time: e.target.value })}
+                          className={DESIGN_TOKENS.components.input.base}
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Lieu de naissance
+                      </label>
+                      <PlaceAutocomplete
+                        value={formData.birth_place}
+                        onChange={(value, place) => {
+                          setFormData({ ...formData, birth_place: value });
+                          setSelectedPlace(place);
+                        }}
+                        placeholder="Lieu de naissance"
+                      />
+                    </div>
+                    
+                    <motion.div 
+                      className="flex justify-end gap-3 mt-6"
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <motion.button 
+                        onClick={() => setEditMode(false)} 
+                        className="px-4 py-2 rounded-lg border border-gray-600 text-gray-300 hover:bg-white/5 transition-all duration-200"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                       >
-                        <LogOut className="w-5 h-5" />
-                        <span className="font-medium">Déconnexion</span>
+                        Annuler
                       </motion.button>
+                      <motion.button 
+                        onClick={handleSave} 
+                        disabled={saving} 
+                        className="px-4 py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-black font-semibold hover:opacity-90 transition-all duration-200 shadow-lg flex items-center gap-2"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {saving ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-gray-900 border-t-transparent rounded-full animate-spin" />
+                            Sauvegarde...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4" />
+                            Sauvegarder
+                          </>
+                        )}
+                      </motion.button>
+                    </motion.div>
+                  </motion.div>
+                ) : (
+                  <motion.div 
+                    key="view"
+                    variants={formVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="space-y-6"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-4">
+                        <div className="p-4 bg-white/5 rounded-lg border border-white/10">
+                          <p className="text-sm text-gray-400 mb-1">Nom complet</p>
+                          <p className="text-lg text-white font-medium">{profile?.name}</p>
+                        </div>
+                        <div className="p-4 bg-white/5 rounded-lg border border-white/10">
+                          <p className="text-sm text-gray-400 mb-1">Téléphone</p>
+                          <p className="text-lg text-white font-medium">{profile?.phone}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        <div className="p-4 bg-white/5 rounded-lg border border-white/10">
+                          <p className="text-sm text-gray-400 mb-1">Date de naissance</p>
+                          <p className="text-lg text-white font-medium">{formatDate(profile?.birth_date || '')}</p>
+                        </div>
+                        <div className="p-4 bg-white/5 rounded-lg border border-white/10">
+                          <p className="text-sm text-gray-400 mb-1">Heure de naissance</p>
+                          <p className="text-lg text-white font-medium">{formatTime(profile?.birth_time || '')}</p>
+                        </div>
+                      </div>
                     </div>
-                  </InteractiveCard>
-                </motion.div>
+                    
+                    <div className="p-4 bg-white/5 rounded-lg border border-white/10">
+                      <p className="text-sm text-gray-400 mb-1">Lieu de naissance</p>
+                      <p className="text-lg text-white font-medium">{profile?.birth_place}</p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </InteractiveCard>
+        </div>
+        <div className="w-full md:w-80 flex flex-col gap-6">
+          {/* Carte abonnement */}
+          <InteractiveCard className="mb-8 shadow-xl rounded-2xl bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10">
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-primary to-secondary">
+                  <CreditCard className="w-6 h-6 text-gray-900" />
+                </div>
+                <h3 className="text-lg font-semibold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
+                  Abonnement
+                </h3>
+              </div>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10">
+                  <span className="text-sm text-gray-400">Statut</span>
+                  <span className={`text-sm font-semibold px-2 py-1 rounded-full ${
+                    profile.subscription_status === 'active' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                    profile.subscription_status === 'trial' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' : 
+                    'bg-red-500/20 text-red-400 border border-red-500/30'
+                  }`}>
+                    {profile.subscription_status === 'active' ? 'Actif' :
+                     profile.subscription_status === 'trial' ? 'Essai' : 'Expiré'}
+                  </span>
+                </div>
+                {profile.subscription_status === 'trial' && (
+                  <motion.div 
+                    className="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/10"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2 }}
+                  >
+                    <span className="text-sm text-gray-400">Jours restants</span>
+                    <span className="text-sm font-semibold text-yellow-400">
+                      {daysUntilTrialEnd} jours
+                    </span>
+                  </motion.div>
+                )}
               </div>
             </div>
-          </motion.div>
+          </InteractiveCard>
+          {/* Bouton Déconnexion */}
+          <button className="w-full px-6 py-3 bg-red-700/80 text-white rounded-lg font-semibold shadow-lg hover:bg-red-800/90 transition-all duration-200 mt-2 flex items-center justify-center gap-2">
+            <LogOut className="w-5 h-5" /> Déconnexion
+          </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
 

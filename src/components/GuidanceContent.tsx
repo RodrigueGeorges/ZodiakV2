@@ -43,6 +43,22 @@ function getRandomMantra() {
   return MANTRAS[Math.floor(Math.random() * MANTRAS.length)];
 }
 
+// Ajout d'une fonction utilitaire pour transformer le score en label, couleur, emoji
+function getScoreLevel(score: number) {
+  if (score >= 80) return { label: 'Excellente énergie', color: 'bg-green-600/80 text-white', emoji: '🌟' };
+  if (score >= 60) return { label: 'Bonne tendance', color: 'bg-yellow-500/80 text-black', emoji: '✨' };
+  if (score >= 40) return { label: 'À surveiller', color: 'bg-orange-500/80 text-black', emoji: '🟠' };
+  return { label: 'Attention', color: 'bg-red-600/80 text-white', emoji: '🔴' };
+}
+
+// Définir GuidanceData pour l'accès dynamique
+interface GuidanceData {
+  summary: string;
+  love: { text: string; score: number };
+  work: { text: string; score: number };
+  energy: { text: string; score: number };
+}
+
 function GuidanceContent(): JSX.Element {
   const { user } = useAuth();
   const [showShareModal, setShowShareModal] = useState(false);
@@ -99,11 +115,12 @@ function GuidanceContent(): JSX.Element {
 
   // Affichage automatique de la guidance du jour si elle existe
   if (guidance) {
+    const guidanceData = guidance as GuidanceData;
     return (
       <div className="relative">
         {/* Fond étoilé animé */}
         <div className="absolute inset-0 pointer-events-none z-0">
-          <StarryBackground animated />
+          <StarryBackground />
           <div className="absolute inset-0 bg-gradient-radial from-transparent via-cosmic-800/40 to-cosmic-900/90" />
         </div>
         <motion.div
@@ -146,76 +163,44 @@ function GuidanceContent(): JSX.Element {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
           >
-            <InteractiveCard className="relative bg-gradient-to-br from-cosmic-800/90 to-cosmic-900/90 border-primary/30 shadow-2xl rounded-3xl p-8 overflow-hidden animate-fade-in">
-              <div className="relative z-10 flex flex-col items-center gap-4">
-                <div className="text-2xl md:text-3xl font-cinzel text-primary drop-shadow-glow text-center mb-2">
-                  {guidance.summary}
-                </div>
+            <InteractiveCard className="relative bg-gradient-to-br from-primary/80 to-secondary/80 border-primary/30 shadow-2xl rounded-3xl p-8 overflow-hidden animate-fade-in flex flex-col items-center">
+              <div className="text-4xl mb-2">🌠</div>
+              <div className="text-2xl md:text-3xl font-cinzel text-primary drop-shadow-glow text-center mb-2">
+                {guidanceData.summary}
               </div>
             </InteractiveCard>
           </motion.div>
           {/* Conseils détaillés */}
           <div className="grid gap-4 md:grid-cols-3">
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 }}>
-              <InteractiveCard className="bg-gradient-to-br from-pink-900/30 to-red-900/20 border-pink-500/20">
-                <div className="flex items-start gap-3">
-                  <Heart className="w-6 h-6 text-pink-400 flex-shrink-0 mt-1" />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-white font-cinzel">Amour</h3>
-                      <span className={cn("text-sm font-medium", getScoreColor(getGuidanceScore(guidance.love)))}>
-                        {getScoreEmoji(getGuidanceScore(guidance.love))} {getGuidanceScore(guidance.love)}%
+            {[
+              { key: 'love', label: 'Amour', icon: <Heart className="w-6 h-6 text-pink-400 flex-shrink-0 mt-1" /> },
+              { key: 'work', label: 'Travail', icon: <Briefcase className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" /> },
+              { key: 'energy', label: 'Énergie', icon: <Battery className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" /> },
+            ].map(({ key, label, icon }, idx) => {
+              const score = getGuidanceScore(guidanceData[key]);
+              const { label: level, color, emoji } = getScoreLevel(score);
+              return (
+                <motion.div key={key} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.2 + idx * 0.1 }}>
+                  <InteractiveCard className="relative bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10 shadow-xl rounded-2xl p-6 flex flex-col gap-2">
+                    <div className="flex items-center gap-3 mb-2">
+                      {icon}
+                      <h3 className="font-semibold text-white font-cinzel text-lg">{label}</h3>
+                      <span className={`ml-auto px-3 py-1 rounded-full text-xs font-bold shadow-md ${color} flex items-center gap-1`}>
+                        {emoji} {level}
                       </span>
                     </div>
-                    <FormattedGuidanceText text={getGuidanceText(guidance.love) || 'Aucun conseil amour disponible.'} />
-                  </div>
-                </div>
-              </InteractiveCard>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.3 }}>
-              <InteractiveCard className="bg-gradient-to-br from-blue-900/30 to-indigo-900/20 border-blue-500/20">
-                <div className="flex items-start gap-3">
-                  <Briefcase className="w-6 h-6 text-blue-400 flex-shrink-0 mt-1" />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-white font-cinzel">Travail</h3>
-                      <span className={cn("text-sm font-medium", getScoreColor(getGuidanceScore(guidance.work)))}>
-                        {getScoreEmoji(getGuidanceScore(guidance.work))} {getGuidanceScore(guidance.work)}%
-                      </span>
-                    </div>
-                    <FormattedGuidanceText text={getGuidanceText(guidance.work) || 'Aucun conseil travail disponible.'} />
-                  </div>
-                </div>
-              </InteractiveCard>
-            </motion.div>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }}>
-              <InteractiveCard className="bg-gradient-to-br from-green-900/30 to-emerald-900/20 border-green-500/20">
-                <div className="flex items-start gap-3">
-                  <Battery className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-semibold text-white font-cinzel">Énergie</h3>
-                      <span className={cn("text-sm font-medium", getScoreColor(getGuidanceScore(guidance.energy)))}>
-                        {getScoreEmoji(getGuidanceScore(guidance.energy))} {getGuidanceScore(guidance.energy)}%
-                      </span>
-                    </div>
-                    <FormattedGuidanceText text={getGuidanceText(guidance.energy) || 'Aucun conseil énergie disponible.'} />
-                  </div>
-                </div>
-              </InteractiveCard>
-            </motion.div>
+                    <FormattedGuidanceText text={getGuidanceText(guidanceData[key]) || `Aucun conseil ${label.toLowerCase()} disponible.`} />
+                  </InteractiveCard>
+                </motion.div>
+              );
+            })}
           </div>
-          {/* Mantra du jour (issu de la guidance si disponible, sinon fallback) */}
+          {/* Mantra du jour (pas guidance.mantra, utiliser un fallback inspirant) */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.5 }}>
-            <InteractiveCard className="bg-gradient-to-br from-yellow-900/30 to-orange-900/20 border-yellow-500/20">
-              <div className="flex items-start gap-3">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-white mb-2 font-cinzel">Mantra du Jour</h3>
-                  <p className="text-gray-300 italic text-lg">"
-                    {guidance.mantra || getRandomMantra()}"
-                  </p>
-                </div>
-              </div>
+            <InteractiveCard className="bg-gradient-to-br from-yellow-400/30 to-orange-400/20 border-yellow-500/20 shadow-xl rounded-2xl p-6 flex flex-col items-center animate-glow">
+              <div className="text-3xl mb-2">🧘‍♂️</div>
+              <h3 className="font-semibold text-white mb-2 font-cinzel">Mantra du Jour</h3>
+              <p className="text-gray-900 italic text-lg text-center font-medium">“{getRandomMantra()}”</p>
             </InteractiveCard>
           </motion.div>
           {/* Modal de partage */}
