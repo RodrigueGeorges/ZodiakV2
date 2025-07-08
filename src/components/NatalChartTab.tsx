@@ -94,7 +94,7 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
       setError(null);
       try {
         // console.log('🔄 Génération de l\'interprétation du thème natal...');
-        const interpretationResponse = await OpenAIService.generateNatalChartInterpretation(natalChart);
+        const interpretationResponse = await OpenAIService.generateNatalChartInterpretation(natalChart, firstName);
         if (interpretationResponse.success && interpretationResponse.data) {
           setInterpretation(interpretationResponse.data);
           const updatedProfile = { ...profile, natal_chart_interpretation: interpretationResponse.data };
@@ -215,7 +215,7 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
   }
 
   return (
-    <div className="space-y-6 pt-2 md:pt-4 min-h-0 flex flex-col justify-start">
+    <div className="space-y-6 pt-2 md:pt-4 flex flex-col justify-start">
       {/* En-tête avec signature astrale */}
       <div className="text-center mb-0 mt-0">
         <h2 className="text-2xl md:text-3xl font-cinzel font-bold mb-2 md:mb-4 bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
@@ -339,7 +339,7 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
                   setError(null);
                   
                   try {
-                    const generatedText = await OpenAIService.generateNatalChartInterpretation(natalChart);
+                    const generatedText = await OpenAIService.generateNatalChartInterpretation(natalChart, firstName);
                     if (generatedText && typeof generatedText === 'object' && 'success' in generatedText && generatedText.success && generatedText.data) {
                       setInterpretation(generatedText.data);
                     } else if (typeof generatedText === 'string') {

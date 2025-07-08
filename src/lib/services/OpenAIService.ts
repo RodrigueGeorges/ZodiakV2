@@ -96,9 +96,9 @@ class OpenAIService {
     `;
   }
 
-  private static buildNatalChartInterpretationPrompt(natalChart: NatalChart): string {
+  private static buildNatalChartInterpretationPrompt(natalChart: NatalChart, firstName?: string): string {
     return `
-      Tu es un astrologue expérimenté et bienveillant. En te basant sur le thème natal suivant, rédige une interprétation astrologique complète, riche et personnalisée en plusieurs paragraphes. Adresse-toi directement à la personne.
+      Tu es un astrologue expérimenté et bienveillant. En te basant sur le thème natal suivant, rédige une interprétation astrologique complète, riche et personnalisée en plusieurs paragraphes. Adresse-toi directement à la personne en commençant par "Cher(e) ${firstName || 'ami(e)'}".
 
       Le texte doit être structuré, facile à lire et couvrir les points suivants :
       1.  **Introduction** : Une brève présentation de la "signature astrale" (Soleil, Lune, Ascendant) et ce qu'elle révèle de la personnalité centrale.
