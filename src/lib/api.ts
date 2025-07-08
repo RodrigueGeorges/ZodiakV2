@@ -83,7 +83,7 @@ export class ApiService {
     }
 
     try {
-      console.log(`API call to ${endpoint}`, { ...data, clientId: '***' });
+      // console.log(`API call to ${endpoint}`, { ...data, clientId: '***' });
 
       const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',

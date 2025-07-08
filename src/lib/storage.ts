@@ -28,49 +28,63 @@ export class StorageService {
   // === PROFILES ===
   static async getProfile(userId: string): Promise<Profile | null> {
     try {
-      const cacheKey = `${this.PROFILE_PREFIX}${userId}`;
-      const cached = this.getFromCache<Profile>(cacheKey);
+      const cached = localStorage.getItem(`profile_${userId}`);
       if (cached) {
-        console.log('✅ Profil récupéré du cache');
-        return cached;
+        const profile = JSON.parse(cached);
+        // console.log('✅ Profil récupéré du cache');
+        return profile;
       }
-
-      console.log('🔄 Récupération du profil depuis Supabase...');
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .maybeSingle();
-
-      if (error) throw error;
-      if (!data) return null;
-
-      this.setInCache(cacheKey, data);
-      console.log('💾 Profil mis en cache');
-      return data;
+      return null;
     } catch (error) {
-      console.error('Error getting profile:', error);
+      console.error('Erreur lors de la récupération du cache:', error);
       return null;
     }
   }
 
-  static async saveProfile(profile: Profile): Promise<boolean> {
+  static async saveProfile(profile: Profile): Promise<void> {
     try {
-      console.log('💾 Sauvegarde du profil dans Supabase...');
+      if (!profile || !profile.id) {
+        throw new Error('Profil invalide ou ID manquant');
+      }
+      
+      // console.log('💾 Sauvegarde du profil dans Supabase...');
       const { error } = await supabase
         .from('profiles')
-        .upsert(profile as Record<string, unknown>);
+        .upsert(profile, { onConflict: 'id' });
 
       if (error) throw error;
 
-      const cacheKey = `${this.PROFILE_PREFIX}${profile.id}`;
-      this.setInCache(cacheKey, profile);
-
-      console.log('✅ Profil sauvegardé avec succès');
-      return true;
+      // Mise en cache local
+      localStorage.setItem(`profile_${profile.id}`, JSON.stringify(profile));
+      // console.log('✅ Profil sauvegardé avec succès');
     } catch (error) {
-      console.error('Error saving profile:', error);
-      return false;
+      console.error('Erreur lors de la sauvegarde du profil:', error);
+      throw error;
+    }
+  }
+
+  static async loadProfileFromSupabase(userId: string): Promise<Profile | null> {
+    try {
+      // console.log('🔄 Récupération du profil depuis Supabase...');
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        // Mise en cache
+        localStorage.setItem(`profile_${userId}`, JSON.stringify(data));
+        // console.log('💾 Profil mis en cache');
+        return data;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Erreur lors de la récupération du profil:', error);
+      return null;
     }
   }
 
@@ -99,7 +113,7 @@ export class StorageService {
       }
 
       this.setInCache(cacheKey, data);
-      console.log('💾 Guidance mise en cache');
+      // console.log('💾 Guidance mise en cache');
       return data;
     } catch (error) {
       console.error('Error getting guidance:', error);

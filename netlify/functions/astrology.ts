@@ -39,7 +39,7 @@ const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 heures
 function getFromCache(key: string): NatalChart | null {
   const cached = serverCache.get(key);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    console.log('✅ Cache hit for key:', key);
+    // console.log('✅ Cache hit for key:', key);
     return cached.data;
   }
   if (cached) {
@@ -53,7 +53,7 @@ function setInCache(key: string, data: NatalChart): void {
     data,
     timestamp: Date.now()
   });
-  console.log('💾 Cached data for key:', key);
+  // console.log('💾 Cached data for key:', key);
 }
 
 export const handler: Handler = async (event, _context) => {
@@ -105,7 +105,7 @@ export const handler: Handler = async (event, _context) => {
       };
     }
 
-    console.log('🔄 Cache miss, calling Prokerala API...');
+    // console.log('🔄 Cache miss, calling Prokerala API...');
 
     const baseUrl = process.env.PROKERALA_BASE_URL;
     const clientId = process.env.PROKERALA_CLIENT_ID;
@@ -170,8 +170,8 @@ export const handler: Handler = async (event, _context) => {
     url.searchParams.append('la', 'en');
     url.searchParams.append('ayanamsa', '0');
     
-    console.log('Prokerala URL:', url.toString());
-    console.log('Access Token:', accessToken ? 'Present' : 'Missing');
+    // console.log('Prokerala URL:', url.toString());
+    // console.log('Access Token:', accessToken ? 'Present' : 'Missing');
     
     const response = await fetch(url.toString(), {
       method: 'GET',
@@ -181,8 +181,8 @@ export const handler: Handler = async (event, _context) => {
       }
     });
 
-    console.log('Response status:', response.status);
-    console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+    // console.log('Response status:', response.status);
+    // console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
     if (!response.ok) {
       const errorText = await response.text();

@@ -79,7 +79,7 @@ class SupabaseOptimizationService {
 
       // 4. Mettre en cache
       await StorageService.saveDailyGuidance(data);
-      console.log('💾 Guidance mise en cache');
+      // console.log('💾 Guidance mise en cache');
       
       return data;
     } catch (error) {
@@ -152,7 +152,7 @@ class SupabaseOptimizationService {
 
       // 3. Mettre en cache
       await StorageService.saveDailyGuidance(guidance);
-      console.log('✅ Guidance sauvegardée et mise en cache');
+      // console.log('✅ Guidance sauvegardée et mise en cache');
 
       console.log('Analytics tracking disabled - guidance save_optimized event');
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, CreditCard, Bell, LogOut, Edit2, Check, X, Save } from 'lucide-react';
+import { User, CreditCard, Bell, LogOut, Edit2, Check, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../lib/hooks/useAuth.tsx';
 import { supabase } from '../lib/supabase';
@@ -11,8 +11,28 @@ import PlaceAutocomplete from '../components/PlaceAutocomplete';
 import LoadingScreen from '../components/LoadingScreen';
 import { DESIGN_TOKENS } from '../lib/constants/design';
 import { AstrologyService } from '../lib/astrology';
-import type { Place } from '../lib/types/supabase';
+import type { Place } from '../lib/places';
 import NatalSignature from '../components/NatalSignature';
+import type { Profile } from '../lib/types/supabase';
+
+// Types pour le thème natal
+interface Planet {
+  name: string;
+  sign: string;
+  degree?: number;
+  house?: number;
+}
+
+interface Ascendant {
+  sign: string;
+  degree?: number;
+}
+
+interface NatalChart {
+  planets: Planet[];
+  ascendant: Ascendant;
+  houses?: Array<{ number: number; sign: string }>;
+}
 
 // Animations pour les transitions
 const pageVariants = {
@@ -184,7 +204,7 @@ export function Profile() {
     return <div className="text-red-400 text-center mt-8">Profil non disponible ou incomplet. Veuillez compléter votre profil.</div>;
   }
 
-  let natalChart: any = null;
+  let natalChart: NatalChart | null = null;
   try {
     natalChart = typeof profile.natal_chart === 'string'
       ? JSON.parse(profile.natal_chart)
@@ -195,8 +215,8 @@ export function Profile() {
 
   // Affichage du thème natal uniquement si tous les signes sont présents
   const hasFullNatal = natalChart && natalChart.planets && natalChart.ascendant &&
-    natalChart.planets.find((p: any) => p.name === 'Soleil')?.sign &&
-    natalChart.planets.find((p: any) => p.name === 'Lune')?.sign &&
+    natalChart.planets.find((p: Planet) => p.name === 'Soleil')?.sign &&
+    natalChart.planets.find((p: Planet) => p.name === 'Lune')?.sign &&
     natalChart.ascendant.sign;
 
   return (
@@ -222,10 +242,10 @@ export function Profile() {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
               {/* Colonne principale */}
               <div className="xl:col-span-2 space-y-6">
-                {hasFullNatal && (
+                {hasFullNatal && natalChart && (
                   <NatalSignature
-                    sunSign={natalChart.planets.find((p: any) => p.name === 'Soleil')?.sign || ''}
-                    moonSign={natalChart.planets.find((p: any) => p.name === 'Lune')?.sign || ''}
+                    sunSign={natalChart.planets.find((p: Planet) => p.name === 'Soleil')?.sign || ''}
+                    moonSign={natalChart.planets.find((p: Planet) => p.name === 'Lune')?.sign || ''}
                     ascendantSign={natalChart.ascendant.sign || ''}
                   />
                 )}

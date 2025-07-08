@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { AstrologyService } from '../astrology';
+import { AstrologyService, type NatalChart } from '../astrology';
 import { SMSService } from '../sms';
 import { StorageService } from '../storage';
 import OpenAIService from './OpenAIService';
@@ -42,7 +42,7 @@ class GuidanceService {
 
       // Generate guidance with OpenAI
       const guidance = await OpenAIService.generateGuidance(
-        profile.natal_chart as Record<string, unknown>,
+        profile.natal_chart as NatalChart,
         transits
       );
 

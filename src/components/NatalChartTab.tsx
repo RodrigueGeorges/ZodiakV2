@@ -1,69 +1,89 @@
 import React, { useState, useEffect } from 'react';
-import { Sun, Moon, Sparkle, Star, Heart, MessageSquare } from 'lucide-react';
-import type { Profile, NatalChart } from '../lib/types/supabase';
-import InteractiveCard from './InteractiveCard';
-import OpenAIService from '../lib/services/OpenAIService';
+import { Sun, Moon, MessageSquare, Heart, Star, Sparkle } from 'lucide-react';
+import { OpenAIService } from '../lib/services/OpenAIService';
 import { StorageService } from '../lib/storage';
-import CosmicLoader from './CosmicLoader';
+import InteractiveCard from './InteractiveCard';
 import NatalSignature from './NatalSignature';
-import type { JSX } from 'react';
+import CosmicLoader from './CosmicLoader';
+import type { Profile } from '../lib/types/supabase';
 
 interface NatalChartTabProps {
   profile: Profile;
 }
 
 function NatalChartTab({ profile }: NatalChartTabProps) {
-  const [interpretation, setInterpretation] = useState<string | null>(profile.natal_chart_interpretation || null);
+  const [astroSummary, setAstroSummary] = useState<string | null>(null);
+  const [interpretation, setInterpretation] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [astroSummary, setAstroSummary] = useState<string | null>(profile.natal_summary || null);
 
-  const natalChart = profile.natal_chart as NatalChart;
-  const firstName = profile.name ? profile.name.split(' ')[0] : '';
+  const firstName = profile?.name?.split(' ')[0] || 'Utilisateur';
+  const natalChart = profile?.natal_chart ? 
+    (typeof profile.natal_chart === 'string' ? JSON.parse(profile.natal_chart) : profile.natal_chart) 
+    : null;
 
-  // Extraction des données principales
   const sunSign = natalChart?.planets?.find((p: { name: string; sign: string }) => p.name === 'Soleil')?.sign || 'N/A';
   const moonSign = natalChart?.planets?.find((p: { name: string; sign: string }) => p.name === 'Lune')?.sign || 'N/A';
   const ascendantSign = natalChart?.ascendant?.sign || 'N/A';
 
   // On charge d'abord le résumé depuis Supabase si présent
   useEffect(() => {
-    const generateSummary = async () => {
-      if (!natalChart || astroSummary) return;
-      setIsLoading(true);
-      try {
-        const summary = await OpenAIService.generateNatalSummary(natalChart, firstName);
-        setAstroSummary(summary);
-        // Sauvegarder le résumé dans Supabase pour éviter les futurs appels OpenAI
-        const updatedProfile = { ...profile, natal_summary: summary };
-        await StorageService.saveProfile(updatedProfile);
-      } catch (err) {
-        console.error('Erreur lors de la génération du résumé:', err);
-        setAstroSummary(`${firstName}, votre signature astrale révèle un Soleil en ${sunSign}, une Lune en ${moonSign} et un Ascendant en ${ascendantSign}. Cette combinaison unique façonne votre personnalité et votre façon d'aborder la vie.`);
-      } finally {
-        setIsLoading(false);
+    const loadOrGenerateSummary = async () => {
+      if (!natalChart || !profile) return;
+      
+      // D'abord, essayer de charger le résumé existant depuis le profil
+      if (profile.natal_summary && !astroSummary) {
+        setAstroSummary(profile.natal_summary);
+        return;
+      }
+      
+      // Si pas de résumé existant et qu'on n'en a pas déjà un, en générer un nouveau
+      if (!profile.natal_summary && !astroSummary) {
+        setIsLoading(true);
+        try {
+          const summaryResponse = await OpenAIService.generateNatalSummary(natalChart, firstName);
+          if (summaryResponse.success && summaryResponse.data) {
+            setAstroSummary(summaryResponse.data);
+            // Sauvegarder le résumé dans Supabase pour éviter les futurs appels OpenAI
+            const updatedProfile = { ...profile, natal_summary: summaryResponse.data };
+            await StorageService.saveProfile(updatedProfile);
+          } else {
+            throw new Error('Erreur lors de la génération du résumé');
+          }
+        } catch (err) {
+          console.error('Erreur lors de la génération du résumé:', err);
+          setAstroSummary(`${firstName}, votre signature astrale révèle un Soleil en ${sunSign}, une Lune en ${moonSign} et un Ascendant en ${ascendantSign}. Cette combinaison unique façonne votre personnalité et votre façon d'aborder la vie.`);
+        } finally {
+          setIsLoading(false);
+        }
       }
     };
-    generateSummary();
-  }, [natalChart, firstName, astroSummary, sunSign, moonSign, ascendantSign]);
+    loadOrGenerateSummary();
+  }, [natalChart, profile, astroSummary, firstName, sunSign, moonSign, ascendantSign]);
 
   useEffect(() => {
     const generateInterpretation = async () => {
       // Optimisation : ne jamais appeler OpenAI si profile.natal_chart_interpretation existe déjà
-      if (!natalChart || profile.natal_chart_interpretation) {
-        setInterpretation(profile.natal_chart_interpretation || null);
-        setIsLoading(false);
+      if (!natalChart || !profile) return;
+      
+      if (profile.natal_chart_interpretation) {
+        setInterpretation(profile.natal_chart_interpretation);
         return;
       }
+      
       setIsLoading(true);
       setError(null);
       try {
-        console.log('🔄 Génération de l\'interprétation du thème natal...');
-        const generatedText = await OpenAIService.generateNatalChartInterpretation(natalChart);
-        setInterpretation(generatedText);
-        const updatedProfile = { ...profile, natal_chart_interpretation: generatedText };
-        await StorageService.saveProfile(updatedProfile);
-        console.log('✅ Interprétation générée et sauvegardée');
+        // console.log('🔄 Génération de l\'interprétation du thème natal...');
+        const interpretationResponse = await OpenAIService.generateNatalChartInterpretation(natalChart);
+        if (interpretationResponse.success && interpretationResponse.data) {
+          setInterpretation(interpretationResponse.data);
+          const updatedProfile = { ...profile, natal_chart_interpretation: interpretationResponse.data };
+          await StorageService.saveProfile(updatedProfile);
+          // console.log('✅ Interprétation générée et sauvegardée');
+        } else {
+          throw new Error('Erreur lors de la génération de l\'interprétation');
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Une erreur est survenue lors de la génération de votre interprétation.');
         console.error('❌ Erreur lors de la génération de l\'interprétation:', err);
@@ -72,7 +92,7 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
       }
     };
     generateInterpretation();
-  }, [natalChart, profile]);
+  }, [natalChart, profile?.natal_chart_interpretation, profile]);
 
   if (!natalChart) {
     return (

@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 
 interface InteractiveCardProps {
@@ -9,7 +9,7 @@ interface InteractiveCardProps {
   'aria-label'?: string;
 }
 
-function InteractiveCard({ children, className = '', onClick, tabIndex, 'aria-label': ariaLabel }: InteractiveCardProps) {
+const InteractiveCard = React.memo(function InteractiveCard({ children, className = '', onClick, tabIndex, 'aria-label': ariaLabel }: InteractiveCardProps) {
   return (
     <motion.div
       className={`relative bg-white/5 backdrop-blur-lg rounded-xl overflow-hidden border border-white/10 shadow-xl ${className}`}
@@ -36,4 +36,4 @@ function InteractiveCard({ children, className = '', onClick, tabIndex, 'aria-la
   );
 }
 
-export default InteractiveCard;
+export default React.memo(InteractiveCard);

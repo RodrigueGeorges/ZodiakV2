@@ -16,7 +16,13 @@ const TIMEZONE = 'Europe/Paris'; // Fuseau horaire par défaut
 // --- Duplication de la logique des services pour l'environnement serveur ---
 
 // Logique OpenAI
-async function generateGuidanceForSms(natalChart: NatalChart, transits: any): Promise<any> {
+async function generateGuidanceForSms(natalChart: NatalChart, transits: Record<string, unknown>): Promise<{
+  summary: string;
+  love: { text: string; score: number };
+  work: { text: string; score: number };
+  energy: { text: string; score: number };
+  mantra: string;
+}> {
   const prompt = `
 Tu es un astrologue expert, bienveillant et moderne, qui rédige des guidances quotidiennes pour une application innovante de guidance astrologique personnalisée.
 
@@ -125,7 +131,7 @@ const sendGuidanceSms = async (profile: Profile & { _guidanceDate?: string }) =>
     const transits = await AstrologyService.calculateDailyTransits(today);
 
     // 2. Générer la guidance personnalisée
-    const guidance = await generateGuidanceForSms(profile.natal_chart as any, transits);
+    const guidance = await generateGuidanceForSms(profile.natal_chart as unknown as NatalChart, transits);
     
     // 3. Générer un token unique et un code court unique
     const token = randomUUID();

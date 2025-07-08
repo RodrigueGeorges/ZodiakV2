@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import AbortController from 'abort-controller';
 
 // Fonction pour construire une réponse standardisée
-const buildResponse = (statusCode: number, body: any, headers: Record<string, string> = {}) => ({
+const buildResponse = (statusCode: number, body: unknown, headers: Record<string, string> = {}) => ({
   statusCode,
   body: JSON.stringify(body),
   headers: {

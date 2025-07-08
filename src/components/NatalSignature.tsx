@@ -1,3 +1,4 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Sun, Moon, Sparkle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -32,7 +33,7 @@ interface NatalSignatureProps {
   ascendantSign: string;
 }
 
-export function NatalSignature({ sunSign, moonSign, ascendantSign }: NatalSignatureProps) {
+export const NatalSignature = React.memo(function NatalSignature({ sunSign, moonSign, ascendantSign }: NatalSignatureProps) {
   if (!sunSign || !moonSign || !ascendantSign) {
     return (
       <div className="p-4 bg-white/5 rounded-lg border border-white/10 mb-6 text-center text-red-400">
@@ -89,4 +90,4 @@ export function NatalSignature({ sunSign, moonSign, ascendantSign }: NatalSignat
   );
 }
 
-export default NatalSignature;
+export default React.memo(NatalSignature);

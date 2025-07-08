@@ -6,7 +6,7 @@ interface LoadingScreenProps {
   error?: string;
 }
 
-function LoadingScreen({ message = 'Chargement...', error }: LoadingScreenProps) {
+const LoadingScreen = React.memo(function LoadingScreen({ message = 'Chargement...', error }: LoadingScreenProps) {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen w-full bg-cosmic-900 text-white">
       <CosmicLoader />
@@ -24,4 +24,4 @@ function LoadingScreen({ message = 'Chargement...', error }: LoadingScreenProps)
   );
 }
 
-export default LoadingScreen;
+export default React.memo(LoadingScreen);

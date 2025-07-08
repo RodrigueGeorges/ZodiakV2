@@ -56,11 +56,11 @@ async function testRodrigueGuidance() {
       return;
     }
 
-    console.log(`✅ Profil trouvé: ${rodrigueProfile.name}`);
-    console.log(`   📱 Téléphone: ${rodrigueProfile.phone || '❌ Manquant'}`);
-    console.log(`   📊 Statut: ${rodrigueProfile.subscription_status}`);
-    console.log(`   🔔 SMS activé: ${rodrigueProfile.daily_guidance_sms_enabled ? '✅ Oui' : '❌ Non'}`);
-    console.log(`   ⏰ Heure de guidance: ${rodrigueProfile.guidance_sms_time || '08:00'}`);
+    // console.log(`✅ Profil trouvé: ${rodrigueProfile.name}`);
+    // console.log(`   📱 Téléphone: ${rodrigueProfile.phone || '❌ Manquant'}`);
+    // console.log(`   📊 Statut: ${rodrigueProfile.subscription_status}`);
+    // console.log(`   🔔 SMS activé: ${rodrigueProfile.daily_guidance_sms_enabled ? '✅ Oui' : '❌ Non'}`);
+    // console.log(`   ⏰ Heure de guidance: ${rodrigueProfile.guidance_sms_time || '08:00'}`);
 
     // 2. Vérifier la configuration
     console.log('\n2️⃣ Vérification de la configuration...');
@@ -77,7 +77,7 @@ async function testRodrigueGuidance() {
       return;
     }
 
-    console.log('✅ Configuration valide pour l\'envoi de guidance');
+    // console.log('✅ Configuration valide pour l\'envoi de guidance');
 
     // 3. Tester l'envoi de guidance
     console.log('\n3️⃣ Test d\'envoi de guidance...');
@@ -113,8 +113,8 @@ async function testRodrigueGuidance() {
       return;
     }
 
-    console.log('✅ Guidance de test créée avec succès');
-    console.log(`   📝 Résumé: ${insertedGuidance.summary}`);
+    // console.log('✅ Guidance de test créée avec succès');
+    // console.log(`   📝 Résumé: ${insertedGuidance.summary}`);
 
     // 4. Tester l'envoi SMS
     console.log('\n4️⃣ Test d\'envoi SMS...');
@@ -135,9 +135,9 @@ async function testRodrigueGuidance() {
       const result = await response.json();
       
       if (response.ok) {
-        console.log('✅ SMS de test envoyé avec succès');
-        console.log(`   📋 Message ID: ${result.messageId || 'N/A'}`);
-        console.log(`   📱 Envoyé à: ${rodrigueProfile.phone}`);
+        // console.log('✅ SMS de test envoyé avec succès');
+        // console.log(`   📋 Message ID: ${result.messageId || 'N/A'}`);
+        // console.log(`   📱 Envoyé à: ${rodrigueProfile.phone}`);
       } else {
         console.log('❌ Erreur lors de l\'envoi du SMS:', result);
       }
@@ -159,17 +159,17 @@ async function testRodrigueGuidance() {
     if (updateError) {
       console.error('❌ Erreur lors de la mise à jour du profil:', updateError.message);
     } else {
-      console.log('✅ Profil mis à jour avec succès');
-      console.log(`   📅 Dernière guidance: ${new Date().toLocaleString('fr-FR')}`);
+      // console.log('✅ Profil mis à jour avec succès');
+      // console.log(`   📅 Dernière guidance: ${new Date().toLocaleString('fr-FR')}`);
     }
 
     // 6. Résumé
-    console.log('\n🎯 Résumé du test:');
-    console.log(`✅ Profil de Rodrigue vérifié`);
-    console.log(`✅ Configuration SMS validée`);
-    console.log(`✅ Guidance de test créée`);
-    console.log(`✅ SMS envoyé à ${rodrigueProfile.phone}`);
-    console.log(`✅ Profil mis à jour`);
+    // console.log('\n🎯 Résumé du test:');
+    // console.log(`✅ Profil de Rodrigue vérifié`);
+    // console.log(`✅ Configuration SMS validée`);
+    // console.log(`✅ Guidance de test créée`);
+    // console.log(`✅ SMS envoyé à ${rodrigueProfile.phone}`);
+    // console.log(`✅ Profil mis à jour`);
     
     console.log('\n📞 Demandez à Rodrigue de vérifier s\'il a reçu le SMS de test !');
 

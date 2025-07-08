@@ -52,12 +52,12 @@ function AddressAutocomplete({
 
       setLoading(true);
       try {
-        console.log('Searching addresses for:', query);
+        // console.log('Searching addresses for:', query);
         const results = await AddressService.search(query, { 
           type,
           limit: 5
         });
-        console.log('Search results:', results);
+        // console.log('Search results:', results);
         setAddresses(results);
       } catch (error) {
         console.error('Erreur de recherche:', error);
@@ -80,7 +80,7 @@ function AddressAutocomplete({
   };
 
   const handleSelectAddress = (address: Address) => {
-    console.log('Selected address:', address);
+    // console.log('Selected address:', address);
     setSelectedAddress(address);
     const formattedAddress = AddressService.formatAddress(address);
     setQuery(formattedAddress);

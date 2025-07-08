@@ -38,11 +38,11 @@ export function useGuidance(): UseGuidanceReturn {
     if (!user?.id) return null;
 
     try {
-      console.log('🔍 Recherche de guidance existante dans Supabase...');
+      // console.log('🔍 Recherche de guidance existante dans Supabase...');
       const storedGuidance = await StorageService.getDailyGuidance(user.id, today);
       
       if (storedGuidance) {
-        console.log('✅ Guidance trouvée dans Supabase');
+        // console.log('✅ Guidance trouvée dans Supabase');
         return {
           summary: storedGuidance.summary,
           love: typeof storedGuidance.love === 'string' 
@@ -57,7 +57,7 @@ export function useGuidance(): UseGuidanceReturn {
         };
       }
       
-      console.log('⚠️ Aucune guidance trouvée dans Supabase');
+      // console.log('⚠️ Aucune guidance trouvée dans Supabase');
       return null;
     } catch (error) {
       console.error('Erreur lors du chargement de la guidance:', error);
@@ -95,7 +95,7 @@ export function useGuidance(): UseGuidanceReturn {
         return;
       }
 
-      console.log('🚀 Génération d\'une nouvelle guidance...');
+      // console.log('🚀 Génération d\'une nouvelle guidance...');
       if (!profile.natal_chart || typeof profile.natal_chart === 'string') {
         throw new Error('Thème natal non disponible. Veuillez compléter votre profil.');
       }
@@ -117,7 +117,7 @@ export function useGuidance(): UseGuidanceReturn {
       const saved = await StorageService.saveDailyGuidance(guidanceToSave);
       if (saved) {
         setGuidance(guidanceData);
-        console.log('✅ Guidance générée et sauvegardée avec succès');
+        // console.log('✅ Guidance générée et sauvegardée avec succès');
         toast.success('Guidance générée avec succès !');
       } else {
         throw new Error('Erreur lors de la sauvegarde de la guidance');
@@ -139,7 +139,7 @@ export function useGuidance(): UseGuidanceReturn {
     setError(null);
 
     try {
-      console.log('🔄 Actualisation de la guidance...');
+      // console.log('🔄 Actualisation de la guidance...');
       
       // Vider le cache pour forcer le rechargement depuis Supabase
       StorageService.clearUserCache(user.id);
@@ -148,10 +148,10 @@ export function useGuidance(): UseGuidanceReturn {
       
       if (storedGuidance) {
         setGuidance(storedGuidance);
-        console.log('✅ Guidance actualisée');
+        // console.log('✅ Guidance actualisée');
       } else {
         setGuidance(null);
-        console.log('⚠️ Aucune guidance trouvée après actualisation');
+        // console.log('⚠️ Aucune guidance trouvée après actualisation');
       }
     } catch (error) {
       console.error('Erreur lors de l\'actualisation:', error);
@@ -177,9 +177,9 @@ export function useGuidance(): UseGuidanceReturn {
         
         if (storedGuidance) {
           setGuidance(storedGuidance);
-          console.log('✅ Guidance chargée depuis Supabase');
+          // console.log('✅ Guidance chargée depuis Supabase');
         } else {
-          console.log('⚠️ Aucune guidance disponible pour aujourd\'hui');
+          // console.log('⚠️ Aucune guidance disponible pour aujourd\'hui');
           setGuidance(null);
         }
       } catch (error) {

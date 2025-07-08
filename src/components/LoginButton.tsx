@@ -67,7 +67,7 @@ function LoginButton({
         .single();
       if (!error && profile) {
         StorageService.saveProfile(profile);
-        console.log('Profil sauvegardé dans le localStorage:', profile);
+        // console.log('Profil sauvegardé dans le localStorage:', profile);
         setIsOpen(false);
         showToast('Connexion réussie', 'success');
         // La redirection sera gérée par useAuthRedirect
@@ -76,7 +76,7 @@ function LoginButton({
         showToast('Profil non trouvé, veuillez compléter votre inscription.', 'info');
         // La redirection sera gérée par useAuthRedirect
       }
-      console.log('Session dans le localStorage:', localStorage.getItem('auth_session'));
+      // console.log('Session dans le localStorage:', localStorage.getItem('auth_session'));
     } catch (error) {
       showToast('Erreur lors de la connexion', 'error');
       console.error('Error handling auth success:', error);

@@ -26,7 +26,7 @@ async function testDailyGuidanceSystem() {
       return;
     }
 
-    console.log(`✅ ${profiles?.length || 0} utilisateurs trouvés avec SMS activé\n`);
+    // console.log(`✅ ${profiles?.length || 0} utilisateurs trouvés avec SMS activé\n`);
 
     if (!profiles || profiles.length === 0) {
       console.log('ℹ️ Aucun utilisateur à tester');

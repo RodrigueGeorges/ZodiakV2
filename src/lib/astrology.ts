@@ -187,8 +187,8 @@ export class AstrologyService {
       const cacheKey = `natal_${validatedData.date_of_birth}_${validatedData.time_of_birth}_${Math.round(latitude * 10000).toString()}_${Math.round(longitude * 10000).toString()}`;
       const cached = this.getFromCache<NatalChart>(cacheKey);
       if (cached) {
-        console.log('✅ Thème natal récupéré du cache');
-        return cached;
+              // console.log('✅ Thème natal récupéré du cache');
+      return cached;
       }
 
       // Vérification du rate limit
@@ -196,7 +196,7 @@ export class AstrologyService {
         throw new ApiError('Trop de requêtes. Veuillez réessayer dans quelques instants.', 429);
       }
 
-      console.log('🔄 Calcul du thème natal via API Prokerala...');
+      // console.log('🔄 Calcul du thème natal via API Prokerala...');
       const params = {
         datetime: datetime,
         latitude: latitude.toString(),
@@ -209,7 +209,7 @@ export class AstrologyService {
 
       // Cache pour 24h (thème natal ne change jamais)
       this.setInCache(cacheKey, chart);
-      console.log('💾 Thème natal mis en cache');
+      // console.log('💾 Thème natal mis en cache');
       
       return chart;
     } catch (error) {
@@ -227,8 +227,8 @@ export class AstrologyService {
       const cacheKey = `guidance_${userId}_${date}`;
       const cached = this.getFromCache<GuidanceResponse>(cacheKey);
       if (cached) {
-        console.log('✅ Guidance quotidienne récupérée du cache');
-        return cached;
+              // console.log('✅ Guidance quotidienne récupérée du cache');
+      return cached;
       }
 
       // Vérification du rate limit
@@ -236,7 +236,7 @@ export class AstrologyService {
         throw new ApiError('Trop de requêtes. Veuillez réessayer dans quelques instants.', 429);
       }
 
-      console.log('🔄 Génération de la guidance quotidienne...');
+      // console.log('🔄 Génération de la guidance quotidienne...');
       
       // Calculer les transits du jour (simulé pour l'instant)
       const transits = await this.calculateDailyTransits(date);
@@ -246,7 +246,7 @@ export class AstrologyService {
       
       // Cache pour 24h (guidance quotidienne)
       this.setInCache(cacheKey, guidance);
-      console.log('💾 Guidance quotidienne mise en cache');
+      // console.log('💾 Guidance quotidienne mise en cache');
       
       return guidance;
     } catch (error) {
@@ -277,12 +277,12 @@ export class AstrologyService {
       // Vérifier si la guidance d'aujourd'hui existe déjà
       const existing = this.getFromCache<GuidanceResponse>(cacheKey);
       if (existing) {
-        console.log('✅ Guidance du jour déjà disponible');
+        // console.log('✅ Guidance du jour déjà disponible');
         return;
       }
 
       // Précharger en arrière-plan
-      console.log('🔄 Préchargement de la guidance du jour...');
+      // console.log('🔄 Préchargement de la guidance du jour...');
       this.generateDailyGuidance(userId, natalChart, today).catch(error => {
         console.warn('Erreur lors du préchargement de la guidance:', error);
       });
