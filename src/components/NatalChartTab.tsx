@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sun, Moon, MessageSquare, Heart, Star, Sparkle } from 'lucide-react';
-import { OpenAIService } from '../lib/services/OpenAIService';
+import OpenAIService from '../lib/services/OpenAIService';
 import { StorageService } from '../lib/storage';
 import InteractiveCard from './InteractiveCard';
 import NatalSignature from './NatalSignature';

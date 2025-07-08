@@ -33,7 +33,7 @@ interface NatalSignatureProps {
   ascendantSign: string;
 }
 
-export const NatalSignature = React.memo(function NatalSignature({ sunSign, moonSign, ascendantSign }: NatalSignatureProps) {
+function NatalSignature({ sunSign, moonSign, ascendantSign }: NatalSignatureProps) {
   if (!sunSign || !moonSign || !ascendantSign) {
     return (
       <div className="p-4 bg-white/5 rounded-lg border border-white/10 mb-6 text-center text-red-400">
