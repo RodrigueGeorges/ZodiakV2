@@ -163,9 +163,9 @@ function GuidanceContent(): JSX.Element {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
           >
-            <InteractiveCard className="relative bg-gradient-to-br from-primary/80 to-secondary/80 border-primary/30 shadow-2xl rounded-3xl p-8 overflow-hidden animate-fade-in flex flex-col items-center">
-              <div className="text-4xl mb-2">🌠</div>
-              <div className="text-2xl md:text-3xl font-cinzel text-primary drop-shadow-glow text-center mb-2">
+            <InteractiveCard className="relative bg-gradient-to-br from-primary/90 to-secondary/80 border-primary/40 shadow-2xl rounded-3xl p-10 overflow-hidden flex flex-col items-center">
+              <div className="text-5xl mb-4">🔮</div>
+              <div className="text-3xl md:text-4xl font-cinzel text-primary drop-shadow-glow text-center mb-2 font-bold">
                 {guidanceData.summary}
               </div>
             </InteractiveCard>
@@ -195,9 +195,9 @@ function GuidanceContent(): JSX.Element {
               );
             })}
           </div>
-          {/* Mantra du jour (pas guidance.mantra, utiliser un fallback inspirant) */}
+          {/* Mantra du jour (sans effet tournant/pulse) */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.5 }}>
-            <InteractiveCard className="bg-gradient-to-br from-yellow-400/30 to-orange-400/20 border-yellow-500/20 shadow-xl rounded-2xl p-6 flex flex-col items-center animate-glow">
+            <InteractiveCard className="bg-gradient-to-br from-yellow-400/30 to-orange-400/20 border-yellow-500/20 shadow-xl rounded-2xl p-6 flex flex-col items-center">
               <div className="text-3xl mb-2">🧘‍♂️</div>
               <h3 className="font-semibold text-white mb-2 font-cinzel">Mantra du Jour</h3>
               <p className="text-gray-900 italic text-lg text-center font-medium">“{getRandomMantra()}”</p>
