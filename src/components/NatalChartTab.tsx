@@ -215,7 +215,7 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
   }
 
   return (
-    <div className="space-y-6 pt-2 md:pt-6 min-h-[30vh] flex flex-col justify-start">
+    <div className="space-y-6 pt-2 md:pt-4 min-h-0 flex flex-col justify-start">
       {/* En-tête avec signature astrale */}
       <div className="text-center mb-0 mt-0">
         <h2 className="text-2xl md:text-3xl font-cinzel font-bold mb-2 md:mb-4 bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
