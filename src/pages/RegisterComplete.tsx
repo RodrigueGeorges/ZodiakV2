@@ -11,10 +11,11 @@ import { getCoordsFromPlaceString, type Place } from '../lib/places';
 import { AstrologyService } from '../lib/astrology';
 import type { NatalChart } from '../lib/astrology';
 import LoadingScreen from '../components/LoadingScreen';
+import { StorageService } from '../lib/storage';
 
 export default function RegisterComplete() {
   const navigate = useNavigate();
-  const { user, profile, isLoading } = useAuth();
+  const { user, profile, isLoading, refreshProfile } = useAuth();
   const { shouldRedirect } = useAuthRedirect();
   const [form, setForm] = useState({
     name: '',
@@ -106,13 +107,15 @@ export default function RegisterComplete() {
 
       if (upsertError) throw upsertError;
 
-      await refreshProfile();
-      
-      setSuccess('Profil complété avec succès ! Redirection...');
-      
-      setTimeout(() => {
+      // Vide le cache et force le refresh du profil depuis Supabase
+      StorageService.clearUserCache(user.id);
+      const refreshed = await refreshProfile();
+      if (refreshed) {
+        setSuccess('Profil complété avec succès ! Redirection...');
         navigate('/profile', { replace: true });
-      }, 1000);
+      } else {
+        setError('Erreur lors de la récupération du profil après création.');
+      }
 
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour du profil.');

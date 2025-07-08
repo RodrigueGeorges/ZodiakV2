@@ -141,9 +141,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [navigate]);
 
-  useEffect(() => {
-    console.log('[useAuth] Etat global:', { isLoading, isAuthenticated, user, profile });
-  }, [isLoading, isAuthenticated, user, profile]);
+
 
   const signOut = async () => {
     try {

@@ -92,6 +92,10 @@ function GuidanceContent(): JSX.Element {
     return <LoadingScreen message="Chargement de votre guidance..." />;
   }
 
+  if (!guidance) {
+    return <div className="text-red-400 text-center mt-8">Aucune guidance disponible pour aujourd'hui.</div>;
+  }
+
   // Affichage automatique de la guidance du jour si elle existe
   if (guidance) {
     return (
@@ -151,7 +155,7 @@ function GuidanceContent(): JSX.Element {
                     {getScoreEmoji(getGuidanceScore(guidance.love))} {getGuidanceScore(guidance.love)}%
                   </span>
                 </div>
-                <FormattedGuidanceText text={getGuidanceText(guidance.love)} />
+                <FormattedGuidanceText text={getGuidanceText(guidance.love) || 'Aucun conseil amour disponible.'} />
               </div>
             </div>
           </InteractiveCard>
@@ -165,7 +169,7 @@ function GuidanceContent(): JSX.Element {
                     {getScoreEmoji(getGuidanceScore(guidance.work))} {getGuidanceScore(guidance.work)}%
                   </span>
                 </div>
-                <FormattedGuidanceText text={getGuidanceText(guidance.work)} />
+                <FormattedGuidanceText text={getGuidanceText(guidance.work) || 'Aucun conseil travail disponible.'} />
               </div>
             </div>
           </InteractiveCard>
@@ -179,7 +183,7 @@ function GuidanceContent(): JSX.Element {
                     {getScoreEmoji(getGuidanceScore(guidance.energy))} {getGuidanceScore(guidance.energy)}%
                   </span>
                 </div>
-                <FormattedGuidanceText text={getGuidanceText(guidance.energy)} />
+                <FormattedGuidanceText text={getGuidanceText(guidance.energy) || 'Aucun conseil énergie disponible.'} />
               </div>
             </div>
           </InteractiveCard>

@@ -33,6 +33,14 @@ interface NatalSignatureProps {
 }
 
 export function NatalSignature({ sunSign, moonSign, ascendantSign }: NatalSignatureProps) {
+  if (!sunSign || !moonSign || !ascendantSign) {
+    return (
+      <div className="p-4 bg-white/5 rounded-lg border border-white/10 mb-6 text-center text-red-400">
+        Thème natal incomplet ou non disponible.
+      </div>
+    );
+  }
+
   const signatureItems = [
     { label: 'Soleil', sign: sunSign, icon: <Sun className="w-5 h-5 text-yellow-400" /> },
     { label: 'Lune', sign: moonSign, icon: <Moon className="w-5 h-5 text-slate-300" /> },

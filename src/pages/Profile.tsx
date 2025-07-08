@@ -128,7 +128,7 @@ export function Profile() {
   };
 
   const formatDate = (date: string) => {
-    if (!date) return 'Non renseigné';
+    if (!date) return '';
     return new Date(date).toLocaleDateString('fr-FR', {
       day: 'numeric',
       month: 'long',
@@ -137,7 +137,7 @@ export function Profile() {
   };
 
   const formatTime = (time: string) => {
-    if (!time) return 'Non renseigné';
+    if (!time) return '';
     return time;
   };
 
@@ -172,40 +172,32 @@ export function Profile() {
     </AnimatePresence>
   );
 
-  console.log('isAuthLoading:', isAuthLoading);
-  console.log('user:', user);
-  console.log('profile:', profile);
-
   if (isAuthLoading) {
     return <LoadingScreen />;
   }
 
-  if (!user || !profile) {
-    return <LoadingScreen />;
+  if (!user) {
+    return <div className="text-red-400 text-center mt-8">Utilisateur non authentifié. Veuillez vous reconnecter.</div>;
+  }
+
+  if (!profile) {
+    return <div className="text-red-400 text-center mt-8">Profil non disponible ou incomplet. Veuillez compléter votre profil.</div>;
   }
 
   let natalChart: any = null;
-  if (profile?.natal_chart) {
-    if (typeof profile.natal_chart === 'string') {
-      try {
-        natalChart = JSON.parse(profile.natal_chart);
-      } catch {
-        natalChart = profile.natal_chart;
-      }
-    } else {
-      natalChart = profile.natal_chart;
-    }
+  try {
+    natalChart = typeof profile.natal_chart === 'string'
+      ? JSON.parse(profile.natal_chart)
+      : profile.natal_chart;
+  } catch {
+    natalChart = null;
   }
 
-  // Affichage debug du natalChart
-  if (natalChart) {
-    return (
-      <div style={{ color: 'white', padding: 20 }}>
-        <h2>Debug natalChart</h2>
-        <pre>{JSON.stringify(natalChart, null, 2)}</pre>
-      </div>
-    );
-  }
+  // Affichage du thème natal uniquement si tous les signes sont présents
+  const hasFullNatal = natalChart && natalChart.planets && natalChart.ascendant &&
+    natalChart.planets.find((p: any) => p.name === 'Soleil')?.sign &&
+    natalChart.planets.find((p: any) => p.name === 'Lune')?.sign &&
+    natalChart.ascendant.sign;
 
   return (
     <motion.div 
@@ -230,7 +222,7 @@ export function Profile() {
             <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
               {/* Colonne principale */}
               <div className="xl:col-span-2 space-y-6">
-                {natalChart && natalChart.planets && natalChart.ascendant && (
+                {hasFullNatal && (
                   <NatalSignature
                     sunSign={natalChart.planets.find((p: any) => p.name === 'Soleil')?.sign || ''}
                     moonSign={natalChart.planets.find((p: any) => p.name === 'Lune')?.sign || ''}
@@ -391,11 +383,11 @@ export function Profile() {
                               <div className="space-y-4">
                                 <div className="p-4 bg-white/5 rounded-lg border border-white/10">
                                   <p className="text-sm text-gray-400 mb-1">Nom complet</p>
-                                  <p className="text-lg text-white font-medium">{profile?.name || 'Non renseigné'}</p>
+                                  <p className="text-lg text-white font-medium">{profile?.name}</p>
                                 </div>
                                 <div className="p-4 bg-white/5 rounded-lg border border-white/10">
                                   <p className="text-sm text-gray-400 mb-1">Téléphone</p>
-                                  <p className="text-lg text-white font-medium">{profile?.phone || 'Non renseigné'}</p>
+                                  <p className="text-lg text-white font-medium">{profile?.phone}</p>
                                 </div>
                               </div>
                               
@@ -413,7 +405,7 @@ export function Profile() {
                             
                             <div className="p-4 bg-white/5 rounded-lg border border-white/10">
                               <p className="text-sm text-gray-400 mb-1">Lieu de naissance</p>
-                              <p className="text-lg text-white font-medium">{profile?.birth_place || 'Non renseigné'}</p>
+                              <p className="text-lg text-white font-medium">{profile?.birth_place}</p>
                             </div>
                           </motion.div>
                         )}
