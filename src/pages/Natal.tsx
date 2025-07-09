@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import NatalChartTab from '../components/NatalChartTab';
 import LoadingScreen from '../components/LoadingScreen';
-import StarryBackground from '../components/StarryBackground';
+import PageLayout from '../components/PageLayout';
 
 export default function Natal() {
   const { profile, isLoading, isAuthenticated } = useAuth();
@@ -22,13 +22,12 @@ export default function Natal() {
   if (!profile) return <LoadingScreen error="Profil non trouvé. Redirection..." />;
 
   return (
-    <div className="min-h-screen bg-cosmic-900 relative">
-      <StarryBackground />
-      <div className="container mx-auto px-4 md:px-8 xl:px-12 2xl:px-24 py-12">
-        <div className="max-w-4xl xl:max-w-6xl 2xl:max-w-screen-xl mx-auto">
-          <NatalChartTab profile={profile} />
-        </div>
-      </div>
-    </div>
+    <PageLayout
+      title={`Thème Natal de ${profile.name?.split(' ')[0] || 'Utilisateur'}`}
+      subtitle="Votre carte du ciel, votre signature astrale et votre interprétation premium."
+      maxWidth="5xl"
+    >
+      <NatalChartTab profile={profile} />
+    </PageLayout>
   );
 } 

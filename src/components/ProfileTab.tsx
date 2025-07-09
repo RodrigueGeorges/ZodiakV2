@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, CreditCard, Bell, LogOut, Edit2, Check, X, Clock, Send, Sun, Camera as CameraIcon } from 'lucide-react';
+import { User, CreditCard, Bell, LogOut, Edit2, Check, X, Clock, Send, Sun, Camera } from 'lucide-react';
 import type { Profile } from '../lib/types/supabase';
 import { useNavigate } from 'react-router-dom';
 import InteractiveCard from './InteractiveCard';
@@ -190,7 +190,7 @@ function ProfileTab({ profile, onLogout }: ProfileTabProps) {
       subtitle="Gérez vos informations personnelles et préférences"
       maxWidth="4xl"
     >
-      <div className="space-y-6">
+      <div className="space-y-8">
         {/* Bandeau de confidentialité */}
         <div className="info-banner">
           🔒 Vos données de naissance sont 100% privées et ne seront jamais partagées.
@@ -254,7 +254,7 @@ function ProfileTab({ profile, onLogout }: ProfileTabProps) {
                     )}
                   </div>
                   <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-xs hover:bg-primary/80 transition-colors">
-                    <CameraIcon className="w-3 h-3" />
+                    <Camera className="w-3 h-3" />
                   </button>
                 </div>
                 <div>
