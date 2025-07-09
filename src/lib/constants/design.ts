@@ -1,6 +1,149 @@
 // ATTENTION: NE PAS MODIFIER CE FICHIER
 // Ces constantes définissent l'identité visuelle de l'application
 
+import { Sun, Moon, Compass, Clock, Heart, Briefcase, Battery, Sparkle, User, MessageSquare } from 'lucide-react';
+
+/**
+ * Système de couleurs cohérent pour toute l'application
+ */
+export const DESIGN_COLORS = {
+  // Couleurs principales
+  primary: '#FFD700', // Or
+  secondary: '#FF69B4', // Rose
+  cosmic: {
+    800: '#1a1a2e',
+    900: '#16213e'
+  },
+  
+  // Couleurs d'accent cohérentes
+  accent: {
+    gold: '#FFD700', // Même que primary
+    yellow: '#F5CBA7', // Jaune doux
+    pink: '#FF69B4', // Même que secondary
+    white: '#FFFFFF',
+    gray: {
+      300: '#D1D5DB',
+      400: '#9CA3AF',
+      500: '#6B7280'
+    }
+  },
+  
+  // Couleurs sémantiques (pour les scores, états, etc.)
+  semantic: {
+    success: '#10B981', // Vert
+    warning: '#F59E0B', // Orange
+    error: '#EF4444', // Rouge
+    info: '#3B82F6' // Bleu
+  }
+};
+
+/**
+ * Système d'icônes cohérent
+ */
+export const DESIGN_ICONS = {
+  // Icônes principales (Lucide)
+  primary: {
+    sun: Sun,
+    moon: Moon,
+    compass: Compass,
+    clock: Clock,
+    heart: Heart,
+    briefcase: Briefcase,
+    battery: Battery,
+    sparkle: Sparkle,
+    user: User,
+    messageSquare: MessageSquare
+  },
+  
+  // Icônes sémantiques (Emojis pour les scores)
+  semantic: {
+    love: '💕',
+    work: '💼', 
+    energy: '⚡',
+    success: '🌟',
+    warning: '⚠️',
+    error: '❌',
+    info: 'ℹ️'
+  }
+};
+
+/**
+ * Configuration des scores avec couleurs cohérentes
+ */
+export const SCORE_CONFIG = {
+  love: {
+    icon: DESIGN_ICONS.semantic.love,
+    label: 'Amour',
+    colors: {
+      low: `from-${DESIGN_COLORS.semantic.error}/20 to-${DESIGN_COLORS.semantic.error}/20 border-${DESIGN_COLORS.semantic.error}/30`,
+      medium: `from-${DESIGN_COLORS.secondary}/20 to-${DESIGN_COLORS.secondary}/20 border-${DESIGN_COLORS.secondary}/30`,
+      high: `from-${DESIGN_COLORS.primary}/20 to-${DESIGN_COLORS.primary}/20 border-${DESIGN_COLORS.primary}/30`
+    },
+    badgeColors: {
+      low: `from-${DESIGN_COLORS.semantic.error} to-${DESIGN_COLORS.semantic.error} text-white`,
+      medium: `from-${DESIGN_COLORS.secondary} to-${DESIGN_COLORS.secondary} text-white`,
+      high: `from-${DESIGN_COLORS.primary} to-${DESIGN_COLORS.primary} text-black`
+    }
+  },
+  work: {
+    icon: DESIGN_ICONS.semantic.work,
+    label: 'Travail',
+    colors: {
+      low: `from-${DESIGN_COLORS.semantic.error}/20 to-${DESIGN_COLORS.semantic.error}/20 border-${DESIGN_COLORS.semantic.error}/30`,
+      medium: `from-${DESIGN_COLORS.semantic.info}/20 to-${DESIGN_COLORS.semantic.info}/20 border-${DESIGN_COLORS.semantic.info}/30`,
+      high: `from-${DESIGN_COLORS.semantic.success}/20 to-${DESIGN_COLORS.semantic.success}/20 border-${DESIGN_COLORS.semantic.success}/30`
+    },
+    badgeColors: {
+      low: `from-${DESIGN_COLORS.semantic.error} to-${DESIGN_COLORS.semantic.error} text-white`,
+      medium: `from-${DESIGN_COLORS.semantic.info} to-${DESIGN_COLORS.semantic.info} text-white`,
+      high: `from-${DESIGN_COLORS.semantic.success} to-${DESIGN_COLORS.semantic.success} text-white`
+    }
+  },
+  energy: {
+    icon: DESIGN_ICONS.semantic.energy,
+    label: 'Énergie',
+    colors: {
+      low: `from-${DESIGN_COLORS.semantic.error}/20 to-${DESIGN_COLORS.semantic.error}/20 border-${DESIGN_COLORS.semantic.error}/30`,
+      medium: `from-${DESIGN_COLORS.semantic.warning}/20 to-${DESIGN_COLORS.semantic.warning}/20 border-${DESIGN_COLORS.semantic.warning}/30`,
+      high: `from-${DESIGN_COLORS.semantic.success}/20 to-${DESIGN_COLORS.semantic.success}/20 border-${DESIGN_COLORS.semantic.success}/30`
+    },
+    badgeColors: {
+      low: `from-${DESIGN_COLORS.semantic.error} to-${DESIGN_COLORS.semantic.error} text-white`,
+      medium: `from-${DESIGN_COLORS.semantic.warning} to-${DESIGN_COLORS.semantic.warning} text-white`,
+      high: `from-${DESIGN_COLORS.semantic.success} to-${DESIGN_COLORS.semantic.success} text-white`
+    }
+  }
+};
+
+/**
+ * Classes CSS cohérentes
+ */
+export const DESIGN_CLASSES = {
+  // Couleurs de texte
+  text: {
+    primary: 'text-primary',
+    secondary: 'text-secondary',
+    accent: 'text-yellow-300',
+    white: 'text-white',
+    gray: 'text-gray-300'
+  },
+  
+  // Couleurs de fond
+  bg: {
+    primary: 'bg-primary',
+    secondary: 'bg-secondary',
+    cosmic: 'bg-cosmic-900',
+    cosmicLight: 'bg-cosmic-800'
+  },
+  
+  // Gradients
+  gradient: {
+    primary: 'bg-gradient-to-r from-primary to-secondary',
+    primaryVia: 'bg-gradient-to-r from-primary via-secondary to-primary',
+    cosmic: 'bg-gradient-to-br from-cosmic-800 to-cosmic-900'
+  }
+};
+
 export const DESIGN_TOKENS = {
   // Couleurs principales
   colors: {

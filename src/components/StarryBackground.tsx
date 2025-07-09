@@ -19,11 +19,15 @@ export function StarryBackground() {
     setCanvasSize();
     window.addEventListener('resize', setCanvasSize);
 
-    const stars = Array.from({ length: 100 }, () => ({
+    // Optimisation mobile : réduire le nombre d'étoiles sur mobile
+    const isMobile = window.innerWidth < 768;
+    const starCount = isMobile ? 50 : 100;
+    
+    const stars = Array.from({ length: starCount }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      size: Math.random() * 2,
-      speed: Math.random() * 0.5 + 0.1
+      size: Math.random() * (isMobile ? 1.5 : 2), // Étoiles plus petites sur mobile
+      speed: Math.random() * (isMobile ? 0.3 : 0.5) + 0.1 // Vitesse réduite sur mobile
     }));
 
     function animate() {

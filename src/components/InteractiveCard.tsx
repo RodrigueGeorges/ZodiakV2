@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface InteractiveCardProps {
@@ -10,18 +10,37 @@ interface InteractiveCardProps {
 }
 
 function InteractiveCard({ children, className = '', onClick, tabIndex, 'aria-label': ariaLabel }: InteractiveCardProps) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Configuration d'animation optimisée pour mobile
+  const animationConfig = isMobile ? {
+    duration: 0.3,
+    ease: "easeOut"
+  } : {
+    type: 'spring',
+    stiffness: 260,
+    damping: 20
+  };
+
   return (
     <motion.div
-      className={`relative bg-white/5 backdrop-blur-lg rounded-xl overflow-hidden border border-white/10 shadow-xl ${className}`}
-      whileHover={{ scale: onClick ? 1.02 : 1 }}
+      className={`relative bg-white/5 backdrop-blur-lg rounded-xl overflow-hidden border border-white/10 shadow-xl mobile-optimized ${className}`}
+      whileHover={{ scale: onClick && !isMobile ? 1.02 : 1 }}
       whileTap={{ scale: onClick ? 0.98 : 1 }}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{
-        type: 'spring',
-        stiffness: 260,
-        damping: 20
-      }}
+      transition={animationConfig}
       onClick={onClick}
       tabIndex={tabIndex}
       aria-label={ariaLabel}

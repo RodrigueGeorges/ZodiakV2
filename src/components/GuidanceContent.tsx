@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, RefreshCw, Heart, Briefcase, Battery } from 'lucide-react';
+import { Calendar, Clock, RefreshCw } from 'lucide-react';
 import { DateTime } from 'luxon';
 import { useGuidance } from '../lib/hooks/useGuidance';
 import LoadingScreen from './LoadingScreen';
@@ -11,6 +11,7 @@ import ShareButton from './ShareButton';
 import FormattedGuidanceText from './FormattedGuidanceText';
 import PageLayout from './PageLayout';
 import { getGuidanceText, getGuidanceScore, guidanceScoreConfig, getScoreLevel } from '../lib/utils/guidance';
+import { DESIGN_ICONS, DESIGN_CLASSES } from '../lib/constants/design';
 
 // Animations
 const containerVariants = {
@@ -104,7 +105,7 @@ function GuidanceContent(): JSX.Element {
               </h2>
               <div className="flex items-center gap-2 text-white/80">
                 <span className="text-sm">Guidance générée par l'IA</span>
-                <span className="text-xs">✨</span>
+                <span className={DESIGN_CLASSES.text.accent}>✨</span>
               </div>
             </div>
           </InteractiveCard>
@@ -123,9 +124,9 @@ function GuidanceContent(): JSX.Element {
         <motion.div variants={itemVariants}>
           <div className="grid gap-6 md:grid-cols-3">
             {[
-              { key: 'love' as keyof GuidanceData, label: 'Amour & Relations', icon: <Heart className="w-8 h-8" />, config: guidanceScoreConfig.love },
-              { key: 'work' as keyof GuidanceData, label: 'Travail & Carrière', icon: <Briefcase className="w-8 h-8" />, config: guidanceScoreConfig.work },
-              { key: 'energy' as keyof GuidanceData, label: 'Énergie & Vitalité', icon: <Battery className="w-8 h-8" />, config: guidanceScoreConfig.energy },
+              { key: 'love' as keyof GuidanceData, label: 'Amour & Relations', icon: DESIGN_ICONS.semantic.love, config: guidanceScoreConfig.love },
+              { key: 'work' as keyof GuidanceData, label: 'Travail & Carrière', icon: DESIGN_ICONS.semantic.work, config: guidanceScoreConfig.work },
+              { key: 'energy' as keyof GuidanceData, label: 'Énergie & Vitalité', icon: DESIGN_ICONS.semantic.energy, config: guidanceScoreConfig.energy },
             ].map(({ key, label, icon, config }, idx) => (
               <motion.div
                 key={key}
@@ -136,8 +137,8 @@ function GuidanceContent(): JSX.Element {
               >
                 <InteractiveCard className="card-premium h-full flex flex-col">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="text-primary">
-                      {icon}
+                    <div className={DESIGN_CLASSES.text.primary}>
+                      <span className="text-2xl">{icon}</span>
                     </div>
                     <h3 className="font-semibold text-white font-cinzel text-xl">{label}</h3>
                   </div>

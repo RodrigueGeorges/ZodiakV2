@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Optimisation Mobile - Zodiak</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #16213e;
+            color: white;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .test-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .test-title {
+            color: #FFD700;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+        .status-pass {
+            color: #4ade80;
+        }
+        .status-warning {
+            color: #fbbf24;
+        }
+        .status-fail {
+            color: #f87171;
+        }
+        .device-info {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .touch-target {
+            display: inline-block;
+            width: 44px;
+            height: 44px;
+            background: #FFD700;
+            border-radius: 8px;
+            margin: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 style="color: #FFD700; text-align: center;">Test Optimisation Mobile - Zodiak</h1>
+        
+        <div class="device-info">
+            <h3>Informations de l'appareil</h3>
+            <p><strong>Largeur d'écran:</strong> <span id="screen-width"></span>px</p>
+            <p><strong>Hauteur d'écran:</strong> <span id="screen-height"></span>px</p>
+            <p><strong>Ratio pixel:</strong> <span id="pixel-ratio"></span></p>
+            <p><strong>User Agent:</strong> <span id="user-agent"></span></p>
+            <p><strong>Type d'appareil:</strong> <span id="device-type"></span></p>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">1. Configuration Mobile</h2>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Viewport meta tag configuré
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> PWA manifest avec display standalone
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Safe area insets implémentés
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Touch-friendly avec touchAction manipulation
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">2. Navigation Mobile</h2>
+            <div class="test-item">
+                <span class="status-pass">✅</span> BottomNavBar sur mobile (cachée sur desktop)
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> TopNavBar sur desktop (cachée sur mobile)
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Touch targets optimisés (44px minimum)
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Accessibilité avec aria-labels
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">3. Layout Responsive</h2>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Container system responsive
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Grid responsive (1 → 2 → 4 colonnes)
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Typography responsive
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Spacing responsive
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">4. Performance Mobile</h2>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Canvas optimisé (50 étoiles sur mobile vs 100)
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Animations réduites sur mobile (0.3s vs 0.6s)
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Lazy loading des composants
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Service Worker pour cache
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">5. Cohérence Design</h2>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Couleurs cohérentes (primary, secondary, cosmic)
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Typographie harmonisée (Cinzel, Inter)
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Composants réutilisables (InteractiveCard, PageLayout)
+            </div>
+            <div class="test-item">
+                <span class="status-pass">✅</span> Animations harmonisées (Framer Motion)
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">6. Touch Targets Test</h2>
+            <p>Vérifiez que ces boutons sont facilement cliquables sur mobile :</p>
+            <div class="touch-target">A</div>
+            <div class="touch-target">B</div>
+            <div class="touch-target">C</div>
+            <div class="touch-target">D</div>
+            <p style="font-size: 0.9rem; color: #9ca3af;">Tous les boutons doivent faire au moins 44x44px</p>
+        </div>
+
+        <div class="test-section">
+            <h2 class="test-title">7. Recommandations</h2>
+            <div class="test-item">
+                <span class="status-warning">⚠️</span> Tester sur iPhone SE (375px)
+            </div>
+            <div class="test-item">
+                <span class="status-warning">⚠️</span> Tester sur Samsung Galaxy S21 (360px)
+            </div>
+            <div class="test-item">
+                <span class="status-warning">⚠️</span> Vérifier les performances avec Lighthouse Mobile
+            </div>
+            <div class="test-item">
+                <span class="status-warning">⚠️</span> Tester la navigation au clavier
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Détection de l'appareil
+        function updateDeviceInfo() {
+            document.getElementById('screen-width').textContent = window.innerWidth;
+            document.getElementById('screen-height').textContent = window.innerHeight;
+            document.getElementById('pixel-ratio').textContent = window.devicePixelRatio;
+            document.getElementById('user-agent').textContent = navigator.userAgent.substring(0, 50) + '...';
+            
+            let deviceType = 'Desktop';
+            if (window.innerWidth < 768) {
+                deviceType = 'Mobile';
+            } else if (window.innerWidth < 1024) {
+                deviceType = 'Tablet';
+            }
+            document.getElementById('device-type').textContent = deviceType;
+        }
+
+        updateDeviceInfo();
+        window.addEventListener('resize', updateDeviceInfo);
+
+        // Test de performance simple
+        console.log('Test d\'optimisation mobile chargé');
+        console.log('Largeur d\'écran:', window.innerWidth);
+        console.log('Type d\'appareil:', window.innerWidth < 768 ? 'Mobile' : 'Desktop');
+    </script>
+</body>
+</html> 

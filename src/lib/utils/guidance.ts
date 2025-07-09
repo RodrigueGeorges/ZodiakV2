@@ -1,3 +1,5 @@
+import { SCORE_CONFIG } from '../constants/design';
+
 /**
  * Extrait le texte de guidance d'un champ JSON
  */
@@ -22,52 +24,9 @@ export const getGuidanceScore = (field: any): number => {
 };
 
 /**
- * Configuration des scores de guidance
+ * Configuration des scores de guidance - Utilise le système cohérent
  */
-export const guidanceScoreConfig = {
-  love: {
-    icon: '💕',
-    label: 'Amour',
-    colors: {
-      low: 'from-red-500/20 to-red-600/20 border-red-500/30',
-      medium: 'from-pink-500/20 to-rose-500/20 border-pink-500/30',
-      high: 'from-pink-400/20 to-pink-500/20 border-pink-400/30'
-    },
-    badgeColors: {
-      low: 'from-red-500 to-red-600 text-red-100',
-      medium: 'from-pink-500 to-pink-600 text-pink-100',
-      high: 'from-pink-400 to-pink-500 text-pink-100'
-    }
-  },
-  work: {
-    icon: '💼',
-    label: 'Travail',
-    colors: {
-      low: 'from-gray-500/20 to-gray-600/20 border-gray-500/30',
-      medium: 'from-blue-500/20 to-blue-600/20 border-blue-500/30',
-      high: 'from-green-500/20 to-green-600/20 border-green-500/30'
-    },
-    badgeColors: {
-      low: 'from-gray-500 to-gray-600 text-gray-100',
-      medium: 'from-blue-500 to-blue-600 text-blue-100',
-      high: 'from-green-500 to-green-600 text-green-100'
-    }
-  },
-  energy: {
-    icon: '⚡',
-    label: 'Énergie',
-    colors: {
-      low: 'from-red-500/20 to-red-600/20 border-red-500/30',
-      medium: 'from-yellow-500/20 to-yellow-600/20 border-yellow-500/30',
-      high: 'from-green-500/20 to-green-600/20 border-green-500/30'
-    },
-    badgeColors: {
-      low: 'from-red-500 to-red-600 text-red-100',
-      medium: 'from-yellow-500 to-yellow-600 text-yellow-100',
-      high: 'from-green-500 to-green-600 text-green-100'
-    }
-  }
-};
+export const guidanceScoreConfig = SCORE_CONFIG;
 
 /**
  * Détermine le niveau d'un score

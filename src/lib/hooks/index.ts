@@ -10,3 +10,4 @@ export * from './usePreview';
 export * from './useRegistration';
 export * from './useAuthRedirect';
 export * from './useGuidanceRedirect';
+export * from './useMobile';
