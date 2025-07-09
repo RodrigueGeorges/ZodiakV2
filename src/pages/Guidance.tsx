@@ -11,7 +11,7 @@ const pageVariants = {
   exit: { opacity: 0, y: -20 }
 };
 
-export function Guidance() {
+export default function Guidance() {
   const { profile, isLoading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -26,23 +26,8 @@ export function Guidance() {
   }
 
   if (!profile) {
-    // This can happen briefly during redirects or if profile fetching fails.
-    // The useAuth hook ensures user has a profile to get here,
-    // but if not, we can show an error or redirect.
     return <LoadingScreen error="Profil non trouvé. Redirection..." />;
   }
 
-  return (
-    <motion.div
-      variants={pageVariants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      className="bg-cosmic-900"
-    >
-      <GuidanceContent profile={profile} />
-    </motion.div>
-  );
+  return <GuidanceContent profile={profile} />;
 }
-
-export default Guidance;
