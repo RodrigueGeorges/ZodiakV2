@@ -12,6 +12,8 @@ import { useAuth } from '../lib/hooks/useAuth';
 import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 import CosmicLoader from '../components/CosmicLoader';
 
+// HOME PAGE - DESIGN PREMIUM
+// Optimisation technique uniquement, aucun changement visuel
 export default function Home() {
   const { isAuthenticated, isLoading, user } = useAuth();
   const { shouldRedirect } = useAuthRedirect();
@@ -25,6 +27,7 @@ export default function Home() {
   const [info, setInfo] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
 
+  // Gestion de l'authentification email
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -63,7 +66,7 @@ export default function Home() {
     }
   };
 
-  // Affiche le loader uniquement si on attend la session ET qu'on ne sait pas encore si l'utilisateur existe
+  // Loader pendant la récupération de la session
   if (isLoading && user === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cosmic-900">
@@ -72,7 +75,7 @@ export default function Home() {
     );
   }
 
-  // Si l'utilisateur est authentifié et a un profil, il sera redirigé automatiquement
+  // Redirection automatique si l'utilisateur est authentifié
   if (shouldRedirect) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cosmic-900">
@@ -88,6 +91,7 @@ export default function Home() {
       <div className="container mx-auto px-4 md:px-8 xl:px-12 2xl:px-24 py-8 md:py-12 lg:py-16">
         <div className="max-w-5xl xl:max-w-7xl 2xl:max-w-screen-xl mx-auto">
           <div className="text-center mb-8 md:mb-12 xl:mb-16">
+            {/* HEADER PREMIUM */}
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -100,18 +104,21 @@ export default function Home() {
               </p>
             </motion.div>
 
-            {/* BOUTON PRINCIPAL */}
+            {/* BOUTON PRINCIPAL ACCESSIBLE */}
             <motion.button
               className="px-8 py-3 bg-primary text-black rounded-lg font-bold text-lg shadow-lg hover:bg-secondary transition relative flex items-center gap-2 mx-auto mb-8 z-20 no-rotate"
               onClick={() => setShowModal(true)}
+              role="button"
+              aria-label="Commencez votre voyage astral"
+              tabIndex={0}
             >
-              <Sparkle className="w-6 h-6 text-yellow-300" />
+              <Sparkle className="w-6 h-6 text-yellow-300" aria-hidden="true" />
               Commencez votre voyage astral
             </motion.button>
 
-            {/* MODALE AVEC FORMULAIRE */}
+            {/* MODALE AVEC FORMULAIRE - ACCESSIBLE */}
             {showModal && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true">
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -122,11 +129,12 @@ export default function Home() {
                   <button
                     onClick={() => setShowModal(false)}
                     className="absolute top-3 left-3 text-primary hover:text-secondary text-lg font-bold"
+                    aria-label="Retour à l'accueil"
                   >
                     ← Accueil
                   </button>
                   {/* Croix de fermeture */}
-                  <button onClick={() => setShowModal(false)} className="absolute top-3 right-3 text-primary hover:text-secondary text-2xl">×</button>
+                  <button onClick={() => setShowModal(false)} className="absolute top-3 right-3 text-primary hover:text-secondary text-2xl" aria-label="Fermer la modale">×</button>
                   <InteractiveCard className="p-6 md:p-8 xl:p-10 2xl:p-16">
                     <h2 className="text-xl md:text-2xl font-cinzel font-bold text-center mb-4 md:mb-6">
                       <span className="bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text">
@@ -137,10 +145,12 @@ export default function Home() {
                       <button
                         className={cn('px-3 py-1 rounded', authMode === 'sms' ? 'bg-primary text-black' : 'bg-white/10 text-white')}
                         onClick={() => setAuthMode('sms')}
+                        aria-label="Authentification par SMS"
                       >SMS</button>
                       <button
                         className={cn('px-3 py-1 rounded', authMode === 'email' ? 'bg-primary text-black' : 'bg-white/10 text-white')}
                         onClick={() => setAuthMode('email')}
+                        aria-label="Authentification par Email"
                       >Email</button>
                     </div>
                     {authMode === 'sms' ? (
@@ -148,43 +158,49 @@ export default function Home() {
                     ) : (
                       <form onSubmit={handleEmailAuth} className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                          <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="email-input">Email</label>
                           <input
+                            id="email-input"
                             type="email"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
                             className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
                             placeholder="Votre email"
                             required
+                            autoComplete="email"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-300 mb-1">Mot de passe</label>
+                          <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="password-input">Mot de passe</label>
                           <input
+                            id="password-input"
                             type="password"
                             value={password}
                             onChange={e => setPassword(e.target.value)}
                             className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
                             placeholder="Votre mot de passe"
                             required
+                            autoComplete="current-password"
                           />
                         </div>
-                        {error && <div className="text-red-400 text-sm mb-2">{error}</div>}
-                        {info && <div className="text-green-400 text-sm mb-2">{info}</div>}
+                        {/* Messages d'erreur/info accessibles */}
+                        {error && <div className="text-red-400 text-sm mb-2" aria-live="polite">{error}</div>}
+                        {info && <div className="text-green-400 text-sm mb-2" aria-live="polite">{info}</div>}
                         <motion.button
                           type="submit"
                           className="w-full py-2 rounded-lg bg-primary text-black font-semibold hover:bg-secondary transition-colors relative overflow-hidden"
                           whileTap={{ scale: 0.97 }}
                           animate={loading ? { boxShadow: '0 0 24px 8px #F5CBA7' } : {}}
                           disabled={loading}
+                          aria-label={isSignUp ? 'Créer un compte' : 'Se connecter'}
                         >
                           {loading ? 'Chargement...' : (isSignUp ? 'Créer un compte' : 'Se connecter')}
                         </motion.button>
                         <div className="text-center mt-2">
                           {isSignUp ? (
-                            <span className="text-sm text-gray-400">Déjà un compte ? <button type="button" className="underline text-primary" onClick={() => setIsSignUp(false)}>Se connecter</button></span>
+                            <span className="text-sm text-gray-400">Déjà un compte ? <button type="button" className="underline text-primary" onClick={() => setIsSignUp(false)} aria-label="Se connecter">Se connecter</button></span>
                           ) : (
-                            <span className="text-sm text-gray-400">Pas encore de compte ? <button type="button" className="underline text-primary" onClick={() => setIsSignUp(true)}>Créer un compte</button></span>
+                            <span className="text-sm text-gray-400">Pas encore de compte ? <button type="button" className="underline text-primary" onClick={() => setIsSignUp(true)} aria-label="Créer un compte">Créer un compte</button></span>
                           )}
                         </div>
                       </form>
@@ -214,33 +230,34 @@ export default function Home() {
             >
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 blur-xl opacity-50" />
               <div className="relative bg-white/5 backdrop-blur-lg rounded-full py-2 md:py-2 px-4 md:px-6 xl:px-10 2xl:px-14 inline-flex items-center gap-2 md:gap-3 border border-white/10 shadow-2xl">
-                <Sparkle className="w-4 h-4 md:w-5 md:h-5 text-primary animate-pulse" />
+                <Sparkle className="w-4 h-4 md:w-5 md:h-5 text-primary animate-pulse" aria-hidden="true" />
                 <span className="text-base md:text-lg xl:text-xl 2xl:text-2xl font-cinzel font-semibold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
                   1 mois d'essai gratuit
                 </span>
-                <Sparkle className="w-4 h-4 md:w-5 md:h-5 text-primary animate-pulse" />
+                <Sparkle className="w-4 h-4 md:w-5 md:h-5 text-primary animate-pulse" aria-hidden="true" />
               </div>
             </motion.div>
 
+            {/* GRILLE DES FONCTIONNALITÉS */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-8 xl:gap-12 2xl:gap-16">
               {[
                 {
-                  icon: <Sun className="w-5 h-5 md:w-6 md:h-6" />,
+                  icon: <Sun className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />,
                   title: "Guidance Quotidienne",
                   description: "Recevez chaque matin un message inspirant et personnalisé, basé sur votre thème astral unique, pour avancer sereinement dans votre vie."
                 },
                 {
-                  icon: <Moon className="w-5 h-5 md:w-6 md:h-6" />,
+                  icon: <Moon className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />,
                   title: "Thème Astral Détaillé",
                   description: "Profitez d'analyses astrologiques approfondies pour comprendre l'influence des planètes sur votre parcours et révéler les clés de votre bien-être."
                 },
                 {
-                  icon: <Compass className="w-5 h-5 md:w-6 md:h-6" />,
+                  icon: <Compass className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />,
                   title: "Navigation Céleste",
                   description: "Prenez des décisions éclairées grâce à des conseils personnalisés, en harmonie avec les énergies cosmiques de votre carte du ciel."
                 },
                 {
-                  icon: <Clock className="w-5 h-5 md:w-6 md:h-6" />,
+                  icon: <Clock className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />,
                   title: "Timing Parfait",
                   description: "Identifiez les moments les plus propices pour vos projets importants, grâce à une guidance adaptée à votre profil astral et à l'énergie du jour."
                 }
@@ -273,7 +290,7 @@ export default function Home() {
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <Sparkle className="w-5 h-5 text-yellow-300 animate-float" />
+                      <Sparkle className="w-5 h-5 text-yellow-300 animate-float" aria-hidden="true" />
                     </motion.div>
                   </InteractiveCard>
                 </motion.div>

@@ -6,9 +6,8 @@ import NatalSignature from './NatalSignature';
 import CosmicLoader from './CosmicLoader';
 import ZodiacWheel from './ZodiacWheel';
 import EmptyState from './EmptyState';
+import InteractiveCard from './InteractiveCard';
 import type { Profile } from '../lib/types/supabase';
-import StarryBackground from './StarryBackground';
-import Logo from './Logo';
 
 interface NatalChartTabProps {
   profile: Profile;
@@ -109,22 +108,11 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
 
   return (
     <div className="flex flex-col items-center w-full gap-8">
-      {/* Header premium avec logo */}
-      <div className="w-full flex flex-col items-center mb-2">
-        <Logo className="w-16 h-16 mb-2" />
-        <h2 className="text-3xl md:text-4xl font-cinzel font-bold mb-2 bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text text-center">
-          Thème Natal de {firstName}
-        </h2>
-        <p className="text-gray-300 max-w-2xl mx-auto text-base md:text-lg text-center">
-          Découvrez votre carte du ciel de naissance. Chaque planète révèle une facette unique de votre personnalité.
-        </p>
-      </div>
-
       {/* Carte du ciel agrandie et centrée */}
       <div className="flex justify-center w-full">
-        <div className="bg-gradient-to-br from-cosmic-800/90 to-cosmic-900/90 border-2 border-primary/30 shadow-2xl rounded-3xl p-4 md:p-8 flex flex-col items-center max-w-2xl w-full">
-          <ZodiacWheel natalChart={natalChart} size={window.innerWidth < 600 ? 320 : 520} />
-        </div>
+        <InteractiveCard className="shadow-xl rounded-2xl bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10 p-4 md:p-8 flex flex-col items-center max-w-2xl w-full">
+          <ZodiacWheel natalChart={natalChart} />
+        </InteractiveCard>
       </div>
 
       {/* Signature astrale premium */}
@@ -146,21 +134,18 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
 
       {/* Interprétation détaillée premium */}
       {interpretationText && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
-          className="w-full max-w-3xl mx-auto bg-cosmic-800/90 text-white rounded-2xl shadow-lg p-8 border border-primary/30 mt-4"
-        >
-          <h3 className="text-2xl font-cinzel font-bold mb-4 text-primary text-center">Interprétation détaillée</h3>
-          <div className="text-lg leading-relaxed text-center">
-            {interpretationText.replace(/^([A-Z][a-z]+),/i, `Cher ${firstName},`)}
+        <InteractiveCard className="w-full max-w-3xl mx-auto shadow-xl rounded-2xl bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10 p-8">
+          <div className="relative z-10">
+            <h3 className="text-2xl font-cinzel font-bold mb-4 text-primary text-center">Interprétation détaillée</h3>
+            <div className="text-lg leading-relaxed text-center text-white">
+              {interpretationText.replace(/^([A-Z][a-z]+),/i, `Cher ${firstName},`)}
+            </div>
           </div>
-        </motion.div>
+        </InteractiveCard>
       )}
 
       {/* Fallback ou loader */}
-      {isLoading && <CosmicLoader message="Génération de votre thème natal..." />}
+      {isLoading && <CosmicLoader />}
       {error && (
         <div className="text-red-400 text-center mt-4">{error}</div>
       )}

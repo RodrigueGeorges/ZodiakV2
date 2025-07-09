@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, RefreshCw } from 'lucide-react';
+import { Calendar, Clock, Loader2 } from 'lucide-react';
 import { DateTime } from 'luxon';
 import { useGuidance } from '../lib/hooks/useGuidance';
-import LoadingScreen from './LoadingScreen';
+import CosmicLoader from './CosmicLoader';
 import EmptyState from './EmptyState';
 import InteractiveCard from './InteractiveCard';
 import GuidanceScoreBadge from './GuidanceScoreBadge';
@@ -61,7 +61,11 @@ function GuidanceContent(): JSX.Element {
   };
 
   if (loading && !guidance) {
-    return <LoadingScreen message="Chargement de votre guidance..." />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cosmic-900">
+        <CosmicLoader />
+      </div>
+    );
   }
 
   if (!guidance) {
@@ -185,7 +189,7 @@ function GuidanceContent(): JSX.Element {
               whileTap={{ scale: 0.95 }}
               title="Actualiser la guidance"
             >
-              <RefreshCw className={`w-4 h-4 ${isRefreshingManual ? 'animate-spin' : ''}`} />
+              <Loader2 className={`w-4 h-4 ${isRefreshingManual ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Actualiser</span>
             </motion.button>
             <ShareButton

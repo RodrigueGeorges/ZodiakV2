@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, CreditCard, Bell, LogOut, Edit2, Check, X } from 'lucide-react';
+import { User, CreditCard, Bell, LogOut, Edit2, Check, X, Save } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../lib/hooks/useAuth.tsx';
 import { supabase } from '../lib/supabase';
-import StarryBackground from '../components/StarryBackground';
+import PageLayout from '../components/PageLayout';
 import InteractiveCard from '../components/InteractiveCard';
 import PlaceAutocomplete from '../components/PlaceAutocomplete';
-import LoadingScreen from '../components/LoadingScreen';
+import CosmicLoader from '../components/CosmicLoader';
 import { DESIGN_TOKENS } from '../lib/constants/design';
 import { AstrologyService } from '../lib/astrology';
 import type { Place } from '../lib/places';
@@ -35,12 +35,6 @@ interface NatalChart {
 }
 
 // Animations pour les transitions
-const pageVariants = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -20 }
-};
-
 const cardVariants = {
   initial: { opacity: 0, scale: 0.95 },
   animate: { opacity: 1, scale: 1 },
@@ -214,12 +208,12 @@ export function Profile() {
       const { data, error } = await supabase.storage.from('avatars').upload(fileName, file, { upsert: true });
       if (error) throw error;
       const { publicURL } = supabase.storage.from('avatars').getPublicUrl(fileName).data;
-      if (!publicURL) throw new Error('Erreur lors de la récupération de l’URL');
+      if (!publicURL) throw new Error('Erreur lors de la récupération de l\'URL');
       // Mettre à jour le profil
       await supabase.from('profiles').update({ avatar_url: publicURL, updated_at: new Date().toISOString() }).eq('id', user?.id);
       await refreshProfile();
     } catch (err) {
-      setAvatarError(err instanceof Error ? err.message : 'Erreur lors de l’upload');
+      setAvatarError(err instanceof Error ? err.message : 'Erreur lors de l\'upload');
     } finally {
       setAvatarUploading(false);
     }
@@ -229,15 +223,27 @@ export function Profile() {
   const initials = (profile?.name || user?.email || 'U')[0]?.toUpperCase() + (profile?.name?.split(' ')[1]?.[0]?.toUpperCase() || '');
 
   if (isAuthLoading) {
-    return <LoadingScreen />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cosmic-900">
+        <CosmicLoader />
+      </div>
+    );
   }
 
   if (!user) {
-    return <div className="text-red-400 text-center mt-8">Utilisateur non authentifié. Veuillez vous reconnecter.</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cosmic-900">
+        <div className="text-red-400 text-center">Utilisateur non authentifié. Veuillez vous reconnecter.</div>
+      </div>
+    );
   }
 
   if (!profile) {
-    return <div className="text-red-400 text-center mt-8">Profil non disponible ou incomplet. Veuillez compléter votre profil.</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cosmic-900">
+        <div className="text-red-400 text-center">Profil non disponible ou incomplet. Veuillez compléter votre profil.</div>
+      </div>
+    );
   }
 
   let natalChart: NatalChart | null = null;
@@ -256,9 +262,21 @@ export function Profile() {
     natalChart.ascendant.sign;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-cosmic-950 pt-4 pb-12">
-      {/* Header moderne */}
-      <div className="w-full max-w-4xl mx-auto mb-8 flex flex-col md:flex-row items-center md:items-end gap-4">
+    <PageLayout 
+      title="Mon Profil" 
+      subtitle="Gérez vos informations et votre abonnement"
+      showLogo={false}
+      maxWidth="4xl"
+    >
+      {renderStatus()}
+      
+      {/* Header avec avatar et informations utilisateur */}
+      <motion.div 
+        className="w-full mb-8 flex flex-col md:flex-row items-center md:items-end gap-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
         <div className="flex items-center gap-4 flex-1">
           <div className="relative group w-16 h-16">
             {profile?.avatar_url ? (
@@ -276,20 +294,25 @@ export function Profile() {
             {avatarUploading && <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full"><span className="text-white text-xs">Chargement...</span></div>}
           </div>
           <div>
-            <h1 className="text-3xl font-cinzel font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-1">Mon Profil</h1>
-            <div className="text-gray-400 text-sm">Bienvenue, {profile?.name || user?.email || 'Utilisateur'} !</div>
+            <h2 className="text-2xl font-cinzel font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-1">
+              Bienvenue, {profile?.name || user?.email || 'Utilisateur'} !
+            </h2>
+            <div className="text-gray-400 text-sm">Gérez votre profil et vos préférences</div>
             {avatarError && <div className="text-xs text-red-400 mt-1">{avatarError}</div>}
           </div>
         </div>
         {/* Badge d'abonnement */}
         {profile?.subscription_status && (
-          <span className={`px-4 py-1 rounded-full text-sm font-semibold shadow-md ${profile.subscription_status === 'trial' ? 'bg-yellow-500/80 text-black' : 'bg-green-600/80 text-white'}`}>
+          <span className={`px-4 py-1 rounded-full text-sm font-semibold shadow-md ${
+            profile.subscription_status === 'trial' ? 'bg-yellow-500/80 text-black' : 'bg-green-600/80 text-white'
+          }`}>
             {profile.subscription_status === 'trial' ? 'Essai' : 'Abonné'}
           </span>
         )}
-      </div>
+      </motion.div>
+
       {/* Disposition responsive des cartes */}
-      <div className="w-full max-w-4xl mx-auto flex flex-col md:flex-row gap-8">
+      <div className="w-full flex flex-col md:flex-row gap-8">
         <div className="flex-1 min-w-0">
           {/* Carte infos utilisateur */}
           <InteractiveCard className="mb-8 shadow-xl rounded-2xl bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10">
@@ -298,9 +321,9 @@ export function Profile() {
                 <div className="p-2 rounded-lg bg-gradient-to-r from-primary to-secondary">
                   <User className="w-6 h-6 text-gray-900" />
                 </div>
-                <h2 className="text-xl font-semibold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
+                <h3 className="text-xl font-semibold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
                   Informations personnelles
-                </h2>
+                </h3>
                 {!editMode && (
                   <motion.button
                     onClick={() => setEditMode(true)}
@@ -464,7 +487,21 @@ export function Profile() {
               </AnimatePresence>
             </div>
           </InteractiveCard>
+
+          {/* Carte thème natal si disponible */}
+          {hasFullNatal && natalChart && (
+            <InteractiveCard className="mb-8 shadow-xl rounded-2xl bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10">
+              <div className="relative z-10">
+                <NatalSignature
+                  sunSign={natalChart.planets.find((p: Planet) => p.name === 'Soleil')?.sign || 'Non disponible'}
+                  moonSign={natalChart.planets.find((p: Planet) => p.name === 'Lune')?.sign || 'Non disponible'}
+                  ascendantSign={natalChart.ascendant.sign || 'Non disponible'}
+                />
+              </div>
+            </InteractiveCard>
+          )}
         </div>
+
         <div className="w-full md:w-80 flex flex-col gap-6">
           {/* Carte abonnement */}
           <InteractiveCard className="mb-8 shadow-xl rounded-2xl bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10">
@@ -505,13 +542,20 @@ export function Profile() {
               </div>
             </div>
           </InteractiveCard>
-          {/* Bouton Déconnexion */}
-          <button className="w-full px-6 py-3 bg-red-700/80 text-white rounded-lg font-semibold shadow-lg hover:bg-red-800/90 transition-all duration-200 mt-2 flex items-center justify-center gap-2">
-            <LogOut className="w-5 h-5" /> Déconnexion
-          </button>
+
+          {/* Bouton Déconnexion harmonisé */}
+          <motion.button 
+            onClick={handleLogout}
+            className="w-full px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold shadow-lg hover:from-red-700 hover:to-red-800 transition-all duration-200 flex items-center justify-center gap-2"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <LogOut className="w-5 h-5" /> 
+            Déconnexion
+          </motion.button>
         </div>
       </div>
-    </div>
+    </PageLayout>
   );
 }
 
