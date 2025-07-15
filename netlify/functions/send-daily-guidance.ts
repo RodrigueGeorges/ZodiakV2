@@ -620,6 +620,20 @@ const handler: Handler = async () => {
       .eq('daily_guidance_sms_enabled', true)
       .in('subscription_status', ['active', 'trial']);
 
+    // LOG DEBUG : Afficher les profils récupérés et les champs critiques
+    if (profiles && profiles.length > 0) {
+      console.log("Profils récupérés :", profiles.map(p => ({
+        id: p.id,
+        name: p.name,
+        phone: p.phone,
+        natal_chart: !!p.natal_chart,
+        guidance_sms_time: p.guidance_sms_time,
+        last_guidance_sent: p.last_guidance_sent
+      })));
+    } else {
+      console.log("Aucun profil récupéré par la requête principale.");
+    }
+
     if (error) {
       console.error("❌ Erreur lors de la récupération des profils:", error);
       return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
@@ -641,6 +655,8 @@ const handler: Handler = async () => {
     let skippedCount = 0;
 
     for (const profile of profiles) {
+      // LOG DEBUG : Afficher les champs avant filtrage
+      console.log(`Traitement du profil ${profile.id} (${profile.name}) - phone: ${profile.phone}, natal_chart: ${!!profile.natal_chart}`);
       try {
         // Vérifier si l'utilisateur a un numéro de téléphone
         if (!profile.phone) {
