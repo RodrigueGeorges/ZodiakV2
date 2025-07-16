@@ -8,7 +8,7 @@ import { Sun, Moon, Compass, Clock, Heart, Briefcase, Battery, Sparkle, User, Me
  */
 export const DESIGN_COLORS = {
   // Couleurs principales
-  primary: '#FFD700', // Or
+  primary: '#D8CAB8', // Silver Gold
   secondary: '#FF69B4', // Rose
   cosmic: {
     800: '#1a1a2e',
@@ -17,8 +17,8 @@ export const DESIGN_COLORS = {
   
   // Couleurs d'accent cohérentes
   accent: {
-    gold: '#FFD700', // Même que primary
-    yellow: '#F5CBA7', // Jaune doux
+    gold: '#D8CAB8', // Silver Gold
+    yellow: '#D8CAB8', // Silver Gold
     pink: '#FF69B4', // Même que secondary
     white: '#FFFFFF',
     gray: {
@@ -123,7 +123,7 @@ export const DESIGN_CLASSES = {
   text: {
     primary: 'text-primary',
     secondary: 'text-secondary',
-    accent: 'text-yellow-300',
+    accent: 'text-[#D8CAB8]',
     white: 'text-white',
     gray: 'text-gray-300'
   },
@@ -147,7 +147,7 @@ export const DESIGN_CLASSES = {
 export const DESIGN_TOKENS = {
   // Couleurs principales
   colors: {
-    primary: '#F5CBA7',
+    primary: '#D4A373',
     secondary: '#D4A373',
     cosmic: {
       900: '#0B1120',
@@ -186,11 +186,11 @@ export const DESIGN_TOKENS = {
       glow: `
         @keyframes glow {
           0%, 100% { 
-            filter: drop-shadow(0 0 15px #F5CBA7);
+            filter: drop-shadow(0 0 15px #D4A373);
             transform: scale(1);
           }
           50% { 
-            filter: drop-shadow(0 0 30px #F5CBA7);
+            filter: drop-shadow(0 0 30px #D4A373);
             transform: scale(1.1);
           }
         }

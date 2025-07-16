@@ -40,7 +40,7 @@ export function ApiDashboard({ className }: ApiDashboardProps) {
       case 'healthy':
         return <CheckCircle className="w-5 h-5 text-green-500" />;
       case 'degraded':
-        return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
+        return <AlertTriangle className="w-5 h-5 text-[#D8CAB8]" />;
       case 'down':
         return <AlertTriangle className="w-5 h-5 text-red-500" />;
       default:
@@ -53,7 +53,7 @@ export function ApiDashboard({ className }: ApiDashboardProps) {
       case 'healthy':
         return 'text-green-500';
       case 'degraded':
-        return 'text-yellow-500';
+        return 'text-[#D8CAB8]';
       case 'down':
         return 'text-red-500';
       default:
@@ -188,7 +188,7 @@ export function ApiDashboard({ className }: ApiDashboardProps) {
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Entrées expirées:</span>
-              <span className="text-yellow-400 font-mono">{healthReport.cache.expiredCount}</span>
+              <span className="text-[#D8CAB8] font-mono">{healthReport.cache.expiredCount}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Âge moyen:</span>

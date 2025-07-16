@@ -304,7 +304,7 @@ export function Profile() {
         {/* Badge d'abonnement */}
         {profile?.subscription_status && (
           <span className={`px-4 py-1 rounded-full text-sm font-semibold shadow-md ${
-            profile.subscription_status === 'trial' ? 'bg-yellow-500/80 text-black' : 'bg-green-600/80 text-white'
+            profile.subscription_status === 'trial' ? 'bg-[#D8CAB8]/80 text-black' : 'bg-green-600/80 text-white'
           }`}>
             {profile.subscription_status === 'trial' ? 'Essai' : 'Abonné'}
           </span>
@@ -519,7 +519,7 @@ export function Profile() {
                   <span className="text-sm text-gray-400">Statut</span>
                   <span className={`text-sm font-semibold px-2 py-1 rounded-full ${
                     profile.subscription_status === 'active' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
-                    profile.subscription_status === 'trial' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' : 
+                    profile.subscription_status === 'trial' ? 'bg-[#D8CAB8]/20 text-[#D8CAB8] border border-[#D8CAB8]/30' : 
                     'bg-red-500/20 text-red-400 border border-red-500/30'
                   }`}>
                     {profile.subscription_status === 'active' ? 'Actif' :
@@ -534,7 +534,7 @@ export function Profile() {
                     transition={{ delay: 0.2 }}
                   >
                     <span className="text-sm text-gray-400">Jours restants</span>
-                    <span className="text-sm font-semibold text-yellow-400">
+                    <span className="text-sm font-semibold text-[#D8CAB8]">
                       {daysUntilTrialEnd} jours
                     </span>
                   </motion.div>

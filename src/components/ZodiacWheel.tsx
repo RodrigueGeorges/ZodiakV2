@@ -94,7 +94,7 @@ export default function ZodiacWheel({ natalChart, className = '' }: ZodiacWheelP
         {/* Définition du gradient pour la bordure */}
         <defs>
           <linearGradient id="gradient-border" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FFD700" />
+            <stop offset="0%" stopColor="#D8CAB8" />
             <stop offset="50%" stopColor="#FF69B4" />
             <stop offset="100%" stopColor="#00CED1" />
           </linearGradient>

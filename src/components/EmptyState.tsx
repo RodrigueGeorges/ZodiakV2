@@ -60,7 +60,7 @@ const emptyStateConfig = {
     )
   },
   profile: {
-    icon: <Sun className="w-16 h-16 text-yellow-400" />,
+    icon: <Sun className="w-16 h-16 text-[#D8CAB8]" />,
     emoji: '👤',
     defaultTitle: 'Profil Incomplet',
     defaultMessage: 'Ajoutez vos informations personnelles pour personnaliser votre expérience astrologique.',
@@ -69,7 +69,7 @@ const emptyStateConfig = {
         <motion.div
           animate={{ rotate: [0, 5, -5, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 to-orange-400/20 rounded-full flex items-center justify-center"
+          className="absolute inset-0 bg-gradient-to-br from-[#D8CAB8]/20 to-orange-400/20 rounded-full flex items-center justify-center"
         >
           <span className="text-5xl">👤</span>
         </motion.div>

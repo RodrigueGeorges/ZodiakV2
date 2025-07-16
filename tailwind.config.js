@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#FFD700',
+        primary: '#D8CAB8',
         secondary: '#FF69B4',
         cosmic: {
           800: '#1a1a2e',
@@ -49,7 +49,7 @@ export default {
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(circle, transparent 0%, rgba(26, 26, 46, 0.4) 50%, rgba(22, 33, 62, 0.9) 100%)',
-        'gradient-primary': 'linear-gradient(135deg, #FFD700, #FF69B4)',
+        'gradient-primary': 'linear-gradient(135deg, #D8CAB8, #BFAF80)',
       },
       boxShadow: {
         'glow': '0 0 20px rgba(255, 215, 0, 0.3)',

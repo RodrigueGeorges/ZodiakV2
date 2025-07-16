@@ -71,7 +71,7 @@ export function NatalChartSVG({ chartData, size = 400, showLabels = true }: Nata
                 cx={x} 
                 cy={y} 
                 r={5} 
-                fill="#FFD700"
+                fill="#D8CAB8"
                 onMouseEnter={(e) => setTooltip({ 
                   x: e.clientX, 
                   y: e.clientY, 
@@ -80,7 +80,7 @@ export function NatalChartSVG({ chartData, size = 400, showLabels = true }: Nata
                 onMouseLeave={() => setTooltip(null)}
               />
               {showLabels && (
-                <text x={x + 8} y={y + 4} fontSize="10" fill="#FFD700">
+                <text x={x + 8} y={y + 4} fontSize="10" fill="#D8CAB8">
                   {planet.name}
                 </text>
               )}

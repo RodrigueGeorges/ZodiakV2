@@ -107,7 +107,7 @@ export function PerformanceMonitor({ className, showDetails = false }: Performan
                         <span className={cn(
                           "font-medium",
                           metric.duration && metric.duration < 100 ? "text-green-400" :
-                          metric.duration && metric.duration < 500 ? "text-yellow-400" : "text-red-400"
+                          metric.duration && metric.duration < 500 ? "text-[#D8CAB8]" : "text-red-400"
                         )}>
                           {metric.duration?.toFixed(0)}ms
                         </span>
