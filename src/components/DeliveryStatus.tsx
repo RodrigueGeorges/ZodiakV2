@@ -75,32 +75,32 @@ function DeliveryStatus({ messageId }: DeliveryStatusProps) {
     submitted: {
       icon: Clock,
       text: 'Envoyé',
-      color: 'text-gray-400'
+      color: 'text-primary'
     },
     delivered: {
       icon: CheckCircle,
       text: 'Délivré',
-      color: 'text-green-400'
+      color: 'text-primary'
     },
     failed: {
       icon: XCircle,
       text: 'Échec',
-      color: 'text-red-400'
+      color: 'text-primary'
     },
     rejected: {
       icon: XCircle,
       text: 'Rejeté',
-      color: 'text-red-400'
+      color: 'text-primary'
     },
     accepted: {
       icon: Clock,
       text: 'Accepté',
-      color: 'text-blue-400'
+      color: 'text-primary'
     },
     buffered: {
       icon: Clock,
       text: 'En attente',
-      color: 'text-yellow-400'
+      color: 'text-primary'
     }
   };
 
@@ -112,7 +112,7 @@ function DeliveryStatus({ messageId }: DeliveryStatusProps) {
       <Icon className="w-4 h-4" />
       <span>{config.text}</span>
       {status.error_code && (
-        <span className="text-sm text-red-400">
+        <span className="text-sm text-primary">
           (Erreur: {status.error_code})
         </span>
       )}

@@ -35,7 +35,7 @@ function InteractiveCard({ children, className = '', onClick, tabIndex, 'aria-la
 
   return (
     <motion.div
-      className={`relative bg-white/5 backdrop-blur-lg rounded-xl overflow-hidden border border-white/10 shadow-xl mobile-optimized ${className}`}
+      className={`relative bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border border-primary/20 shadow-xl rounded-xl overflow-hidden mobile-optimized text-primary ${className}`}
       whileHover={{ scale: onClick && !isMobile ? 1.02 : 1 }}
       whileTap={{ scale: onClick ? 0.98 : 1 }}
       initial={{ opacity: 0, y: 20 }}

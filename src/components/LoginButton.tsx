@@ -278,11 +278,11 @@ function LoginButton({
 
                   <div className="flex justify-center mb-4 gap-4">
                     <button
-                      className={cn('px-3 py-1 rounded', authMode === 'sms' ? 'bg-primary text-black' : 'bg-white/10 text-white')}
+                      className={cn('px-3 py-1 rounded', authMode === 'sms' ? 'bg-gradient-to-r from-primary to-secondary text-cosmic-900' : 'bg-cosmic-900 text-primary border border-primary')}
                       onClick={() => { setAuthMode('sms'); setIsSignUp(false); }}
                     >SMS</button>
                     <button
-                      className={cn('px-3 py-1 rounded', authMode === 'email' ? 'bg-primary text-black' : 'bg-white/10 text-white')}
+                      className={cn('px-3 py-1 rounded', authMode === 'email' ? 'bg-gradient-to-r from-primary to-secondary text-cosmic-900' : 'bg-cosmic-900 text-primary border border-primary')}
                       onClick={() => setAuthMode('email')}
                     >Email</button>
                   </div>

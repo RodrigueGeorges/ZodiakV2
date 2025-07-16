@@ -26,27 +26,11 @@ function Toast({
   }, [isVisible, duration, onClose]);
 
   const getIcon = () => {
-    switch (type) {
-      case 'success':
-        return <CheckCircle className="w-5 h-5 text-green-400" />;
-      case 'error':
-        return <XCircle className="w-5 h-5 text-red-400" />;
-      default:
-        return <AlertCircle className="w-5 h-5 text-blue-400" />;
-    }
+    return <AlertCircle className="w-5 h-5 text-primary" />;
   };
 
   const getStyles = () => {
-    const baseStyles = 'flex items-center gap-3 p-4 rounded-lg shadow-lg border';
-    
-    switch (type) {
-      case 'success':
-        return cn(baseStyles, 'bg-green-900/90 border-green-700 text-green-100');
-      case 'error':
-        return cn(baseStyles, 'bg-red-900/90 border-red-700 text-red-100');
-      default:
-        return cn(baseStyles, 'bg-blue-900/90 border-blue-700 text-blue-100');
-    }
+    return cn('flex items-center gap-3 p-4 rounded-lg shadow-lg border border-primary bg-cosmic-900 text-primary');
   };
 
   return (
@@ -64,7 +48,7 @@ function Toast({
             <span className="flex-1 text-sm font-medium">{message}</span>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-primary hover:text-secondary transition-colors"
             >
               <X className="w-4 h-4" />
             </button>

@@ -114,27 +114,27 @@ export default function AdminProtection({ children }: AdminProtectionProps) {
               
               <InteractiveCard className="p-8">
                 <div className="flex flex-col items-center space-y-6">
-                  <div className="w-16 h-16 bg-red-500/10 rounded-full flex items-center justify-center">
-                    <Lock className="w-8 h-8 text-red-400" />
+                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Lock className="w-8 h-8 text-primary" />
                   </div>
                   
                   <div>
-                    <h1 className="text-2xl font-cinzel font-bold mb-2 text-red-400">
+                    <h1 className="text-2xl font-cinzel font-bold mb-2 text-primary">
                       Accès Refusé
                     </h1>
-                    <p className="text-gray-400 mb-4">
+                    <p className="text-primary mb-4">
                       Vous n'avez pas les autorisations nécessaires pour accéder à cette page.
                     </p>
                     
                     {user && (
-                      <div className="bg-gray-800/50 rounded-lg p-4 mb-4">
-                        <p className="text-sm text-gray-300">
+                      <div className="bg-primary/10 rounded-lg p-4 mb-4">
+                        <p className="text-sm text-primary">
                           Connecté en tant que : <span className="font-medium">{user.email}</span>
                         </p>
                       </div>
                     )}
                     
-                    <div className="flex items-center justify-center space-x-2 text-yellow-400 mb-4">
+                    <div className="flex items-center justify-center space-x-2 text-primary mb-4">
                       <AlertTriangle className="w-4 h-4" />
                       <span className="text-sm">Redirection automatique dans 3 secondes...</span>
                     </div>

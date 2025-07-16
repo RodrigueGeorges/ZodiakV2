@@ -16,7 +16,7 @@ function TopNavBar() {
   ];
 
   return (
-    <nav className="hidden md:flex w-full bg-gray-900/80 backdrop-blur-lg border-b border-gray-700 px-6 py-2 z-40">
+    <nav className="hidden md:flex w-full bg-cosmic-900/80 backdrop-blur-lg border-b border-primary px-6 py-2 z-40">
       <div className="flex gap-4 items-center mx-auto">
         {navItems.map((item) => (
           <button
@@ -25,8 +25,8 @@ function TopNavBar() {
             className={cn(
               'flex items-center gap-2 px-3 py-2 rounded-lg font-cinzel text-lg transition-colors',
               location.pathname === item.path
-                ? 'bg-primary/20 text-primary'
-                : 'text-gray-200 hover:bg-primary/10 hover:text-primary'
+                ? 'bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text'
+                : 'text-primary hover:text-primary/80'
             )}
           >
             {item.icon}

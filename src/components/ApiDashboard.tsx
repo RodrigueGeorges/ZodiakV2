@@ -118,29 +118,26 @@ export function ApiDashboard({ className }: ApiDashboardProps) {
         {healthReport.monitoring.health.map((service: any, index: number) => (
           <div
             key={service.service}
-            className="p-4 bg-gray-900/50 backdrop-blur-lg rounded-lg border border-white/10"
+            className="p-4 bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 backdrop-blur-lg rounded-lg border border-primary/20 shadow-xl"
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-white capitalize">{service.service}</h3>
+              <h3 className="font-semibold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text capitalize">{service.service}</h3>
               {getStatusIcon(service.status)}
             </div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-400">Statut:</span>
-                <span className={getStatusColor(service.status)}>
-                  {service.status === 'healthy' ? 'Opérationnel' : 
-                   service.status === 'degraded' ? 'Dégradé' : 'Indisponible'}
+                <span className="text-primary">Statut:</span>
+                <span className="text-primary">
+                  {service.status === 'healthy' ? 'Opérationnel' : service.status === 'degraded' ? 'Dégradé' : 'Indisponible'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Temps de réponse:</span>
-                <span className="text-white">{service.responseTime.toFixed(0)}ms</span>
+                <span className="text-primary">Temps de réponse:</span>
+                <span className="text-primary">{service.responseTime.toFixed(0)}ms</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-400">Taux d'erreur:</span>
-                <span className={service.errorRate > 10 ? 'text-red-400' : 'text-green-400'}>
-                  {service.errorRate.toFixed(1)}%
-                </span>
+                <span className="text-primary">Taux d'erreur:</span>
+                <span className="text-primary">{service.errorRate.toFixed(1)}%</span>
               </div>
             </div>
           </div>

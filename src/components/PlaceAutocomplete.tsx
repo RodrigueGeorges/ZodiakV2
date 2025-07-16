@@ -94,13 +94,11 @@ export function PlaceAutocomplete({
           placeholder={placeholder}
           className={cn(
             'w-full pl-12 pr-12 py-3 rounded-lg',
-            'bg-white/5 backdrop-blur-lg',
-            'border border-white/10',
-            'text-white placeholder-gray-400',
+            'bg-cosmic-900/60 border border-primary text-primary placeholder-primary',
             'focus:border-primary focus:ring-2 focus:ring-primary/50',
             'transition-all duration-200',
             'text-lg',
-            (error || externalError) && 'border-red-500 focus:ring-red-500'
+            (error || externalError) && 'border-primary focus:ring-primary'
           )}
         />
         <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -119,7 +117,7 @@ export function PlaceAutocomplete({
       </div>
 
       {(error || externalError) && (
-        <p className="mt-2 text-sm text-red-400 bg-red-900/30 rounded px-3 py-2" aria-live="polite">
+        <p className="mt-2 text-sm text-primary bg-primary/10 rounded px-3 py-2" aria-live="polite">
           {externalError || (typeof error === 'string' ? error : error?.message || 'Une erreur est survenue')}
         </p>
       )}

@@ -51,19 +51,19 @@ export function AstrologyTest() {
 
   return (
     <div className="p-6 bg-white/5 backdrop-blur-lg rounded-lg">
-      <h2 className="text-xl font-semibold mb-4 text-[#F5CBA7]">Test Astrologique</h2>
+      <h2 className="text-xl font-semibold mb-4 bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">Test Astrologique</h2>
 
       <button
         onClick={handleTest}
         disabled={loading}
         className={cn(
           'w-full py-3 px-4 rounded-lg',
-          'bg-gradient-to-r from-[#F5CBA7] to-[#D4A373]',
-          'text-gray-900 font-semibold',
+          'bg-gradient-to-r from-primary to-secondary',
+          'text-cosmic-900 font-semibold',
           'flex items-center justify-center gap-2',
           'transition-all duration-200',
           'hover:opacity-90',
-          'focus:outline-none focus:ring-2 focus:ring-[#F5CBA7] focus:ring-opacity-50',
+          'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50',
           loading && 'opacity-50 cursor-not-allowed'
         )}
       >

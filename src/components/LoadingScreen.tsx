@@ -16,7 +16,7 @@ function LoadingScreen({ message = 'Chargement...', error }: LoadingScreenProps)
         </div>
       )}
       {error && (
-        <div className="mt-6 text-lg text-red-400 font-semibold text-center animate-pulse" aria-live="polite">
+        <div className="mt-6 text-lg text-primary font-semibold text-center animate-pulse" aria-live="polite">
           {error}
         </div>
       )}

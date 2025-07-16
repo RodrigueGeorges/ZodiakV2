@@ -35,7 +35,7 @@ export function StarryBackground() {
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       stars.forEach(star => {
-        ctx.fillStyle = '#F5CBA7';
+        ctx.fillStyle = '#F5CBA7'; // doré lunaire premium
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
         ctx.fill();

@@ -115,26 +115,23 @@ export default function SMSTrackingStats() {
   if (!stats) return null;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-bold text-gray-800 mb-6">
+    <div className="bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 rounded-2xl shadow-xl border border-primary/20 p-6">
+      <h2 className="text-xl font-bold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-6">
         📊 Statistiques SMS
       </h2>
-
       {/* Statistiques globales */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg p-4">
-          <div className="text-2xl font-bold">{stats.total_sent}</div>
-          <div className="text-sm opacity-90">SMS envoyés</div>
+        <div className="bg-gradient-to-r from-primary/20 to-secondary/10 text-primary rounded-lg p-4 border border-primary/30 shadow-glow">
+          <div className="text-2xl font-bold text-primary">{stats.total_sent}</div>
+          <div className="text-sm opacity-90 text-primary">SMS envoyés</div>
         </div>
-        
-        <div className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg p-4">
-          <div className="text-2xl font-bold">{stats.total_opened}</div>
-          <div className="text-sm opacity-90">Ouvertures ({stats.open_rate}%)</div>
+        <div className="bg-gradient-to-r from-primary/20 to-secondary/10 text-primary rounded-lg p-4 border border-primary/30 shadow-glow">
+          <div className="text-2xl font-bold text-primary">{stats.total_opened}</div>
+          <div className="text-sm opacity-90 text-primary">Ouvertures ({stats.open_rate}%)</div>
         </div>
-        
-        <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg p-4">
-          <div className="text-2xl font-bold">{stats.total_clicked}</div>
-          <div className="text-sm opacity-90">Clics ({stats.click_rate}%)</div>
+        <div className="bg-gradient-to-r from-primary/20 to-secondary/10 text-primary rounded-lg p-4 border border-primary/30 shadow-glow">
+          <div className="text-2xl font-bold text-primary">{stats.total_clicked}</div>
+          <div className="text-sm opacity-90 text-primary">Clics ({stats.click_rate}%)</div>
         </div>
       </div>
 

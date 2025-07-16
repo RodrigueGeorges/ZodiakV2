@@ -5,8 +5,8 @@ export const COLORS = {
   background: '#0B1120',
   backgroundGradient: '#1e293b',
   text: {
-    primary: '#FFFFFF',
-    secondary: '#9CA3AF',
+    primary: '#F5CBA7',
+    secondary: '#D4A373',
   }
 } as const;
 

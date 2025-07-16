@@ -104,12 +104,12 @@ function GuidanceContent(): JSX.Element {
               >
                 🔮
               </motion.div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-cinzel text-white drop-shadow-glow text-center mb-4 font-bold leading-tight">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text text-center mb-4 font-bold leading-tight">
                 {guidanceData.summary}
               </h2>
-              <div className="flex items-center gap-2 text-white/80">
-                <span className="text-sm">Guidance générée par l'IA</span>
-                <span className={DESIGN_CLASSES.text.accent}>✨</span>
+              <div className="flex items-center gap-2 text-primary">
+                <span className="text-sm font-cinzel italic">Guidance générée par l'IA</span>
+                <span className="text-primary">✨</span>
               </div>
             </div>
           </InteractiveCard>
@@ -144,12 +144,12 @@ function GuidanceContent(): JSX.Element {
                     <div className={DESIGN_CLASSES.text.primary}>
                       <span className="text-2xl">{icon}</span>
                     </div>
-                    <h3 className="font-semibold text-white font-cinzel text-xl">{label}</h3>
+                    <h3 className="font-semibold font-cinzel text-xl bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">{label}</h3>
                   </div>
                   <div className="flex-1">
                     <FormattedGuidanceText 
                       text={getGuidanceText(guidanceData[key]) || `Aucun conseil ${label.toLowerCase()} disponible pour aujourd'hui.`}
-                      className="text-gray-200 leading-relaxed text-base"
+                      className="text-primary leading-relaxed text-base"
                     />
                   </div>
                   <div className="mt-4 flex justify-end">

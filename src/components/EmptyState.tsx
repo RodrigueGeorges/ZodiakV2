@@ -124,7 +124,7 @@ export default function EmptyState({
         <h3 className="text-xl font-cinzel font-bold mb-4 bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
           {title || config.defaultTitle}
         </h3>
-        <p className="text-gray-300 mb-6 leading-relaxed">
+        <p className="mb-6 leading-relaxed text-primary">
           {message || config.defaultMessage}
         </p>
 
@@ -137,7 +137,7 @@ export default function EmptyState({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={action.onClick}
-            className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-black font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+            className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-cosmic-900 font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
           >
             {action.label}
           </motion.button>

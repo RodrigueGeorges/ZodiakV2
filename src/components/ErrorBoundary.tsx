@@ -4,13 +4,13 @@ import { captureException } from '../lib/sentry'
 
 function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-red-600 mb-4">Une erreur est survenue</h2>
-        <p className="text-gray-600 mb-4">{error.message}</p>
+    <div className="min-h-screen flex items-center justify-center bg-cosmic-900">
+      <div className="max-w-md w-full p-6 bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 rounded-lg shadow-lg border border-primary/20">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-4">Une erreur est survenue</h2>
+        <p className="text-primary mb-4">{error.message}</p>
         <button
           onClick={resetErrorBoundary}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+          className="w-full bg-gradient-to-r from-primary to-secondary text-cosmic-900 py-2 px-4 rounded font-semibold hover:opacity-90 transition-colors"
         >
           Réessayer
         </button>

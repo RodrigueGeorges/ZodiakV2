@@ -22,11 +22,11 @@ export default function GuidanceScoreBadge({ type, score, className = '' }: Guid
       whileTap={{ scale: 0.95 }}
       className={`inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r ${colorClass} shadow-lg border border-white/20 ${className}`}
     >
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 text-primary font-cinzel">
         <span className="text-lg">{config.icon}</span>
         <span className="font-semibold text-sm">{config.label}</span>
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 text-primary font-cinzel">
         <span className="text-lg">{emoji}</span>
         <span className="font-bold text-sm">{score}%</span>
       </div>

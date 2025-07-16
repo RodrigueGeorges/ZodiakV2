@@ -45,7 +45,7 @@ export function InboundMessages({ userId }: InboundMessagesProps) {
     <InteractiveCard className="p-6">
       <div className="flex items-center gap-3 mb-4">
         <MessageSquare className="w-6 h-6 text-primary" />
-        <h2 className="text-xl font-semibold">Messages Reçus</h2>
+        <h2 className="text-xl font-semibold text-primary">Messages Reçus</h2>
       </div>
 
       {loading ? (
@@ -65,13 +65,13 @@ export function InboundMessages({ userId }: InboundMessagesProps) {
           {messages.map((message) => (
             <div
               key={message.id}
-              className="p-4 bg-white/5 rounded-lg space-y-2"
+              className="p-4 bg-primary/10 rounded-lg space-y-2"
             >
-              <div className="flex justify-between text-sm text-gray-400">
+              <div className="flex justify-between text-sm text-primary">
                 <span>De : {message.from}</span>
                 <span>{formatDate(message.timestamp)}</span>
               </div>
-              <p className="text-white">{message.text}</p>
+              <p className="text-primary">{message.text}</p>
             </div>
           ))}
         </div>

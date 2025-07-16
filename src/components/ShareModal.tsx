@@ -101,7 +101,7 @@ export function ShareModal({ isOpen, onClose, guidance, userName }: ShareModalPr
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-cinzel text-primary">Partager ma guidance</h3>
+          <h3 className="text-xl font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">Partager ma guidance</h3>
           <button
             onClick={onClose}
             className="p-2 hover:bg-white/10 rounded-full transition-colors"
@@ -112,7 +112,7 @@ export function ShareModal({ isOpen, onClose, guidance, userName }: ShareModalPr
 
         {/* Partage par SMS */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-primary mb-2">
             Envoyer par SMS
           </label>
           <div className="flex gap-2">
@@ -121,13 +121,13 @@ export function ShareModal({ isOpen, onClose, guidance, userName }: ShareModalPr
               placeholder="Numéro de téléphone"
               value={sharePhone}
               onChange={(e) => setSharePhone(e.target.value)}
-              className="flex-1 px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary"
+              className="flex-1 px-3 py-2 bg-cosmic-900 border border-primary rounded-lg text-primary placeholder-primary focus:outline-none focus:border-primary"
             />
             <button
               onClick={handleShareViaSMS}
-              className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-cosmic-900 rounded-lg hover:opacity-90 transition-colors flex items-center gap-2 border border-primary shadow-glow"
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="w-4 h-4 text-primary" />
               SMS
             </button>
           </div>

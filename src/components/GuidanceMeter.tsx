@@ -20,7 +20,7 @@ function GuidanceMeter({ label, score, icon, colorClass }: GuidanceMeterProps) {
         <svg className="w-full h-full" viewBox="0 0 100 100">
           {/* Background circle */}
           <circle
-            className="text-white/10"
+            className="text-primary/20"
             strokeWidth="8"
             stroke="currentColor"
             fill="transparent"
@@ -47,11 +47,11 @@ function GuidanceMeter({ label, score, icon, colorClass }: GuidanceMeterProps) {
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-3xl font-bold">{numericScore}</span>
-          <span className="text-xs text-gray-400">/ 100</span>
+          <span className="text-3xl font-bold text-primary">{numericScore}</span>
+          <span className="text-xs text-primary">/ 100</span>
         </div>
       </div>
-      <div className="mt-3 flex items-center gap-2">
+      <div className="mt-3 flex items-center gap-2 text-primary">
         {icon}
         <span className="text-sm font-semibold">{label}</span>
       </div>

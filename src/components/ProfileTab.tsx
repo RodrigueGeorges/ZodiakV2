@@ -207,14 +207,14 @@ function ProfileTab({ profile, onLogout }: ProfileTabProps) {
             <InteractiveCard className="card-premium-glow max-w-3xl mx-auto text-center">
               {profile.natal_summary && (
                 <div className="mb-4">
-                  <h3 className="text-xl md:text-2xl font-cinzel font-bold text-primary mb-2">Signature astrale</h3>
-                  <p className="text-lg text-white font-cinzel leading-relaxed">{profile.natal_summary}</p>
+                  <h3 className="text-xl md:text-2xl font-cinzel font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-2">Signature astrale</h3>
+                  <p className="text-lg font-cinzel leading-relaxed text-primary">{profile.natal_summary}</p>
                 </div>
               )}
               {profile.natal_chart_interpretation && (
                 <div>
-                  <h3 className="text-xl md:text-2xl font-cinzel font-bold text-primary mb-2">Interprétation détaillée</h3>
-                  <p className="text-base text-gray-200 leading-relaxed whitespace-pre-line">{profile.natal_chart_interpretation}</p>
+                  <h3 className="text-xl md:text-2xl font-cinzel font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-2">Interprétation détaillée</h3>
+                  <p className="text-base leading-relaxed whitespace-pre-line text-primary">{profile.natal_chart_interpretation}</p>
                 </div>
               )}
             </InteractiveCard>
@@ -267,16 +267,16 @@ function ProfileTab({ profile, onLogout }: ProfileTabProps) {
               {!editMode ? (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                    <span className="text-gray-400 font-medium">Prénom</span>
-                    <span className="text-lg font-cinzel text-white">{profile.name}</span>
+                    <span className="text-primary font-medium">Prénom</span>
+                    <span className="text-lg font-cinzel text-primary">{profile.name}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                    <span className="text-gray-400 font-medium">Téléphone</span>
-                    <span className="text-lg font-cinzel text-white">{profile.phone || 'Non renseigné'}</span>
+                    <span className="text-primary font-medium">Téléphone</span>
+                    <span className="text-lg font-cinzel text-primary">{profile.phone || 'Non renseigné'}</span>
                   </div>
                   <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                    <span className="text-gray-400 font-medium">Fin d'essai</span>
-                    <span className="text-lg font-cinzel text-white">
+                    <span className="text-primary font-medium">Fin d'essai</span>
+                    <span className="text-lg font-cinzel text-primary">
                       {profile.trial_ends_at ? new Date(profile.trial_ends_at).toLocaleDateString('fr-FR') : '—'}
                     </span>
                   </div>

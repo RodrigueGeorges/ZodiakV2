@@ -126,7 +126,7 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="w-full max-w-3xl mx-auto bg-gradient-to-br from-primary/80 to-secondary/80 text-cosmic-900 rounded-2xl shadow-xl p-8 mb-2 border-2 border-primary/40 text-center font-cinzel text-xl md:text-2xl font-semibold"
+          className="w-full max-w-3xl mx-auto bg-gradient-to-br from-primary/80 to-secondary/80 text-cosmic-900 rounded-2xl shadow-xl p-8 mb-2 border-2 border-primary/40 text-center font-cinzel text-xl md:text-2xl font-semibold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text"
         >
           {astroSummary.replace(/^([A-Z][a-z]+),/i, `Cher ${firstName},`)}
         </motion.div>
@@ -136,8 +136,8 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
       {interpretationText && (
         <InteractiveCard className="w-full max-w-3xl mx-auto shadow-xl rounded-2xl bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10 p-8">
           <div className="relative z-10">
-            <h3 className="text-2xl font-cinzel font-bold mb-4 text-primary text-center">Interprétation détaillée</h3>
-            <div className="text-lg leading-relaxed text-center text-white">
+            <h3 className="text-2xl font-cinzel font-bold mb-4 text-primary text-center bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">Interprétation détaillée</h3>
+            <div className="text-lg leading-relaxed text-center text-primary">
               {interpretationText.replace(/^([A-Z][a-z]+),/i, `Cher ${firstName},`)}
             </div>
           </div>

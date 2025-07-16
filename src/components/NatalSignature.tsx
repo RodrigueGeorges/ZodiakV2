@@ -45,9 +45,9 @@ function NatalSignature({ sunSign, moonSign, ascendantSign }: NatalSignatureProp
   }
 
   const signatureItems = [
-    { label: 'Soleil', sign: sunSign, icon: <Sun className="w-5 h-5 text-yellow-400" /> },
-    { label: 'Lune', sign: moonSign, icon: <Moon className="w-5 h-5 text-slate-300" /> },
-    { label: 'Ascendant', sign: ascendantSign, icon: <Sparkle className="w-5 h-5 text-fuchsia-400" /> }
+    { label: 'Soleil', sign: sunSign, icon: <Sun className="w-5 h-5 text-primary" /> },
+    { label: 'Lune', sign: moonSign, icon: <Moon className="w-5 h-5 text-primary" /> },
+    { label: 'Ascendant', sign: ascendantSign, icon: <Sparkle className="w-5 h-5 text-primary" /> }
   ];
 
   const handleSignClick = (sign: string, label: string) => {
@@ -60,7 +60,7 @@ function NatalSignature({ sunSign, moonSign, ascendantSign }: NatalSignatureProp
       >
         <div className="flex-1 w-0">
           <p className="text-sm font-semibold text-primary">{label} en {sign}</p>
-          <p className="mt-1 text-sm text-gray-300">{description}</p>
+          <p className="mt-1 text-sm text-primary">{description}</p>
         </div>
       </div>
     ));

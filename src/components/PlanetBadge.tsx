@@ -63,17 +63,17 @@ export default function PlanetBadge({ planet, variant = 'default', className = '
       >
         <div className="flex items-center gap-1">
           {icon}
-          <span className="font-semibold text-sm">{planet.name}</span>
+          <span className="font-semibold text-sm text-primary">{planet.name}</span>
         </div>
         <div className="flex items-center gap-1">
           <span className="text-lg">{zodiacSymbol}</span>
-          <span className="font-bold text-sm">{planet.sign}</span>
+          <span className="font-bold text-sm text-primary">{planet.sign}</span>
           {planet.retrograde && (
-            <span className="text-xs bg-red-500/20 px-1 rounded">R</span>
+            <span className="text-xs bg-primary/20 px-1 rounded text-primary">R</span>
           )}
         </div>
         {planet.house && (
-          <span className="text-xs bg-white/20 px-1 rounded">Maison {planet.house}</span>
+          <span className="text-xs bg-white/20 px-1 rounded text-primary">Maison {planet.house}</span>
         )}
       </motion.div>
     ),
@@ -97,16 +97,16 @@ export default function PlanetBadge({ planet, variant = 'default', className = '
         className={`flex flex-col items-center p-4 rounded-xl bg-gradient-to-br ${colorClass} shadow-xl border border-white/20 ${className}`}
       >
         <div className="text-2xl mb-2">{icon}</div>
-        <h4 className="font-bold text-sm mb-1">{planet.name}</h4>
+        <h4 className="font-bold text-sm mb-1 text-primary">{planet.name}</h4>
         <div className="flex items-center gap-1 mb-2">
           <span className="text-xl">{zodiacSymbol}</span>
-          <span className="font-semibold text-sm">{planet.sign}</span>
+          <span className="font-semibold text-sm text-primary">{planet.sign}</span>
         </div>
         {planet.house && (
-          <span className="text-xs bg-white/20 px-2 py-1 rounded-full">Maison {planet.house}</span>
+          <span className="text-xs bg-white/20 px-2 py-1 rounded-full text-primary">Maison {planet.house}</span>
         )}
         {planet.retrograde && (
-          <span className="text-xs bg-red-500/30 px-2 py-1 rounded-full mt-1">Rétrograde</span>
+          <span className="text-xs bg-primary/20 px-2 py-1 rounded-full mt-1 text-primary">Rétrograde</span>
         )}
       </motion.div>
     )
