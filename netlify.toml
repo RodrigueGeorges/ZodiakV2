@@ -60,6 +60,9 @@
 [functions."send-daily-guidance"]
   schedule = "0 8 * * *"
 
+[functions."generate-guidance"]
+  schedule = "0 0 * * *"
+
 [[headers]]
   for = "/*"
     [headers.values]
