@@ -7,18 +7,18 @@ interface ZodiacWheelProps {
 }
 
 const zodiacSigns = [
-  { name: 'Bélier', symbol: '♈', startDegree: 0, color: '#FF6B6B' },
-  { name: 'Taureau', symbol: '♉', startDegree: 30, color: '#4ECDC4' },
-  { name: 'Gémeaux', symbol: '♊', startDegree: 60, color: '#45B7D1' },
-  { name: 'Cancer', symbol: '♋', startDegree: 90, color: '#96CEB4' },
-  { name: 'Lion', symbol: '♌', startDegree: 120, color: '#FFEAA7' },
-  { name: 'Vierge', symbol: '♍', startDegree: 150, color: '#DDA0DD' },
-  { name: 'Balance', symbol: '♎', startDegree: 180, color: '#98D8C8' },
-  { name: 'Scorpion', symbol: '♏', startDegree: 210, color: '#F7DC6F' },
-  { name: 'Sagittaire', symbol: '♐', startDegree: 240, color: '#BB8FCE' },
-  { name: 'Capricorne', symbol: '♑', startDegree: 270, color: '#85C1E9' },
-  { name: 'Verseau', symbol: '♒', startDegree: 300, color: '#F8C471' },
-  { name: 'Poissons', symbol: '♓', startDegree: 330, color: '#82E0AA' }
+  { name: 'Bélier', symbol: '♈', startDegree: 0, color: '#D8CAB8' },
+  { name: 'Taureau', symbol: '♉', startDegree: 30, color: '#D8CAB8' },
+  { name: 'Gémeaux', symbol: '♊', startDegree: 60, color: '#D8CAB8' },
+  { name: 'Cancer', symbol: '♋', startDegree: 90, color: '#D8CAB8' },
+  { name: 'Lion', symbol: '♌', startDegree: 120, color: '#D8CAB8' },
+  { name: 'Vierge', symbol: '♍', startDegree: 150, color: '#D8CAB8' },
+  { name: 'Balance', symbol: '♎', startDegree: 180, color: '#D8CAB8' },
+  { name: 'Scorpion', symbol: '♏', startDegree: 210, color: '#D8CAB8' },
+  { name: 'Sagittaire', symbol: '♐', startDegree: 240, color: '#D8CAB8' },
+  { name: 'Capricorne', symbol: '♑', startDegree: 270, color: '#D8CAB8' },
+  { name: 'Verseau', symbol: '♒', startDegree: 300, color: '#D8CAB8' },
+  { name: 'Poissons', symbol: '♓', startDegree: 330, color: '#D8CAB8' }
 ];
 
 const planetSymbols: { [key: string]: string } = {
@@ -36,17 +36,17 @@ const planetSymbols: { [key: string]: string } = {
 };
 
 const planetColors: { [key: string]: string } = {
-  'Soleil': '#FFD700',
-  'Lune': '#C0C0C0',
-  'Mercure': '#32CD32',
-  'Vénus': '#FF69B4',
-  'Mars': '#FF4500',
-  'Jupiter': '#FFA500',
-  'Saturne': '#4169E1',
-  'Uranus': '#00CED1',
-  'Neptune': '#1E90FF',
-  'Pluton': '#8A2BE2',
-  'Ascendant': '#FF1493'
+  'Soleil': '#D8CAB8',
+  'Lune': '#D8CAB8',
+  'Mercure': '#D8CAB8',
+  'Vénus': '#D8CAB8',
+  'Mars': '#D8CAB8',
+  'Jupiter': '#D8CAB8',
+  'Saturne': '#D8CAB8',
+  'Uranus': '#D8CAB8',
+  'Neptune': '#D8CAB8',
+  'Pluton': '#D8CAB8',
+  'Ascendant': '#D8CAB8'
 };
 
 export default function ZodiacWheel({ natalChart, className = '' }: ZodiacWheelProps) {

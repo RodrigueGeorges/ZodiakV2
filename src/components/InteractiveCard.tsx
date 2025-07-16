@@ -1,5 +1,6 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { EFFECTS, GRADIENTS } from './constants/theme';
 
 interface InteractiveCardProps {
   children: ReactNode;
@@ -35,7 +36,13 @@ function InteractiveCard({ children, className = '', onClick, tabIndex, 'aria-la
 
   return (
     <motion.div
-      className={`relative bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border border-primary/20 shadow-xl rounded-xl overflow-hidden mobile-optimized text-primary ${className}`}
+      className={`relative bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border border-primary/20 shadow-xl rounded-xl overflow-hidden mobile-optimized text-primary backdrop-blur-lg bg-opacity-60 ${className}`}
+      style={{
+        boxShadow: EFFECTS.halo,
+        background: GRADIENTS.glass,
+        WebkitTapHighlightColor: 'transparent',
+        touchAction: onClick ? 'manipulation' : 'auto',
+      }}
       whileHover={{ scale: onClick && !isMobile ? 1.02 : 1 }}
       whileTap={{ scale: onClick ? 0.98 : 1 }}
       initial={{ opacity: 0, y: 20 }}
@@ -44,10 +51,6 @@ function InteractiveCard({ children, className = '', onClick, tabIndex, 'aria-la
       onClick={onClick}
       tabIndex={tabIndex}
       aria-label={ariaLabel}
-      style={{
-        WebkitTapHighlightColor: 'transparent',
-        touchAction: onClick ? 'manipulation' : 'auto'
-      }}
     >
       <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
       <div className="relative z-10">{children}</div>

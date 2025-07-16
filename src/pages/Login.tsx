@@ -70,11 +70,11 @@ export default function Login() {
             </div>
             <div className="flex justify-center mb-4 gap-4">
               <button
-                className={cn('px-3 py-1 rounded', authMode === 'sms' ? 'bg-primary text-black' : 'bg-white/10 text-white')}
+                className={cn('px-3 py-1 rounded', authMode === 'sms' ? 'bg-gradient-to-r from-primary to-secondary text-cosmic-900' : 'bg-cosmic-900 text-primary border border-primary')}
                 onClick={() => setAuthMode('sms')}
               >SMS</button>
               <button
-                className={cn('px-3 py-1 rounded', authMode === 'email' ? 'bg-primary text-black' : 'bg-white/10 text-white')}
+                className={cn('px-3 py-1 rounded', authMode === 'email' ? 'bg-gradient-to-r from-primary to-secondary text-cosmic-900' : 'bg-cosmic-900 text-primary border border-primary')}
                 onClick={() => setAuthMode('email')}
               >Email</button>
             </div>
@@ -83,35 +83,35 @@ export default function Login() {
             ) : (
               <form onSubmit={handleEmailLogin} className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="login-email">Email</label>
+                  <label className="block text-sm font-medium text-primary mb-1" htmlFor="login-email">Email</label>
                   <input
                     id="login-email"
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                     placeholder="Votre email"
                     required
                     autoComplete="email"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1" htmlFor="login-password">Mot de passe</label>
+                  <label className="block text-sm font-medium text-primary mb-1" htmlFor="login-password">Mot de passe</label>
                   <input
                     id="login-password"
                     type="password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                     placeholder="Votre mot de passe"
                     required
                     autoComplete="current-password"
                   />
                 </div>
-                {error && <div className="text-red-400 text-sm mb-2" role="alert" aria-live="assertive">{error}</div>}
+                {error && <div className="text-primary text-sm mb-2" role="alert" aria-live="assertive">{error}</div>}
                 <button
                   type="submit"
-                  className="w-full py-2 rounded-lg bg-primary text-black font-semibold hover:bg-secondary focus:bg-secondary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none transition-colors"
+                  className="w-full py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-cosmic-900 font-semibold hover:opacity-90 focus:bg-secondary focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none transition-colors"
                   disabled={loading}
                   aria-busy={loading}
                 >
@@ -120,7 +120,7 @@ export default function Login() {
                 <div className="text-center mt-2">
                   <button
                     type="button"
-                    className="text-sm text-blue-400 hover:text-blue-300 underline focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:outline-none"
+                    className="text-sm text-primary hover:text-secondary underline focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                     onClick={() => {
                       if (email) {
                         supabase.auth.resetPasswordForEmail(email, {
@@ -141,7 +141,7 @@ export default function Login() {
               </form>
             )}
             <div className="mt-4 text-center">
-              <span className="text-sm text-gray-400">Pas encore de compte ?{' '}
+              <span className="text-sm text-primary">Pas encore de compte ?{' '}
                 <button type="button" className="underline text-primary" onClick={() => navigate('/register')}>Créer un compte</button>
               </span>
             </div>

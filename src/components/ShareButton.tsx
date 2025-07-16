@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Share2, Copy, Check, Twitter, Facebook, Instagram } from 'lucide-react';
+import { LogIn, Check } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 interface ShareButtonProps {
@@ -45,10 +45,10 @@ export default function ShareButton({ title, content, url, className = '', varia
   };
 
   const shareOptions = [
-    { icon: <Copy className="w-4 h-4" />, label: 'Copier', action: copyToClipboard, color: 'bg-blue-500 hover:bg-blue-600' },
-    { icon: <Twitter className="w-4 h-4" />, label: 'Twitter', action: shareOnTwitter, color: 'bg-sky-500 hover:bg-sky-600' },
-    { icon: <Facebook className="w-4 h-4" />, label: 'Facebook', action: shareOnFacebook, color: 'bg-blue-600 hover:bg-blue-700' },
-    { icon: <Instagram className="w-4 h-4" />, label: 'Instagram', action: shareOnInstagram, color: 'bg-pink-500 hover:bg-pink-600' }
+    { icon: <Check className="w-4 h-4" />, label: 'Copier', action: copyToClipboard, color: '' },
+    { icon: <Check className="w-4 h-4" />, label: 'Twitter', action: shareOnTwitter, color: '' },
+    { icon: <Check className="w-4 h-4" />, label: 'Facebook', action: shareOnFacebook, color: '' },
+    { icon: <Check className="w-4 h-4" />, label: 'Instagram', action: shareOnInstagram, color: '' }
   ];
 
   const variants = {
@@ -58,9 +58,9 @@ export default function ShareButton({ title, content, url, className = '', varia
           onClick={() => setIsOpen(!isOpen)}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-black font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-cosmic-900 font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
         >
-          {copied ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
+          {copied ? <Check className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
           <span>{copied ? 'Copié !' : 'Partager'}</span>
         </motion.button>
 
@@ -83,7 +83,7 @@ export default function ShareButton({ title, content, url, className = '', varia
                       option.action();
                       setIsOpen(false);
                     }}
-                    className={`flex items-center gap-2 p-2 rounded-md text-white transition-colors ${option.color}`}
+                    className={`flex items-center gap-2 p-2 rounded-md text-primary transition-colors bg-gradient-to-r from-primary/10 to-secondary/10`}
                   >
                     {option.icon}
                     <span className="text-sm">{option.label}</span>
@@ -102,7 +102,7 @@ export default function ShareButton({ title, content, url, className = '', varia
         whileTap={{ scale: 0.9 }}
         className={`inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-primary/80 to-secondary/80 text-black text-sm font-medium rounded-md shadow-md ${className}`}
       >
-        {copied ? <Check className="w-3 h-3" /> : <Share2 className="w-3 h-3" />}
+        {copied ? <Check className="w-3 h-3" /> : <LogIn className="w-3 h-3" />}
         <span className="text-xs">{copied ? 'Copié' : 'Partager'}</span>
       </motion.button>
     ),
@@ -113,7 +113,7 @@ export default function ShareButton({ title, content, url, className = '', varia
         whileTap={{ scale: 0.9 }}
         className={`fixed bottom-6 right-6 w-12 h-12 bg-gradient-to-r from-primary to-secondary text-black rounded-full shadow-2xl z-40 flex items-center justify-center ${className}`}
       >
-        <Share2 className="w-5 h-5" />
+        <LogIn className="w-5 h-5" />
       </motion.button>
     )
   };

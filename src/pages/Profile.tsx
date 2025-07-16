@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, CreditCard, Bell, LogOut, Edit2, Check, X, Save } from 'lucide-react';
+import { User, CreditCard, Bell, LogOut, Edit2, Check, X } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../lib/hooks/useAuth.tsx';
 import { supabase } from '../lib/supabase';
@@ -207,10 +207,10 @@ export function Profile() {
       const fileName = `${user?.id || 'user'}_${Date.now()}.${fileExt}`;
       const { data, error } = await supabase.storage.from('avatars').upload(fileName, file, { upsert: true });
       if (error) throw error;
-      const { publicURL } = supabase.storage.from('avatars').getPublicUrl(fileName).data;
-      if (!publicURL) throw new Error('Erreur lors de la récupération de l\'URL');
+      const { publicUrl } = supabase.storage.from('avatars').getPublicUrl(fileName).data;
+      if (!publicUrl) throw new Error('Erreur lors de la récupération de l\'URL');
       // Mettre à jour le profil
-      await supabase.from('profiles').update({ avatar_url: publicURL, updated_at: new Date().toISOString() }).eq('id', user?.id);
+      await supabase.from('profiles').update({ avatar_url: publicUrl, updated_at: new Date().toISOString() }).eq('id', user?.id);
       await refreshProfile();
     } catch (err) {
       setAvatarError(err instanceof Error ? err.message : 'Erreur lors de l\'upload');
@@ -279,8 +279,8 @@ export function Profile() {
       >
         <div className="flex items-center gap-4 flex-1">
           <div className="relative group w-16 h-16">
-            {profile?.avatar_url ? (
-              <img src={profile.avatar_url} alt="Avatar" className="w-16 h-16 rounded-full object-cover border-4 border-cosmic-900 shadow-lg" />
+            {(profile as any)?.avatar_url ? (
+              <img src={(profile as any).avatar_url} alt="Avatar" className="w-16 h-16 rounded-full object-cover border-4 border-cosmic-900 shadow-lg" />
             ) : (
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-3xl font-bold text-cosmic-950 shadow-lg border-4 border-cosmic-900">
                 {initials}
@@ -438,7 +438,7 @@ export function Profile() {
                           </>
                         ) : (
                           <>
-                            <Save className="w-4 h-4" />
+                            <Check className="w-4 h-4" />
                             Sauvegarder
                           </>
                         )}
@@ -546,11 +546,17 @@ export function Profile() {
           {/* Bouton Déconnexion harmonisé */}
           <motion.button 
             onClick={handleLogout}
-            className="w-full px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold shadow-lg hover:from-red-700 hover:to-red-800 transition-all duration-200 flex items-center justify-center gap-2"
+            className="w-full px-6 py-3 bg-gradient-to-r from-primary to-secondary text-cosmic-900 rounded-lg font-semibold shadow-lg hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2 mb-24"
+            style={{
+              boxShadow: '0 0 32px 8px #D8CAB880',
+              background: 'linear-gradient(120deg, #D8CAB8 0%, #E5E1C6 40%, #BFAF80 70%, #fffbe6 100%)',
+              backgroundSize: '200% auto',
+              animation: 'sheen 3s linear infinite',
+            }}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
-            <LogOut className="w-5 h-5" /> 
+            <LogOut className="w-5 h-5 text-cosmic-900" /> 
             Déconnexion
           </motion.button>
         </div>

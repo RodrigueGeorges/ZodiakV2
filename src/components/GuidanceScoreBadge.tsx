@@ -20,7 +20,7 @@ export default function GuidanceScoreBadge({ type, score, className = '' }: Guid
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ scale: 1.05, y: -2 }}
       whileTap={{ scale: 0.95 }}
-      className={`inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r ${colorClass} shadow-lg border border-white/20 ${className}`}
+      className={`inline-flex items-center gap-2 px-3 py-2 rounded-full bg-gradient-to-r from-primary to-secondary shadow-lg border border-white/20 ${className}`}
     >
       <div className="flex items-center gap-1 text-primary font-cinzel">
         <span className="text-lg">{config.icon}</span>

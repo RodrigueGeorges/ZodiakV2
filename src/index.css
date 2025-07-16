@@ -217,6 +217,16 @@ a {
   }
 }
 
+@keyframes sheen {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
 .animate-fade-in {
   animation: fade-in 0.6s ease-out;
 }

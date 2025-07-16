@@ -106,13 +106,13 @@ export default function Home() {
 
             {/* BOUTON PRINCIPAL ACCESSIBLE */}
             <motion.button
-              className="px-8 py-3 bg-primary text-black rounded-lg font-bold text-lg shadow-lg hover:bg-secondary transition relative flex items-center gap-2 mx-auto mb-8 z-20 no-rotate"
+              className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-cosmic-900 rounded-lg font-bold text-lg shadow-lg hover:opacity-90 transition relative flex items-center gap-2 mx-auto mb-8 z-20 no-rotate"
               onClick={() => setShowModal(true)}
               role="button"
               aria-label="Commencez votre voyage astral"
               tabIndex={0}
             >
-              <Sparkle className="w-6 h-6 text-yellow-300" aria-hidden="true" />
+              <Sparkle className="w-6 h-6 text-primary" aria-hidden="true" />
               Commencez votre voyage astral
             </motion.button>
 
@@ -143,12 +143,12 @@ export default function Home() {
                     </h2>
                     <div className="flex justify-center mb-4 gap-4">
                       <button
-                        className={cn('px-3 py-1 rounded', authMode === 'sms' ? 'bg-primary text-black' : 'bg-white/10 text-white')}
+                        className={cn('px-3 py-1 rounded', authMode === 'sms' ? 'bg-gradient-to-r from-primary to-secondary text-cosmic-900' : 'bg-cosmic-900 text-primary border border-primary')}
                         onClick={() => setAuthMode('sms')}
                         aria-label="Authentification par SMS"
                       >SMS</button>
                       <button
-                        className={cn('px-3 py-1 rounded', authMode === 'email' ? 'bg-primary text-black' : 'bg-white/10 text-white')}
+                        className={cn('px-3 py-1 rounded', authMode === 'email' ? 'bg-gradient-to-r from-primary to-secondary text-cosmic-900' : 'bg-cosmic-900 text-primary border border-primary')}
                         onClick={() => setAuthMode('email')}
                         aria-label="Authentification par Email"
                       >Email</button>
@@ -206,7 +206,7 @@ export default function Home() {
                       </form>
                     )}
                     <div className="mt-4 md:mt-6 text-center">
-                      <p className="text-sm md:text-base text-gray-400">
+                      <p className="text-sm md:text-base text-primary">
                         Pas encore de compte ?{' '}
                         <Link 
                           to="/register" 
@@ -229,7 +229,7 @@ export default function Home() {
               className="relative mb-8 md:mb-12"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 blur-xl opacity-50" />
-              <div className="relative bg-white/5 backdrop-blur-lg rounded-full py-2 md:py-2 px-4 md:px-6 xl:px-10 2xl:px-14 inline-flex items-center gap-2 md:gap-3 border border-white/10 shadow-2xl">
+              <div className="relative bg-gradient-to-r from-primary/10 to-secondary/10 rounded-full py-2 md:py-2 px-4 md:px-6 xl:px-10 2xl:px-14 inline-flex items-center gap-2 md:gap-3 border border-primary/20 shadow-2xl">
                 <Sparkle className="w-4 h-4 md:w-5 md:h-5 text-primary animate-pulse" aria-hidden="true" />
                 <span className="text-base md:text-lg xl:text-xl 2xl:text-2xl font-cinzel font-semibold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
                   1 mois d'essai gratuit
@@ -282,7 +282,7 @@ export default function Home() {
                       <h3 className="text-lg md:text-xl font-cinzel font-semibold text-primary mb-2">
                         {feature.title}
                       </h3>
-                      <p className="text-sm md:text-base text-gray-300">{feature.description}</p>
+                      <p className="text-sm md:text-base text-primary">{feature.description}</p>
                     </div>
                     <motion.div
                       className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100"
@@ -290,7 +290,7 @@ export default function Home() {
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <Sparkle className="w-5 h-5 text-yellow-300 animate-float" aria-hidden="true" />
+                      <Sparkle className="w-5 h-5 text-primary animate-float" aria-hidden="true" />
                     </motion.div>
                   </InteractiveCard>
                 </motion.div>

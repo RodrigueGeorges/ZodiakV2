@@ -28,11 +28,11 @@ function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-gray-900/80 backdrop-blur-lg border-b border-gray-700">
+    <header className="sticky top-0 z-30 bg-cosmic-900/80 backdrop-blur-lg border-b border-primary">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-4">
           <Logo className="w-8 h-8" />
-          <h1 className="text-lg font-semibold text-white">Zodiak</h1>
+          <h1 className="text-lg font-semibold text-primary">Zodiak</h1>
         </div>
         
         <nav className="hidden md:flex items-center gap-1">
@@ -44,8 +44,8 @@ function Header() {
                 onClick={() => handleTabChange(tab.key)}
                 className={cn(
                   'px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                  'text-gray-300 hover:text-white',
-                  isActive && 'text-[#F5CBA7] bg-[#F5CBA7]/10'
+                  'text-primary hover:text-primary/80',
+                  isActive && 'bg-gradient-to-r from-primary/10 to-secondary/10 text-primary'
                 )}
               >
                 {tab.label}

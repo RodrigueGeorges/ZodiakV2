@@ -166,44 +166,44 @@ export default function RegisterComplete() {
               </div>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Nom complet</label>
+                  <label className="block text-sm font-medium text-primary mb-1">Nom complet</label>
                   <input
                     type="text"
                     value={form.name}
                     onChange={e => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
                     placeholder="Votre nom"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Numéro de téléphone</label>
+                  <label className="block text-sm font-medium text-primary mb-1">Numéro de téléphone</label>
                   <input
                     type="tel"
                     value={form.phone}
                     onChange={e => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
                     placeholder="+33612345678"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Date de naissance</label>
+                  <label className="block text-sm font-medium text-primary mb-1">Date de naissance</label>
                   <input
                     type="date"
                     value={form.birthDate}
                     onChange={e => setForm({ ...form, birthDate: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Heure de naissance</label>
+                  <label className="block text-sm font-medium text-primary mb-1">Heure de naissance</label>
                   <input
                     type="time"
                     value={form.birthTime}
                     onChange={e => setForm({ ...form, birthTime: e.target.value, unknownTime: false })}
-                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
                     placeholder="HH:mm"
                     disabled={form.unknownTime}
                   />
@@ -215,11 +215,11 @@ export default function RegisterComplete() {
                       onChange={e => setForm({ ...form, unknownTime: e.target.checked, birthTime: '' })}
                       className="mr-2"
                     />
-                    <label htmlFor="unknownTime" className="text-sm text-gray-400">Je ne connais pas l'heure</label>
+                    <label htmlFor="unknownTime" className="text-sm text-primary">Je ne connais pas l'heure</label>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Lieu de naissance</label>
+                  <label className="block text-sm font-medium text-primary mb-1">Lieu de naissance</label>
                   <PlaceAutocomplete
                     value={form.birthPlace}
                     onChange={(value, place) => setForm({ ...form, birthPlace: value, birthPlaceObj: place })}
@@ -228,21 +228,21 @@ export default function RegisterComplete() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Heure d'envoi de la guidance</label>
+                  <label className="block text-sm font-medium text-primary mb-1">Heure d'envoi de la guidance</label>
                   <input
                     type="time"
                     value={form.guidanceTime}
                     onChange={e => setForm({ ...form, guidanceTime: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
                     required
                   />
-                  <span className="text-xs text-gray-400">Par défaut : 08:00</span>
+                  <span className="text-xs text-primary">Par défaut : 08:00</span>
                 </div>
-                {error && <div className="text-red-400 text-sm mb-2">{error}</div>}
-                {success && <div className="text-green-400 text-sm mb-2">{success}</div>}
+                {error && <div className="text-primary text-sm mb-2">{error}</div>}
+                {success && <div className="text-primary text-sm mb-2">{success}</div>}
                 <button
                   type="submit"
-                  className="w-full py-2 rounded-lg bg-primary text-black font-semibold hover:bg-secondary transition-colors"
+                  className="w-full py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-cosmic-900 font-semibold hover:opacity-90 transition-colors"
                   disabled={loading || !isFormValid()}
                 >
                   Compléter le profil

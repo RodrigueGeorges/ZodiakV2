@@ -30,7 +30,7 @@ function GuidanceMeter({ label, score, icon, colorClass }: GuidanceMeterProps) {
           />
           {/* Progress circle */}
           <motion.circle
-            className={colorClass}
+            className="text-primary"
             strokeWidth="8"
             strokeDasharray={circumference}
             strokeDashoffset={offset}

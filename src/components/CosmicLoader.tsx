@@ -6,19 +6,19 @@ function CosmicLoader() {
       <div className="relative w-24 h-24">
         {/* Anneau cosmique */}
         <motion.div
-          className="absolute inset-0 rounded-full border-4 border-[#F5CBA7]/30"
+          className="absolute inset-0 rounded-full border-4 border-[#D8CAB8]/30"
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
         />
         {/* Anneau secondaire */}
         <motion.div
-          className="absolute inset-2 rounded-full border-2 border-[#D4A373]/30"
+          className="absolute inset-2 rounded-full border-2 border-[#BFAF80]/30"
           animate={{ rotate: -360 }}
           transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
         />
         {/* Planète centrale */}
         <motion.div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-[#F5CBA7] to-[#D4A373] shadow-lg"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-[#D8CAB8] to-[#BFAF80] shadow-lg"
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
         />

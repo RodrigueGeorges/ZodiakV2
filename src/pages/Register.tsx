@@ -77,11 +77,11 @@ export default function Register() {
             </div>
             <div className="flex justify-center mb-4 gap-4">
               <button
-                className={cn('px-3 py-1 rounded', authMode === 'sms' ? 'bg-primary text-black' : 'bg-white/10 text-white')}
+                className={cn('px-3 py-1 rounded', authMode === 'sms' ? 'bg-gradient-to-r from-primary to-secondary text-cosmic-900' : 'bg-cosmic-900 text-primary border border-primary')}
                 onClick={() => setAuthMode('sms')}
               >SMS</button>
               <button
-                className={cn('px-3 py-1 rounded', authMode === 'email' ? 'bg-primary text-black' : 'bg-white/10 text-white')}
+                className={cn('px-3 py-1 rounded', authMode === 'email' ? 'bg-gradient-to-r from-primary to-secondary text-cosmic-900' : 'bg-cosmic-900 text-primary border border-primary')}
                 onClick={() => setAuthMode('email')}
               >Email</button>
             </div>
@@ -90,39 +90,39 @@ export default function Register() {
             ) : (
               <form onSubmit={handleEmailSignUp} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-primary mb-1">Email</label>
                   <input
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
                     placeholder="Votre email"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-1">Mot de passe</label>
+                  <label className="block text-sm font-medium text-primary mb-1">Mot de passe</label>
                   <input
                     type="password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50"
+                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
                     placeholder="Votre mot de passe"
                     required
                   />
                 </div>
-                {emailError && <div className="text-red-400 text-sm mb-2">{emailError}</div>}
-                {emailInfo && <div className="text-green-400 text-sm mb-2">{emailInfo}</div>}
+                {emailError && <div className="text-primary text-sm mb-2">{emailError}</div>}
+                {emailInfo && <div className="text-primary text-sm mb-2">{emailInfo}</div>}
                 <button
                   type="submit"
-                  className="w-full py-2 rounded-lg bg-primary text-black font-semibold hover:bg-secondary transition-colors"
+                  className="w-full py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-cosmic-900 font-semibold hover:opacity-90 transition-colors"
                 >
                   Créer un compte
                 </button>
               </form>
             )}
             <div className="mt-4 text-center">
-              <span className="text-sm text-gray-400">Déjà un compte ?{' '}
+              <span className="text-sm text-primary">Déjà un compte ?{' '}
                 <button type="button" className="underline text-primary" onClick={() => navigate('/login')}>Se connecter</button>
               </span>
             </div>

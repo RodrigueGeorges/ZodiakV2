@@ -1,12 +1,12 @@
 // Constantes de thème pour l'application
 export const COLORS = {
-  primary: '#F5CBA7',
-  secondary: '#D4A373',
+  primary: '#D8CAB8', // Silver Gold, subtil et lunaire
+  secondary: '#BFAF80', // Stardust Gold, pour un contraste doux
   background: '#0B1120',
   backgroundGradient: '#1e293b',
   text: {
-    primary: '#F5CBA7',
-    secondary: '#D4A373',
+    primary: '#D8CAB8', // Silver Gold pour le texte principal
+    secondary: '#BFAF80', // Stardust Gold pour le texte secondaire
   }
 } as const;
 
@@ -61,3 +61,25 @@ export const KEYFRAMES = {
     }
   `,
 } as const;
+
+export const GRADIENTS = {
+  lunarSheen: 'linear-gradient(120deg, #D8CAB8 0%, #E5E1C6 40%, #BFAF80 70%, #fffbe6 100%)',
+  lunarSheenAnimated: 'linear-gradient(120deg, #D8CAB8 0%, #E5E1C6 40%, #BFAF80 70%, #fffbe6 100%)', // Utilisé avec animation
+  glass: 'rgba(24, 28, 40, 0.6)',
+};
+
+export const EFFECTS = {
+  halo: '0 0 32px 8px #D8CAB880', // Halo doux Silver Gold
+  sheenAnimation: `
+    @keyframes sheen {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+  `,
+  twinkle: `
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+  `,
+};

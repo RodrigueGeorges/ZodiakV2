@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Logo from './Logo';
 import StarryBackground from './StarryBackground';
+import { GRADIENTS, EFFECTS } from './constants/theme';
 
 interface PageLayoutProps {
   title: string;
@@ -49,9 +50,21 @@ export default function PageLayout({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {showLogo && <Logo className="page-header-logo" />}
-          <h1 className="page-title">{title}</h1>
-          {subtitle && <p className="page-subtitle">{subtitle}</p>}
+          {showLogo && <Logo className="page-header-logo" style={{ filter: 'drop-shadow(' + EFFECTS.halo + ')' }} />}
+          <h1
+            className="page-title text-primary bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text"
+            style={{
+              background: GRADIENTS.lunarSheenAnimated,
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              color: 'transparent',
+              animation: 'sheen 3s linear infinite',
+              backgroundSize: '200% auto',
+            }}
+          >
+            {title}
+          </h1>
+          {subtitle && <p className="page-subtitle text-primary/80">{subtitle}</p>}
         </motion.div>
 
         {/* Contenu de la page */}

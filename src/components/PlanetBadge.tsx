@@ -28,17 +28,17 @@ const planetIcons: { [key: string]: JSX.Element } = {
 };
 
 const planetColors: { [key: string]: string } = {
-  'Soleil': 'from-yellow-500 to-yellow-600 text-yellow-100',
-  'Lune': 'from-slate-400 to-slate-500 text-slate-100',
-  'Mercure': 'from-green-500 to-green-600 text-green-100',
-  'Vénus': 'from-pink-500 to-pink-600 text-pink-100',
-  'Mars': 'from-red-500 to-red-600 text-red-100',
-  'Jupiter': 'from-orange-500 to-orange-600 text-orange-100',
-  'Saturne': 'from-indigo-500 to-indigo-600 text-indigo-100',
-  'Uranus': 'from-cyan-500 to-cyan-600 text-cyan-100',
-  'Neptune': 'from-blue-500 to-blue-600 text-blue-100',
-  'Pluton': 'from-purple-500 to-purple-600 text-purple-100',
-  'Ascendant': 'from-fuchsia-500 to-fuchsia-600 text-fuchsia-100'
+  'Soleil': 'from-primary to-secondary text-primary',
+  'Lune': 'from-primary to-secondary text-primary',
+  'Mercure': 'from-primary to-secondary text-primary',
+  'Vénus': 'from-primary to-secondary text-primary',
+  'Mars': 'from-primary to-secondary text-primary',
+  'Jupiter': 'from-primary to-secondary text-primary',
+  'Saturne': 'from-primary to-secondary text-primary',
+  'Uranus': 'from-primary to-secondary text-primary',
+  'Neptune': 'from-primary to-secondary text-primary',
+  'Pluton': 'from-primary to-secondary text-primary',
+  'Ascendant': 'from-primary to-secondary text-primary'
 };
 
 const zodiacSymbols: { [key: string]: string } = {
