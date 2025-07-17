@@ -96,12 +96,12 @@ export default function Home() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="mb-4 md:mb-6"
+              className="mb-4 md:mb-6 flex flex-col items-center justify-center md:flex-row md:gap-8 md:mb-10"
             >
-              <Logo />
-              <p className="text-2xl md:text-3xl font-cinzel italic text-center mt-4 mb-6 relative z-30 bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-[0_0_12px_#F5CBA7]">
-                L'astrologie qui éclaire votre quotidien.
-              </p>
+              <Logo size="lg" className="drop-shadow-glow" aria-label="Logo Zodiak" />
+              <span className="mt-4 md:mt-0 md:ml-2 text-4xl md:text-6xl font-cinzel font-bold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-[0_0_18px_#F5CBA7] select-none" aria-label="Zodiak">
+                Zodiak
+              </span>
             </motion.div>
 
             {/* BOUTON PRINCIPAL ACCESSIBLE */}
