@@ -88,15 +88,13 @@ export default function Home() {
     <div className="min-h-screen overflow-hidden relative">
       <StarryBackground />
 
-      {/* HEADER : Logo + nom en haut à gauche */}
-      <header className="w-full flex items-center justify-between px-4 md:px-8 xl:px-12 2xl:px-24 pt-6 md:pt-8 absolute top-0 left-0 z-30">
-        <div className="flex items-center gap-3">
-          <Logo size="md" className="drop-shadow-glow" aria-label="Logo Zodiak" />
-          <span className="text-2xl md:text-3xl font-cinzel font-bold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-[0_0_12px_#F5CBA7] select-none" aria-label="Zodiak">
-            Zodiak
-          </span>
-        </div>
-      </header>
+      {/* LOGO + NOM EN HAUT À GAUCHE, SANS BARRE */}
+      <div className="absolute top-8 left-8 z-30 flex items-center gap-10 select-none">
+        <Logo size="lg" className="drop-shadow-glow" aria-label="Logo Zodiak" />
+        <span className="text-5xl md:text-6xl font-cinzel font-bold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-[0_0_24px_#F5CBA7]" aria-label="Zodiak">
+          Zodiak
+        </span>
+      </div>
 
       {/* TAGLINE CENTRÉE EN HAUT */}
       <div className="w-full flex justify-center pt-24 md:pt-28 xl:pt-32">
