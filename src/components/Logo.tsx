@@ -73,7 +73,7 @@ export function Logo({ size = 'md', className = '', style }: LogoProps) {
               }}
             >
               <Icon />
-            </div>
+        </div>
           );
         })}
       </div>

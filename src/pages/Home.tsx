@@ -100,7 +100,7 @@ export default function Home() {
 
       {/* TAGLINE CENTRÉE EN HAUT */}
       <div className="w-full flex justify-center pt-24 md:pt-28 xl:pt-32">
-        <h1 className="text-center text-xl md:text-2xl xl:text-3xl font-cinzel font-semibold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-glow max-w-2xl mx-auto">
+        <h1 className="text-center text-xl md:text-2xl xl:text-3xl font-cinzel font-semibold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-glow max-w-2xl mx-auto cosmic-glow">
           Votre guide cosmique quotidien
         </h1>
       </div>
@@ -110,11 +110,13 @@ export default function Home() {
           <div className="text-center mb-8 md:mb-12 xl:mb-16">
             {/* BOUTON PRINCIPAL ACCESSIBLE */}
             <motion.button
-              className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-cosmic-900 rounded-lg font-bold text-lg shadow-lg hover:opacity-90 transition relative flex items-center gap-2 mx-auto mb-8 z-20 no-rotate"
+              className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-cosmic-900 rounded-lg font-bold text-lg shadow-lg hover:opacity-90 transition relative flex items-center gap-2 mx-auto mb-8 z-20 no-rotate cosmic-btn-premium"
               onClick={() => setShowModal(true)}
               role="button"
               aria-label="Commencez votre voyage astral"
               tabIndex={0}
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.98 }}
             >
               <Sparkle className="w-6 h-6 text-primary" aria-hidden="true" />
               Commencez votre voyage astral

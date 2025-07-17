@@ -78,3 +78,8 @@
 .animate-orbit-fast {
   animation: orbit 8s linear infinite;
 }
+
+.cosmic-glow {
+  text-shadow: 0 0 12px #F5CBA7, 0 0 32px #fffbe6, 0 0 2px #fffbe6;
+  filter: drop-shadow(0 0 8px #F5CBA7);
+}
