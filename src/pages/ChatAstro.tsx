@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PageLayout from '../components/PageLayout';
 import { motion } from 'framer-motion';
 import { Sparkle, Send } from 'lucide-react';
@@ -20,33 +20,66 @@ export default function ChatAstro() {
   const firstName = profile?.name?.split(' ')[0] || 'Utilisateur';
   const natalChart = profile?.natal_chart ? (typeof profile.natal_chart === 'string' ? JSON.parse(profile.natal_chart) : profile.natal_chart) : null;
 
-  const [messages, setMessages] = useState([
-    { from: 'bot', text: 'Bienvenue dans le Guide Astral ! Pose-moi une question sur ton thème, ta guidance ou ta vie.' }
-  ]);
+  // Mémoire conversationnelle
+  const [conversationId, setConversationId] = useState<string | null>(() => localStorage.getItem('astro_conversation_id'));
+  const [messages, setMessages] = useState<any[]>(() => {
+    const saved = localStorage.getItem('astro_conversation_history');
+    return saved ? JSON.parse(saved) : [
+      { from: 'bot', text: 'Bienvenue dans le Guide Astral ! Pose-moi une question sur ton thème, ta guidance ou ta vie.' }
+    ];
+  });
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const chatRef = useRef<HTMLDivElement>(null);
+
+  // Scroll auto
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [messages, loading]);
+
+  // Persistance locale
+  useEffect(() => {
+    localStorage.setItem('astro_conversation_history', JSON.stringify(messages));
+    if (conversationId) localStorage.setItem('astro_conversation_id', conversationId);
+  }, [messages, conversationId]);
+
+  // Reset si changement d'utilisateur
+  useEffect(() => {
+    setConversationId(null);
+    setMessages([{ from: 'bot', text: 'Bienvenue dans le Guide Astral ! Pose-moi une question sur ton thème, ta guidance ou ta vie.' }]);
+    localStorage.removeItem('astro_conversation_id');
+    localStorage.removeItem('astro_conversation_history');
+  }, [user?.id]);
 
   const handleSend = async (suggestion?: string) => {
     const question = suggestion || input;
-    if (!question.trim()) return;
-    setMessages([...messages, { from: 'user', text: question }]);
+    if (!question.trim() || loading) return;
+    setMessages(msgs => [...msgs, { from: 'user', text: question }]);
     setInput('');
     setLoading(true);
-    if (!natalChart) {
-      setMessages(msgs => [...msgs, { from: 'bot', text: 'Pour une réponse personnalisée, complète d\'abord ton profil avec ta date, heure et lieu de naissance.' }]);
-      setLoading(false);
-      return;
-    }
     try {
       const res = await fetch('/.netlify/functions/astro-chatbot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question, firstName, natalChart })
+        body: JSON.stringify({
+          question,
+          firstName,
+          natalChart,
+          userId: user?.id,
+          conversationId,
+        })
       });
       const data = await res.json();
-      setMessages(msgs => [...msgs, { from: 'bot', text: data.answer || 'Je suis désolé, je n\'ai pas pu générer de réponse pour le moment.' }]);
+      if (data.answer) {
+        setConversationId(data.conversationId);
+        setMessages(msgs => [...msgs, { from: 'bot', text: data.answer }]);
+      } else {
+        setMessages(msgs => [...msgs, { from: 'bot', text: "Je n'ai pas pu générer de réponse pour le moment." }]);
+      }
     } catch (e) {
-      setMessages(msgs => [...msgs, { from: 'bot', text: 'Erreur lors de la connexion au guide astral. Réessaie plus tard.' }]);
+      setMessages(msgs => [...msgs, { from: 'bot', text: "Erreur lors de la connexion au guide astral. Réessaie plus tard." }]);
     }
     setLoading(false);
   };
@@ -54,7 +87,7 @@ export default function ChatAstro() {
   return (
     <PageLayout title="Guide Astral" subtitle="Pose tes questions à ton guide astrologique personnel" maxWidth="2xl">
       <div className="flex flex-col flex-1 bg-cosmic-900/80 rounded-2xl shadow-xl border border-primary/20 p-4 overflow-y-auto pb-24 md:pb-0">
-        <div className="flex-1 overflow-y-auto space-y-4 pb-2">
+        <div ref={chatRef} className="flex-1 overflow-y-auto space-y-4 pb-2">
           {messages.map((msg, i) => (
             <motion.div
               key={i}

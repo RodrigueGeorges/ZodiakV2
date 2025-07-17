@@ -137,9 +137,14 @@ export function Profile() {
   const handleLogout = async () => {
     try {
       await signOut();
-      navigate('/');
     } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
+      if (!error || error.status !== 403) {
+        console.error('Erreur lors de la déconnexion:', error);
+      }
+    } finally {
+      localStorage.clear();
+      navigate('/');
+      window.location.reload();
     }
   };
 
