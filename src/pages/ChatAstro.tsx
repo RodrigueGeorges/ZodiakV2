@@ -53,7 +53,7 @@ export default function ChatAstro() {
 
   return (
     <PageLayout title="Guide Astral" subtitle="Pose tes questions à ton guide astrologique personnel" maxWidth="2xl">
-      <div className="flex flex-col h-[60vh] md:h-[70vh] bg-cosmic-900/80 rounded-2xl shadow-xl border border-primary/20 p-4 overflow-hidden">
+      <div className="flex flex-col h-[60vh] md:h-[70vh] bg-cosmic-900/80 rounded-2xl shadow-xl border border-primary/20 p-4 overflow-hidden pb-24 md:pb-0">
         <div className="flex-1 overflow-y-auto space-y-4 pb-2">
           {messages.map((msg, i) => (
             <motion.div

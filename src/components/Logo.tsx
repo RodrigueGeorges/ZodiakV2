@@ -48,34 +48,18 @@ export function Logo({ size = 'md', className = '', style }: LogoProps) {
     <div className={`relative flex items-center justify-center ${sizeMap[size]} ${className}`} style={style}>
       {/* Outer cosmic ring */}
       <div className={`absolute ${ringMap[size]} rounded-full border-2 border-primary/30 animate-spin-slow`}>
-        {/* Orbital stars and sparkles */}
-        {[
-          {icon: Star, radius: '40%', duration: 'animate-orbit-slow', delay: '0s', angle: 0},
-          {icon: Star, radius: '40%', duration: 'animate-orbit-medium', delay: '2s', angle: 90},
-          {icon: Star, radius: '40%', duration: 'animate-orbit-fast', delay: '4s', angle: 180},
-          {icon: Star, radius: '40%', duration: 'animate-orbit-medium', delay: '6s', angle: 270},
-          {icon: Sparkle, radius: '55%', duration: 'animate-orbit-fast', delay: '1s', angle: 45},
-          {icon: Sparkle, radius: '55%', duration: 'animate-orbit-slow', delay: '3s', angle: 135},
-          {icon: Sparkle, radius: '55%', duration: 'animate-orbit-medium', delay: '5s', angle: 225},
-          {icon: Sparkle, radius: '55%', duration: 'animate-orbit-fast', delay: '7s', angle: 315},
-        ].map((item, i) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={i}
-              className={`absolute ${sparkleMap[size]} text-primary ${item.duration}`}
-              style={{
-                '--orbit-radius': item.radius,
-                top: '50%',
-                left: '50%',
-                transform: `rotate(${item.angle}deg) translateX(${item.radius})`,
-                animationDelay: item.delay,
-              }}
-            >
-              <Icon />
+        <div className="absolute -top-1 left-1/2 -translate-x-1/2">
+          <Star className={`${sparkleMap[size]} text-primary animate-cosmic-pulse`} />
         </div>
-          );
-        })}
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2">
+          <Star className={`${sparkleMap[size]} text-primary animate-cosmic-pulse`} />
+        </div>
+        <div className="absolute -left-1 top-1/2 -translate-y-1/2">
+          <Star className={`${sparkleMap[size]} text-primary animate-cosmic-pulse`} />
+        </div>
+        <div className="absolute -right-1 top-1/2 -translate-y-1/2">
+          <Star className={`${sparkleMap[size]} text-primary animate-cosmic-pulse`} />
+        </div>
       </div>
 
       {/* Middle cosmic ring */}
@@ -96,10 +80,33 @@ export function Logo({ size = 'md', className = '', style }: LogoProps) {
       </div>
 
       {/* Floating sparkles */}
-      {/* SUPPRIMÉ : sparkles flottants, remplacés par orbite */}
+      <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+        <Sparkle className={`${sparkleMap[size]} text-primary animate-float`} />
+      </div>
+      <div className="absolute -bottom-4 left-1/2 -translate-x-1/2">
+        <Sparkle className={`${sparkleMap[size]} text-primary animate-float-delayed`} />
+      </div>
+      <div className="absolute top-1/2 -left-4 -translate-y-1/2">
+        <Sparkle className={`${sparkleMap[size]} text-primary animate-float-reverse`} />
+      </div>
+      <div className="absolute top-1/2 -right-4 -translate-y-1/2">
+        <Sparkle className={`${sparkleMap[size]} text-primary animate-float-reverse-delayed`} />
+      </div>
 
       {/* Additional decorative stars */}
-      {/* SUPPRIMÉ : étoiles décoratives aléatoires, tout est en orbite maintenant */}
+      <div className="absolute inset-0">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-primary rounded-full animate-twinkle"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2}s`
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 }
