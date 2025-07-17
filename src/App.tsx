@@ -15,6 +15,7 @@ import { useAuth } from './lib/hooks/useAuth';
 import PrivateRoute from './components/PrivateRoute';
 import GuidanceAccess from './pages/GuidanceAccess';
 import GuidanceShortRedirect from './pages/GuidanceShortRedirect';
+import ChatAstro from './pages/ChatAstro';
 import './index.css';
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
         <Route path="/test" element={<Test />} />
         <Route path="/guidance/access" element={<GuidanceAccess />} />
         <Route path="/g/:short" element={<GuidanceShortRedirect />} />
+        <Route path="/guide-astral" element={<ChatAstro />} />
       </Routes>
       {user && <BottomNavBar />}
     </>
