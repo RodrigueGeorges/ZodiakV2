@@ -25,7 +25,7 @@ export const handler: Handler = async (event) => {
 
     // 1. Charger ou créer la conversation
     let convId = conversationId;
-    let messages = [];
+    let messages: Array<{ role: string; content: string }> = [];
     let preferences = {};
     if (convId) {
       const { data, error } = await supabase
@@ -34,7 +34,7 @@ export const handler: Handler = async (event) => {
         .eq('id', convId)
         .single();
       if (data) {
-        messages = data.messages || [];
+        messages = (data.messages as Array<{ role: string; content: string }>) || [];
         preferences = data.preferences || {};
       }
     } else {
@@ -51,10 +51,27 @@ export const handler: Handler = async (event) => {
     messages.push({ role: 'user', content: question });
 
     // 3. Préparer le contexte pour OpenAI (limité aux 12 derniers messages)
-    const context = messages.slice(-12);
-    // Prompt système personnalisé
-    const systemPrompt = `Tu es un astrologue bienveillant et moderne. Voici le thème natal de l'utilisateur :\n${JSON.stringify(natalChart, null, 2)}\nPrénom : ${firstName}.\nPréférences : ${JSON.stringify(preferences)}.\nSois personnalisé, clair, inspirant, et propose un mantra ou une action concrète si possible.`;
-    const openaiMessages = [
+    const context: Array<{ role: string; content: string }> = messages.slice(-12);
+    // Prompt système premium et adaptatif
+    const systemPrompt = `
+Tu es un astrologue humain, bienveillant, à l'écoute, et expert. 
+Ton rôle :
+- Adapter tes réponses au style, au ton et au niveau de détail de l'utilisateur.
+- Relancer la discussion si la question est vague ou appelle un suivi (ex : "Veux-tu approfondir ce point ?", "Souhaites-tu un conseil plus pratique ?").
+- Poser des questions ouvertes si pertinent, pour encourager l'utilisateur à s'exprimer.
+- Faire référence à la conversation passée si c'est utile (ex : "Comme tu l'as évoqué précédemment...").
+- Garder un ton chaleureux, empathique, jamais robotique.
+- Proposer un mantra ou une action concrète si possible.
+
+Voici le thème natal de l'utilisateur :
+${JSON.stringify(natalChart, null, 2)}
+Prénom : ${firstName}.
+Préférences détectées : ${JSON.stringify(preferences)}.
+Historique de la conversation :
+${context.map(m => `${m.role === 'user' ? 'Utilisateur' : 'Astrologue'} : ${m.content}`).join('\n')}
+
+Commence ta réponse directement, sans rappeler que tu es une IA. Sois naturel, humain, et adapte-toi à la discussion.`;
+    const openaiMessages: Array<{ role: string; content: string }> = [
       { role: 'system', content: systemPrompt },
       ...context
     ];
