@@ -17,10 +17,22 @@ const handler: Handler = async () => {
     .eq('daily_guidance_sms_enabled', true)
     .in('subscription_status', ['active', 'trial']);
 
-  if (error) return { statusCode: 500, body: error.message };
+  if (error) {
+    console.error('❌ Erreur récupération profils:', error.message);
+    return { statusCode: 500, body: error.message };
+  }
+
+  console.log(`📋 Profils éligibles trouvés: ${profiles?.length || 0}`);
 
   for (const profile of profiles || []) {
-    if (!profile.phone || !profile.natal_chart) continue;
+    if (!profile.phone) {
+      console.log(`⏭️ Profil ${profile.id} skippé: pas de téléphone.`);
+      continue;
+    }
+    if (!profile.natal_chart) {
+      console.log(`⏭️ Profil ${profile.id} skippé: pas de natal_chart.`);
+      continue;
+    }
 
     // Vérifier si la guidance existe déjà
     const { data: existing } = await supabase
@@ -30,14 +42,18 @@ const handler: Handler = async () => {
       .eq('date', today)
       .maybeSingle();
 
-    if (existing) continue;
+    if (existing) {
+      console.log(`⏭️ Profil ${profile.id} skippé: guidance déjà existante pour ${today}.`);
+      continue;
+    }
 
     // Générer la guidance
     try {
+      console.log(`🚀 Génération guidance pour ${profile.id} (${profile.name})...`);
       const transits = await calculateDailyTransits(today);
       const guidance = await generateGuidanceWithOpenAI(profile.natal_chart, transits, today);
 
-      await supabase.from('daily_guidance').upsert({
+      const { error: upsertError } = await supabase.from('daily_guidance').upsert({
         user_id: profile.id,
         date: today,
         summary: guidance.summary,
@@ -46,7 +62,11 @@ const handler: Handler = async () => {
         energy: guidance.energy,
         created_at: new Date().toISOString()
       });
-      console.log(`✅ Guidance générée pour ${profile.id}`);
+      if (upsertError) {
+        console.error(`❌ Erreur upsert guidance pour ${profile.id}:`, upsertError.message);
+      } else {
+        console.log(`✅ Guidance générée et enregistrée pour ${profile.id}`);
+      }
     } catch (e) {
       console.error(`❌ Erreur génération guidance pour ${profile.id}:`, e);
     }
