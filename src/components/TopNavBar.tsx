@@ -1,6 +1,6 @@
 import { useAuth } from '../lib/hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { User, Compass, MessageSquare } from 'lucide-react';
+import { User, Compass, MessageSquare, Sparkle } from 'lucide-react';
 import { cn } from '../lib/utils';
 
 function TopNavBar() {
@@ -13,6 +13,7 @@ function TopNavBar() {
     { label: 'Profil', icon: <User />, path: '/profile' },
     { label: 'Natal', icon: <Compass />, path: '/natal' },
     { label: 'Guidance', icon: <MessageSquare />, path: '/guidance' },
+    { label: 'Guide Astral', icon: <Sparkle />, path: '/guide-astral' },
   ];
 
   return (
