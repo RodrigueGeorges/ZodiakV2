@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { User, Compass, MessageSquare } from 'lucide-react';
+import { User, Compass, MessageSquare, Sparkle } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../lib/hooks/useAuth';
 
@@ -15,6 +15,7 @@ function BottomNavBar() {
     { path: '/profile', icon: User, label: 'Profil' },
     { path: '/natal', icon: Compass, label: 'Natal' },
     { path: '/guidance', icon: MessageSquare, label: 'Guidance' },
+    { path: '/guide-astral', icon: Sparkle, label: 'Guide Astral' },
   ];
 
   return (

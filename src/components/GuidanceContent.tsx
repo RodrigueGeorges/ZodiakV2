@@ -70,15 +70,17 @@ function GuidanceContent(): JSX.Element {
 
   if (!guidance) {
     return (
-      <EmptyState
-        type="guidance"
-        title="Guidance Non Disponible"
-        message="Votre guidance quotidienne sera bientôt disponible. Les astres préparent quelque chose de spécial pour vous."
-        action={{
-          label: "Actualiser",
-          onClick: handleRefreshGuidance
-        }}
-      />
+      <PageLayout title="Guidance du jour" subtitle="Vos conseils astrologiques personnalisés" maxWidth="4xl">
+        <EmptyState
+          type="guidance"
+          title="Guidance Non Disponible"
+          message="Votre guidance quotidienne sera bientôt disponible. Les astres préparent quelque chose de spécial pour vous."
+          action={{
+            label: "Actualiser",
+            onClick: handleRefreshGuidance
+          }}
+        />
+      </PageLayout>
     );
   }
 
