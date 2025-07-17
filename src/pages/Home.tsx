@@ -4,7 +4,7 @@ import { Sparkle, Moon, Sun, Compass, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
 import PhoneAuth from '../components/PhoneAuth';
-import Logo from '../components/Logo';
+import { Logo } from '../components/Logo';
 import StarryBackground from '../components/StarryBackground';
 import InteractiveCard from '../components/InteractiveCard';
 import { supabase } from '../lib/supabase';
@@ -90,7 +90,7 @@ export default function Home() {
 
       {/* LOGO + NOM EN HAUT À GAUCHE, SANS BARRE */}
       <div className="absolute top-4 left-4 md:top-8 md:left-8 z-30 flex items-center gap-6 md:gap-10 select-none">
-        <Logo size="md md:lg" className="drop-shadow-glow" aria-label="Logo Zodiak" />
+        <Logo size="lg" className="drop-shadow-glow" aria-label="Logo Zodiak" />
         <span className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-cinzel font-bold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-[0_0_24px_#F5CBA7]" aria-label="Zodiak">
           Zodiak
         </span>
