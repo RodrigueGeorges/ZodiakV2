@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import frGender from 'fr-gender';
 
 // Utility for combining Tailwind classes
 export function cn(...inputs: ClassValue[]) {
@@ -90,4 +91,12 @@ export function createSafeTimer(callback: () => void, interval: number) {
     stop: cleanup,
     isRunning: () => isActive
   };
+}
+
+export function detectGender(firstName: string): 'male' | 'female' | 'unknown' {
+  if (!firstName || typeof firstName !== 'string') return 'unknown';
+  const gender = frGender(firstName.trim());
+  if (gender === 'M') return 'male';
+  if (gender === 'F') return 'female';
+  return 'unknown';
 }

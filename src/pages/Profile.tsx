@@ -265,7 +265,6 @@ export function Profile() {
     <PageLayout 
       title="Mon Profil" 
       subtitle="Gérez vos informations et votre abonnement"
-      showLogo={false}
       maxWidth="4xl"
     >
       {renderStatus()}

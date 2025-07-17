@@ -2,6 +2,7 @@ import { ApiErrorHandler, type ApiResponse } from '../errors/ApiErrorHandler';
 import { ApiCache } from '../cache/CacheManager';
 import { ApiMonitor } from '../monitoring/ApiMonitor';
 import type { NatalChart } from '../astrology';
+import { detectGender } from '../utils';
 
 class OpenAIService {
   private static readonly config = {
@@ -97,8 +98,19 @@ class OpenAIService {
   }
 
   private static buildNatalChartInterpretationPrompt(natalChart: NatalChart, firstName?: string): string {
+    let intro = 'Cher(e) ami(e)';
+    if (firstName) {
+      const gender = detectGender(firstName);
+      if (gender === 'female') {
+        intro = `Chère ${firstName}`;
+      } else if (gender === 'male') {
+        intro = `Cher ${firstName}`;
+      } else {
+        intro = `Cher(e) ${firstName}`;
+      }
+    }
     return `
-      Tu es un astrologue expérimenté et bienveillant. En te basant sur le thème natal suivant, rédige une interprétation astrologique complète, riche et personnalisée en plusieurs paragraphes. Adresse-toi directement à la personne en commençant par "Cher(e) ${firstName || 'ami(e)'}".
+      Tu es un astrologue expérimenté et bienveillant. En te basant sur le thème natal suivant, rédige une interprétation astrologique complète, riche et personnalisée en plusieurs paragraphes. Adresse-toi directement à la personne en commençant par "${intro},".
 
       Le texte doit être structuré, facile à lire et couvrir les points suivants :
       1.  **Introduction** : Une brève présentation de la "signature astrale" (Soleil, Lune, Ascendant) et ce qu'elle révèle de la personnalité centrale.
@@ -135,7 +147,7 @@ class OpenAIService {
     `;
   }
 
-  static async generateNatalChartInterpretation(natalChart: NatalChart, userId?: string): Promise<ApiResponse<string>> {
+  static async generateNatalChartInterpretation(natalChart: NatalChart, firstName?: string, userId?: string): Promise<ApiResponse<string>> {
     if (!natalChart) {
       return ApiErrorHandler.createErrorResponse('VALIDATION_ERROR', 'Les données du thème natal sont requises.');
     }
@@ -143,9 +155,9 @@ class OpenAIService {
     try {
       const interpretation = await ApiCache.getCachedApiResponse(
         'openai-interpretation',
-        { natalChart, userId },
+        { natalChart, firstName, userId },
         async () => {
-          const prompt = this.buildNatalChartInterpretationPrompt(natalChart);
+          const prompt = this.buildNatalChartInterpretationPrompt(natalChart, firstName);
           return await this.callOpenAI(prompt);
         },
         7 * 24 * 60 * 60 * 1000 // Cache 7 jours

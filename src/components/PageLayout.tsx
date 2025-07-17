@@ -50,7 +50,7 @@ export default function PageLayout({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {showLogo && <Logo className="page-header-logo" style={{ filter: 'drop-shadow(' + EFFECTS.halo + ')' }} />}
+          {showLogo && <Logo size="md" className="page-header-logo" style={{ filter: 'drop-shadow(' + EFFECTS.halo + ')' }} />}
           <h1
             className="page-title text-primary bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text"
             style={{
