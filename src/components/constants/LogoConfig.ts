@@ -26,5 +26,5 @@ export const LOGO_CONFIG = {
     pulse: 'animate-cosmic-pulse',
     twinkle: 'animate-twinkle',
   },
-  decorativeStars: 8,
+  decorativeStars: 0,
 } as const;

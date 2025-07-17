@@ -63,3 +63,18 @@
   0%, 100% { transform: scale(1); opacity: 0.5; }
   50% { transform: scale(1.5); opacity: 1; }
 }
+
+@keyframes orbit {
+  0% { transform: rotate(0deg) translateX(var(--orbit-radius)) rotate(0deg); }
+  100% { transform: rotate(360deg) translateX(var(--orbit-radius)) rotate(-360deg); }
+}
+
+.animate-orbit-slow {
+  animation: orbit 16s linear infinite;
+}
+.animate-orbit-medium {
+  animation: orbit 12s linear infinite;
+}
+.animate-orbit-fast {
+  animation: orbit 8s linear infinite;
+}

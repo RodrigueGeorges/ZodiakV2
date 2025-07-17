@@ -88,22 +88,26 @@ export default function Home() {
     <div className="min-h-screen overflow-hidden relative">
       <StarryBackground />
 
+      {/* HEADER : Logo + nom en haut à gauche */}
+      <header className="w-full flex items-center justify-between px-4 md:px-8 xl:px-12 2xl:px-24 pt-6 md:pt-8 absolute top-0 left-0 z-30">
+        <div className="flex items-center gap-3">
+          <Logo size="md" className="drop-shadow-glow" aria-label="Logo Zodiak" />
+          <span className="text-2xl md:text-3xl font-cinzel font-bold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-[0_0_12px_#F5CBA7] select-none" aria-label="Zodiak">
+            Zodiak
+          </span>
+        </div>
+      </header>
+
+      {/* TAGLINE CENTRÉE EN HAUT */}
+      <div className="w-full flex justify-center pt-24 md:pt-28 xl:pt-32">
+        <h1 className="text-center text-xl md:text-2xl xl:text-3xl font-cinzel font-semibold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-glow max-w-2xl mx-auto">
+          Votre guide cosmique quotidien
+        </h1>
+      </div>
+
       <div className="container mx-auto px-4 md:px-8 xl:px-12 2xl:px-24 py-8 md:py-12 lg:py-16">
         <div className="max-w-5xl xl:max-w-7xl 2xl:max-w-screen-xl mx-auto">
           <div className="text-center mb-8 md:mb-12 xl:mb-16">
-            {/* HEADER PREMIUM */}
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className="mb-4 md:mb-6 flex flex-col items-center justify-center md:flex-row md:gap-8 md:mb-10"
-            >
-              <Logo size="lg" className="drop-shadow-glow" aria-label="Logo Zodiak" />
-              <span className="mt-4 md:mt-0 md:ml-2 text-4xl md:text-6xl font-cinzel font-bold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-[0_0_18px_#F5CBA7] select-none" aria-label="Zodiak">
-                Zodiak
-              </span>
-            </motion.div>
-
             {/* BOUTON PRINCIPAL ACCESSIBLE */}
             <motion.button
               className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-cosmic-900 rounded-lg font-bold text-lg shadow-lg hover:opacity-90 transition relative flex items-center gap-2 mx-auto mb-8 z-20 no-rotate"
