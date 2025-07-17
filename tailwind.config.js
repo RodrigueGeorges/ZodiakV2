@@ -8,7 +8,7 @@ export default {
     extend: {
       colors: {
         primary: '#D8CAB8',
-        secondary: '#FF69B4',
+        secondary: '#BFAF80',
         cosmic: {
           800: '#1a1a2e',
           900: '#16213e',
