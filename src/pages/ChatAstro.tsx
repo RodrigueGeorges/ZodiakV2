@@ -56,6 +56,12 @@ export default function ChatAstro() {
   const handleSend = async (suggestion?: string) => {
     const question = suggestion || input;
     if (!question.trim() || loading) return;
+    // Vérification profil complet
+    if (!user?.id || !profile?.natal_chart || !profile?.name) {
+      setMessages(msgs => [...msgs, { from: 'bot', text: "Ton profil est incomplet. Merci de vérifier tes informations dans la page Profil (nom, thème natal, etc.)." }]);
+      setLoading(false);
+      return;
+    }
     setMessages(msgs => [...msgs, { from: 'user', text: question }]);
     setInput('');
     setLoading(true);
@@ -83,6 +89,10 @@ export default function ChatAstro() {
     }
     setLoading(false);
   };
+
+  if (!user?.id || !profile?.natal_chart || !profile?.name) {
+    return <div className="flex items-center justify-center h-full text-primary font-cinzel text-lg">Chargement du profil...</div>;
+  }
 
   return (
     <PageLayout title="Guide Astral" subtitle="Pose tes questions à ton guide astrologique personnel" maxWidth="2xl">
@@ -112,7 +122,7 @@ export default function ChatAstro() {
               type="button"
               className="flex items-center gap-1 px-3 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition text-sm font-cinzel"
               onClick={() => handleSend(s)}
-              disabled={loading}
+              disabled={loading || !user?.id || !profile?.natal_chart || !profile?.name}
             >
               <Sparkle className="w-4 h-4" /> {s}
             </button>
@@ -127,7 +137,7 @@ export default function ChatAstro() {
             disabled={loading}
             autoFocus
           />
-          <button type="submit" className="bg-primary text-cosmic-900 rounded-lg px-4 py-2 font-bold flex items-center gap-1 hover:bg-secondary transition disabled:opacity-50" disabled={loading || !input.trim()}>
+          <button type="submit" className="bg-primary text-cosmic-900 rounded-lg px-4 py-2 font-bold flex items-center gap-1 hover:bg-secondary transition disabled:opacity-50" disabled={loading || !input.trim() || !user?.id || !profile?.natal_chart || !profile?.name}>
             <Send className="w-5 h-5" />
             Envoyer
           </button>
