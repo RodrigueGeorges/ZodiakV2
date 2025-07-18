@@ -80,7 +80,7 @@ Commence ta réponse directement, sans rappeler que tu es une IA. Sois naturel, 
     const openaiRes = await fetch(`${process.env.URL || 'https://zodiak.netlify.app'}/.netlify/functions/openai`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: openaiMessages, maxTokens: 400, temperature: 0.8 })
+      body: JSON.stringify({ prompt: systemPrompt, maxTokens: 400, temperature: 0.8 })
     });
     if (!openaiRes.ok) {
       const err = await openaiRes.text();
