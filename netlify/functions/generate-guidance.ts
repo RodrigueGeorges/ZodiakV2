@@ -9,6 +9,8 @@ const supabase = createClient(
 
 const BATCH_SIZE = 100;
 
+// Fonction Netlify : Génère et stocke la guidance du jour pour chaque utilisateur éligible. Ne fait jamais d'envoi de SMS.
+// Séparation stricte des responsabilités.
 const handler: Handler = async () => {
   const today = new Date().toISOString().slice(0, 10);
   let offset = 0;
@@ -32,6 +34,7 @@ const handler: Handler = async () => {
     for (const profile of profiles) {
       totalProcessed++;
       try {
+        const maskedPhone = profile.phone ? profile.phone.replace(/(\+?\d{2})(\d{2})\d{4}(\d{2})/, '$1$2******$3') : '';
         if (!profile.phone) {
           console.log(`⏭️ Profil ${profile.id} skippé: pas de téléphone.`);
           totalSkipped++;
@@ -54,9 +57,8 @@ const handler: Handler = async () => {
           totalSkipped++;
           continue;
         }
-        // Générer la guidance
         try {
-          console.log(`🚀 Génération guidance pour ${profile.id} (${profile.name})...`);
+          console.log(`🚀 Génération guidance pour ${profile.id} (${profile.name}, ${maskedPhone})...`);
           const transits = await calculateDailyTransits(today);
           const guidance = await generateGuidanceWithOpenAI(profile.natal_chart, transits, today);
           const { error: upsertError } = await supabase.from('daily_guidance').upsert({
@@ -80,7 +82,8 @@ const handler: Handler = async () => {
           totalErrors++;
         }
       } catch (e) {
-        console.error(`❌ Erreur inattendue pour ${profile.id}:`, e);
+        // Log d'erreur critique global (Sentry-ready)
+        console.error(`[CRITICAL] Erreur inattendue pour ${profile.id}:`, e);
         totalErrors++;
       }
     }

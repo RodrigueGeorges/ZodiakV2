@@ -609,6 +609,16 @@ Découvrez vos conseils personnalisés : ${process.env.URL || 'https://zodiak.ne
   }
 };
 
+const smsRateLimitMap = new Map<string, number>(); // userId -> timestamp dernier SMS
+
+const canSendSms = (userId: string) => {
+  const now = Date.now();
+  const lastSent = smsRateLimitMap.get(userId) || 0;
+  if (now - lastSent < 60 * 1000) return false;
+  smsRateLimitMap.set(userId, now);
+  return true;
+};
+
 const BATCH_SIZE = 100;
 
 const handler: Handler = async () => {
@@ -658,11 +668,18 @@ const handler: Handler = async () => {
             skippedCount++;
             continue;
           }
+          // Rate limiting SMS (1/min/user)
+          if (!canSendSms(profile.id)) {
+            console.log(`⏭️ SMS déjà envoyé récemment à ${profile.id}, rate limited.`);
+            skippedCount++;
+            continue;
+          }
           // Format international du numéro
           let phone = profile.phone;
           if (phone && phone.startsWith('0')) {
             phone = '+33' + phone.slice(1);
           }
+          const maskedPhone = phone ? phone.replace(/(\+?\d{2})(\d{2})\d{4}(\d{2})/, '$1$2******$3') : '';
           // Générer ou récupérer le lien court
           let shortCode;
           let isUnique = false;
@@ -676,11 +693,12 @@ const handler: Handler = async () => {
           // SMS teasing
           const firstName = profile.name?.split(' ')[0] || 'cher utilisateur';
           const smsContent = `✨ Bonjour ${firstName} !\n\nDécouvre ta guidance du jour ! 🌟\nLes astres ont un message spécial pour toi 👇\n${shortLink}\n(Valable 24h)`;
-          console.log('Envoi SMS :', { to: phone, text: smsContent });
+          console.log('Envoi SMS :', { to: maskedPhone, text: smsContent });
           await sendSms(phone, smsContent);
           sentCount++;
         } catch (e) {
-          console.error(`❌ Erreur lors de l'envoi du SMS à ${profile.id}:`, e);
+          // Log d'erreur critique global (Sentry-ready)
+          console.error(`[CRITICAL] Erreur lors de l'envoi du SMS à ${profile.id}:`, e);
           errorCount++;
         }
       }

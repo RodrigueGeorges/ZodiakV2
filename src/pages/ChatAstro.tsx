@@ -85,7 +85,7 @@ export default function ChatAstro() {
         setMessages(msgs => [...msgs, { from: 'bot', text: "Je n'ai pas pu générer de réponse pour le moment." }]);
       }
     } catch (e) {
-      setMessages(msgs => [...msgs, { from: 'bot', text: "Erreur lors de la connexion au guide astral. Réessaie plus tard." }]);
+      setMessages(msgs => [...msgs, { from: 'bot', text: "Erreur réseau ou serveur. Merci de réessayer plus tard." }]);
     }
     setLoading(false);
   };
@@ -137,7 +137,7 @@ export default function ChatAstro() {
             disabled={loading}
             autoFocus
           />
-          <button type="submit" className="w-full sm:w-auto bg-primary text-cosmic-900 rounded-lg px-4 py-2 font-bold flex items-center gap-1 justify-center hover:bg-secondary transition disabled:opacity-50" disabled={loading || !input.trim() || !user?.id || !profile?.natal_chart || !profile?.name}>
+          <button type="submit" className="w-full sm:w-auto bg-primary text-cosmic-900 rounded-lg px-4 py-2 font-bold flex items-center gap-1 justify-center hover:bg-secondary transition disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary" disabled={loading || !input.trim() || !user?.id || !profile?.natal_chart || !profile?.name}>
             <Send className="w-5 h-5" />
             Envoyer
           </button>
