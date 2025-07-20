@@ -7,9 +7,9 @@ import { toZonedTime, format } from 'date-fns-tz';
 import { randomUUID } from 'crypto';
 
 // Initialiser le client Supabase
-const supabase = createClient<Database>(
+const supabase = createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 const TIMEZONE = 'Europe/Paris'; // Fuseau horaire par défaut
@@ -166,7 +166,7 @@ async function calculateDailyTransits(date: string): Promise<Record<string, unkn
 
     console.log(`🔄 Calcul des transits via Prokerala pour ${date}...`);
 
-    const prokeralaRes = await fetch(`${baseUrl}/v2/astrology/natal-chart`, {
+    const prokeralaRes = await fetch(`${baseUrl}/astrology/natal-chart`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
@@ -545,15 +545,15 @@ const sendGuidanceSms = async (profile: Profile & { _guidanceDate?: string }) =>
     
     // 6. Format du SMS avec teasing minimal et prénom personnalisé
     const firstName = profile.name?.split(' ')[0] || 'cher utilisateur';
-    const smsContent = `✨ Bonjour ${firstName} !
-
-Découvre ta guidance du jour ! 🌟
-Les astres ont un message spécial pour toi 👇
-${shortLink}
-(Valable 24h)`;
-
+    let phone = profile.phone;
+    // Correction du format du numéro (français)
+    if (phone && phone.startsWith('0')) {
+      phone = '+33' + phone.slice(1);
+    }
+    const smsContent = `✨ Bonjour ${firstName} !\n\nDécouvre ta guidance du jour ! 🌟\nLes astres ont un message spécial pour toi 👇\n${shortLink}\n(Valable 24h)`;
+    console.log('Envoi SMS :', { to: phone, text: smsContent });
     // 7. Envoyer le SMS
-    await sendSms(profile.phone, smsContent);
+    await sendSms(phone, smsContent);
 
     // 8. Sauvegarder la guidance dans la base de données pour la page web
     await supabase
@@ -609,101 +609,92 @@ Découvrez vos conseils personnalisés : ${process.env.URL || 'https://zodiak.ne
   }
 };
 
+const BATCH_SIZE = 100;
+
 const handler: Handler = async () => {
   try {
-    console.log('🕐 Début de la vérification des guidances quotidiennes...');
-    
-    // Récupérer tous les utilisateurs avec SMS activé et abonnement valide
-    const { data: profiles, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('daily_guidance_sms_enabled', true)
-      .in('subscription_status', ['active', 'trial']);
-
-    // LOG DEBUG : Afficher les profils récupérés et les champs critiques
-    if (profiles && profiles.length > 0) {
-      console.log("Profils récupérés :", profiles.map(p => ({
-        id: p.id,
-        name: p.name,
-        phone: p.phone,
-        natal_chart: !!p.natal_chart,
-        guidance_sms_time: p.guidance_sms_time,
-        last_guidance_sent: p.last_guidance_sent
-      })));
-    } else {
-      console.log("Aucun profil récupéré par la requête principale.");
-    }
-
-    if (error) {
-      console.error("❌ Erreur lors de la récupération des profils:", error);
-      return { statusCode: 500, body: JSON.stringify({ error: error.message }) };
-    }
-
-    if (!profiles || profiles.length === 0) {
-      console.log("ℹ️ Aucun utilisateur à notifier.");
-      return { statusCode: 200, body: JSON.stringify({ message: "Aucun utilisateur à notifier." }) };
-    }
-    
-    console.log(`📊 Trouvé ${profiles.length} utilisateurs avec SMS activé.`);
-
-    // Heure et date locale Europe/Paris
-    const nowUtc = new Date();
-    const nowParis = toZonedTime(nowUtc, TIMEZONE);
-    console.log(`🕗 Heure locale Paris: ${format(nowParis, 'yyyy-MM-dd HH:mm', { timeZone: TIMEZONE })}`);
-
+    console.log('🕐 Début de la vérification des guidances quotidiennes (batch)...');
+    let offset = 0;
     let sentCount = 0;
     let skippedCount = 0;
-
-    for (const profile of profiles) {
-      // LOG DEBUG : Afficher les champs avant filtrage
-      console.log(`Traitement du profil ${profile.id} (${profile.name}) - phone: ${profile.phone}, natal_chart: ${!!profile.natal_chart}`);
-      try {
-        // Vérifier si l'utilisateur a un numéro de téléphone
-        if (!profile.phone) {
-          console.log(`⚠️ Utilisateur ${profile.id} n'a pas de numéro de téléphone`);
-          continue;
-        }
-
-        // Vérifier si l'utilisateur a un thème natal
-        if (!profile.natal_chart) {
-          console.log(`⚠️ Utilisateur ${profile.id} n'a pas de thème natal`);
-          continue;
-        }
-
-        // Date du jour (Europe/Paris)
-        const todayParis = format(toZonedTime(new Date(), TIMEZONE), 'yyyy-MM-dd', { timeZone: TIMEZONE });
-
-        // Vérifier si la guidance du jour existe déjà
-        const { data: existingGuidance } = await supabase
-          .from('daily_guidance')
-          .select('*')
-          .eq('user_id', profile.id)
-          .eq('date', todayParis)
-          .maybeSingle();
-
-        if (!existingGuidance) {
-          // Générer la guidance et l'envoyer par SMS
-          console.log(`🚀 Génération et envoi de la guidance pour ${profile.id} (${profile.name})`);
-          await sendGuidanceSms({ ...profile, _guidanceDate: todayParis });
-          sentCount++;
-        } else {
-          console.log(`⏭️ Guidance déjà existante pour aujourd'hui pour l'utilisateur ${profile.id}`);
-          skippedCount++;
-        }
-      } catch (profileError) {
-        console.error(`❌ Erreur lors du traitement de l'utilisateur ${profile.id}:`, profileError);
+    let errorCount = 0;
+    let total = 0;
+    while (true) {
+      const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('daily_guidance_sms_enabled', true)
+        .in('subscription_status', ['active', 'trial'])
+        .range(offset, offset + BATCH_SIZE - 1);
+      if (error) {
+        console.error('❌ Erreur lors de la récupération des profils:', error);
+        break;
       }
+      if (!profiles || profiles.length === 0) break;
+      for (const profile of profiles) {
+        total++;
+        try {
+          if (!profile.phone) {
+            console.log(`⚠️ Utilisateur ${profile.id} n'a pas de numéro de téléphone`);
+            skippedCount++;
+            continue;
+          }
+          if (!profile.natal_chart) {
+            console.log(`⚠️ Utilisateur ${profile.id} n'a pas de thème natal`);
+            skippedCount++;
+            continue;
+          }
+          // Date du jour (Europe/Paris)
+          const todayParis = format(toZonedTime(new Date(), TIMEZONE), 'yyyy-MM-dd', { timeZone: TIMEZONE });
+          // Vérifier si la guidance du jour existe déjà
+          const { data: existingGuidance } = await supabase
+            .from('daily_guidance')
+            .select('*')
+            .eq('user_id', profile.id)
+            .eq('date', todayParis)
+            .maybeSingle();
+          if (!existingGuidance) {
+            console.log(`⏭️ Pas de guidance à envoyer pour ${profile.id}`);
+            skippedCount++;
+            continue;
+          }
+          // Format international du numéro
+          let phone = profile.phone;
+          if (phone && phone.startsWith('0')) {
+            phone = '+33' + phone.slice(1);
+          }
+          // Générer ou récupérer le lien court
+          let shortCode;
+          let isUnique = false;
+          while (!isUnique) {
+            shortCode = generateShortCode();
+            const { data: existing } = await supabase.from('guidance_token').select('id').eq('short_code', shortCode).maybeSingle();
+            if (!existing) isUnique = true;
+          }
+          const appUrl = process.env.URL || 'https://zodiak.netlify.app';
+          const shortLink = `${appUrl}/g/${shortCode}`;
+          // SMS teasing
+          const firstName = profile.name?.split(' ')[0] || 'cher utilisateur';
+          const smsContent = `✨ Bonjour ${firstName} !\n\nDécouvre ta guidance du jour ! 🌟\nLes astres ont un message spécial pour toi 👇\n${shortLink}\n(Valable 24h)`;
+          console.log('Envoi SMS :', { to: phone, text: smsContent });
+          await sendSms(phone, smsContent);
+          sentCount++;
+        } catch (e) {
+          console.error(`❌ Erreur lors de l'envoi du SMS à ${profile.id}:`, e);
+          errorCount++;
+        }
+      }
+      offset += BATCH_SIZE;
     }
-
-    console.log(`✅ Vérification terminée. ${sentCount} SMS envoyés, ${skippedCount} ignorés.`);
-
+    console.log(`✅ Vérification terminée. ${sentCount} SMS envoyés, ${skippedCount} ignorés, ${errorCount} erreurs, ${total} profils traités.`);
     return {
       statusCode: 200,
       body: JSON.stringify({ 
         message: 'Vérification des guidances terminée.',
         sent: sentCount,
         skipped: skippedCount,
-        total: profiles.length
+        errors: errorCount,
+        total
       }),
     };
   } catch (error) {

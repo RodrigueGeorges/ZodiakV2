@@ -128,7 +128,7 @@ export default function ChatAstro() {
             </button>
           ))}
         </div>
-        <form className="flex gap-2 mt-2" onSubmit={e => { e.preventDefault(); handleSend(); }}>
+        <form className="flex flex-col sm:flex-row gap-2 mt-2" onSubmit={e => { e.preventDefault(); handleSend(); }}>
           <input
             className="flex-1 rounded-lg px-4 py-2 bg-cosmic-800/80 border border-primary/20 text-primary focus:outline-none focus:ring-2 focus:ring-primary/40 font-cinzel"
             placeholder="Pose ta question..."
@@ -137,7 +137,7 @@ export default function ChatAstro() {
             disabled={loading}
             autoFocus
           />
-          <button type="submit" className="bg-primary text-cosmic-900 rounded-lg px-4 py-2 font-bold flex items-center gap-1 hover:bg-secondary transition disabled:opacity-50" disabled={loading || !input.trim() || !user?.id || !profile?.natal_chart || !profile?.name}>
+          <button type="submit" className="w-full sm:w-auto bg-primary text-cosmic-900 rounded-lg px-4 py-2 font-bold flex items-center gap-1 justify-center hover:bg-secondary transition disabled:opacity-50" disabled={loading || !input.trim() || !user?.id || !profile?.natal_chart || !profile?.name}>
             <Send className="w-5 h-5" />
             Envoyer
           </button>
