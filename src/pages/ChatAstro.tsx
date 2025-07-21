@@ -88,13 +88,33 @@ export default function ChatAstro() {
         setTypingText('');
         let decoder = new TextDecoder();
         let done = false;
+        let buffer = '';
         while (!done) {
           const { value, done: doneReading } = await reader.read();
           done = doneReading;
           if (value) {
-            const chunk = decoder.decode(value);
-            fullText += chunk;
-            setTypingText(fullText);
+            buffer += decoder.decode(value, { stream: true });
+            // Découper par ligne (chaque chunk JSON est sur une ligne)
+            let lines = buffer.split('\n');
+            // Garder la dernière ligne incomplète dans le buffer
+            buffer = lines.pop() || '';
+            for (let line of lines) {
+              line = line.trim();
+              if (!line) continue;
+              // Certains flux OpenAI commencent par 'data: '
+              if (line.startsWith('data:')) line = line.replace(/^data:\s*/, '');
+              if (line === '[DONE]') continue;
+              try {
+                const json = JSON.parse(line);
+                const content = json.choices?.[0]?.delta?.content;
+                if (content) {
+                  fullText += content;
+                  setTypingText(fullText);
+                }
+              } catch (e) {
+                // ignorer les erreurs de parsing
+              }
+            }
           }
         }
         setMessages(msgs => [...msgs, { from: 'bot', text: fullText }]);

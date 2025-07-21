@@ -42,7 +42,7 @@ export default function PageLayout({
         <div className="absolute inset-0 bg-gradient-radial from-transparent via-cosmic-800/40 to-cosmic-900/90" />
       </div>
 
-      <div className={`page-content ${maxWidthClasses[maxWidth]} safe-area-inset-bottom ${className}`}>
+      <div className={`page-content ${maxWidthClasses[maxWidth]} safe-area-inset-bottom pb-24 md:pb-12 ${className}`}>
         {/* Header premium harmonisé */}
         <motion.div 
           className="page-header"
