@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import Logo from './Logo';
+import AnimatedAstroLogo from './AnimatedAstroLogo';
 import StarryBackground from './StarryBackground';
 import { GRADIENTS, EFFECTS } from './constants/theme';
 
@@ -50,7 +50,7 @@ export default function PageLayout({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          {showLogo && <Logo size="md" className="page-header-logo" style={{ filter: 'drop-shadow(' + EFFECTS.halo + ')' }} />}
+          {showLogo && <AnimatedAstroLogo />}
           <h1
             className="page-title text-primary bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text"
             style={{

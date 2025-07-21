@@ -252,22 +252,22 @@ export default function Home() {
                 {
                   icon: <Sun className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />,
                   title: "Guidance Quotidienne",
-                  description: "Recevez chaque matin un message inspirant et personnalisé, basé sur votre thème astral unique, pour avancer sereinement dans votre vie."
+                  description: "Recevez chaque jour un message personnalisé basé sur votre thème astral et les transits planétaires du moment, directement dans l’application ou par SMS."
                 },
                 {
                   icon: <Moon className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />,
                   title: "Thème Astral Détaillé",
-                  description: "Profitez d'analyses astrologiques approfondies pour comprendre l'influence des planètes sur votre parcours et révéler les clés de votre bien-être."
+                  description: "Accédez à l’analyse complète de votre carte du ciel : interprétation de vos planètes, ascendant, aspects majeurs, et résumé de votre signature astrale."
                 },
                 {
                   icon: <Compass className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />,
-                  title: "Navigation Céleste",
-                  description: "Prenez des décisions éclairées grâce à des conseils personnalisés, en harmonie avec les énergies cosmiques de votre carte du ciel."
+                  title: "Chat Astrologique Intelligent",
+                  description: "Posez toutes vos questions à notre chatbot astrologique : guidance, conseils, explications sur votre thème ou sur les influences du jour, avec des réponses instantanées et personnalisées."
                 },
                 {
                   icon: <Clock className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />,
-                  title: "Timing Parfait",
-                  description: "Identifiez les moments les plus propices pour vos projets importants, grâce à une guidance adaptée à votre profil astral et à l'énergie du jour."
+                  title: "Suivi & Notifications",
+                  description: "Recevez des rappels, suivez l’historique de vos guidances et bénéficiez de notifications pour ne jamais manquer les moments clés ou les nouveaux messages."
                 }
               ].map((feature, index) => (
                 <motion.div
