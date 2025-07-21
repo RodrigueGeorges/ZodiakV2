@@ -31,6 +31,8 @@ export default function ChatAstro() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
+  const [typingText, setTypingText] = useState('');
+  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Scroll auto
   useEffect(() => {
@@ -65,6 +67,7 @@ export default function ChatAstro() {
     setMessages(msgs => [...msgs, { from: 'user', text: question }]);
     setInput('');
     setLoading(true);
+    setTypingText('');
     try {
       const res = await fetch('/.netlify/functions/astro-chatbot', {
         method: 'POST',
@@ -77,12 +80,48 @@ export default function ChatAstro() {
           conversationId,
         })
       });
-      const data = await res.json();
-      if (data.answer) {
-        setConversationId(data.conversationId);
-        setMessages(msgs => [...msgs, { from: 'bot', text: data.answer }]);
+      // Gestion du streaming (text/event-stream)
+      const contentType = res.headers.get('content-type');
+      if (contentType && contentType.includes('text/event-stream') && res.body) {
+        const reader = res.body.getReader();
+        let fullText = '';
+        setTypingText('');
+        let decoder = new TextDecoder();
+        let done = false;
+        while (!done) {
+          const { value, done: doneReading } = await reader.read();
+          done = doneReading;
+          if (value) {
+            const chunk = decoder.decode(value);
+            fullText += chunk;
+            setTypingText(fullText);
+          }
+        }
+        setMessages(msgs => [...msgs, { from: 'bot', text: fullText }]);
+        setTypingText('');
       } else {
-        setMessages(msgs => [...msgs, { from: 'bot', text: "Je n'ai pas pu générer de réponse pour le moment." }]);
+        // Fallback : réponse complète, effet typing lettre par lettre
+        const data = await res.json();
+        if (data.answer) {
+          setConversationId(data.conversationId);
+          let i = 0;
+          const fullText = data.answer;
+          setTypingText('');
+          if (typingTimeout.current) clearTimeout(typingTimeout.current);
+          const typeLetter = () => {
+            setTypingText(prev => prev + fullText[i]);
+            i++;
+            if (i < fullText.length) {
+              typingTimeout.current = setTimeout(typeLetter, 12 + Math.random() * 30);
+            } else {
+              setMessages(msgs => [...msgs, { from: 'bot', text: fullText }]);
+              setTypingText('');
+            }
+          };
+          typeLetter();
+        } else {
+          setMessages(msgs => [...msgs, { from: 'bot', text: "Je n'ai pas pu générer de réponse pour le moment." }]);
+        }
       }
     } catch (e) {
       setMessages(msgs => [...msgs, { from: 'bot', text: "Erreur réseau ou serveur. Merci de réessayer plus tard." }]);
@@ -113,7 +152,11 @@ export default function ChatAstro() {
               </div>
             </motion.div>
           ))}
-          {loading && (
+          {/* Effet typing pour la réponse du bot */}
+          {typingText && (
+            <div className="flex justify-start"><div className="animate-pulse px-4 py-2 bg-cosmic-800/80 text-primary rounded-xl font-cinzel"><Sparkle className="inline w-4 h-4 mr-1 text-secondary align-middle" />{typingText}<span className="animate-blink">|</span></div></div>
+          )}
+          {loading && !typingText && (
             <div className="flex justify-start"><div className="animate-pulse px-4 py-2 bg-cosmic-800/80 text-primary rounded-xl font-cinzel">Le guide réfléchit...</div></div>
           )}
         </div>

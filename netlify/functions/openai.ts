@@ -77,6 +77,7 @@ export const handler: Handler = async (event) => {
         ],
         max_tokens: maxTokens,
         temperature: temperature,
+        stream: true // Active le streaming
       }),
     });
 
@@ -85,12 +86,30 @@ export const handler: Handler = async (event) => {
       throw new Error(`OpenAI API request failed: ${response.statusText} - ${errorText}`);
     }
 
-    const data = await response.json();
-
+    // Streaming: accumule les chunks pour réduire la latence côté OpenAI
+    let openaiBody = '';
+    if (response.body && typeof (response.body as any).on === 'function') {
+      // Node.js stream (netlify-lambda utilise node-fetch)
+      await new Promise<void>((resolve, reject) => {
+        (response.body as any).on('data', (chunk: Buffer) => {
+          openaiBody += chunk.toString();
+        });
+        (response.body as any).on('end', () => resolve());
+        (response.body as any).on('error', (err: Error) => reject(err));
+      });
+    } else {
+      // Fallback: pas de body (devrait être rare)
+      openaiBody = await response.text();
+    }
     return {
       statusCode: 200,
-      headers,
-      body: JSON.stringify(data),
+      headers: {
+        ...headers,
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+      },
+      body: openaiBody,
     };
 
   } catch (error) {

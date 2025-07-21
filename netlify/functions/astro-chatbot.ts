@@ -111,7 +111,7 @@ Commence ta réponse directement, sois naturel, humain, et adapte-toi à la disc
       ...context
     ];
 
-    // 4. Appel OpenAI
+    // 4. Appel OpenAI en streaming
     const openaiRes = await fetch(`${process.env.URL || 'https://zodiak.netlify.app'}/.netlify/functions/openai`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -121,19 +121,56 @@ Commence ta réponse directement, sois naturel, humain, et adapte-toi à la disc
       const err = await openaiRes.text();
       return { statusCode: 500, headers, body: JSON.stringify({ error: 'Erreur OpenAI', details: err }) };
     }
-    const data = await openaiRes.json();
-    const answer = data.choices?.[0]?.message?.content || 'Je suis désolé, je n\'ai pas pu générer de réponse pour le moment.';
 
-    // 5. Ajouter la réponse de l'agent à l'historique
-    messages.push({ role: 'assistant', content: answer });
-
-    // 6. Mettre à jour la conversation en base
-    await supabase
-      .from('conversations')
-      .update({ messages, updated_at: new Date().toISOString() })
-      .eq('id', convId);
-
-    return { statusCode: 200, headers, body: JSON.stringify({ answer, conversationId: convId, messages }) };
+    // Streaming : lit la réponse chunk par chunk et la transmet au client
+    let streamedAnswer = '';
+    if (openaiRes.body && typeof (openaiRes.body as any).on === 'function') {
+      // Node.js stream
+      return new Promise((resolve, reject) => {
+        let answer = '';
+        (openaiRes.body as any).on('data', (chunk: Buffer) => {
+          const text = chunk.toString();
+          answer += text;
+          streamedAnswer += text;
+        });
+        (openaiRes.body as any).on('end', async () => {
+          // Ajoute la réponse complète à l'historique
+          messages.push({ role: 'assistant', content: streamedAnswer });
+          await supabase
+            .from('conversations')
+            .update({ messages, updated_at: new Date().toISOString() })
+            .eq('id', convId);
+          resolve({
+            statusCode: 200,
+            headers: {
+              ...headers,
+              'Content-Type': 'text/event-stream',
+              'Cache-Control': 'no-cache',
+              'Connection': 'keep-alive',
+            },
+            body: streamedAnswer,
+          });
+        });
+        (openaiRes.body as any).on('error', (err: Error) => reject(err));
+      });
+    } else {
+      // Fallback : pas de stream, réponse complète
+      const data = await openaiRes.text();
+      streamedAnswer = data;
+      messages.push({ role: 'assistant', content: streamedAnswer });
+      await supabase
+        .from('conversations')
+        .update({ messages, updated_at: new Date().toISOString() })
+        .eq('id', convId);
+      return {
+        statusCode: 200,
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ answer: streamedAnswer, conversationId: convId, messages }),
+      };
+    }
   } catch (error) {
     return { statusCode: 500, headers, body: JSON.stringify({ error: error instanceof Error ? error.message : 'Erreur serveur' }) };
   }
