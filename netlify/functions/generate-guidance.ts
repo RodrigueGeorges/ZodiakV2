@@ -61,13 +61,27 @@ const handler: Handler = async () => {
           console.log(`🚀 Génération guidance pour ${profile.id} (${profile.name}, ${maskedPhone})...`);
           const transits = await calculateDailyTransits(today);
           const guidance = await generateGuidanceWithOpenAI(profile.natal_chart, transits, today);
+          // Correction : forcer le format {text, score} pour chaque champ
+          const safeGuidance = {
+            summary: guidance.summary || '',
+            love: (typeof guidance.love === 'object' && guidance.love && 'text' in guidance.love && 'score' in guidance.love)
+              ? guidance.love
+              : { text: typeof guidance.love === 'string' ? guidance.love : '', score: 75 },
+            work: (typeof guidance.work === 'object' && guidance.work && 'text' in guidance.work && 'score' in guidance.work)
+              ? guidance.work
+              : { text: typeof guidance.work === 'string' ? guidance.work : '', score: 75 },
+            energy: (typeof guidance.energy === 'object' && guidance.energy && 'text' in guidance.energy && 'score' in guidance.energy)
+              ? guidance.energy
+              : { text: typeof guidance.energy === 'string' ? guidance.energy : '', score: 75 },
+            mantra: guidance.mantra || ''
+          };
           const { error: upsertError } = await supabase.from('daily_guidance').upsert({
             user_id: profile.id,
             date: today,
-            summary: guidance.summary,
-            love: guidance.love,
-            work: guidance.work,
-            energy: guidance.energy,
+            summary: safeGuidance.summary,
+            love: safeGuidance.love,
+            work: safeGuidance.work,
+            energy: safeGuidance.energy,
             created_at: new Date().toISOString()
           });
           if (upsertError) {

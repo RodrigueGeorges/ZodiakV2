@@ -150,7 +150,7 @@ function GuidanceContent(): JSX.Element {
                   </div>
                   <div className="flex-1">
                     <FormattedGuidanceText 
-                      text={guidanceData[key]?.text || getGuidanceText(guidanceData[key]) || `Aucun conseil ${label.toLowerCase()} disponible pour aujourd'hui.`}
+                      text={getGuidanceText(guidanceData[key]) || `Aucun conseil ${label.toLowerCase()} disponible pour aujourd'hui.`}
                       className="text-primary leading-relaxed text-base"
                     />
                   </div>
