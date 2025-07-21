@@ -95,7 +95,7 @@ export default function Home() {
           className="drop-shadow-glow"
           aria-label="Logo Zodiak"
         />
-        <span className="truncate text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-cinzel font-bold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-[0_0_24px_#F5CBA7]" aria-label="Zodiak">
+        <span className="truncate text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-cinzel font-bold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text" aria-label="Zodiak">
           Zodiak
         </span>
       </div>
