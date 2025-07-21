@@ -105,7 +105,10 @@ export default function ChatAstro() {
               animate={{ opacity: 1, y: 0 }}
               className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              <div className={`rounded-xl px-4 py-2 max-w-[80%] text-base font-cinzel ${msg.from === 'user' ? 'bg-primary/80 text-cosmic-900' : 'bg-cosmic-800/80 text-primary'} shadow`}>
+              <div className={`rounded-xl px-4 py-2 text-base font-cinzel shadow
+                ${msg.from === 'user' ? 'bg-primary/80 text-cosmic-900' : 'bg-cosmic-800/80 text-primary'}
+                max-w-full sm:max-w-[80%] break-words whitespace-pre-line`}
+              >
                 {msg.from === 'bot' && <Sparkle className="inline w-4 h-4 mr-1 text-secondary align-middle" />} {msg.text}
               </div>
             </motion.div>

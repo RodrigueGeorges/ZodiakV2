@@ -44,7 +44,25 @@ export default function ShareButton({ title, content, url, className = '', varia
     copyToClipboard();
   };
 
+  const canWebShare = typeof navigator !== 'undefined' && !!navigator.share;
+
+  const shareNative = async () => {
+    try {
+      await navigator.share({
+        title,
+        text: content,
+        url: shareUrl,
+      });
+      setCopied(true);
+      toast.success('Partagé avec succès !');
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      // L'utilisateur a annulé ou l'API n'est pas supportée
+    }
+  };
+
   const shareOptions = [
+    ...(canWebShare ? [{ icon: <LogIn className="w-4 h-4" />, label: 'Partager…', action: shareNative, color: '' }] : []),
     { icon: <Check className="w-4 h-4" />, label: 'Copier', action: copyToClipboard, color: '' },
     { icon: <Check className="w-4 h-4" />, label: 'Twitter', action: shareOnTwitter, color: '' },
     { icon: <Check className="w-4 h-4" />, label: 'Facebook', action: shareOnFacebook, color: '' },
