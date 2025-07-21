@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../lib/hooks/useAuth.tsx';
 import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 import { supabase } from '../lib/supabase';
@@ -155,8 +155,26 @@ export default function RegisterComplete() {
     return (
       <div className="min-h-screen overflow-hidden relative">
         <StarryBackground />
-        <div className="container mx-auto px-4 md:px-8 xl:px-12 2xl:px-24 py-8 md:py-12 lg:py-16">
-          <div className="max-w-md mx-auto mt-16">
+        {/* HEADER FIXE */}
+        <header className="fixed top-0 left-0 w-full z-40 bg-cosmic-900/80 backdrop-blur-md shadow-lg border-b border-primary/10">
+          <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
+            <Logo />
+            <nav className="flex gap-6">
+              <Link to="/profile" className="text-primary font-cinzel hover:text-secondary transition">Profil</Link>
+              <Link to="/natal" className="text-primary font-cinzel hover:text-secondary transition">Natal</Link>
+              <Link to="/guidance" className="text-primary font-cinzel hover:text-secondary transition">Guidance</Link>
+              <Link to="/chatastro" className="text-primary font-cinzel hover:text-secondary transition">Guide Astral</Link>
+            </nav>
+          </div>
+        </header>
+        <div className="container mx-auto px-4 md:px-8 xl:px-12 2xl:px-24 flex flex-col items-center justify-center min-h-screen">
+          <div className="max-w-md w-full mt-32 mb-12">
+            {/* BOUTON RETOUR ACCUEIL */}
+            <div className="mb-4 flex justify-start">
+              <Link to="/" className="text-primary hover:text-secondary font-cinzel text-lg flex items-center gap-2">
+                <span className="text-2xl">←</span> Accueil
+              </Link>
+            </div>
             <InteractiveCard className="p-6 md:p-8 xl:p-10 2xl:p-16">
               <div className="mb-8 text-center">
                 <Logo />
