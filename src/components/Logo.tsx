@@ -1,4 +1,4 @@
-import { Moon, Sun, Star, Sparkle } from 'lucide-react';
+import { Sun, Star } from 'lucide-react';
 import React from 'react';
 
 interface LogoProps {
@@ -12,101 +12,64 @@ const sizeMap = {
   md: 'w-16 h-16',
   lg: 'w-32 h-32',
 };
-const ringMap = {
-  sm: 'w-12 h-12',
-  md: 'w-16 h-16',
-  lg: 'w-32 h-32',
-};
-const middleMap = {
+const centerMap = {
   sm: 'w-8 h-8',
   md: 'w-12 h-12',
   lg: 'w-24 h-24',
 };
-const sunMap = {
-  sm: 'w-6 h-6',
-  md: 'w-8 h-8',
-  lg: 'w-16 h-16',
+const glyphMap = {
+  sm: 'text-lg',
+  md: 'text-2xl',
+  lg: 'text-4xl',
 };
-const centerStarMap = {
-  sm: 'w-4 h-4',
-  md: 'w-6 h-6',
-  lg: 'w-8 h-8',
-};
-const moonMap = {
-  sm: 'w-3 h-3',
-  md: 'w-4 h-4',
-  lg: 'w-6 h-6',
-};
-const sparkleMap = {
-  sm: 'w-3 h-3',
-  md: 'w-4 h-4',
-  lg: 'w-6 h-6',
-};
+
+const zodiacGlyphs = [
+  { symbol: '♈', label: 'Bélier', angle: 0 },
+  { symbol: '♋', label: 'Cancer', angle: 60 },
+  { symbol: '♎', label: 'Balance', angle: 120 },
+  { symbol: '♑', label: 'Capricorne', angle: 180 },
+  { symbol: '♓', label: 'Poissons', angle: 240 },
+  { symbol: '♌', label: 'Lion', angle: 300 },
+];
+
+// Animation CSS orbitale à ajouter dans index.css :
+// @keyframes orbit-cosmic {
+//   0% { transform: rotate(0deg) translateY(-110%) rotate(0deg); }
+//   100% { transform: rotate(360deg) translateY(-110%) rotate(-360deg); }
+// }
+// .orbit-cosmic { animation: orbit-cosmic 16s linear infinite; transform-origin: 50% 60%; }
 
 export function Logo({ size = 'md', className = '', style }: LogoProps) {
   return (
     <div className={`relative flex items-center justify-center ${sizeMap[size]} ${className}`} style={style}>
-      {/* Outer cosmic ring */}
-      <div className={`absolute ${ringMap[size]} rounded-full border-2 border-primary/30 animate-spin-slow`}>
-        <div className="absolute -top-1 left-1/2 -translate-x-1/2">
-          <Star className={`${sparkleMap[size]} text-primary animate-cosmic-pulse`} />
-        </div>
-        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2">
-          <Star className={`${sparkleMap[size]} text-primary animate-cosmic-pulse`} />
-        </div>
-        <div className="absolute -left-1 top-1/2 -translate-y-1/2">
-          <Star className={`${sparkleMap[size]} text-primary animate-cosmic-pulse`} />
-        </div>
-        <div className="absolute -right-1 top-1/2 -translate-y-1/2">
-          <Star className={`${sparkleMap[size]} text-primary animate-cosmic-pulse`} />
-        </div>
+      {/* Cercle central lumineux (soleil/étoile) */}
+      <div className="relative z-10 flex items-center justify-center">
+        <div className="absolute inset-0 bg-primary rounded-full blur-xl opacity-30 animate-glow" />
+        <Sun className={`${centerMap[size]} text-primary animate-glow relative z-10`} />
+        <Star className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${glyphMap[size]} text-primary/90`} />
       </div>
-
-      {/* Middle cosmic ring */}
-      <div className={`absolute ${middleMap[size]} rounded-full border-2 border-secondary/30 animate-reverse-spin`}>
-        <div className="absolute top-1/2 -translate-y-1/2 -left-3">
-          <Moon className={`${moonMap[size]} text-primary animate-float`} />
-        </div>
-        <div className="absolute top-1/2 -translate-y-1/2 -right-3">
-          <Moon className={`${moonMap[size]} text-primary animate-float-reverse`} />
-        </div>
-      </div>
-
-      {/* Central sun with glowing effect */}
-      <div className="relative">
-        <div className="absolute inset-0 bg-primary rounded-full blur-xl opacity-20 animate-glow" />
-        <Sun className={`${sunMap[size]} text-primary animate-glow relative z-10`} />
-        <Star className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${centerStarMap[size]} text-primary/90`} />
-      </div>
-
-      {/* Floating sparkles */}
-      <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-        <Sparkle className={`${sparkleMap[size]} text-primary animate-float`} />
-      </div>
-      <div className="absolute -bottom-4 left-1/2 -translate-x-1/2">
-        <Sparkle className={`${sparkleMap[size]} text-primary animate-float-delayed`} />
-      </div>
-      <div className="absolute top-1/2 -left-4 -translate-y-1/2">
-        <Sparkle className={`${sparkleMap[size]} text-primary animate-float-reverse`} />
-      </div>
-      <div className="absolute top-1/2 -right-4 -translate-y-1/2">
-        <Sparkle className={`${sparkleMap[size]} text-primary animate-float-reverse-delayed`} />
-      </div>
-
-      {/* Additional decorative stars */}
-      <div className="absolute inset-0">
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute w-1 h-1 bg-primary rounded-full animate-twinkle"
+      {/* Glyphes zodiacaux dorés en orbite harmonieuse */}
+      {zodiacGlyphs.map((g, i) => (
+        <div
+          key={g.label}
+          className="absolute left-1/2 top-1/2"
+          style={{
+            transform: `rotate(${g.angle}deg)`
+          }}
+        >
+          <span
+            className={`${glyphMap[size]} text-primary font-bold orbit-cosmic`}
             style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`
+              display: 'inline-block',
+              transform: 'translateY(-110%)',
+              animationDelay: `${i * 2.5}s`
             }}
-          />
-        ))}
-      </div>
+            aria-label={g.label}
+          >
+            {g.symbol}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
