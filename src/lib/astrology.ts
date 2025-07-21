@@ -118,7 +118,7 @@ export class AstrologyService {
     // Appel sécurisé via la fonction Netlify serverless
     const response = await fetch('/.netlify/functions/astrology', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({
         type: endpoint === 'western/chart' ? 'natal_chart' : 'transits',
         birthDate: params.datetime?.split('T')[0],

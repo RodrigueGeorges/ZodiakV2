@@ -74,8 +74,10 @@ export const handler: Handler = async (event, _context): Promise<any> => {
 
   try {
     const request: AstrologyRequest = JSON.parse(event.body || '{}');
+    console.log('Astrology API request params:', request);
     if (!request.birthDate || !request.birthTime || !request.birthPlace) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing required fields' }) };
+      console.error('Missing required fields:', request);
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing required fields', details: request }) };
     }
 
     // --- SUPABASE ---
@@ -126,6 +128,10 @@ export const handler: Handler = async (event, _context): Promise<any> => {
     }
     // Appel API Prokerala (POST JSON)
     const [latitude, longitude] = request.birthPlace.split(',').map(s => s.trim());
+    if (!latitude || !longitude || isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude))) {
+      console.error('Invalid birthPlace format:', request.birthPlace);
+      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid birthPlace format', details: request.birthPlace }) };
+    }
     const datetime = `${request.birthDate}T${request.birthTime}Z`;
     const prokeralaRes = await fetch(`${baseUrl}/v2/astrology/natal-chart`, {
       method: 'POST',
@@ -143,6 +149,7 @@ export const handler: Handler = async (event, _context): Promise<any> => {
     });
     if (!prokeralaRes.ok) {
       const errorText = await prokeralaRes.text();
+      console.error('Prokerala API error:', errorText);
       return { statusCode: 500, headers, body: JSON.stringify({ error: 'Astrology API error', details: errorText }) };
     }
     const natalChart = await prokeralaRes.json();
