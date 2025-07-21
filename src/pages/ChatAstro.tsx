@@ -94,25 +94,30 @@ export default function ChatAstro() {
           done = doneReading;
           if (value) {
             buffer += decoder.decode(value, { stream: true });
-            // Découper par ligne (chaque chunk JSON est sur une ligne)
             let lines = buffer.split('\n');
-            // Garder la dernière ligne incomplète dans le buffer
             buffer = lines.pop() || '';
             for (let line of lines) {
               line = line.trim();
               if (!line) continue;
-              // Certains flux OpenAI commencent par 'data: '
               if (line.startsWith('data:')) line = line.replace(/^data:\s*/, '');
               if (line === '[DONE]') continue;
-              try {
-                const json = JSON.parse(line);
-                const content = json.choices?.[0]?.delta?.content;
-                if (content) {
-                  fullText += content;
-                  setTypingText(fullText);
+              // Certains flux peuvent contenir plusieurs objets JSON collés
+              const jsons = line.split('}{').map((part, idx, arr) =>
+                idx === 0
+                  ? part + (arr.length > 1 ? '}' : '')
+                  : '{' + part + (idx < arr.length - 1 ? '}' : '')
+              );
+              for (let jsonStr of jsons) {
+                try {
+                  const json = JSON.parse(jsonStr);
+                  const content = json.choices?.[0]?.delta?.content;
+                  if (content) {
+                    fullText += content;
+                    setTypingText(fullText);
+                  }
+                } catch (e) {
+                  // ignorer les erreurs de parsing
                 }
-              } catch (e) {
-                // ignorer les erreurs de parsing
               }
             }
           }
