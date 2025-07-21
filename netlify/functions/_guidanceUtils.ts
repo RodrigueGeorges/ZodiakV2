@@ -191,7 +191,7 @@ export async function sendSms(phone, guidance, name) {
   const response = await fetch(`${appUrl}/.netlify/functions/send-sms`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ to: phone, text: smsContent, from: 'Zodiak' })
+    body: JSON.stringify({ phone, message: smsContent, from: 'Zodiak' })
   });
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));

@@ -150,14 +150,14 @@ function GuidanceContent(): JSX.Element {
                   </div>
                   <div className="flex-1">
                     <FormattedGuidanceText 
-                      text={getGuidanceText(guidanceData[key]) || `Aucun conseil ${label.toLowerCase()} disponible pour aujourd'hui.`}
+                      text={guidanceData[key]?.text || getGuidanceText(guidanceData[key]) || `Aucun conseil ${label.toLowerCase()} disponible pour aujourd'hui.`}
                       className="text-primary leading-relaxed text-base"
                     />
                   </div>
                   <div className="mt-4 flex justify-end">
                     <ShareButton
                       title={`Ma guidance ${label}`}
-                      content={getGuidanceText(guidanceData[key])}
+                      content={guidanceData[key]?.text || getGuidanceText(guidanceData[key])}
                       variant="compact"
                     />
                   </div>

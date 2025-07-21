@@ -461,17 +461,12 @@ function getDefaultGuidance(): {
 
 // Logique SMS (utiliser Vonage au lieu de Brevo pour la cohérence)
 async function sendSms(phoneNumber: string, content: string): Promise<void> {
-  // Utiliser la fonction send-sms existante
   const response = await fetch(`${process.env.URL || 'https://zodiak.netlify.app'}/.netlify/functions/send-sms`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      to: phoneNumber,
-      text: content,
-      from: 'Zodiak'
-    })
+    body: JSON.stringify({ phone: phoneNumber, message: content, from: 'Zodiak' })
   });
 
   if (!response.ok) {

@@ -15,7 +15,12 @@ export const handler: Handler = async (event) => {
   }
 
   try {
-    const { phone, message } = JSON.parse(event.body || '{}');
+    // Accepte les deux formats de payload
+    const body = JSON.parse(event.body || '{}');
+    const phone = body.phone || body.to;
+    const message = body.message || body.text;
+    const sender = body.from || 'Zodiak';
+    const isVerification = !!body.isVerification; // optionnel
 
     if (!phone || !message) {
       return {
@@ -24,25 +29,23 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    // Générer un code de vérification
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-
-    // Sauvegarder le code dans la base de données
-    const { error: dbError } = await _supabase
-      .from('sms_verifications')
-      .insert({
-        phone,
-        code,
-        expires_at: expiresAt.toISOString()
-      });
-
-    if (dbError) {
-      throw new Error('Erreur lors de la sauvegarde du code');
+    let smsText = message;
+    // Si c'est une demande de vérification, on génère un code et on sauvegarde
+    if (isVerification) {
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+      const { error: dbError } = await _supabase
+        .from('sms_verifications')
+        .insert({
+          phone,
+          code,
+          expires_at: expiresAt.toISOString()
+        });
+      if (dbError) {
+        throw new Error('Erreur lors de la sauvegarde du code');
+      }
+      smsText = message.replace('{code}', code);
     }
-
-    // Préparer le message avec le code
-    const smsText = message.replace('{code}', code);
 
     // Appel direct à l'API Brevo
     const response = await fetch('https://api.brevo.com/v3/transactionalSMS/sms', {
@@ -50,12 +53,13 @@ export const handler: Handler = async (event) => {
       headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'api-key': process.env.VITE_BREVO_API_KEY || ''
+        'api-key': process.env.BREVO_API_KEY || process.env.VITE_BREVO_API_KEY || ''
       },
       body: JSON.stringify({
-        sender: 'Zodiak',
+        sender,
         recipient: phone,
-        content: smsText
+        content: smsText,
+        type: 'transactional'
       })
     });
 

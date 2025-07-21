@@ -23,10 +23,9 @@ export const handler: Handler = async (event) => {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'Données manquantes (question, prénom, thème natal, userId)' }) };
     }
 
-    // 1. Charger ou créer la conversation
     let convId = conversationId;
     let messages: Array<{ role: string; content: string }> = [];
-    let preferences = {};
+    let preferences: any = {};
     if (convId) {
       const { data, error } = await supabase
         .from('conversations')
@@ -35,7 +34,9 @@ export const handler: Handler = async (event) => {
         .single();
       if (data) {
         messages = (data.messages as Array<{ role: string; content: string }>) || [];
-        preferences = data.preferences || {};
+        if (data.preferences) {
+          preferences = data.preferences;
+        }
       }
     } else {
       // Nouvelle conversation
@@ -47,12 +48,37 @@ export const handler: Handler = async (event) => {
       convId = data?.id;
     }
 
-    // 2. Ajouter le nouveau message utilisateur
     messages.push({ role: 'user', content: question });
 
+    // 1. Détection d'intention, style, ton
+    try {
+      const analysisPrompt = `Analyse le message suivant et réponds sous forme d’un objet JSON strict :\n{\n  "intention": "amour | travail | bien-être | guidance générale | autre",\n  "style": "court | détaillé | mantra | conseil pratique | inspiration | autre",\n  "ton": "direct | empathique | spirituel | neutre | autre"\n}\nMessage utilisateur : "${question}"\nHistorique récent : ${messages.slice(-4).map(m => m.content).join(' | ')}`;
+      const analysisRes = await fetch(`${process.env.URL || 'https://zodiak.netlify.app'}/.netlify/functions/openai`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: analysisPrompt, maxTokens: 120, temperature: 0.2 })
+      });
+      if (analysisRes.ok) {
+        const analysisData = await analysisRes.json();
+        let parsed = null;
+        try {
+          parsed = JSON.parse(analysisData.choices?.[0]?.message?.content || '{}');
+        } catch {}
+        if (parsed && typeof parsed === 'object') {
+          preferences = parsed;
+        }
+      }
+    } catch (e) {
+      // Si l'analyse échoue, on continue sans bloquer
+      preferences = {};
+    }
+    // 2. Stockage des préférences (optionnel : en base si conversationId)
+    if (convId) {
+      await supabase.from('conversations').update({ preferences }).eq('id', convId);
+    }
     // 3. Préparer le contexte pour OpenAI (limité aux 12 derniers messages)
     const context: Array<{ role: string; content: string }> = messages.slice(-12);
-    // Prompt système conversationnel avancé
+    // Prompt système conversationnel avancé avec personnalisation
     const systemPrompt = `
 Tu es un astrologue humain, bienveillant, à l'écoute, expert et très interactif.
 Ta mission :
@@ -66,6 +92,11 @@ Ta mission :
 - Si l'utilisateur revient sur un sujet déjà abordé, approfondis ou propose une nouvelle perspective.
 - Si l'utilisateur pose une question très générale, propose-lui de préciser (ex : "Sur quel aspect de ta vie veux-tu qu'on se concentre aujourd'hui ?").
 - Si la discussion s'essouffle, propose une relance ou une question inspirante.
+
+Préférences détectées (à respecter dans ta réponse) :
+- Intention : ${(preferences as any).intention || 'non détectée'}
+- Style préféré : ${(preferences as any).style || 'non détecté'}
+- Ton préféré : ${(preferences as any).ton || 'non détecté'}
 
 Voici le thème natal de l'utilisateur :
 ${JSON.stringify(natalChart, null, 2)}
