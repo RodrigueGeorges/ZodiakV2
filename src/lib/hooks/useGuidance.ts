@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { StorageService } from '../storage';
 import { AstrologyService } from '../astrology';
-import OpenAIService from '../services/OpenAIService';
 import { DateTime } from 'luxon';
 import { toast } from 'react-hot-toast';
 import type { DailyGuidance, NatalChart } from '../types/supabase';
@@ -32,7 +31,7 @@ export function useGuidance(): UseGuidanceReturn {
   const today = DateTime.now().toISODate();
 
   // Vérifier si on a déjà tenté de générer une guidance aujourd'hui
-  const hasAttemptedToday = lastAttemptDate === today;
+  // const hasAttemptedToday = lastAttemptDate === today;
 
   const loadGuidanceFromStorage = useCallback(async () => {
     if (!user?.id) return null;

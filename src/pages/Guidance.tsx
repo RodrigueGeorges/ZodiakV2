@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import CosmicLoader from '../components/CosmicLoader';
-import GuidanceContent from '../components/GuidanceContent';
+import { GuidanceContent } from '../components/GuidanceContent';
 import { useAuth } from '../lib/hooks/useAuth';
 
 const pageVariants = {

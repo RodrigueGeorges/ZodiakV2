@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -11,6 +13,14 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, './src')
     }
+  },
+  css: {
+    postcss: {
+      plugins: [
+        tailwindcss,
+        autoprefixer,
+      ],
+    },
   },
   build: {
     target: 'esnext',
@@ -34,7 +44,7 @@ export default defineConfig({
     },
     terserOptions: {
       compress: {
-        drop_console: false,
+        drop_console: true,
         drop_debugger: true
       }
     }
@@ -59,6 +69,13 @@ export default defineConfig({
         changeOrigin: true,
       }
     }
+  },
+  define: {
+    'process.env': {},
+  },
+  preview: {
+    port: 4173,
+    host: true,
   },
   // Ajout de la configuration pour les variables d'environnement
   envPrefix: 'VITE_'

@@ -15,7 +15,7 @@ import CosmicLoader from '../components/CosmicLoader';
 // HOME PAGE - DESIGN PREMIUM
 // Optimisation technique uniquement, aucun changement visuel
 export default function Home() {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isLoading, user } = useAuth();
   const { shouldRedirect } = useAuthRedirect();
   const navigate = useNavigate();
   const [authMode, setAuthMode] = useState<'sms' | 'email'>('email');

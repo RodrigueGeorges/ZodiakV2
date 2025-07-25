@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { supabase } from '../supabase';
 import { StorageService } from '../storage';
 import type { Profile } from '../types/supabase';
@@ -67,34 +67,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const handleAuthStateChange = async (event: string, _session: AuthSession | null) => {
-    setIsLoading(true);
-    try {
-      if (event === 'SIGNED_IN' && _session?.user) {
-        setSession(_session);
-        setUser(_session.user);
-        setIsAuthenticated(true);
-        await loadProfile(_session.user.id);
-        StorageService.clearUserCache(_session.user.id);
-        return;
-      } else if (event === 'SIGNED_OUT') {
-        setSession(null);
-        setUser(null);
-        setProfile(null);
-        setIsAuthenticated(false);
-        if (_session?.user?.id) {
-          StorageService.clearUserCache(_session.user.id);
-        }
+  const handleAuthStateChange = useCallback(async (event: string, session: any) => {
+    console.log('Auth state changed:', event, session?.user?.id);
+    
+    if (event === 'SIGNED_IN' && session?.user) {
+      setUser(session.user);
+      setIsLoading(false);
+      
+      // Charger le profil
+      try {
+        const profile = await StorageService.getProfile(session.user.id);
+        setProfile(profile);
+      } catch (error) {
+        console.error('Erreur lors du chargement du profil:', error);
       }
-    } catch (error) {
-      setSession(null);
+    } else if (event === 'SIGNED_OUT') {
       setUser(null);
       setProfile(null);
-      setIsAuthenticated(false);
-    } finally {
       setIsLoading(false);
+      StorageService.clearUserCache();
     }
-  };
+  }, []);
 
   useEffect(() => {
     let didTimeout = false;
@@ -139,7 +132,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       clearTimeout(timeout);
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [handleAuthStateChange]);
 
 
 

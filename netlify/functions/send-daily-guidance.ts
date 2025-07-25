@@ -649,6 +649,7 @@ const handler: Handler = async () => {
     let skippedCount = 0;
     let errorCount = 0;
     let total = 0;
+    
     while (true) {
       const { data: profiles, error } = await supabase
         .from('profiles')

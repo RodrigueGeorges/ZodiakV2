@@ -1,277 +1,229 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../lib/hooks/useAuth.tsx';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../lib/hooks/useAuth';
 import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
-import { supabase } from '../lib/supabase';
-import InteractiveCard from '../components/InteractiveCard';
-import Logo from '../components/Logo';
-import StarryBackground from '../components/StarryBackground';
-import PlaceAutocomplete from '../components/PlaceAutocomplete';
-import { getCoordsFromPlaceString, type Place } from '../lib/places';
-import { AstrologyService } from '../lib/astrology';
-import type { NatalChart } from '../lib/astrology';
-import LoadingScreen from '../components/LoadingScreen';
 import { StorageService } from '../lib/storage';
+import { AstrologyService } from '../lib/astrology';
+import { ButtonZodiak } from '../components/ButtonZodiak';
+import { LoadingScreen } from '../components/LoadingScreen';
+import { PageLayout } from '../components/PageLayout';
+import { motion } from 'framer-motion';
+import { User, Calendar, Clock, MapPin, Star, CheckCircle } from 'lucide-react';
 
 export default function RegisterComplete() {
   const navigate = useNavigate();
-  const { user, profile, isLoading, refreshProfile } = useAuth();
-  const { shouldRedirect } = useAuthRedirect();
-  const [form, setForm] = useState({
-    name: '',
-    phone: '',
-    birthDate: '',
-    birthTime: '',
-    unknownTime: false,
-    birthPlace: '',
-    birthPlaceObj: null as Place | null,
-    guidanceTime: '08:00',
-  });
+  const { user } = useAuth();
+  const { redirectTo } = useAuthRedirect();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [placeStatus, setPlaceStatus] = useState({ loading: false, error: null as string | null, valid: false });
-
-  const params = new URLSearchParams(window.location.search);
-  const justSignedUp = params.get('justSignedUp');
+  const [formData, setFormData] = useState({
+    name: '',
+    birth_date: '',
+    birth_time: '',
+    birth_place: ''
+  });
 
   useEffect(() => {
-    // Pré-fill form with existing profile data
-    if (user && profile) {
-      setForm(prevForm => ({
-        ...prevForm,
-        name: profile.name || '',
-        phone: profile.phone || '',
-        birthDate: profile.birth_date || '',
-        birthTime: profile.birth_time || '',
-        birthPlace: profile.birth_place || '',
-        guidanceTime: profile.guidance_sms_time || '08:00',
-      }));
-      // If a birth place is already set, consider it valid
-      if (profile.birth_place) {
-        setPlaceStatus({ loading: false, error: null, valid: true });
+    const loadFormData = async () => {
+      try {
+        const savedData = StorageService.getFormData();
+        if (savedData) {
+          setFormData({
+            name: savedData.name || '',
+            birth_date: savedData.birth_date || '',
+            birth_time: savedData.birth_time || '',
+            birth_place: savedData.birth_place || ''
+          });
+        }
+      } catch (err) {
+        console.error('Erreur lors du chargement des données:', err);
+      } finally {
+        setLoading(false);
       }
-    }
-  }, [user, profile]);
+    };
 
-  useEffect(() => {
-    if (profile && !justSignedUp) {
-      navigate('/profile', { replace: true });
-    }
-  }, [profile, navigate, justSignedUp]);
+    loadFormData();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid()) {
-      setError('Veuillez remplir tous les champs correctement.');
+    if (!user?.id) {
+      setError('Utilisateur non connecté');
       return;
     }
 
+    setSaving(true);
     setError(null);
-    setSuccess(null);
-    setLoading(true);
 
     try {
-      if (!user) {
-        throw new Error("Utilisateur non trouvé. Veuillez vous reconnecter.");
-      }
-
-      const birthTime = form.unknownTime ? '12:00' : form.birthTime;
-      const [hour, minute] = birthTime.split(':').map(Number);
-      
-      const coords = await getCoordsFromPlaceString(form.birthPlace);
-
-      if (!coords) {
-        throw new Error("Impossible de récupérer les coordonnées du lieu de naissance.");
-      }
-
+      // Calculer le thème natal
       const birthData = {
-        date_of_birth: form.birthDate,
-        time_of_birth: `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`,
-        location: `${coords.latitude},${coords.longitude}`
+        date_of_birth: formData.birth_date,
+        time_of_birth: formData.birth_time,
+        location: formData.birth_place
       };
 
       const natalChart = await AstrologyService.calculateNatalChart(birthData);
 
-      const { error: upsertError } = await supabase.from('profiles').upsert({
+      // Sauvegarder le profil complet
+      const profile = {
         id: user.id,
-        name: form.name,
-        phone: form.phone,
-        birth_date: form.birthDate,
-        birth_time: form.unknownTime ? null : form.birthTime,
-        birth_place: form.birthPlace,
-        natal_chart: natalChart as NatalChart,
-        guidance_sms_time: form.guidanceTime,
-        updated_at: new Date().toISOString(),
-      });
+        name: formData.name,
+        birth_date: formData.birth_date,
+        birth_time: formData.birth_time,
+        birth_place: formData.birth_place,
+        natal_chart: natalChart,
+        subscription_status: 'trial',
+        trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 jours d'essai
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
 
-      if (upsertError) throw upsertError;
+      await StorageService.saveProfile(profile);
 
-      // Vide le cache et force le refresh du profil depuis Supabase
-      StorageService.clearUserCache(user.id);
-      const refreshed = await refreshProfile();
-      if (refreshed) {
-        setSuccess('Profil complété avec succès ! Redirection...');
-        navigate('/profile', { replace: true });
-      } else {
-        setError('Erreur lors de la récupération du profil après création.');
-      }
+      // Nettoyer les données temporaires
+      StorageService.clearFormData();
 
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Erreur lors de la mise à jour du profil.');
+      // Rediriger vers la guidance
+      redirectTo('/guidance');
+    } catch (err) {
+      console.error('Erreur lors de la sauvegarde:', err);
+      setError('Erreur lors de la sauvegarde du profil. Veuillez réessayer.');
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   };
 
-  const isFormValid = () => {
-    return (
-      form.name.trim() &&
-      form.phone.trim() &&
-      form.birthDate.trim() &&
-      (form.birthTime.trim() || form.unknownTime) &&
-      placeStatus.valid
-    );
-  };
-
-  if (isLoading) {
-    return <LoadingScreen message="Chargement de votre profil..." />;
+  if (loading) {
+    return <LoadingScreen />;
   }
 
-  // Si l'utilisateur n'est PAS authentifié, redirige vers /login
   if (!user) {
-    navigate('/login', { replace: true });
-    return null;
+    redirectTo('/login');
+    return <LoadingScreen />;
   }
 
-  // Si l'utilisateur a déjà un profil, redirige vers /profile
-  if (user && profile) {
-    navigate('/profile', { replace: true });
-    return null;
-  }
-
-  // Si l'utilisateur est authentifié mais n'a pas de profil, afficher le formulaire
-  if (user && !profile) {
-    return (
-      <div className="min-h-screen overflow-hidden relative">
-        <StarryBackground />
-        {/* HEADER FIXE */}
-        <header className="fixed top-0 left-0 w-full z-40 bg-cosmic-900/80 backdrop-blur-md shadow-lg border-b border-primary/10">
-          <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-3">
-            <Logo />
-            <nav className="flex gap-6">
-              <Link to="/profile" className="text-primary font-cinzel hover:text-secondary transition">Profil</Link>
-              <Link to="/natal" className="text-primary font-cinzel hover:text-secondary transition">Natal</Link>
-              <Link to="/guidance" className="text-primary font-cinzel hover:text-secondary transition">Guidance</Link>
-              <Link to="/chatastro" className="text-primary font-cinzel hover:text-secondary transition">Guide Astral</Link>
-            </nav>
-          </div>
-        </header>
-        <div className="container mx-auto px-4 md:px-8 xl:px-12 2xl:px-24 flex flex-col items-center justify-center min-h-screen">
-          <div className="max-w-md w-full mt-32 mb-12">
-            {/* BOUTON RETOUR ACCUEIL */}
-            <div className="mb-4 flex justify-start">
-              <Link to="/" className="text-primary hover:text-secondary font-cinzel text-lg flex items-center gap-2">
-                <span className="text-2xl">←</span> Accueil
-              </Link>
+  return (
+    <PageLayout title="Compléter votre profil" subtitle="Dernière étape pour accéder à votre guidance">
+      <div className="max-w-2xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="bg-gradient-to-br from-cosmic-800/50 to-cosmic-900/50 rounded-lg p-8 border border-primary/20"
+        >
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+              <Star className="w-8 h-8 text-cosmic-900" />
             </div>
-            <InteractiveCard className="p-6 md:p-8 xl:p-10 2xl:p-16">
-              <div className="mb-8 text-center">
-                <Logo />
-                <h2 className="text-2xl font-cinzel font-bold mt-4 mb-2">
-                  Complétez votre profil
-                </h2>
-              </div>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-primary mb-1">Nom complet</label>
-                  <input
-                    type="text"
-                    value={form.name}
-                    onChange={e => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
-                    placeholder="Votre nom"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary mb-1">Numéro de téléphone</label>
-                  <input
-                    type="tel"
-                    value={form.phone}
-                    onChange={e => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
-                    placeholder="+33612345678"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary mb-1">Date de naissance</label>
-                  <input
-                    type="date"
-                    value={form.birthDate}
-                    onChange={e => setForm({ ...form, birthDate: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary mb-1">Heure de naissance</label>
-                  <input
-                    type="time"
-                    value={form.birthTime}
-                    onChange={e => setForm({ ...form, birthTime: e.target.value, unknownTime: false })}
-                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
-                    placeholder="HH:mm"
-                    disabled={form.unknownTime}
-                  />
-                  <div className="flex items-center mt-1">
-                    <input
-                      type="checkbox"
-                      id="unknownTime"
-                      checked={form.unknownTime}
-                      onChange={e => setForm({ ...form, unknownTime: e.target.checked, birthTime: '' })}
-                      className="mr-2"
-                    />
-                    <label htmlFor="unknownTime" className="text-sm text-primary">Je ne connais pas l'heure</label>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary mb-1">Lieu de naissance</label>
-                  <PlaceAutocomplete
-                    value={form.birthPlace}
-                    onChange={(value, place) => setForm({ ...form, birthPlace: value, birthPlaceObj: place })}
-                    placeholder="Ville, Pays (ex: Paris, France)"
-                    onStatusChange={setPlaceStatus}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-primary mb-1">Heure d'envoi de la guidance</label>
-                  <input
-                    type="time"
-                    value={form.guidanceTime}
-                    onChange={e => setForm({ ...form, guidanceTime: e.target.value })}
-                    className="w-full px-4 py-2 rounded-lg bg-cosmic-900 border border-primary text-primary placeholder-primary focus:border-primary focus:ring-2 focus:ring-primary/50"
-                    required
-                  />
-                  <span className="text-xs text-primary">Par défaut : 08:00</span>
-                </div>
-                {error && <div className="text-primary text-sm mb-2">{error}</div>}
-                {success && <div className="text-primary text-sm mb-2">{success}</div>}
-                <button
-                  type="submit"
-                  className="w-full py-2 rounded-lg bg-gradient-to-r from-primary to-secondary text-cosmic-900 font-semibold hover:opacity-90 transition-colors"
-                  disabled={loading || !isFormValid()}
-                >
-                  Compléter le profil
-                </button>
-              </form>
-            </InteractiveCard>
+            <h2 className="text-2xl font-bold text-primary mb-2">
+              Complétez votre profil
+            </h2>
+            <p className="text-gray-400">
+              Ces informations nous permettront de calculer votre thème natal et de vous proposer une guidance personnalisée
+            </p>
           </div>
-        </div>
-      </div>
-    );
-  }
 
-  return null;
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Nom */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <User className="w-4 h-4 inline mr-2" />
+                Nom complet
+              </label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-4 py-3 bg-cosmic-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary transition-colors"
+                placeholder="Votre nom complet"
+                required
+              />
+            </div>
+
+            {/* Date de naissance */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <Calendar className="w-4 h-4 inline mr-2" />
+                Date de naissance
+              </label>
+              <input
+                type="date"
+                value={formData.birth_date}
+                onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
+                className="w-full px-4 py-3 bg-cosmic-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-primary transition-colors"
+                required
+              />
+            </div>
+
+            {/* Heure de naissance */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <Clock className="w-4 h-4 inline mr-2" />
+                Heure de naissance
+              </label>
+              <input
+                type="time"
+                value={formData.birth_time}
+                onChange={(e) => setFormData({ ...formData, birth_time: e.target.value })}
+                className="w-full px-4 py-3 bg-cosmic-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-primary transition-colors"
+                required
+              />
+            </div>
+
+            {/* Lieu de naissance */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                <MapPin className="w-4 h-4 inline mr-2" />
+                Lieu de naissance
+              </label>
+              <input
+                type="text"
+                value={formData.birth_place}
+                onChange={(e) => setFormData({ ...formData, birth_place: e.target.value })}
+                className="w-full px-4 py-3 bg-cosmic-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary transition-colors"
+                placeholder="Ville, Pays"
+                required
+              />
+            </div>
+
+            {error && (
+              <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+                <p className="text-red-400 text-sm">{error}</p>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+              <ButtonZodiak
+                type="button"
+                onClick={() => navigate('/')}
+                variant="outline"
+                className="flex-1"
+              >
+                Retour à l'accueil
+              </ButtonZodiak>
+              <ButtonZodiak
+                type="submit"
+                disabled={saving}
+                className="flex-1 bg-primary hover:bg-primary/90"
+              >
+                {saving ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                    Sauvegarde...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Terminer l'inscription
+                  </>
+                )}
+              </ButtonZodiak>
+            </div>
+          </form>
+        </motion.div>
+      </div>
+    </PageLayout>
+  );
 } 
