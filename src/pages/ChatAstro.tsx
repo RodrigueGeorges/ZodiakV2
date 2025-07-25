@@ -145,7 +145,27 @@ export default function ChatAstro() {
           };
           typeLetter();
         } else {
-          setMessages(msgs => [...msgs, { from: 'bot', text: "Je n'ai pas pu générer de réponse pour le moment." }]);
+          // Si pas de data.answer, essayer de parser la réponse brute
+          const responseText = await res.text();
+          console.log('Raw response:', responseText);
+          
+          // Filtrer le JSON brut et extraire uniquement le contenu textuel
+          let cleanText = responseText;
+          
+          // Supprimer les lignes commençant par DATA:
+          cleanText = cleanText.replace(/^DATA:.*$/gm, '');
+          
+          // Supprimer les objets JSON complets
+          cleanText = cleanText.replace(/\{[^{}]*"choices"[^{}]*\}/g, '');
+          
+          // Supprimer les lignes vides multiples
+          cleanText = cleanText.replace(/\n\s*\n/g, '\n').trim();
+          
+          if (cleanText && cleanText.length > 10) {
+            setMessages(msgs => [...msgs, { from: 'bot', text: cleanText }]);
+          } else {
+            setMessages(msgs => [...msgs, { from: 'bot', text: "Je n'ai pas pu générer de réponse pour le moment." }]);
+          }
         }
       }
     } catch (e) {

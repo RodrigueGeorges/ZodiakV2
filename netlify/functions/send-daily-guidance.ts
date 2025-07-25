@@ -461,20 +461,45 @@ function getDefaultGuidance(): {
 
 // Logique SMS (utiliser Vonage au lieu de Brevo pour la cohérence)
 async function sendSms(phoneNumber: string, content: string): Promise<void> {
-  const response = await fetch(`${process.env.URL || 'https://zodiak.netlify.app'}/.netlify/functions/send-sms`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ phone: phoneNumber, message: content, from: 'Zodiak' })
-  });
+  try {
+    // Vérifier si le service SMS est configuré
+    const apiKey = process.env.BREVO_API_KEY;
+    if (!apiKey) {
+      console.warn('⚠️ Service SMS non configuré (BREVO_API_KEY manquante)');
+      return;
+    }
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(`Erreur SMS: ${errorData.error || 'Envoi SMS échoué'}`);
+    const response = await fetch('https://api.brevo.com/v3/transactionalSMS/sms', {
+      method: 'POST',
+      headers: {
+        'api-key': apiKey,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        sender: 'Zodiak',
+        recipient: phoneNumber,
+        content: content,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage = errorData?.message || response.statusText;
+      
+      // Si le service SMS n'est pas activé, log un avertissement au lieu d'échouer
+      if (errorMessage.includes('not yet activated') || errorMessage.includes('SMS sending status')) {
+        console.warn(`⚠️ Service SMS non activé pour ${phoneNumber}: ${errorMessage}`);
+        return;
+      }
+      
+      throw new Error(`Erreur SMS: ${errorMessage}`);
+    }
+
+    console.log(`✅ SMS envoyé à ${phoneNumber}`);
+  } catch (error) {
+    console.error(`❌ Erreur lors de l'envoi du SMS à ${phoneNumber}:`, error);
+    throw error;
   }
-
-  console.log(`SMS envoyé avec succès à ${phoneNumber}`);
 }
 
 function generateShortCode(length = 6) {

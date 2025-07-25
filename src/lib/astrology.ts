@@ -221,7 +221,7 @@ export class AstrologyService {
     }
   }
 
-  static async generateDailyGuidance(userId: string, natalChart: NatalChart, date: string): Promise<GuidanceResponse> {
+  static async generateDailyGuidance(userId: string, natalChart: NatalChart, date: string, birthPlace?: string): Promise<GuidanceResponse> {
     try {
       // Clé de cache pour la guidance quotidienne
       const cacheKey = `guidance_${userId}_${date}`;
@@ -238,17 +238,17 @@ export class AstrologyService {
 
       // console.log('🔄 Génération de la guidance quotidienne...');
       
-      // Calculer les transits du jour (simulé pour l'instant)
-      const transits = await this.calculateDailyTransits(date);
+      // Calculer les transits du jour avec le lieu de naissance de l'utilisateur
+      const transits = await this.calculateDailyTransits(date, birthPlace);
 
       // Générer la guidance avec OpenAI
       const guidance = await OpenAIService.generateGuidance(natalChart, transits);
       
       // Cache pour 24h (guidance quotidienne)
-      this.setInCache(cacheKey, guidance);
+      this.setInCache(cacheKey, guidance.data || guidance);
       // console.log('💾 Guidance quotidienne mise en cache');
       
-      return guidance;
+      return guidance.data || guidance;
     } catch (error) {
       console.error('Error generating guidance:', error);
       throw error instanceof ApiError ? error : new ApiError('Erreur lors de la génération de la guidance', 500);
@@ -291,21 +291,60 @@ export class AstrologyService {
     }
   }
 
-  static async calculateDailyTransits(date: string): Promise<Record<string, unknown>> {
-    // Simuler le calcul des transits pour une date donnée
-    // TODO: Implémenter un vrai calcul de transits si nécessaire
+  static async calculateDailyTransits(date: string, birthPlace?: string): Promise<Record<string, unknown>> {
+    try {
+      // Appel à l'API Prokerala pour obtenir les vrais transits du jour
+      const response = await fetch('/.netlify/functions/astrology', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          type: 'transits',
+          date: date,
+          time: '12:00', // Transits calculés à midi par défaut
+          place: birthPlace || '0,0' // Coordonnées par défaut (seront remplacées par le lieu de naissance)
+        }),
+      });
+
+      if (!response.ok) {
+        console.warn('Erreur lors du calcul des transits, utilisation des transits simulés');
+        return this.getSimulatedTransits(date);
+      }
+
+      const transitsData = await response.json();
+      return transitsData;
+    } catch (error) {
+      console.warn('Erreur lors du calcul des transits, utilisation des transits simulés:', error);
+      return this.getSimulatedTransits(date);
+    }
+  }
+
+  private static getSimulatedTransits(date: string): Record<string, unknown> {
+    // Fallback : transits simulés si l'API échoue
+    const dateObj = new Date(date);
+    const dayOfYear = Math.floor((dateObj.getTime() - new Date(dateObj.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+    
+    const baseSunDegree = (dayOfYear * 0.9856) % 360;
+    const baseMoonDegree = (dayOfYear * 13.2) % 360;
+    
+    const signs = ['Bélier', 'Taureau', 'Gémeaux', 'Cancer', 'Lion', 'Vierge', 'Balance', 'Scorpion', 'Sagittaire', 'Capricorne', 'Verseau', 'Poissons'];
+    
+    const getSignFromDegree = (degree: number): string => {
+      const signIndex = Math.floor(degree / 30);
+      return signs[signIndex % 12];
+    };
+    
     return {
       date: date,
       planets: [
-        { name: 'Soleil', sign: 'Bélier', degree: 15 },
-        { name: 'Lune', sign: 'Cancer', degree: 25 },
-        { name: 'Mercure', sign: 'Poissons', degree: 10 },
-        { name: 'Vénus', sign: 'Taureau', degree: 5 },
-        { name: 'Mars', sign: 'Gémeaux', degree: 20 }
+        { name: 'Soleil', sign: getSignFromDegree(baseSunDegree), degree: Math.floor(baseSunDegree % 30) },
+        { name: 'Lune', sign: getSignFromDegree(baseMoonDegree), degree: Math.floor(baseMoonDegree % 30) },
+        { name: 'Mercure', sign: getSignFromDegree(baseSunDegree + (dayOfYear % 30)), degree: Math.floor((baseSunDegree + (dayOfYear % 30)) % 30) },
+        { name: 'Vénus', sign: getSignFromDegree(baseSunDegree + (dayOfYear % 45)), degree: Math.floor((baseSunDegree + (dayOfYear % 45)) % 30) },
+        { name: 'Mars', sign: getSignFromDegree(baseSunDegree + (dayOfYear % 60)), degree: Math.floor((baseSunDegree + (dayOfYear % 60)) % 30) }
       ],
       aspects: [
-        { planet1: 'Soleil', planet2: 'Mars', type: 'trigone', orbe: 2 },
-        { planet1: 'Vénus', planet2: 'Lune', type: 'sextile', orbe: 1 }
+        { planet1: 'Soleil', planet2: 'Mars', type: dayOfYear % 2 === 0 ? 'trigone' : 'carré', orbe: (dayOfYear % 5) + 1 },
+        { planet1: 'Vénus', planet2: 'Lune', type: dayOfYear % 3 === 0 ? 'sextile' : 'opposition', orbe: (dayOfYear % 3) + 1 }
       ]
     };
   }

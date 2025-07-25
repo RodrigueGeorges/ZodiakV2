@@ -99,16 +99,21 @@ export function useGuidance(): UseGuidanceReturn {
       if (!profile.natal_chart || typeof profile.natal_chart === 'string') {
         throw new Error('Thème natal non disponible. Veuillez compléter votre profil.');
       }
-      const transits = await AstrologyService.calculateDailyTransits(today);
-      const guidanceData = await OpenAIService.generateGuidance(
+      
+      // Utiliser AstrologyService.generateDailyGuidance qui gère les transits et la génération
+      const guidanceData = await AstrologyService.generateDailyGuidance(
+        user.id,
         profile.natal_chart as NatalChart,
-        transits
+        today,
+        profile.birth_place
       );
+      
       // Vérification stricte des champs requis
-      if (!guidanceData || !guidanceData.success || !guidanceData.data) {
+      if (!guidanceData || !guidanceData.summary || !guidanceData.love || !guidanceData.work || !guidanceData.energy) {
         throw new Error('La génération de la guidance a échoué (données incomplètes ou erreur API). Veuillez réessayer plus tard.');
       }
-      const { summary, love, work, energy } = guidanceData.data;
+      
+      const { summary, love, work, energy } = guidanceData;
       if (
         typeof summary !== 'string' || summary.trim() === '' ||
         typeof love !== 'string' || love.trim() === '' ||
@@ -117,6 +122,7 @@ export function useGuidance(): UseGuidanceReturn {
       ) {
         throw new Error('La génération de la guidance a échoué (texte vide). Veuillez réessayer plus tard.');
       }
+      
       const guidanceToSave: DailyGuidance = {
         id: crypto.randomUUID(),
         user_id: user.id,
@@ -129,7 +135,7 @@ export function useGuidance(): UseGuidanceReturn {
       };
       const saved = await StorageService.saveDailyGuidance(guidanceToSave);
       if (saved) {
-        setGuidance(guidanceData.data);
+        setGuidance(guidanceData);
         toast.success('Guidance générée avec succès !');
       } else {
         throw new Error('Erreur lors de la sauvegarde de la guidance');

@@ -133,19 +133,30 @@ export const handler: Handler = async (event, _context): Promise<any> => {
       return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid birthPlace format', details: request.birthPlace }) };
     }
     const datetime = `${request.birthDate}T${request.birthTime}Z`;
-    const prokeralaRes = await fetch(`${baseUrl}/v2/astrology/natal-chart`, {
+    
+    // Choisir l'endpoint selon le type de requête
+    const endpoint = request.type === 'transits' ? '/v2/astrology/transits' : '/v2/astrology/natal-chart';
+    const requestBody = request.type === 'transits' ? {
+      datetime,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+      house_system: 'placidus',
+      chart_type: 'western',
+    } : {
+      datetime,
+      latitude: parseFloat(latitude),
+      longitude: parseFloat(longitude),
+      house_system: 'placidus',
+      chart_type: 'western',
+    };
+    
+    const prokeralaRes = await fetch(`${baseUrl}${endpoint}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        datetime,
-        latitude: parseFloat(latitude),
-        longitude: parseFloat(longitude),
-        house_system: 'placidus',
-        chart_type: 'western',
-      })
+      body: JSON.stringify(requestBody)
     });
     if (!prokeralaRes.ok) {
       const errorText = await prokeralaRes.text();
