@@ -37,7 +37,7 @@ const handler: Handler = async () => {
 
     // Envoyer le SMS
     try {
-      await sendSms(profile.phone, guidance, profile.name);
+      await sendSms(profile.phone, guidance, profile.name, profile.id);
       console.log(`✅ SMS envoyé à ${profile.id}`);
     } catch (e) {
       console.error(`❌ Erreur envoi SMS pour ${profile.id}:`, e);

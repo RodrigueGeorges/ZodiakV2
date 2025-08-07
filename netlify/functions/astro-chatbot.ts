@@ -19,9 +19,58 @@ export const handler: Handler = async (event) => {
   }
   try {
     const { question, firstName, natalChart, userId, conversationId } = JSON.parse(event.body || '{}');
-    if (!question || !firstName || !natalChart || !userId) {
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Données manquantes (question, prénom, thème natal, userId)' }) };
+    
+    // Validation des données d'entrée
+    console.log('🔍 Validation des données d\'entrée...');
+    
+    if (!question || typeof question !== 'string' || question.trim().length === 0) {
+      console.log('❌ Question manquante ou invalide');
+      return { 
+        statusCode: 400, 
+        headers, 
+        body: JSON.stringify({ 
+          error: 'Question manquante ou invalide' 
+        }) 
+      };
     }
+    
+    if (!firstName || typeof firstName !== 'string' || firstName.trim().length === 0) {
+      console.log('❌ Prénom manquant ou invalide');
+      return { 
+        statusCode: 400, 
+        headers, 
+        body: JSON.stringify({ 
+          error: 'Prénom manquant ou invalide' 
+        }) 
+      };
+    }
+    
+    if (!natalChart || typeof natalChart !== 'object') {
+      console.log('❌ Thème natal manquant ou invalide');
+      return { 
+        statusCode: 400, 
+        headers, 
+        body: JSON.stringify({ 
+          error: 'Thème natal manquant ou invalide' 
+        }) 
+      };
+    }
+    
+    if (!userId || typeof userId !== 'string' || userId.trim().length === 0) {
+      console.log('❌ UserId manquant ou invalide');
+      return { 
+        statusCode: 400, 
+        headers, 
+        body: JSON.stringify({ 
+          error: 'UserId manquant ou invalide' 
+        }) 
+      };
+    }
+    
+    console.log('✅ Validation des données réussie');
+    console.log('📝 Question:', question.substring(0, 50) + '...');
+    console.log('👤 Prénom:', firstName);
+    console.log('🆔 UserId:', userId);
 
     let convId = conversationId;
     let messages: Array<{ role: string; content: string }> = [];
@@ -111,64 +160,85 @@ Commence ta réponse directement, sois naturel, humain, et adapte-toi à la disc
       ...context
     ];
 
-    // 4. Appel OpenAI en streaming
-    const openaiRes = await fetch(`${process.env.URL || 'https://zodiak.netlify.app'}/.netlify/functions/openai`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: systemPrompt, maxTokens: 300, temperature: 0.5 })
-    });
-    if (!openaiRes.ok) {
-      const err = await openaiRes.text();
-      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Erreur OpenAI', details: err }) };
-    }
-
-    // Streaming : lit la réponse chunk par chunk et la transmet au client
-    let streamedAnswer = '';
-    if (openaiRes.body && typeof (openaiRes.body as any).on === 'function') {
-      // Node.js stream
-      return new Promise((resolve, reject) => {
-        let answer = '';
-        (openaiRes.body as any).on('data', (chunk: Buffer) => {
-          const text = chunk.toString();
-          answer += text;
-          streamedAnswer += text;
-        });
-        (openaiRes.body as any).on('end', async () => {
-          // Ajoute la réponse complète à l'historique
-          messages.push({ role: 'assistant', content: streamedAnswer });
-          await supabase
-            .from('conversations')
-            .update({ messages, updated_at: new Date().toISOString() })
-            .eq('id', convId);
-          resolve({
-            statusCode: 200,
-            headers: {
-              ...headers,
-              'Content-Type': 'text/event-stream',
-              'Cache-Control': 'no-cache',
-              'Connection': 'keep-alive',
-            },
-            body: streamedAnswer,
-          });
-        });
-        (openaiRes.body as any).on('error', (err: Error) => reject(err));
+    // 4. Appel OpenAI direct (plus simple et fiable)
+    console.log('📤 Appel OpenAI pour le chat...');
+    
+    try {
+      const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4',
+          messages: openaiMessages,
+          max_tokens: 400,
+          temperature: 0.7,
+          stream: false // Pas de streaming pour simplifier
+        })
       });
-    } else {
-      // Fallback : pas de stream, réponse complète
-      const data = await openaiRes.text();
-      streamedAnswer = data;
-      messages.push({ role: 'assistant', content: streamedAnswer });
+      
+      if (!openaiRes.ok) {
+        const errorText = await openaiRes.text();
+        console.log('❌ Erreur OpenAI:', errorText);
+        return { 
+          statusCode: 500, 
+          headers, 
+          body: JSON.stringify({ 
+            error: 'Erreur lors de la génération de la réponse',
+            details: errorText 
+          }) 
+        };
+      }
+      
+      const openaiData = await openaiRes.json();
+      const answer = openaiData.choices?.[0]?.message?.content;
+      
+      if (!answer) {
+        console.log('❌ Pas de réponse OpenAI');
+        return { 
+          statusCode: 500, 
+          headers, 
+          body: JSON.stringify({ 
+            error: 'Aucune réponse générée' 
+          }) 
+        };
+      }
+      
+      console.log('✅ Réponse OpenAI reçue:', answer.substring(0, 100) + '...');
+      
+      // 5. Sauvegarder la réponse
+      messages.push({ role: 'assistant', content: answer });
       await supabase
         .from('conversations')
-        .update({ messages, updated_at: new Date().toISOString() })
+        .update({ 
+          messages, 
+          updated_at: new Date().toISOString() 
+        })
         .eq('id', convId);
+      
       return {
         statusCode: 200,
         headers: {
           ...headers,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ answer: streamedAnswer, conversationId: convId, messages }),
+        body: JSON.stringify({ 
+          answer, 
+          conversationId: convId 
+        }),
+      };
+      
+    } catch (openaiError) {
+      console.log('❌ Erreur OpenAI:', openaiError.message);
+      return { 
+        statusCode: 500, 
+        headers, 
+        body: JSON.stringify({ 
+          error: 'Erreur de connexion OpenAI',
+          details: openaiError.message 
+        }) 
       };
     }
   } catch (error) {

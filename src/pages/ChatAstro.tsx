@@ -80,93 +80,46 @@ export default function ChatAstro() {
           conversationId,
         })
       });
-      // Gestion du streaming (text/event-stream)
-      const contentType = res.headers.get('content-type');
-      if (contentType && contentType.includes('text/event-stream') && res.body) {
-        const reader = res.body.getReader();
-        let fullText = '';
+      // Gestion simplifiée des réponses JSON
+      const data = await res.json();
+      
+      if (data.error) {
+        console.log('❌ Erreur du serveur:', data.error);
+        setMessages(msgs => [...msgs, { 
+          from: 'bot', 
+          text: "Désolé, j'ai rencontré une erreur. Merci de réessayer dans quelques instants." 
+        }]);
+        return;
+      }
+      
+      if (data.answer) {
+        setConversationId(data.conversationId);
+        
+        // Effet typing lettre par lettre pour une meilleure UX
+        let i = 0;
+        const fullText = data.answer;
         setTypingText('');
-        let decoder = new TextDecoder();
-        let done = false;
-        let buffer = '';
-        while (!done) {
-          const { value, done: doneReading } = await reader.read();
-          done = doneReading;
-          if (value) {
-            buffer += decoder.decode(value, { stream: true });
-            let lines = buffer.split('\n');
-            buffer = lines.pop() || '';
-            for (let line of lines) {
-              line = line.trim();
-              if (!line) continue;
-              if (line.startsWith('data:')) line = line.replace(/^data:\s*/, '');
-              if (line === '[DONE]') continue;
-              // Certains flux peuvent contenir plusieurs objets JSON collés
-              const jsons = line.split('}{').map((part, idx, arr) =>
-                idx === 0
-                  ? part + (arr.length > 1 ? '}' : '')
-                  : '{' + part + (idx < arr.length - 1 ? '}' : '')
-              );
-              for (let jsonStr of jsons) {
-                try {
-                  const json = JSON.parse(jsonStr);
-                  const content = json.choices?.[0]?.delta?.content;
-                  if (content) {
-                    fullText += content;
-                    setTypingText(fullText);
-                  }
-                } catch (e) {
-                  // ignorer les erreurs de parsing
-                }
-              }
-            }
-          }
-        }
-        setMessages(msgs => [...msgs, { from: 'bot', text: fullText }]);
-        setTypingText('');
-      } else {
-        // Fallback : réponse complète, effet typing lettre par lettre
-        const data = await res.json();
-        if (data.answer) {
-          setConversationId(data.conversationId);
-          let i = 0;
-          const fullText = data.answer;
-          setTypingText('');
-          if (typingTimeout.current) clearTimeout(typingTimeout.current);
-          const typeLetter = () => {
-            setTypingText(prev => prev + fullText[i]);
-            i++;
-            if (i < fullText.length) {
-              typingTimeout.current = setTimeout(typeLetter, 12 + Math.random() * 30);
-            } else {
-              setMessages(msgs => [...msgs, { from: 'bot', text: fullText }]);
-              setTypingText('');
-            }
-          };
-          typeLetter();
-        } else {
-          // Si pas de data.answer, essayer de parser la réponse brute
-          const responseText = await res.text();
-          console.log('Raw response:', responseText);
-          
-          // Filtrer le JSON brut et extraire uniquement le contenu textuel
-          let cleanText = responseText;
-          
-          // Supprimer les lignes commençant par DATA:
-          cleanText = cleanText.replace(/^DATA:.*$/gm, '');
-          
-          // Supprimer les objets JSON complets
-          cleanText = cleanText.replace(/\{[^{}]*"choices"[^{}]*\}/g, '');
-          
-          // Supprimer les lignes vides multiples
-          cleanText = cleanText.replace(/\n\s*\n/g, '\n').trim();
-          
-          if (cleanText && cleanText.length > 10) {
-            setMessages(msgs => [...msgs, { from: 'bot', text: cleanText }]);
+        
+        if (typingTimeout.current) clearTimeout(typingTimeout.current);
+        
+        const typeLetter = () => {
+          setTypingText(prev => prev + fullText[i]);
+          i++;
+          if (i < fullText.length) {
+            typingTimeout.current = setTimeout(typeLetter, 15 + Math.random() * 25);
           } else {
-            setMessages(msgs => [...msgs, { from: 'bot', text: "Je n'ai pas pu générer de réponse pour le moment." }]);
+            setMessages(msgs => [...msgs, { from: 'bot', text: fullText }]);
+            setTypingText('');
           }
-        }
+        };
+        
+        typeLetter();
+      } else {
+        console.log('❌ Pas de réponse dans les données:', data);
+        setMessages(msgs => [...msgs, { 
+          from: 'bot', 
+          text: "Je n'ai pas pu générer de réponse pour le moment. Merci de réessayer." 
+        }]);
       }
     } catch (e) {
       setMessages(msgs => [...msgs, { from: 'bot', text: "Erreur réseau ou serveur. Merci de réessayer plus tard." }]);
