@@ -5,8 +5,8 @@ import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 import { StorageService } from '../lib/storage';
 import { AstrologyService } from '../lib/astrology';
 import { ButtonZodiak } from '../components/ButtonZodiak';
-import { LoadingScreen } from '../components/LoadingScreen';
-import { PageLayout } from '../components/PageLayout';
+import LoadingScreen from '../components/LoadingScreen';
+import PageLayout from '../components/PageLayout';
 import { motion } from 'framer-motion';
 import { User, Calendar, Clock, MapPin, Star, CheckCircle } from 'lucide-react';
 

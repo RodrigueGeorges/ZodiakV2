@@ -1,14 +1,14 @@
 import { ReactNode } from 'react';
 import { useAuth } from '../lib/hooks/useAuth';
 import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
-import { LoadingScreen } from './LoadingScreen';
+import LoadingScreen from './LoadingScreen';
 
 interface PrivateRouteProps {
   children: ReactNode;
 }
 
-export function PrivateRoute({ children }: PrivateRouteProps) {
-  const { user, loading: authLoading } = useAuth();
+export default function PrivateRoute({ children }: PrivateRouteProps) {
+  const { user, isLoading: authLoading } = useAuth();
   const { redirectTo } = useAuthRedirect();
 
   if (authLoading) {
@@ -16,7 +16,6 @@ export function PrivateRoute({ children }: PrivateRouteProps) {
   }
 
   if (!user) {
-    redirectTo('/login');
     return <LoadingScreen />;
   }
 

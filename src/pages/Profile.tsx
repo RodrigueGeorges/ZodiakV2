@@ -3,29 +3,16 @@ import { useAuth } from '../lib/hooks/useAuth';
 import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 import { StorageService } from '../lib/storage';
 import { ButtonZodiak } from '../components/ButtonZodiak';
-import { ProfileTab } from '../components/ProfileTab';
+import ProfileTab from '../components/ProfileTab';
 import LoadingScreen from '../components/LoadingScreen';
-import { PageLayout } from '../components/PageLayout';
+import PageLayout from '../components/PageLayout';
 import { motion } from 'framer-motion';
-
-interface ProfileData {
-  id: string;
-  name: string;
-  email?: string;
-  phone?: string;
-  birth_date?: string;
-  birth_time?: string;
-  birth_place?: string;
-  subscription_status: string;
-  trial_ends_at?: string;
-  created_at: string;
-  updated_at: string;
-}
+import type { Profile } from '../lib/types/supabase';
 
 export default function ProfilePage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const { redirectTo } = useAuthRedirect();
-  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,7 +38,7 @@ export default function ProfilePage() {
     loadProfile();
   }, [user?.id]);
 
-  const handleProfileUpdate = async (updatedProfile: ProfileData) => {
+  const handleProfileUpdate = async (updatedProfile: Profile) => {
     try {
       await StorageService.saveProfile(updatedProfile);
       setProfile(updatedProfile);
@@ -66,7 +53,6 @@ export default function ProfilePage() {
   }
 
   if (!user) {
-    redirectTo('/login');
     return <LoadingScreen />;
   }
 
@@ -93,12 +79,12 @@ export default function ProfilePage() {
           <p className="text-gray-400 mb-4">
             Votre profil n'a pas été trouvé. Veuillez compléter votre inscription.
           </p>
-          <ButtonZodiak
-            onClick={() => redirectTo('/register/complete')}
-            className="bg-primary hover:bg-primary/90"
-          >
-            Compléter mon profil
-          </ButtonZodiak>
+                      <ButtonZodiak
+              onClick={() => window.location.href = '/register/complete'}
+              className="bg-primary hover:bg-primary/90"
+            >
+              Compléter mon profil
+            </ButtonZodiak>
         </div>
       </PageLayout>
     );
@@ -111,9 +97,12 @@ export default function ProfilePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <ProfileTab
-          profile={profile}
-          onProfileUpdate={handleProfileUpdate}
+                <ProfileTab 
+          profile={profile} 
+          onLogout={() => {
+            // Gérer la déconnexion
+            window.location.href = '/login';
+          }}
         />
       </motion.div>
     </PageLayout>
