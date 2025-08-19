@@ -4,6 +4,7 @@ import { useGuidance } from '../lib/hooks/useGuidance';
 import { GuidanceMeter } from './GuidanceMeter';
 import { GuidanceScoreBadge } from './GuidanceScoreBadge';
 import { ButtonZodiak } from './ButtonZodiak';
+import ShareButton from './ShareButton';
 import { RefreshCw, AlertCircle } from 'lucide-react';
 
 interface GuidanceContentProps {
@@ -116,7 +117,11 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
           >
             <RefreshCw className="w-5 h-5" />
           </button>
-          <ShareButton guidance={guidance} />
+          <ShareButton 
+            title="Guidance du Jour"
+            content={`${guidance.summary}\n\n💖 Amour: ${guidance.love.text}\n💼 Travail: ${guidance.work.text}\n⚡ Énergie: ${guidance.energy.text}`}
+            url={window.location.href}
+          />
         </div>
       </motion.div>
 

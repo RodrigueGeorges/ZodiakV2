@@ -33,7 +33,7 @@ export default function GuidanceShortRedirect() {
 
       // 2. Tracker l'ouverture du lien
       try {
-        const trackingUrl = `${import.meta.env.VITE_NETLIFY_URL || 'https://zodiak.netlify.app'}/.netlify/functions/track-sms?shortCode=${short}&token=${tokenRow.token}&action=open`;
+        const trackingUrl = `${import.meta.env.VITE_NETLIFY_URL || 'https://zodiakv2.netlify.app'}/.netlify/functions/track-sms?shortCode=${short}&token=${tokenRow.token}&action=open`;
         
         // Créer une image invisible pour tracker l'ouverture
         const trackingImage = new Image();
@@ -56,7 +56,7 @@ export default function GuidanceShortRedirect() {
 
       // 3. Tracker le clic sur le lien
       try {
-        const clickTrackingUrl = `${import.meta.env.VITE_NETLIFY_URL || 'https://zodiak.netlify.app'}/.netlify/functions/track-sms?shortCode=${short}&token=${tokenRow.token}&action=click`;
+        const clickTrackingUrl = `${import.meta.env.VITE_NETLIFY_URL || 'https://zodiakv2.netlify.app'}/.netlify/functions/track-sms?shortCode=${short}&token=${tokenRow.token}&action=click`;
         
         fetch(clickTrackingUrl, {
           method: 'GET',
