@@ -1,6 +1,7 @@
 import { Handler } from '@netlify/functions';
 import { createClient } from '@supabase/supabase-js';
 import { format } from 'date-fns';
+import { randomUUID } from 'crypto';
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -104,7 +105,7 @@ const handler: Handler = async () => {
     }
 
     // 3. Générer un token unique et un code court
-    const token = crypto.randomUUID();
+    const token = randomUUID();
     let shortCode;
     let isUnique = false;
     while (!isUnique) {

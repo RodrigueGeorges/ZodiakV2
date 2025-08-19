@@ -126,7 +126,7 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
       </motion.div>
 
       {/* Résumé général */}
-      <motion.div variants={itemVariants} className="bg-gradient-to-br from-cosmic-800/50 to-cosmic-900/50 rounded-lg p-6 border border-primary/20">
+      <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-6 border border-primary/20 shadow-cosmic">
         <h3 className="text-lg font-semibold text-primary mb-3">Résumé du Jour</h3>
         <p className="text-gray-300 leading-relaxed">
           {guidance.summary}
@@ -136,7 +136,7 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
       {/* Sections détaillées */}
       <div className="grid gap-4 md:grid-cols-3">
         {/* Amour */}
-        <motion.div variants={itemVariants} className="bg-gradient-to-br from-cosmic-800/50 to-cosmic-900/50 rounded-lg p-6 border border-primary/20">
+        <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-6 border border-primary/20 shadow-cosmic">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-semibold text-primary">💖 Amour</h3>
             <GuidanceScoreBadge score={guidance.love.score} />
@@ -148,7 +148,7 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
         </motion.div>
 
         {/* Travail */}
-        <motion.div variants={itemVariants} className="bg-gradient-to-br from-cosmic-800/50 to-cosmic-900/50 rounded-lg p-6 border border-primary/20">
+        <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-6 border border-primary/20 shadow-cosmic">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-semibold text-primary">💼 Travail</h3>
             <GuidanceScoreBadge score={guidance.work.score} />
@@ -160,7 +160,7 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
         </motion.div>
 
         {/* Énergie */}
-        <motion.div variants={itemVariants} className="bg-gradient-to-br from-cosmic-800/50 to-cosmic-900/50 rounded-lg p-6 border border-primary/20">
+        <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-6 border border-primary/20 shadow-cosmic">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-lg font-semibold text-primary">⚡ Énergie</h3>
             <GuidanceScoreBadge score={guidance.energy.score} />
@@ -174,7 +174,7 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
 
       {/* Mantra du jour */}
       {guidance.mantra && (
-        <motion.div variants={itemVariants} className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg p-6 border border-primary/30 text-center">
+        <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-6 border border-primary/30 text-center shadow-cosmic">
           <h3 className="text-lg font-semibold text-primary mb-2">🌟 Mantra du Jour</h3>
           <p className="text-gray-300 italic text-lg">
             "{guidance.mantra}"
