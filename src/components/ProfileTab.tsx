@@ -12,6 +12,7 @@ import PageLayout from './PageLayout';
 interface ProfileTabProps {
   profile: Profile;
   onLogout: () => void;
+  showNatalInfo?: boolean;
 }
 
 interface Planet {
@@ -24,7 +25,7 @@ interface NatalChart {
   ascendant?: { sign: string };
 }
 
-function ProfileTab({ profile, onLogout }: ProfileTabProps) {
+function ProfileTab({ profile, onLogout, showNatalInfo = false }: ProfileTabProps) {
   const navigate = useNavigate();
   const { user, refreshProfile } = useAuth();
 
@@ -174,10 +175,11 @@ function ProfileTab({ profile, onLogout }: ProfileTabProps) {
     (new Date(profile.trial_ends_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
   ));
 
-  const natalChart = profile.natal_chart as NatalChart;
-  const sunSign = natalChart?.planets?.find((p: Planet) => p.name === 'Soleil')?.sign || 'N/A';
-  const moonSign = natalChart?.planets?.find((p: Planet) => p.name === 'Lune')?.sign || 'N/A';
-  const ascendantSign = natalChart?.ascendant?.sign || 'N/A';
+  // Infos de thème natal affichées uniquement si explicitement demandé
+  const natalChart = (showNatalInfo ? (profile.natal_chart as NatalChart) : undefined);
+  const sunSign = showNatalInfo ? (natalChart?.planets?.find((p: Planet) => p.name === 'Soleil')?.sign || 'N/A') : undefined;
+  const moonSign = showNatalInfo ? (natalChart?.planets?.find((p: Planet) => p.name === 'Lune')?.sign || 'N/A') : undefined;
+  const ascendantSign = showNatalInfo ? (natalChart?.ascendant?.sign || 'N/A') : undefined;
 
   // Avatar avec initiales ou photo
   const getInitials = (name: string) => {
@@ -196,13 +198,15 @@ function ProfileTab({ profile, onLogout }: ProfileTabProps) {
           🔒 Vos données de naissance sont 100% privées et ne seront jamais partagées.
         </div>
 
-        {/* Signature astrale */}
-        <div className="mb-8">
-          <NatalSignature sunSign={sunSign} moonSign={moonSign} ascendantSign={ascendantSign} />
-        </div>
+        {/* Signature astrale (affichée uniquement sur la page Natal) */}
+        {showNatalInfo && (
+          <div className="mb-8">
+            <NatalSignature sunSign={sunSign!} moonSign={moonSign!} ascendantSign={ascendantSign!} />
+          </div>
+        )}
 
-        {/* Résumé et interprétation du thème natal */}
-        {(profile.natal_summary || profile.natal_chart_interpretation) && (
+        {/* Résumé et interprétation du thème natal (affichés uniquement sur la page Natal) */}
+        {showNatalInfo && (profile.natal_summary || profile.natal_chart_interpretation) && (
           <div className="mb-8">
             <InteractiveCard className="card-premium-glow max-w-3xl mx-auto text-center">
               {profile.natal_summary && (

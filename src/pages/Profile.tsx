@@ -97,12 +97,13 @@ export default function ProfilePage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-                <ProfileTab 
+        <ProfileTab 
           profile={profile} 
           onLogout={() => {
             // Gérer la déconnexion
             window.location.href = '/login';
           }}
+          showNatalInfo={false}
         />
       </motion.div>
     </PageLayout>

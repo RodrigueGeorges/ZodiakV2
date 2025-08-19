@@ -2,9 +2,10 @@ import { createClient } from '@supabase/supabase-js';
 import { toZonedTime, format } from 'date-fns-tz';
 import { randomUUID as cryptoRandomUUID } from 'crypto';
 
+// IMPORTANT: functions run server-side → use service role for DB writes
 const supabase = createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 const TIMEZONE = 'Europe/Paris';
@@ -458,36 +459,69 @@ IMPORTANT : Chaque guidance doit être UNIQUE, professionnelle, bienveillante et
 }
 
 export async function sendSms(phone, guidance, name, userId = null) {
-  const appUrl = process.env.URL || 'https://zodiak.netlify.app';
+  // Utiliser l'URL du site Netlify (production ou preview) si disponible
+  const appUrl = process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://zodiak.netlify.app';
   
   // Générer un lien court si userId est fourni
   let shortLink = '';
   if (userId) {
     try {
-      // Générer un code court unique
-      const shortCode = generateShortCode();
       const token = randomUUID();
+      const today = new Date().toISOString().slice(0, 10);
       const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-      
-      // Sauvegarder le token
-      await supabase.from('guidance_token').upsert({
+
+      // Générer un short code réellement unique (avec vérification + retry en cas de collision)
+      const shortCode = await generateUniqueShortCode();
+
+      // Tenter l'upsert avec gestion des collisions éventuelles (unique short_code)
+      let attempts = 0;
+      const maxAttempts = 5;
+      let upsertError: any | null = null;
+      let finalShortCode = shortCode;
+
+      while (attempts < maxAttempts) {
+        const { error } = await supabase.from('guidance_token').upsert({
+          user_id: userId,
+          token,
+          date: today,
+          expires_at: expiresAt,
+          short_code: finalShortCode
+        });
+
+        if (!error) {
+          upsertError = null;
+          break;
+        }
+
+        // Si violation d'unicité, régénérer un code et réessayer
+        if (error.code === '23505' || (typeof error.message === 'string' && error.message.includes('unique') && error.message.includes('short_code'))) {
+          attempts++;
+          finalShortCode = generateShortCode(10);
+          continue;
+        }
+
+        upsertError = error;
+        break;
+      }
+
+      if (upsertError) {
+        console.error('Erreur upsert guidance_token:', upsertError);
+        throw upsertError;
+      }
+
+      // Créer l'entrée de tracking (best-effort)
+      const { error: trackingError } = await supabase.from('sms_tracking').insert({
         user_id: userId,
-        token,
-        date: new Date().toISOString().slice(0, 10),
-        expires_at: expiresAt,
-        short_code: shortCode
-      });
-      
-      // Créer l'entrée de tracking
-      await supabase.from('sms_tracking').insert({
-        user_id: userId,
-        short_code: shortCode,
+        short_code: finalShortCode,
         token: token,
-        date: new Date().toISOString().slice(0, 10),
+        date: today,
         sent_at: new Date().toISOString()
       });
+      if (trackingError) {
+        console.warn('⚠️ Erreur lors de la création du tracking SMS:', trackingError.message || trackingError);
+      }
       
-      shortLink = `${appUrl}/g/${shortCode}`;
+      shortLink = `${appUrl}/g/${finalShortCode}`;
     } catch (error) {
       console.error('Erreur lors de la génération du lien court:', error);
     }
@@ -513,7 +547,7 @@ export async function sendSms(phone, guidance, name, userId = null) {
 }
 
 // Fonction utilitaire pour générer un code court
-function generateShortCode(length = 6) {
+function generateShortCode(length = 8) {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {
@@ -530,3 +564,23 @@ function randomUUID() {
     return v.toString(16);
   });
 } 
+
+// Vérifie l'unicité du code dans la table guidance_token et régénère si nécessaire
+async function generateUniqueShortCode(): Promise<string> {
+  let code = generateShortCode(8);
+  let attempts = 0;
+  const maxAttempts = 5;
+  while (attempts < maxAttempts) {
+    const { data, error } = await supabase
+      .from('guidance_token')
+      .select('id')
+      .eq('short_code', code)
+      .maybeSingle();
+    if (!error && !data) {
+      return code;
+    }
+    attempts++;
+    code = generateShortCode(10);
+  }
+  return code;
+}
