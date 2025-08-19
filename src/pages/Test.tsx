@@ -107,7 +107,7 @@ export function Test() {
             className="text-center mb-12"
           >
             <div className="mb-8">
-              <Logo />
+              <Logo size="lg" variant="cosmic" />
             </div>
             <h1 className="text-3xl font-cinzel font-bold mb-4">
               <span className="bg-gradient-to-r from-[#F5CBA7] via-[#D4A373] to-[#F5CBA7] text-transparent bg-clip-text animate-cosmic-text">

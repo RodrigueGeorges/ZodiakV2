@@ -89,15 +89,13 @@ export default function Home() {
       <StarryBackground />
 
       {/* LOGO + NOM EN HAUT À GAUCHE, SANS BARRE */}
-      <div className="absolute top-2 left-2 sm:top-4 sm:left-4 md:top-8 md:left-8 z-30 flex items-center gap-2 sm:gap-4 md:gap-6 lg:gap-10 select-none max-w-[90vw] overflow-hidden">
-        <Logo 
-          size={typeof window !== 'undefined' && window.innerWidth < 640 ? 'sm' : (window.innerWidth < 1024 ? 'md' : 'lg')}
-          className="drop-shadow-glow"
+      <div className="absolute top-4 left-4 z-50">
+        <Logo
+          size="md"
+          variant="cosmic"
+          className="text-primary"
           aria-label="Logo Zodiak"
         />
-        <span className="truncate text-xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-cinzel font-bold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text" aria-label="Zodiak">
-          Zodiak
-        </span>
       </div>
 
       {/* TAGLINE CENTRÉE EN HAUT */}

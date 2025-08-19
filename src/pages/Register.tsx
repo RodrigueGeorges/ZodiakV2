@@ -70,7 +70,7 @@ export default function Register() {
         <div className="max-w-md mx-auto mt-16">
           <InteractiveCard className="p-6 md:p-8 xl:p-10 2xl:p-16">
             <div className="mb-8 text-center">
-              <Logo />
+              <Logo size="lg" variant="cosmic" />
               <h2 className="text-2xl font-cinzel font-bold mt-4 mb-2">
                 Inscription
               </h2>

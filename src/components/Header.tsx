@@ -31,7 +31,7 @@ function Header() {
     <header className="sticky top-0 z-30 bg-cosmic-900/80 backdrop-blur-lg border-b border-primary">
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-4">
-          <Logo className="w-8 h-8" />
+          <Logo className="w-8 h-8" variant="cosmic" />
           <h1 className="text-lg font-semibold text-primary">Zodiak</h1>
         </div>
         

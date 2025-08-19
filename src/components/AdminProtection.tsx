@@ -6,7 +6,7 @@ import { cn } from '../lib/utils';
 import StarryBackground from './StarryBackground';
 import Logo from './Logo';
 import InteractiveCard from './InteractiveCard';
-import { Shield, Lock, AlertTriangle } from 'lucide-react';
+import { Shield, XCircle, AlertCircle } from 'lucide-react';
 import { checkAdminAccess } from '../lib/config/admin';
 
 interface AdminProtectionProps {
@@ -87,7 +87,7 @@ export default function AdminProtection({ children }: AdminProtectionProps) {
       <div className="min-h-screen bg-cosmic-900 flex items-center justify-center">
         <StarryBackground />
         <div className="text-center">
-          <Logo />
+          <Logo size="lg" variant="cosmic" />
           <div className="mt-4 w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="mt-4 text-gray-400">Vérification des autorisations...</p>
         </div>
@@ -109,13 +109,13 @@ export default function AdminProtection({ children }: AdminProtectionProps) {
               className="text-center"
             >
               <div className="mb-8">
-                <Logo />
+                <Logo size="md" variant="cosmic" />
               </div>
               
               <InteractiveCard className="p-8">
                 <div className="flex flex-col items-center space-y-6">
                   <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                    <Lock className="w-8 h-8 text-primary" />
+                    <XCircle className="w-8 h-8 text-primary" />
                   </div>
                   
                   <div>

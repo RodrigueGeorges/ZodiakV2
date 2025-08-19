@@ -236,6 +236,34 @@ a {
   transform-origin: 50% 60%;
 }
 
+@keyframes cosmic-glow {
+  0%, 100% { 
+    filter: drop-shadow(0 0 5px #00BFFF) drop-shadow(0 0 10px #0066CC);
+  }
+  50% { 
+    filter: drop-shadow(0 0 15px #00BFFF) drop-shadow(0 0 25px #0066CC);
+  }
+}
+
+@keyframes cosmic-pulse {
+  0%, 100% { 
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.animate-cosmic-glow {
+  animation: cosmic-glow 3s ease-in-out infinite;
+}
+
+.animate-cosmic-pulse {
+  animation: cosmic-pulse 2s ease-in-out infinite;
+}
+
 .animate-fade-in {
   animation: fade-in 0.6s ease-out;
 }

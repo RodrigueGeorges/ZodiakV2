@@ -45,7 +45,7 @@ export function Subscribe() {
               }}
               className="mb-8"
             >
-              <Logo />
+              <Logo size="lg" variant="cosmic" />
             </motion.div>
 
             <motion.h1
