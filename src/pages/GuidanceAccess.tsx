@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import GuidanceContent from '../components/GuidanceContent';
+import GuidanceDisplay from '../components/GuidanceDisplay';
 import LoadingScreen from '../components/LoadingScreen';
 
 export default function GuidanceAccess() {
@@ -103,7 +103,7 @@ export default function GuidanceAccess() {
     <div className="max-w-lg mx-auto mt-12 p-6 bg-cosmic-900 rounded-xl shadow-lg">
       <h2 className="text-2xl font-bold font-cinzel mb-4 text-primary">Guidance du jour</h2>
       {userName && <div className="mb-2 text-gray-300">Pour : <span className="font-semibold">{userName}</span></div>}
-      <GuidanceContent guidance={guidance} />
+      <GuidanceDisplay guidance={guidance} />
       <div className="mt-6 text-center text-gray-400 text-sm">Lien sécurisé, valable 24h</div>
     </div>
   );
