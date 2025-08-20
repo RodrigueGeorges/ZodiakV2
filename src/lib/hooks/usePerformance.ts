@@ -1,163 +1,209 @@
-import { useRef, useCallback, useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
-interface PerformanceMetric {
-  name: string;
-  value?: number;
-  unit?: string;
-  timestamp: number;
-  startTime?: number;
-  endTime?: number;
-  duration?: number;
-  metadata?: Record<string, unknown>;
+interface PerformanceMetrics {
+  fcp: number | null; // First Contentful Paint
+  lcp: number | null; // Largest Contentful Paint
+  fid: number | null; // First Input Delay
+  cls: number | null; // Cumulative Layout Shift
+  ttfb: number | null; // Time to First Byte
+  fmp: number | null; // First Meaningful Paint
 }
 
-interface _CustomPerformanceObserver {
-  observe: (target: Element) => void;
-  disconnect: () => void;
+interface UsePerformanceReturn {
+  metrics: PerformanceMetrics;
+  isMonitoring: boolean;
+  startMonitoring: () => void;
+  stopMonitoring: () => void;
+  getMetrics: () => PerformanceMetrics;
 }
 
-interface _PerformanceEntry {
-  name: string;
-  entryType: string;
-  startTime: number;
-  duration: number;
-}
+export function usePerformance(): UsePerformanceReturn {
+  const [metrics, setMetrics] = useState<PerformanceMetrics>({
+    fcp: null,
+    lcp: null,
+    fid: null,
+    cls: null,
+    ttfb: null,
+    fmp: null
+  });
+  const [isMonitoring, setIsMonitoring] = useState(false);
 
-interface UsePerformanceOptions {
-  enableLogging?: boolean;
-  enableAnalytics?: boolean;
-}
+  const updateMetric = useCallback((key: keyof PerformanceMetrics, value: number) => {
+    setMetrics(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  }, []);
 
-export function usePerformance(options: UsePerformanceOptions = {}) {
-  const { enableLogging = true, enableAnalytics = true } = options;
-  const metricsRef = useRef<Map<string, PerformanceMetric>>(new Map());
-  const observersRef = useRef<PerformanceObserver[]>([]);
+  const startMonitoring = useCallback(() => {
+    if (!('PerformanceObserver' in window) || isMonitoring) return;
 
-  const startTimer = useCallback((name: string, metadata?: Record<string, unknown>) => {
-    const startTime = performance.now();
-    metricsRef.current.set(name, {
-      name,
-      timestamp: Date.now(),
-      startTime,
-      metadata
-    });
+    setIsMonitoring(true);
 
-    if (enableLogging) {
-      console.log(`🚀 Performance: Started ${name}`, metadata);
-    }
-  }, [enableLogging]);
-
-  const endTimer = useCallback((name: string, additionalMetadata?: Record<string, unknown>) => {
-    const metric = metricsRef.current.get(name);
-    if (!metric) {
-      console.warn(`Performance metric not found: ${name}`);
-      return;
-    }
-
-    const endTime = performance.now();
-    const duration = endTime - (metric.startTime || 0);
-    
-    metric.endTime = endTime;
-    metric.duration = duration;
-    
-    if (additionalMetadata) {
-      metric.metadata = { ...metric.metadata, ...additionalMetadata };
-    }
-
-    if (enableLogging) {
-      console.log(`✅ Performance: ${name} completed in ${duration.toFixed(2)}ms`, metric.metadata);
-    }
-
-    if (enableAnalytics) {
-      // Envoyer les métriques aux analytics
-      // Analytics.trackPerformance(name, duration, metric.metadata);
-    }
-
-    return duration;
-  }, [enableLogging, enableAnalytics]);
-
-  const measureAsync = useCallback(async <T>(
-    name: string, 
-    asyncFunction: () => Promise<T>,
-    metadata?: Record<string, unknown>
-  ): Promise<T> => {
-    startTimer(name, metadata);
-    
+    // First Contentful Paint
     try {
-      const result = await asyncFunction();
-      endTimer(name, { success: true });
-      return result;
+      new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        if (entries.length > 0) {
+          const fcp = entries[0];
+          updateMetric('fcp', fcp.startTime);
+          console.log('🎨 FCP:', fcp.startTime, 'ms');
+        }
+      }).observe({ entryTypes: ['paint'] });
     } catch (error) {
-      endTimer(name, { success: false, error: error instanceof Error ? error.message : 'Unknown error' });
-      throw error;
+      console.warn('FCP monitoring failed:', error);
     }
-  }, [startTimer, endTimer]);
+
+    // Largest Contentful Paint
+    try {
+      new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        if (entries.length > 0) {
+          const lcp = entries[entries.length - 1];
+          updateMetric('lcp', lcp.startTime);
+          console.log('📏 LCP:', lcp.startTime, 'ms');
+        }
+      }).observe({ entryTypes: ['largest-contentful-paint'] });
+    } catch (error) {
+      console.warn('LCP monitoring failed:', error);
+    }
+
+    // First Input Delay
+    try {
+      new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        if (entries.length > 0) {
+          const fid = entries[0];
+          updateMetric('fid', fid.duration);
+          console.log('⚡ FID:', fid.duration, 'ms');
+        }
+      }).observe({ entryTypes: ['first-input'] });
+    } catch (error) {
+      console.warn('FID monitoring failed:', error);
+    }
+
+    // Cumulative Layout Shift
+    try {
+      new PerformanceObserver((entryList) => {
+        let cls = 0;
+        for (const entry of entryList.getEntries()) {
+          const layoutShiftEntry = entry as any;
+          if (!layoutShiftEntry.hadRecentInput) {
+            cls += layoutShiftEntry.value;
+          }
+        }
+        updateMetric('cls', cls);
+        console.log('📐 CLS:', cls);
+      }).observe({ entryTypes: ['layout-shift'] });
+    } catch (error) {
+      console.warn('CLS monitoring failed:', error);
+    }
+
+    // Time to First Byte
+    try {
+      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      if (navigation) {
+        const ttfb = navigation.responseStart - navigation.requestStart;
+        updateMetric('ttfb', ttfb);
+        console.log('🌐 TTFB:', ttfb, 'ms');
+      }
+    } catch (error) {
+      console.warn('TTFB monitoring failed:', error);
+    }
+
+    // First Meaningful Paint (approximation)
+    try {
+      new PerformanceObserver((entryList) => {
+        const entries = entryList.getEntries();
+        if (entries.length > 0) {
+          const fmp = entries[0];
+          updateMetric('fmp', fmp.startTime);
+          console.log('🎯 FMP:', fmp.startTime, 'ms');
+        }
+      }).observe({ entryTypes: ['measure'] });
+    } catch (error) {
+      console.warn('FMP monitoring failed:', error);
+    }
+
+  }, [isMonitoring, updateMetric]);
+
+  const stopMonitoring = useCallback(() => {
+    setIsMonitoring(false);
+  }, []);
 
   const getMetrics = useCallback(() => {
-    return Array.from(metricsRef.current.values());
-  }, []);
+    return metrics;
+  }, [metrics]);
 
-  const clearMetrics = useCallback(() => {
-    metricsRef.current.clear();
-  }, []);
-
-  const getAverageDuration = useCallback((name: string) => {
-    const metrics = Array.from(metricsRef.current.values())
-      .filter(m => m.name === name && m.duration !== undefined);
-    
-    if (metrics.length === 0) return 0;
-    
-    const total = metrics.reduce((sum, m) => sum + (m.duration || 0), 0);
-    return total / metrics.length;
-  }, []);
-
-  // Surveiller les métriques de performance du navigateur
+  // Démarrer automatiquement le monitoring au montage
   useEffect(() => {
-    if (typeof PerformanceObserver !== 'undefined') {
-      // Observer les métriques de navigation
-      const navigationObserver = new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) {
-          if (entry.entryType === 'navigation') {
-            const navEntry = entry as PerformanceNavigationTiming;
-            console.log('🌐 Navigation Performance:', {
-              loadTime: navEntry.loadEventEnd - navEntry.loadEventStart,
-              domContentLoaded: navEntry.domContentLoadedEventEnd - navEntry.domContentLoadedEventStart,
-              firstPaint: navEntry.responseStart - navEntry.requestStart
-            });
-          }
-        }
-      });
-
-      navigationObserver.observe({ entryTypes: ['navigation'] });
-      observersRef.current.push(navigationObserver);
-
-      // Observer les métriques de peinture
-      const paintObserver = new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) {
-          if (entry.entryType === 'paint') {
-            console.log('🎨 Paint Performance:', {
-              name: entry.name,
-              startTime: entry.startTime
-            });
-          }
-        }
-      });
-
-      paintObserver.observe({ entryTypes: ['paint'] });
-      observersRef.current.push(paintObserver);
-    }
+    startMonitoring();
 
     return () => {
-      observersRef.current.forEach(observer => observer.disconnect());
+      stopMonitoring();
     };
-  }, []);
+  }, [startMonitoring, stopMonitoring]);
+
+  // Log des métriques quand elles changent
+  useEffect(() => {
+    const hasAllMetrics = Object.values(metrics).every(metric => metric !== null);
+    if (hasAllMetrics) {
+      console.log('📊 Performance Metrics:', metrics);
+      
+      // Analyser la performance
+      const performanceScore = analyzePerformance(metrics);
+      console.log('🏆 Performance Score:', performanceScore);
+    }
+  }, [metrics]);
 
   return {
-    startTimer,
-    endTimer,
-    measureAsync,
-    getMetrics,
-    clearMetrics,
-    getAverageDuration
+    metrics,
+    isMonitoring,
+    startMonitoring,
+    stopMonitoring,
+    getMetrics
   };
+}
+
+// Fonction d'analyse de performance
+function analyzePerformance(metrics: PerformanceMetrics): string {
+  let score = 0;
+  let totalChecks = 0;
+
+  // FCP < 1.8s = bon
+  if (metrics.fcp !== null) {
+    totalChecks++;
+    if (metrics.fcp < 1800) score++;
+  }
+
+  // LCP < 2.5s = bon
+  if (metrics.lcp !== null) {
+    totalChecks++;
+    if (metrics.lcp < 2500) score++;
+  }
+
+  // FID < 100ms = bon
+  if (metrics.fid !== null) {
+    totalChecks++;
+    if (metrics.fid < 100) score++;
+  }
+
+  // CLS < 0.1 = bon
+  if (metrics.cls !== null) {
+    totalChecks++;
+    if (metrics.cls < 0.1) score++;
+  }
+
+  // TTFB < 600ms = bon
+  if (metrics.ttfb !== null) {
+    totalChecks++;
+    if (metrics.ttfb < 600) score++;
+  }
+
+  const percentage = (score / totalChecks) * 100;
+
+  if (percentage >= 80) return 'Excellent';
+  if (percentage >= 60) return 'Bon';
+  if (percentage >= 40) return 'Moyen';
+  return 'À améliorer';
 } 

@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import GuidanceDisplay from '../components/GuidanceDisplay';
 import LoadingScreen from '../components/LoadingScreen';
+import { motion } from 'framer-motion';
 
 export default function GuidanceAccess() {
   const [searchParams] = useSearchParams();
@@ -82,9 +83,15 @@ export default function GuidanceAccess() {
   }, [searchParams]);
 
   if (loading) return <LoadingScreen message="Chargement de la guidance..." />;
+  
   if (error) return (
     <div className="min-h-screen bg-cosmic-900 flex items-center justify-center p-4">
-      <div className="max-w-lg w-full p-6 bg-cosmic-800 rounded-xl shadow-lg border border-primary/20">
+      <motion.div 
+        className="max-w-lg w-full p-8 bg-cosmic-800 rounded-xl shadow-xl border border-primary/20"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="text-center">
           <div className="text-red-400 text-6xl mb-4">⚠️</div>
           <h2 className="text-2xl font-bold font-cinzel mb-4 text-primary">Lien Invalide</h2>
@@ -94,17 +101,69 @@ export default function GuidanceAccess() {
             <p className="mt-2">Contactez-nous si vous pensez qu'il s'agit d'une erreur.</p>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
+  
   if (!guidance) return null;
 
   return (
-    <div className="max-w-lg mx-auto mt-12 p-6 bg-cosmic-900 rounded-xl shadow-lg">
-      <h2 className="text-2xl font-bold font-cinzel mb-4 text-primary">Guidance du jour</h2>
-      {userName && <div className="mb-2 text-gray-300">Pour : <span className="font-semibold">{userName}</span></div>}
-      <GuidanceDisplay guidance={guidance} />
-      <div className="mt-6 text-center text-gray-400 text-sm">Lien sécurisé, valable 24h</div>
+    <div className="min-h-screen bg-cosmic-900">
+      {/* Header avec design cosmique */}
+      <div className="relative overflow-hidden">
+        {/* Background avec étoiles */}
+        <div className="absolute inset-0 bg-gradient-to-b from-cosmic-900 via-cosmic-800 to-cosmic-900">
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute top-10 left-10 w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+            <div className="absolute top-20 right-20 w-1 h-1 bg-secondary rounded-full animate-pulse delay-1000"></div>
+            <div className="absolute top-40 left-1/4 w-1.5 h-1.5 bg-primary rounded-full animate-pulse delay-500"></div>
+            <div className="absolute top-60 right-1/3 w-1 h-1 bg-secondary rounded-full animate-pulse delay-1500"></div>
+          </div>
+        </div>
+        
+        {/* Contenu principal */}
+        <div className="relative z-10 max-w-4xl mx-auto px-4 py-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-8"
+          >
+            <h1 className="text-4xl md:text-5xl font-bold font-cinzel text-primary mb-4">
+              🌟 Guidance Astrale
+            </h1>
+            <p className="text-xl text-gray-300 mb-2">
+              Message des étoiles pour aujourd'hui
+            </p>
+            {userName && (
+              <p className="text-lg text-secondary font-semibold">
+                Pour {userName}
+              </p>
+            )}
+          </motion.div>
+
+          {/* Contenu de la guidance */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <GuidanceDisplay guidance={guidance} />
+          </motion.div>
+
+          {/* Footer */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-center mt-12 pt-8 border-t border-primary/20"
+          >
+            <p className="text-gray-400 text-sm">
+              ✨ Lien sécurisé • Valable 24h • Généré par l'intelligence des astres
+            </p>
+          </motion.div>
+        </div>
+      </div>
     </div>
   );
 } 

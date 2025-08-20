@@ -460,7 +460,7 @@ IMPORTANT : Chaque guidance doit être UNIQUE, professionnelle, bienveillante et
 
 export async function sendSms(phone, guidance, name, userId = null) {
   // Utiliser l'URL du site Netlify (production ou preview) si disponible
-  const appUrl = process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://zodiak.netlify.app';
+  const appUrl = process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://zodiakv2.netlify.app';
   
   // Générer un lien court si userId est fourni
   let shortLink = '';

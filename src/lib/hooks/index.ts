@@ -11,3 +11,5 @@ export * from './useRegistration';
 export * from './useAuthRedirect';
 export * from './useGuidanceRedirect';
 export * from './useMobile';
+export { useRetry } from './useRetry';
+export { usePerformance } from './usePerformance';

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
 import { supabase } from '../lib/supabase';
 import StarryBackground from '../components/StarryBackground';
-import Logo from '../components/Logo';
+
 import InteractiveCard from '../components/InteractiveCard';
 import SMSTrackingStats from '../components/SMSTrackingStats';
 import AdminProtection from '../components/AdminProtection';
@@ -113,7 +113,7 @@ export function Admin() {
       <div className="min-h-screen bg-cosmic-900 flex items-center justify-center">
         <StarryBackground />
         <div className="text-center">
-                          <Logo size="md" variant="cosmic" />
+              
           <div className="mt-4 w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
         </div>
       </div>
@@ -133,7 +133,7 @@ export function Admin() {
               className="text-center mb-12"
             >
               <div className="mb-8">
-                <Logo size="lg" variant="cosmic" />
+    
               </div>
               <h1 className="text-3xl font-cinzel font-bold mb-4 flex items-center justify-center gap-3">
                 <Shield className="w-8 h-8 text-primary" />

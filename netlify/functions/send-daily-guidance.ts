@@ -549,7 +549,7 @@ const sendGuidanceSms = async (profile: Profile & { _guidanceDate?: string }) =>
     });
     
     // 4. Lien court
-    const appUrl = process.env.URL || 'https://zodiak.netlify.app';
+    const appUrl = process.env.URL || 'https://zodiakv2.netlify.app';
     const shortLink = `${appUrl}/g/${shortCode}`;
     
     // 5. Créer l'entrée de tracking
@@ -607,7 +607,7 @@ const sendGuidanceSms = async (profile: Profile & { _guidanceDate?: string }) =>
 
 Votre guidance quotidienne est prête sur l'application Zodiak.
 
-Découvrez vos conseils personnalisés : ${process.env.URL || 'https://zodiak.netlify.app'}/guidance
+        Découvrez vos conseils personnalisés : ${process.env.URL || 'https://zodiakv2.netlify.app'}/guidance
 
 🌟 Que les astres vous guident !`;
       
@@ -709,7 +709,7 @@ const handler: Handler = async () => {
             const { data: existing } = await supabase.from('guidance_token').select('id').eq('short_code', shortCode).maybeSingle();
             if (!existing) isUnique = true;
           }
-          const appUrl = process.env.URL || 'https://zodiak.netlify.app';
+          const appUrl = process.env.URL || 'https://zodiakv2.netlify.app';
           const shortLink = `${appUrl}/g/${shortCode}`;
           // SMS teasing
           const firstName = profile.name?.split(' ')[0] || 'cher utilisateur';

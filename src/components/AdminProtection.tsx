@@ -4,7 +4,7 @@ import { supabase } from '../lib/supabase';
 import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
 import StarryBackground from './StarryBackground';
-import Logo from './Logo';
+
 import InteractiveCard from './InteractiveCard';
 import { Shield, XCircle, AlertCircle } from 'lucide-react';
 import { checkAdminAccess } from '../lib/config/admin';
@@ -87,7 +87,7 @@ export default function AdminProtection({ children }: AdminProtectionProps) {
       <div className="min-h-screen bg-cosmic-900 flex items-center justify-center">
         <StarryBackground />
         <div className="text-center">
-          <Logo size="lg" variant="cosmic" />
+          
           <div className="mt-4 w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="mt-4 text-gray-400">Vérification des autorisations...</p>
         </div>

@@ -137,7 +137,7 @@ const handler: Handler = async () => {
       });
 
     // 5. Préparer le lien court
-    const appUrl = process.env.URL || 'https://zodiak.netlify.app';
+    const appUrl = process.env.URL || 'https://zodiakv2.netlify.app';
     const shortLink = `${appUrl}/g/${shortCode}`;
 
     // 6. Envoyer le SMS de test personnalisé

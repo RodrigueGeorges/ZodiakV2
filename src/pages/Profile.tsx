@@ -10,7 +10,7 @@ import { motion } from 'framer-motion';
 import type { Profile } from '../lib/types/supabase';
 
 export default function ProfilePage() {
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading, signOut } = useAuth();
   const { redirectTo } = useAuthRedirect();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -48,6 +48,18 @@ export default function ProfilePage() {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      // La redirection sera gérée automatiquement par le hook useAuth
+      // et les listeners d'état d'authentification
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+      // En cas d'erreur, forcer la redirection
+      window.location.href = '/login';
+    }
+  };
+
   if (authLoading || loading) {
     return <LoadingScreen />;
   }
@@ -79,12 +91,12 @@ export default function ProfilePage() {
           <p className="text-gray-400 mb-4">
             Votre profil n'a pas été trouvé. Veuillez compléter votre inscription.
           </p>
-                      <ButtonZodiak
-              onClick={() => window.location.href = '/register/complete'}
-              className="bg-primary hover:bg-primary/90"
-            >
-              Compléter mon profil
-            </ButtonZodiak>
+          <ButtonZodiak
+            onClick={() => window.location.href = '/register/complete'}
+            className="bg-primary hover:bg-primary/90"
+          >
+            Compléter mon profil
+          </ButtonZodiak>
         </div>
       </PageLayout>
     );
@@ -99,10 +111,7 @@ export default function ProfilePage() {
       >
         <ProfileTab 
           profile={profile} 
-          onLogout={() => {
-            // Gérer la déconnexion
-            window.location.href = '/login';
-          }}
+          onLogout={handleLogout}
           showNatalInfo={false}
         />
       </motion.div>

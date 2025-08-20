@@ -89,13 +89,16 @@ export default function Home() {
       <StarryBackground />
 
       {/* LOGO + NOM EN HAUT À GAUCHE, SANS BARRE */}
-      <div className="absolute top-4 left-4 z-50">
+      <div className="absolute top-4 left-4 z-50 flex items-center gap-3">
         <Logo
           size="md"
           variant="cosmic"
           className="text-primary"
           aria-label="Logo Zodiak"
         />
+        <h1 className="text-2xl font-bold font-cinzel bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-glow">
+          Zodiak
+        </h1>
       </div>
 
       {/* TAGLINE CENTRÉE EN HAUT */}

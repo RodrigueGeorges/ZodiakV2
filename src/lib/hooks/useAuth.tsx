@@ -138,9 +138,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      console.log('[useAuth] Déconnexion en cours...');
+      
+      // Déconnexion de Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) {
+        console.error('[useAuth] Erreur Supabase lors de la déconnexion:', error);
+        throw error;
+      }
+      
+      // Nettoyer l'état local
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+      setIsAuthenticated(false);
+      
+      // Nettoyer le cache local
+      StorageService.clearUserCache();
+      
+      console.log('[useAuth] Déconnexion réussie');
+      
+      // Redirection vers la page de connexion
+      window.location.href = '/login';
+      
     } catch (error) {
       console.error('[useAuth] Erreur lors de la déconnexion:', error);
+      
+      // En cas d'erreur, forcer la redirection et le nettoyage
+      setSession(null);
+      setUser(null);
+      setProfile(null);
+      setIsAuthenticated(false);
+      StorageService.clearUserCache();
+      
+      window.location.href = '/login';
     }
   };
 
