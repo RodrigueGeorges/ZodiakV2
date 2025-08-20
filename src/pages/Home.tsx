@@ -96,9 +96,9 @@ export default function Home() {
           className="text-primary"
           aria-label="Logo Zodiak"
         />
-        <h1 className="text-2xl font-bold font-cinzel bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-glow">
+        <span className="text-2xl font-bold font-cinzel bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-glow">
           Zodiak
-        </h1>
+        </span>
       </div>
 
       {/* TAGLINE CENTRÉE EN HAUT */}
@@ -214,17 +214,7 @@ export default function Home() {
                         </div>
                       </form>
                     )}
-                    <div className="mt-4 md:mt-6 text-center">
-                      <p className="text-sm md:text-base text-primary">
-                        Pas encore de compte ?{' '}
-                        <Link 
-                          to="/register" 
-                          className="text-primary hover:text-secondary transition-colors"
-                        >
-                          Inscrivez-vous
-                        </Link>
-                      </p>
-                    </div>
+
                   </InteractiveCard>
                 </motion.div>
               </div>
