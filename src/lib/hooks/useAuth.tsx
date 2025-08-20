@@ -159,8 +159,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       console.log('[useAuth] Déconnexion réussie');
       
-      // Redirection vers la page de connexion
-      window.location.href = '/login';
+      // Redirection vers la page d'accueil
+      window.location.href = '/';
       
     } catch (error) {
       console.error('[useAuth] Erreur lors de la déconnexion:', error);
@@ -172,7 +172,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setIsAuthenticated(false);
       StorageService.clearUserCache();
       
-      window.location.href = '/login';
+      window.location.href = '/';
     }
   };
 
