@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { User, CreditCard, Bell, LogOut, Edit2, Check, X, Clock, Send, Sun, Camera } from 'lucide-react';
+import { User, CreditCard, Bell, LogOut, Edit2, Check, X, Clock, Send, Sun } from 'lucide-react';
 import type { Profile } from '../lib/types/supabase';
 import { useNavigate } from 'react-router-dom';
 import InteractiveCard from './InteractiveCard';
@@ -211,14 +211,14 @@ function ProfileTab({ profile, onLogout, showNatalInfo = false }: ProfileTabProp
             <InteractiveCard className="card-premium-glow max-w-3xl mx-auto text-center">
               {profile.natal_summary && (
                 <div className="mb-4">
-                  <h3 className="text-xl md:text-2xl font-cinzel font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-2">Signature astrale</h3>
-                  <p className="text-lg font-cinzel leading-relaxed text-primary">{profile.natal_summary}</p>
+                                <h3 className="text-xl md:text-2xl font-cinzel font-bold bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text mb-2 animate-blue-glow">Signature astrale</h3>
+              <p className="text-lg font-cinzel leading-relaxed text-blue-300">{profile.natal_summary}</p>
                 </div>
               )}
               {profile.natal_chart_interpretation && (
                 <div>
-                  <h3 className="text-xl md:text-2xl font-cinzel font-bold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-2">Interprétation détaillée</h3>
-                  <p className="text-base leading-relaxed whitespace-pre-line text-primary">{profile.natal_chart_interpretation}</p>
+                  <h3 className="text-xl md:text-2xl font-cinzel font-bold bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text mb-2 animate-blue-glow">Interprétation détaillée</h3>
+                  <p className="text-base leading-relaxed whitespace-pre-line text-blue-300">{profile.natal_chart_interpretation}</p>
                 </div>
               )}
             </InteractiveCard>
@@ -258,7 +258,7 @@ function ProfileTab({ profile, onLogout, showNatalInfo = false }: ProfileTabProp
                     )}
                   </div>
                   <button className="absolute -bottom-1 -right-1 w-6 h-6 bg-primary rounded-full flex items-center justify-center text-white text-xs hover:bg-primary/80 transition-colors">
-                    <Camera className="w-3 h-3" />
+                    <User className="w-3 h-3" />
                   </button>
                 </div>
                 <div>

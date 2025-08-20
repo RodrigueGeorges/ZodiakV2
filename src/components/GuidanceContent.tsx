@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { useGuidance } from '../lib/hooks/useGuidance';
 import { useRetry } from '../lib/hooks/useRetry';
 import { ButtonZodiak } from './ButtonZodiak';
@@ -92,7 +92,7 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
           >
             {isGenerating || isRetrying ? (
               <>
-                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 {isRetrying ? 'Nouvelle tentative...' : 'Génération...'}
               </>
             ) : (
@@ -135,7 +135,7 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
           >
             {isGenerating ? (
               <>
-                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                 Génération...
               </>
             ) : (
@@ -193,8 +193,12 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
 
       {/* Mantra du jour */}
       <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-6 border border-primary/20 shadow-cosmic">
-        <h3 className="text-lg font-semibold text-primary mb-3 font-cinzel">Mantra du jour</h3>
-        <p className="text-gray-300 leading-relaxed italic">"{guidance.mantra}"</p>
+        <h3 className="text-lg font-semibold text-primary mb-3 font-cinzel flex items-center gap-2">
+          🧘‍♀️ Mantra du jour
+        </h3>
+        <p className="text-gray-300 leading-relaxed italic text-center text-lg">
+          "{guidance.mantra || 'Les étoiles vous guident vers votre destinée...'}"
+        </p>
       </motion.div>
 
       {/* Actions */}
@@ -204,13 +208,13 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
           disabled={isGenerating}
           className="bg-cosmic-700 hover:bg-cosmic-600 text-primary"
         >
-          <RefreshCw className="w-4 h-4 mr-2" />
+          <Loader2 className="w-4 h-4 mr-2" />
           Actualiser
         </ButtonZodiak>
         
         <ShareButton
           title="Guidance du Jour"
-          content={`${guidance.summary}\n\n💖 Amour: ${guidance.love.text}\n💼 Travail: ${guidance.work.text}\n⚡ Énergie: ${guidance.energy.text}`}
+          content={`${guidance.summary}\n\n💖 Amour: ${guidance.love.text}\n💼 Travail: ${guidance.work.text}\n⚡ Énergie: ${guidance.energy.text}\n\n🧘‍♀️ Mantra: "${guidance.mantra || 'Les étoiles vous guident vers votre destinée...'}"`}
           url={window.location.href}
         />
       </motion.div>

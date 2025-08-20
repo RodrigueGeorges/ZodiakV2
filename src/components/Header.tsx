@@ -32,7 +32,7 @@ function Header() {
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-4">
   
-          <h1 className="text-lg font-semibold text-primary">Zodiak</h1>
+          <h1 className="text-lg font-semibold text-blue-300">Zodiak</h1>
         </div>
         
         <nav className="hidden md:flex items-center gap-1">
@@ -44,8 +44,8 @@ function Header() {
                 onClick={() => handleTabChange(tab.key)}
                 className={cn(
                   'px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                  'text-primary hover:text-primary/80',
-                  isActive && 'bg-gradient-to-r from-primary/10 to-secondary/10 text-primary'
+                  'text-blue-300 hover:text-blue-200',
+                  isActive && 'bg-gradient-to-r from-blue-300/10 to-cyan-300/10 text-blue-300'
                 )}
               >
                 {tab.label}

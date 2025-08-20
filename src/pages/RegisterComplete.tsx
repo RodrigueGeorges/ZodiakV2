@@ -114,10 +114,10 @@ export default function RegisterComplete() {
           className="bg-gradient-to-br from-cosmic-800/50 to-cosmic-900/50 rounded-lg p-8 border border-primary/20"
         >
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-gradient-to-r from-blue-300 to-cyan-300 rounded-full flex items-center justify-center mx-auto mb-4">
               <Star className="w-8 h-8 text-cosmic-900" />
             </div>
-            <h2 className="text-2xl font-bold text-primary mb-2">
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text mb-2 animate-blue-glow">
               Complétez votre profil
             </h2>
             <p className="text-gray-400">
@@ -136,7 +136,7 @@ export default function RegisterComplete() {
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 bg-cosmic-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary transition-colors"
+                className="w-full px-4 py-3 bg-cosmic-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-300 transition-colors"
                 placeholder="Votre nom complet"
                 required
               />

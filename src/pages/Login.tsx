@@ -75,7 +75,7 @@ export default function Login() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50 transition-colors"
+                className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-300 focus:ring-2 focus:ring-blue-300/50 transition-colors"
                 placeholder="votre@email.com"
                 required
               />
@@ -91,7 +91,7 @@ export default function Login() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50 transition-colors pr-12"
+                  className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-300 focus:ring-2 focus:ring-blue-300/50 transition-colors pr-12"
                   placeholder="Votre mot de passe"
                   required
                 />
@@ -108,7 +108,7 @@ export default function Login() {
             <ButtonZodiak
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-primary to-secondary text-cosmic-900 font-semibold py-3"
+              className="w-full bg-gradient-to-r from-blue-300 to-cyan-300 text-cosmic-900 font-semibold py-3"
             >
               {loading ? 'Connexion...' : 'Se connecter'}
             </ButtonZodiak>
@@ -119,7 +119,7 @@ export default function Login() {
               Pas encore de compte ?{' '}
               <button
                 onClick={() => navigate('/register')}
-                className="text-primary hover:text-secondary transition-colors font-medium"
+                className="text-blue-300 hover:text-blue-200 transition-colors font-medium"
               >
                 Créer un compte
               </button>

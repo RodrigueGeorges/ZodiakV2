@@ -129,14 +129,14 @@ export default function GuidanceAccess() {
             transition={{ duration: 0.8 }}
             className="text-center mb-8"
           >
-            <h1 className="text-4xl md:text-5xl font-bold font-cinzel text-primary mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold font-cinzel bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text mb-4 animate-blue-glow">
               🌟 Guidance Astrale
             </h1>
-            <p className="text-xl text-gray-300 mb-2">
+            <p className="text-xl text-blue-200 mb-2">
               Message des étoiles pour aujourd'hui
             </p>
             {userName && (
-              <p className="text-lg text-secondary font-semibold">
+              <p className="text-lg text-blue-300 font-semibold">
                 Pour {userName}
               </p>
             )}

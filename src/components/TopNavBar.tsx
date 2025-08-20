@@ -26,8 +26,8 @@ function TopNavBar() {
             className={cn(
               'flex items-center gap-2 px-3 py-2 rounded-lg font-cinzel text-lg transition-colors',
               location.pathname === item.path
-                ? 'bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text'
-                : 'text-primary hover:text-primary/80'
+                ? 'bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text animate-blue-glow'
+                : 'text-blue-300 hover:text-blue-200'
             )}
           >
             {item.icon}

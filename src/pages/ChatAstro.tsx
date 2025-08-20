@@ -143,19 +143,19 @@ export default function ChatAstro() {
               className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div className={`rounded-xl px-4 py-2 text-base font-cinzel shadow
-                ${msg.from === 'user' ? 'bg-primary/80 text-cosmic-900' : 'bg-cosmic-800/80 text-primary'}
+                ${msg.from === 'user' ? 'bg-blue-300/80 text-cosmic-900' : 'bg-cosmic-800/80 text-blue-300'}
                 max-w-full sm:max-w-[80%] break-words whitespace-pre-line`}
               >
-                {msg.from === 'bot' && <Sparkle className="inline w-4 h-4 mr-1 text-secondary align-middle" />} {msg.text}
+                {msg.from === 'bot' && <Sparkle className="inline w-4 h-4 mr-1 text-blue-200 align-middle" />} {msg.text}
               </div>
             </motion.div>
           ))}
           {/* Effet typing pour la réponse du bot */}
           {typingText && (
-            <div className="flex justify-start"><div className="animate-pulse px-4 py-2 bg-cosmic-800/80 text-primary rounded-xl font-cinzel"><Sparkle className="inline w-4 h-4 mr-1 text-secondary align-middle" />{typingText}<span className="animate-blink">|</span></div></div>
+            <div className="flex justify-start"><div className="animate-pulse px-4 py-2 bg-cosmic-800/80 text-blue-300 rounded-xl font-cinzel"><Sparkle className="inline w-4 h-4 mr-1 text-blue-200 align-middle" />{typingText}<span className="animate-blink">|</span></div></div>
           )}
           {loading && !typingText && (
-            <div className="flex justify-start"><div className="animate-pulse px-4 py-2 bg-cosmic-800/80 text-primary rounded-xl font-cinzel">Le guide réfléchit...</div></div>
+            <div className="flex justify-start"><div className="animate-pulse px-4 py-2 bg-cosmic-800/80 text-blue-300 rounded-xl font-cinzel">Le guide réfléchit...</div></div>
           )}
         </div>
         {/* Suggestions de questions */}

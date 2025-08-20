@@ -16,7 +16,7 @@ export default function Subscribe() {
       >
         <div className="bg-cosmic-800 rounded-2xl shadow-xl border border-primary/20 p-8">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-cinzel text-primary mb-4">
+            <h1 className="text-3xl font-bold font-cinzel bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text mb-4 animate-blue-glow">
               🌟 Abonnement Premium
             </h1>
             <p className="text-gray-300 text-lg">

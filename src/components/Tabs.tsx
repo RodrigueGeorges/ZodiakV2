@@ -49,8 +49,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange }) => {
             tabIndex={isActive ? 0 : -1}
             className={`relative px-4 py-3 rounded-lg font-cinzel font-medium outline-none transition-all duration-300 flex items-center gap-2 min-w-[120px] justify-center ${
               isActive
-                ? 'bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text'
-                : 'text-primary hover:text-primary/80'
+                ? 'bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text animate-blue-glow'
+                : 'text-blue-300 hover:text-blue-200'
             }`}
             onClick={() => onTabChange(tab.key)}
             onKeyDown={e => {

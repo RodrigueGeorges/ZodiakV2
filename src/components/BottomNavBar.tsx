@@ -31,18 +31,18 @@ function BottomNavBar() {
               onClick={() => navigate(item.path)}
               className={cn(
                 'flex flex-col items-center gap-1 p-3 rounded-lg transition-all duration-200 outline-none',
-                'text-primary hover:text-primary/80 focus:text-primary',
-                'focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-cosmic-900',
+                'text-blue-300 hover:text-blue-200 focus:text-blue-300',
+                'focus-visible:ring-2 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:ring-offset-cosmic-900',
                 'min-h-[44px] min-w-[44px] justify-center',
-                isActive && 'bg-gradient-to-r from-primary/10 to-secondary/10'
+                isActive && 'bg-gradient-to-r from-blue-300/10 to-cyan-300/10'
               )}
               aria-label={item.label}
               aria-current={isActive ? 'page' : undefined}
               tabIndex={0}
               role="link"
             >
-              <Icon className="w-6 h-6 text-primary" aria-hidden="true" />
-              <span className="text-xs font-medium text-primary leading-tight">{item.label}</span>
+              <Icon className="w-6 h-6 text-blue-300" aria-hidden="true" />
+              <span className="text-xs font-medium text-blue-300 leading-tight">{item.label}</span>
             </button>
           );
         })}

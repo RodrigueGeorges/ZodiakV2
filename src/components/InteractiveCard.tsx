@@ -52,7 +52,7 @@ function InteractiveCard({ children, className = '', onClick, tabIndex, 'aria-la
       tabIndex={tabIndex}
       aria-label={ariaLabel}
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-300/10 to-cyan-300/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
       <div className="relative z-10">{children}</div>
     </motion.div>
   );

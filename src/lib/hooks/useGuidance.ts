@@ -11,6 +11,7 @@ interface GuidanceData {
   love: { text: string; score: number };
   work: { text: string; score: number };
   energy: { text: string; score: number };
+  mantra?: string;
 }
 
 interface UseGuidanceReturn {

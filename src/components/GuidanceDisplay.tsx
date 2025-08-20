@@ -13,6 +13,36 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 }
 };
 
+// Fonction pour nettoyer et parser les données JSON dans le texte
+const parseGuidanceText = (text: string) => {
+  if (!text) return { text: '', score: 0 };
+  
+  try {
+    // Essayer de parser le JSON complet
+    const parsed = JSON.parse(text);
+    return {
+      text: parsed.text || text,
+      score: parsed.score || 0
+    };
+  } catch (e) {
+    // Si ce n'est pas du JSON valide, chercher des patterns JSON dans le texte
+    const jsonMatch = text.match(/\{.*\}/);
+    if (jsonMatch) {
+      try {
+        const parsed = JSON.parse(jsonMatch[0]);
+        return {
+          text: parsed.text || text.replace(jsonMatch[0], '').trim(),
+          score: parsed.score || 0
+        };
+      } catch (e2) {
+        // Si tout échoue, retourner le texte original
+        return { text: text, score: 0 };
+      }
+    }
+    return { text: text, score: 0 };
+  }
+};
+
 export default function GuidanceDisplay({ guidance, className = '' }: GuidanceDisplayProps) {
   if (!guidance) {
     return (
@@ -22,6 +52,11 @@ export default function GuidanceDisplay({ guidance, className = '' }: GuidanceDi
       </div>
     );
   }
+
+  // Parser les données pour chaque section
+  const loveData = parseGuidanceText(guidance.love);
+  const workData = parseGuidanceText(guidance.work);
+  const energyData = parseGuidanceText(guidance.energy);
 
   return (
     <motion.div
@@ -66,12 +101,12 @@ export default function GuidanceDisplay({ guidance, className = '' }: GuidanceDi
               <span className="text-2xl mr-2">💖</span>
               <h3 className="text-xl font-bold font-cinzel text-primary">Amour</h3>
             </div>
-            <GuidanceScoreBadge score={guidance.love?.score || 0} />
+            <GuidanceScoreBadge score={loveData.score} />
           </div>
           <p className="text-gray-200 leading-relaxed mb-4">
-            {guidance.love?.text || 'Aucune guidance disponible pour l\'amour.'}
+            {loveData.text || 'Aucune guidance disponible pour l\'amour.'}
           </p>
-          <GuidanceMeter score={guidance.love?.score || 0} />
+          <GuidanceMeter score={loveData.score} />
         </motion.div>
 
         {/* Travail */}
@@ -84,12 +119,12 @@ export default function GuidanceDisplay({ guidance, className = '' }: GuidanceDi
               <span className="text-2xl mr-2">💼</span>
               <h3 className="text-xl font-bold font-cinzel text-primary">Travail</h3>
             </div>
-            <GuidanceScoreBadge score={guidance.work?.score || 0} />
+            <GuidanceScoreBadge score={workData.score} />
           </div>
           <p className="text-gray-200 leading-relaxed mb-4">
-            {guidance.work?.text || 'Aucune guidance disponible pour le travail.'}
+            {workData.text || 'Aucune guidance disponible pour le travail.'}
           </p>
-          <GuidanceMeter score={guidance.work?.score || 0} />
+          <GuidanceMeter score={workData.score} />
         </motion.div>
 
         {/* Énergie */}
@@ -102,34 +137,32 @@ export default function GuidanceDisplay({ guidance, className = '' }: GuidanceDi
               <span className="text-2xl mr-2">⚡</span>
               <h3 className="text-xl font-bold font-cinzel text-primary">Énergie</h3>
             </div>
-            <GuidanceScoreBadge score={guidance.energy?.score || 0} />
+            <GuidanceScoreBadge score={energyData.score} />
           </div>
           <p className="text-gray-200 leading-relaxed mb-4">
-            {guidance.energy?.text || 'Aucune guidance disponible pour l\'énergie.'}
+            {energyData.text || 'Aucune guidance disponible pour l\'énergie.'}
           </p>
-          <GuidanceMeter score={guidance.energy?.score || 0} />
+          <GuidanceMeter score={energyData.score} />
         </motion.div>
       </div>
 
       {/* Mantra du jour */}
-      {guidance.mantra && (
-        <motion.div 
-          variants={itemVariants} 
-          className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-8 border border-primary/30 text-center shadow-cosmic backdrop-blur-sm"
-        >
-          <div className="flex items-center justify-center mb-4">
-            <span className="text-3xl mr-3">🌟</span>
-            <h3 className="text-2xl font-bold font-cinzel text-primary">Mantra du Jour</h3>
-            <span className="text-3xl ml-3">🌟</span>
-          </div>
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent rounded-lg"></div>
-            <p className="text-gray-100 italic text-xl font-medium relative z-10 leading-relaxed">
-              "{guidance.mantra}"
-            </p>
-          </div>
-        </motion.div>
-      )}
+      <motion.div 
+        variants={itemVariants} 
+        className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-2xl p-8 border border-primary/30 text-center shadow-cosmic backdrop-blur-sm"
+      >
+        <div className="flex items-center justify-center mb-4">
+          <span className="text-3xl mr-3">🌟</span>
+          <h3 className="text-2xl font-bold font-cinzel text-primary">Mantra du Jour</h3>
+          <span className="text-3xl ml-3">🌟</span>
+        </div>
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent rounded-lg"></div>
+          <p className="text-gray-100 italic text-xl font-medium relative z-10 leading-relaxed">
+            "{guidance.mantra || 'Les étoiles vous guident vers votre destinée...'}"
+          </p>
+        </div>
+      </motion.div>
 
       {/* Message d'encouragement */}
       <motion.div 

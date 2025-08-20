@@ -136,8 +136,8 @@ export function Admin() {
     
               </div>
               <h1 className="text-3xl font-cinzel font-bold mb-4 flex items-center justify-center gap-3">
-                <Shield className="w-8 h-8 text-primary" />
-                <span className="bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text">
+                <Shield className="w-8 h-8 text-blue-300" />
+                <span className="bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text animate-blue-glow">
                   Dashboard Admin
                 </span>
               </h1>
@@ -168,7 +168,7 @@ export function Admin() {
                       'bg-white/5 backdrop-blur-lg',
                       'border border-white/10',
                       'text-white placeholder-gray-400',
-                      'focus:border-primary focus:ring-2 focus:ring-primary/50',
+                      'focus:border-blue-300 focus:ring-2 focus:ring-blue-300/50',
                       'transition-all duration-200'
                     )}
                   />
@@ -182,7 +182,7 @@ export function Admin() {
                       className={cn(
                         'px-4 py-2 rounded-lg transition-colors',
                         filter === status
-                          ? 'bg-primary text-gray-900'
+                          ? 'bg-blue-300 text-gray-900'
                           : 'bg-white/5 text-gray-300 hover:bg-white/10'
                       )}
                     >

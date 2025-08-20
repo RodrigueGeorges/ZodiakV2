@@ -81,7 +81,7 @@ export default function Register() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50 transition-colors"
+                className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-300 focus:ring-2 focus:ring-blue-300/50 transition-colors"
                 placeholder="votre@email.com"
                 required
               />
@@ -96,7 +96,7 @@ export default function Register() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50 transition-colors"
+                className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-300 focus:ring-2 focus:ring-blue-300/50 transition-colors"
                 placeholder="Votre mot de passe"
                 required
                 minLength={6}
@@ -112,7 +112,7 @@ export default function Register() {
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/50 transition-colors"
+                className="w-full px-4 py-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-300 focus:ring-2 focus:ring-blue-300/50 transition-colors"
                 placeholder="Confirmez votre mot de passe"
                 required
                 minLength={6}
@@ -122,7 +122,7 @@ export default function Register() {
             <ButtonZodiak
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-primary to-secondary text-cosmic-900 font-semibold py-3"
+              className="w-full bg-gradient-to-r from-blue-300 to-cyan-300 text-cosmic-900 font-semibold py-3"
             >
               {loading ? 'Inscription...' : 'Créer un compte'}
             </ButtonZodiak>

@@ -89,21 +89,21 @@ export default function Home() {
       <StarryBackground />
 
       {/* LOGO + NOM EN HAUT À GAUCHE, SANS BARRE */}
-      <div className="absolute top-4 left-4 z-50 flex items-center gap-3">
+      <div className="absolute top-4 left-4 z-50 flex items-center gap-4">
         <Logo
           size="md"
           variant="cosmic"
           className="text-primary"
           aria-label="Logo Zodiak"
         />
-        <span className="text-2xl font-bold font-cinzel bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-glow">
+        <span className="text-2xl font-bold font-cinzel bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text drop-shadow-[0_0_20px_rgba(0,191,255,0.8)] animate-cosmic-glow">
           Zodiak
         </span>
       </div>
 
       {/* TAGLINE CENTRÉE EN HAUT */}
       <div className="w-full flex justify-center pt-24 md:pt-28 xl:pt-32">
-        <h1 className="text-center text-xl md:text-2xl xl:text-3xl font-cinzel font-semibold bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-glow max-w-2xl mx-auto cosmic-glow">
+        <h1 className="text-center text-xl md:text-2xl xl:text-3xl font-cinzel font-semibold bg-gradient-to-r from-blue-200 via-blue-100 to-cyan-200 text-transparent bg-clip-text drop-shadow-[0_0_15px_rgba(0,191,255,0.4)] max-w-2xl mx-auto">
           Votre guide cosmique quotidien
         </h1>
       </div>
@@ -227,13 +227,13 @@ export default function Home() {
               transition={{ delay: 0.6 }}
               className="relative mb-8 md:mb-12"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-primary/20 blur-xl opacity-50" />
-              <div className="relative bg-gradient-to-r from-primary/10 to-secondary/10 rounded-full py-2 md:py-2 px-4 md:px-6 xl:px-10 2xl:px-14 inline-flex items-center gap-2 md:gap-3 border border-primary/20 shadow-2xl">
-                <Sparkle className="w-4 h-4 md:w-5 md:h-5 text-primary animate-pulse" aria-hidden="true" />
-                <span className="text-base md:text-lg xl:text-xl 2xl:text-2xl font-cinzel font-semibold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-300/20 via-transparent to-cyan-300/20 blur-xl opacity-50" />
+                            <div className="relative bg-gradient-to-r from-blue-300/10 to-cyan-300/10 rounded-full py-2 md:py-2 px-4 md:px-6 xl:px-10 2xl:px-14 inline-flex items-center gap-2 md:gap-3 border border-blue-300/20 shadow-2xl">
+                <Sparkle className="w-4 h-4 md:w-5 md:h-5 text-blue-300 animate-pulse" aria-hidden="true" />
+                <span className="text-base md:text-lg xl:text-xl 2xl:text-2xl font-cinzel font-semibold bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text animate-blue-pulse">
                   1 mois d'essai gratuit
                 </span>
-                <Sparkle className="w-4 h-4 md:w-5 md:h-5 text-primary animate-pulse" aria-hidden="true" />
+                <Sparkle className="w-4 h-4 md:w-5 md:h-5 text-blue-300 animate-pulse" aria-hidden="true" />
               </div>
             </motion.div>
 

@@ -121,10 +121,10 @@ export default function EmptyState({
         transition={{ delay: 0.3, duration: 0.6 }}
         className="max-w-md"
       >
-        <h3 className="text-xl font-cinzel font-bold mb-4 bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
+        <h3 className="text-xl font-cinzel font-bold mb-4 bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text animate-blue-glow">
           {title || config.defaultTitle}
         </h3>
-        <p className="mb-6 leading-relaxed text-primary">
+        <p className="mb-6 leading-relaxed text-blue-300">
           {message || config.defaultMessage}
         </p>
 
@@ -137,7 +137,7 @@ export default function EmptyState({
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={action.onClick}
-            className="px-6 py-3 bg-gradient-to-r from-primary to-secondary text-cosmic-900 font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
+            className="px-6 py-3 bg-gradient-to-r from-blue-300 to-cyan-300 text-cosmic-900 font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200"
           >
             {action.label}
           </motion.button>
@@ -145,20 +145,20 @@ export default function EmptyState({
       </motion.div>
 
       {/* Éléments décoratifs */}
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        className="absolute top-4 right-4 text-primary/20"
-      >
-        <Star className="w-8 h-8" />
-      </motion.div>
-      <motion.div
-        animate={{ rotate: -360 }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="absolute bottom-4 left-4 text-secondary/20"
-      >
-        <Sparkles className="w-6 h-6" />
-      </motion.div>
+             <motion.div
+         animate={{ rotate: 360 }}
+         transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+         className="absolute top-4 right-4 text-blue-300/20"
+       >
+         <Star className="w-8 h-8" />
+       </motion.div>
+       <motion.div
+         animate={{ rotate: -360 }}
+         transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+         className="absolute bottom-4 left-4 text-blue-200/20"
+       >
+         <Sparkles className="w-6 h-6" />
+       </motion.div>
     </motion.div>
   );
 } 
