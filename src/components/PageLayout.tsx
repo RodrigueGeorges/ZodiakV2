@@ -52,7 +52,7 @@ export default function PageLayout({
         >
   
           <h1
-            className="page-title text-primary bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text"
+            className="page-title text-blue-400 bg-gradient-to-r from-blue-300 to-blue-500 text-transparent bg-clip-text"
             style={{
               background: GRADIENTS.lunarSheenAnimated,
               backgroundClip: 'text',
@@ -64,7 +64,7 @@ export default function PageLayout({
           >
             {title}
           </h1>
-          {subtitle && <p className="page-subtitle text-primary/80">{subtitle}</p>}
+          {subtitle && <p className="page-subtitle text-blue-300/80">{subtitle}</p>}
         </motion.div>
 
         {/* Contenu de la page */}

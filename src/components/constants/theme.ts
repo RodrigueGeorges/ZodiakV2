@@ -1,12 +1,12 @@
 // Constantes de thème pour l'application
 export const COLORS = {
-  primary: '#D8CAB8', // Silver Gold, subtil et lunaire
-  secondary: '#BFAF80', // Stardust Gold, pour un contraste doux
+  primary: '#00BFFF', // Bleu néon principal
+  secondary: '#0080FF', // Bleu secondaire
   background: '#0B1120',
   backgroundGradient: '#1e293b',
   text: {
-    primary: '#D8CAB8', // Silver Gold pour le texte principal
-    secondary: '#BFAF80', // Stardust Gold pour le texte secondaire
+    primary: '#00BFFF', // Bleu néon pour le texte principal
+    secondary: '#0080FF', // Bleu secondaire pour le texte secondaire
   }
 } as const;
 
@@ -63,13 +63,13 @@ export const KEYFRAMES = {
 } as const;
 
 export const GRADIENTS = {
-  lunarSheen: 'linear-gradient(120deg, #D8CAB8 0%, #E5E1C6 40%, #BFAF80 70%, #fffbe6 100%)',
-  lunarSheenAnimated: 'linear-gradient(120deg, #D8CAB8 0%, #E5E1C6 40%, #BFAF80 70%, #fffbe6 100%)', // Utilisé avec animation
+  lunarSheen: 'linear-gradient(120deg, #00BFFF 0%, #40B5FF 40%, #0080FF 70%, #E6F7FF 100%)',
+  lunarSheenAnimated: 'linear-gradient(120deg, #00BFFF 0%, #40B5FF 40%, #0080FF 70%, #E6F7FF 100%)', // Utilisé avec animation
   glass: 'rgba(24, 28, 40, 0.6)',
 };
 
 export const EFFECTS = {
-  halo: '0 0 32px 8px #D8CAB880', // Halo doux Silver Gold
+  halo: '0 0 32px 8px rgba(0, 191, 255, 0.5)', // Halo bleu néon
   sheenAnimation: `
     @keyframes sheen {
       0% { background-position: -200% 0; }

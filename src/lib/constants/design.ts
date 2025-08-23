@@ -8,8 +8,8 @@ import { Sun, Moon, Compass, Clock, Heart, Briefcase, Battery, Sparkle, User, Me
  */
 export const DESIGN_COLORS = {
   // Couleurs principales
-  primary: '#D8CAB8', // Silver Gold
-  secondary: '#BFAF80', // Doré doux premium
+  primary: '#00BFFF', // Bleu néon principal
+  secondary: '#0080FF', // Bleu secondaire
   cosmic: {
     800: '#1a1a2e',
     900: '#16213e'
@@ -17,9 +17,9 @@ export const DESIGN_COLORS = {
   
   // Couleurs d'accent cohérentes
   accent: {
-    gold: '#D8CAB8', // Silver Gold
-    yellow: '#D8CAB8', // Silver Gold
-    pink: '#BFAF80', // Doré doux premium
+    blue: '#00BFFF', // Bleu néon
+    cyan: '#0080FF', // Bleu secondaire
+    navy: '#004080', // Bleu accent
     white: '#FFFFFF',
     gray: {
       300: '#D1D5DB',

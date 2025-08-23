@@ -7,8 +7,9 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#D8CAB8',
-        secondary: '#BFAF80',
+        primary: '#00BFFF',
+        secondary: '#0080FF',
+        accent: '#004080',
         cosmic: {
           800: '#1a1a2e',
           900: '#16213e',
@@ -49,11 +50,11 @@ export default {
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(circle, transparent 0%, rgba(26, 26, 46, 0.4) 50%, rgba(22, 33, 62, 0.9) 100%)',
-        'gradient-primary': 'linear-gradient(135deg, #D8CAB8, #BFAF80)',
+        'gradient-primary': 'linear-gradient(135deg, #00BFFF, #0080FF)',
       },
       boxShadow: {
-        'glow': '0 0 20px rgba(255, 215, 0, 0.3)',
-        'glow-lg': '0 0 30px rgba(255, 215, 0, 0.4)',
+        'glow': '0 0 20px rgba(0, 191, 255, 0.3)',
+        'glow-lg': '0 0 30px rgba(0, 191, 255, 0.4)',
         'cosmic': '0 10px 25px rgba(0, 0, 0, 0.3)',
       },
       backdropBlur: {

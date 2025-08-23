@@ -5,8 +5,9 @@
 @tailwind utilities;
 
 :root {
-  --primary: #D8CAB8;
-  --secondary: #BFAF80;
+  --primary: #00BFFF;
+  --secondary: #0080FF;
+  --accent: #004080;
   --cosmic-800: #1a1a2e;
   --cosmic-900: #16213e;
   --blue-primary: #00BFFF;
@@ -165,24 +166,24 @@ a {
 }
 
 .page-title {
-  @apply text-3xl md:text-4xl font-bold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text text-center;
+  @apply text-3xl md:text-4xl font-bold font-cinzel bg-gradient-to-r from-blue-300 to-blue-500 text-transparent bg-clip-text text-center;
 }
 
 .page-subtitle {
-  @apply text-xl md:text-2xl font-cinzel italic text-center mt-4 mb-6 relative z-30 bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text drop-shadow-[0_0_12px_#F5CBA7];
+  @apply text-xl md:text-2xl font-cinzel italic text-center mt-4 mb-6 relative z-30 bg-gradient-to-r from-blue-300 via-blue-400 to-blue-500 text-transparent bg-clip-text drop-shadow-[0_0_12px_rgba(0,191,255,0.6)];
 }
 
 /* Cards premium harmonisées */
 .card-premium {
-  @apply bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 rounded-2xl shadow-xl border border-primary/20 p-6;
+  @apply bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 rounded-2xl shadow-xl border border-blue-400/20 p-6;
 }
 
 .card-premium-glow {
-  @apply bg-gradient-to-br from-primary/90 to-secondary/80 border-primary/40 shadow-2xl rounded-3xl p-8 md:p-12 overflow-hidden;
+  @apply bg-gradient-to-br from-blue-400/90 to-blue-600/80 border-blue-400/40 shadow-2xl rounded-3xl p-8 md:p-12 overflow-hidden;
 }
 
 .card-section {
-  @apply bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 rounded-2xl shadow-xl border border-primary/20 p-6;
+  @apply bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 rounded-2xl shadow-xl border border-blue-400/20 p-6;
 }
 
 /* Boutons premium harmonisés */
@@ -211,11 +212,11 @@ a {
 
 /* Effets de glow */
 .drop-shadow-glow {
-  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+  filter: drop-shadow(0 0 10px rgba(0, 191, 255, 0.5));
 }
 
 .text-shadow-glow {
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  text-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
 }
 
 .shadow-cosmic {
@@ -391,7 +392,7 @@ a {
 }
 
 .bg-gradient-primary {
-  background: linear-gradient(135deg, #D8CAB8, #BFAF80);
+  background: linear-gradient(135deg, #00BFFF, #0080FF);
 }
 
 .text-gradient-primary {

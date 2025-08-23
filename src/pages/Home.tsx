@@ -113,7 +113,7 @@ export default function Home() {
           <div className="text-center mb-8 md:mb-12 xl:mb-16">
             {/* BOUTON PRINCIPAL ACCESSIBLE */}
             <motion.button
-              className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-cosmic-900 rounded-lg font-bold text-lg shadow-lg hover:opacity-90 transition relative flex items-center gap-2 mx-auto mb-8 z-20 no-rotate cosmic-btn-premium"
+              className="px-8 py-3 bg-gradient-to-r from-blue-400 to-blue-600 text-white rounded-lg font-bold text-lg shadow-lg hover:opacity-90 transition relative flex items-center gap-2 mx-auto mb-8 z-20 no-rotate cosmic-btn-premium"
               onClick={() => setShowModal(true)}
               role="button"
               aria-label="Commencez votre voyage astral"
@@ -121,7 +121,7 @@ export default function Home() {
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.98 }}
             >
-              <Sparkle className="w-6 h-6 text-primary" aria-hidden="true" />
+              <Sparkle className="w-6 h-6 text-white" aria-hidden="true" />
               Commencez votre voyage astral
             </motion.button>
 
@@ -137,27 +137,27 @@ export default function Home() {
                   {/* Bouton retour à l'accueil */}
                   <button
                     onClick={() => setShowModal(false)}
-                    className="absolute top-3 left-3 text-primary hover:text-secondary text-lg font-bold"
+                    className="absolute top-3 left-3 text-blue-400 hover:text-blue-300 text-lg font-bold"
                     aria-label="Retour à l'accueil"
                   >
                     ← Accueil
                   </button>
                   {/* Croix de fermeture */}
-                  <button onClick={() => setShowModal(false)} className="absolute top-3 right-3 text-primary hover:text-secondary text-2xl" aria-label="Fermer la modale">×</button>
+                  <button onClick={() => setShowModal(false)} className="absolute top-3 right-3 text-blue-400 hover:text-blue-300 text-2xl" aria-label="Fermer la modale">×</button>
                   <InteractiveCard className="p-6 md:p-8 xl:p-10 2xl:p-16">
                     <h2 className="text-xl md:text-2xl font-cinzel font-bold text-center mb-4 md:mb-6">
-                      <span className="bg-gradient-to-r from-primary via-secondary to-primary text-transparent bg-clip-text">
+                      <span className="bg-gradient-to-r from-blue-300 via-blue-200 to-blue-400 text-transparent bg-clip-text">
                         {isSignUp ? 'Inscription' : 'Connexion'}
                       </span>
                     </h2>
                     <div className="flex justify-center mb-4 gap-4">
                       <button
-                        className={cn('px-3 py-1 rounded', authMode === 'sms' ? 'bg-gradient-to-r from-primary to-secondary text-cosmic-900' : 'bg-cosmic-900 text-primary border border-primary')}
+                        className={cn('px-3 py-1 rounded', authMode === 'sms' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white' : 'bg-cosmic-900 text-blue-400 border border-blue-400')}
                         onClick={() => setAuthMode('sms')}
                         aria-label="Authentification par SMS"
                       >SMS</button>
                       <button
-                        className={cn('px-3 py-1 rounded', authMode === 'email' ? 'bg-gradient-to-r from-primary to-secondary text-cosmic-900' : 'bg-cosmic-900 text-primary border border-primary')}
+                        className={cn('px-3 py-1 rounded', authMode === 'email' ? 'bg-gradient-to-r from-blue-400 to-blue-600 text-white' : 'bg-cosmic-900 text-blue-400 border border-blue-400')}
                         onClick={() => setAuthMode('email')}
                         aria-label="Authentification par Email"
                       >Email</button>
