@@ -89,21 +89,21 @@ export default function Home() {
       <StarryBackground />
 
       {/* LOGO + NOM EN HAUT À GAUCHE, SANS BARRE */}
-      <div className="absolute top-4 left-4 z-50 flex items-center gap-4">
+      <div className="absolute top-2 left-2 md:top-4 md:left-4 z-50 flex items-center gap-2 md:gap-4">
         <Logo
-          size="md"
+          size="sm"
           variant="cosmic"
           className="text-primary"
           aria-label="Logo Zodiak"
         />
-        <span className="text-2xl font-bold font-cinzel bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text drop-shadow-[0_0_20px_rgba(0,191,255,0.8)] animate-cosmic-glow">
+        <span className="text-lg md:text-2xl font-bold font-cinzel bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text drop-shadow-[0_0_20px_rgba(0,191,255,0.8)] animate-cosmic-glow">
           Zodiak
         </span>
       </div>
 
       {/* TAGLINE CENTRÉE EN HAUT */}
-      <div className="w-full flex justify-center pt-24 md:pt-28 xl:pt-32">
-        <h1 className="text-center text-xl md:text-2xl xl:text-3xl font-cinzel font-semibold bg-gradient-to-r from-blue-200 via-blue-100 to-cyan-200 text-transparent bg-clip-text drop-shadow-[0_0_15px_rgba(0,191,255,0.4)] max-w-2xl mx-auto">
+      <div className="w-full flex justify-center pt-16 md:pt-24 lg:pt-28 xl:pt-32">
+        <h1 className="text-center text-lg md:text-xl lg:text-2xl xl:text-3xl font-cinzel font-semibold bg-gradient-to-r from-blue-200 via-blue-100 to-cyan-200 text-transparent bg-clip-text drop-shadow-[0_0_15px_rgba(0,191,255,0.4)] max-w-2xl mx-auto px-4">
           Votre guide cosmique quotidien
         </h1>
       </div>
@@ -132,7 +132,7 @@ export default function Home() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="bg-cosmic-900 rounded-2xl shadow-2xl p-6 md:p-8 xl:p-10 2xl:p-16 max-w-md w-full relative border border-primary/20"
+                  className="bg-cosmic-900 rounded-2xl shadow-2xl p-4 md:p-6 lg:p-8 xl:p-10 max-w-[90vw] md:max-w-md w-full relative border border-primary/20"
                 >
                   {/* Bouton retour à l'accueil */}
                   <button

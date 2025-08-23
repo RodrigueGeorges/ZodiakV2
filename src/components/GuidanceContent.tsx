@@ -148,55 +148,58 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
   }
 
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-4 md:space-y-6 ${className}`}>
       {/* Résumé */}
-      <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-6 border border-primary/20 shadow-cosmic">
-        <h3 className="text-lg font-semibold text-primary mb-3 font-cinzel">Résumé du jour</h3>
-        <p className="text-gray-300 leading-relaxed">{guidance.summary}</p>
+      <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-4 md:p-6 border border-primary/20 shadow-cosmic">
+        <h3 className="text-base md:text-lg font-semibold text-primary mb-2 md:mb-3 font-cinzel">Résumé du jour</h3>
+        <p className="text-gray-300 leading-relaxed text-sm md:text-base">{guidance.summary}</p>
       </motion.div>
 
-      {/* Amour */}
-      <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-6 border border-primary/20 shadow-cosmic">
-        <h3 className="text-lg font-semibold text-primary mb-3 font-cinzel flex items-center gap-2">
-          💖 Amour
-        </h3>
-        <p className="text-gray-300 leading-relaxed">{guidance.love.text}</p>
-        <div className="mt-3">
-          <span className="text-sm text-gray-400">Score : </span>
-          <span className="text-primary font-semibold">{guidance.love.score}/10</span>
-        </div>
-      </motion.div>
+      {/* Grille des sections */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        {/* Amour */}
+        <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-4 md:p-6 border border-primary/20 shadow-cosmic">
+          <h3 className="text-base md:text-lg font-semibold text-primary mb-2 md:mb-3 font-cinzel flex items-center gap-2">
+            💖 Amour
+          </h3>
+          <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-3">{guidance.love.text}</p>
+          <div className="mt-3">
+            <span className="text-xs md:text-sm text-gray-400">Score : </span>
+            <span className="text-primary font-semibold text-sm md:text-base">{guidance.love.score}/10</span>
+          </div>
+        </motion.div>
 
-      {/* Travail */}
-      <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-6 border border-primary/20 shadow-cosmic">
-        <h3 className="text-lg font-semibold text-primary mb-3 font-cinzel flex items-center gap-2">
-          💼 Travail
-        </h3>
-        <p className="text-gray-300 leading-relaxed">{guidance.work.text}</p>
-        <div className="mt-3">
-          <span className="text-sm text-gray-400">Score : </span>
-          <span className="text-primary font-semibold">{guidance.work.score}/10</span>
-        </div>
-      </motion.div>
+        {/* Travail */}
+        <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-4 md:p-6 border border-primary/20 shadow-cosmic">
+          <h3 className="text-base md:text-lg font-semibold text-primary mb-2 md:mb-3 font-cinzel flex items-center gap-2">
+            💼 Travail
+          </h3>
+          <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-3">{guidance.work.text}</p>
+          <div className="mt-3">
+            <span className="text-xs md:text-sm text-gray-400">Score : </span>
+            <span className="text-primary font-semibold text-sm md:text-base">{guidance.work.score}/10</span>
+          </div>
+        </motion.div>
 
-      {/* Énergie */}
-      <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-6 border border-primary/20 shadow-cosmic">
-        <h3 className="text-lg font-semibold text-primary mb-3 font-cinzel flex items-center gap-2">
-          ⚡ Énergie
-        </h3>
-        <p className="text-gray-300 leading-relaxed">{guidance.energy.text}</p>
-        <div className="mt-3">
-          <span className="text-sm text-gray-400">Score : </span>
-          <span className="text-primary font-semibold">{guidance.energy.score}/10</span>
-        </div>
-      </motion.div>
+        {/* Énergie */}
+        <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-4 md:p-6 border border-primary/20 shadow-cosmic">
+          <h3 className="text-base md:text-lg font-semibold text-primary mb-2 md:mb-3 font-cinzel flex items-center gap-2">
+            ⚡ Énergie
+          </h3>
+          <p className="text-gray-300 leading-relaxed text-sm md:text-base mb-3">{guidance.energy.text}</p>
+          <div className="mt-3">
+            <span className="text-xs md:text-sm text-gray-400">Score : </span>
+            <span className="text-primary font-semibold text-sm md:text-base">{guidance.energy.score}/10</span>
+          </div>
+        </motion.div>
+      </div>
 
       {/* Mantra du jour */}
-      <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-6 border border-primary/20 shadow-cosmic">
-        <h3 className="text-lg font-semibold text-primary mb-3 font-cinzel flex items-center gap-2">
+      <motion.div variants={itemVariants} className="bg-cosmic-800 rounded-lg p-4 md:p-6 border border-primary/20 shadow-cosmic">
+        <h3 className="text-base md:text-lg font-semibold text-primary mb-2 md:mb-3 font-cinzel flex items-center gap-2">
           🧘‍♀️ Mantra du jour
         </h3>
-        <p className="text-gray-300 leading-relaxed italic text-center text-lg">
+        <p className="text-gray-300 leading-relaxed italic text-center text-base md:text-lg">
           "{guidance.mantra || 'Les étoiles vous guident vers votre destinée...'}"
         </p>
       </motion.div>

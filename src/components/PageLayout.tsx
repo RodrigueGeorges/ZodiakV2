@@ -35,7 +35,7 @@ export default function PageLayout({
   className = ''
 }: PageLayoutProps) {
   return (
-    <div className="page-container">
+    <div className="page-container safe-area-inset-top">
       {/* Fond étoilé animé */}
       <div className="page-background">
         <StarryBackground />

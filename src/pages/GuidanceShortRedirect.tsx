@@ -7,10 +7,15 @@ export default function GuidanceShortRedirect() {
   const { short } = useParams();
   const navigate = useNavigate();
 
+  // Log au chargement du composant
+  console.log('🚀 GuidanceShortRedirect - Composant chargé');
+  console.log('📋 Short code reçu:', short);
+
   useEffect(() => {
     const fetchAndRedirect = async () => {
       console.log('🔍 GuidanceShortRedirect - Début du processus');
       console.log('📋 Short code reçu:', short);
+      console.log('🔍 URL actuelle:', window.location.href);
 
       if (!short) {
         console.log('❌ Aucun short code fourni');
@@ -108,7 +113,14 @@ export default function GuidanceShortRedirect() {
           return;
         }
 
-        // 2. Tracker l'ouverture du lien
+        // Vérifier que le token existe bien
+        if (!tokenRow.token) {
+          console.log('❌ Token vide ou invalide');
+          navigate('/guidance/access?error=notfound', { replace: true });
+          return;
+        }
+
+        // 2. Tracker l'ouverture du lien (optionnel, ne pas bloquer si ça échoue)
         try {
           const trackingUrl = `${import.meta.env.VITE_NETLIFY_URL || 'https://zodiakv2.netlify.app'}/.netlify/functions/track-sms?shortCode=${short}&token=${tokenRow.token}&action=open`;
           console.log('📊 URL de tracking d\'ouverture:', trackingUrl);
@@ -132,7 +144,7 @@ export default function GuidanceShortRedirect() {
           // Continuer même si le tracking échoue
         }
 
-        // 3. Tracker le clic sur le lien
+        // 3. Tracker le clic sur le lien (optionnel, ne pas bloquer si ça échoue)
         try {
           const clickTrackingUrl = `${import.meta.env.VITE_NETLIFY_URL || 'https://zodiakv2.netlify.app'}/.netlify/functions/track-sms?shortCode=${short}&token=${tokenRow.token}&action=click`;
           console.log('📊 URL de tracking de clic:', clickTrackingUrl);
@@ -163,7 +175,12 @@ export default function GuidanceShortRedirect() {
       }
     };
 
-    fetchAndRedirect();
+    // Délai court pour s'assurer que le composant est bien monté
+    const timer = setTimeout(() => {
+      fetchAndRedirect();
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [short, navigate]);
 
   return <LoadingScreen message="Redirection vers la guidance..." />;

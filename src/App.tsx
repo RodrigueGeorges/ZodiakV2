@@ -36,6 +36,7 @@ function App() {
     <>
       {user && <TopNavBar />}
       <Routes>
+        {/* Routes publiques (pas d'authentification requise) */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -43,11 +44,13 @@ function App() {
         <Route path="/subscribe" element={<Subscribe />} />
         <Route path="/zodiak-admin-astro" element={<Admin />} />
         <Route path="/test" element={<Test />} />
-        <Route path="/guidance/access" element={<GuidanceAccess />} />
+        
+        {/* Routes pour les liens SMS (publiques) */}
         <Route path="/g/:short" element={<GuidanceShortRedirect />} />
+        <Route path="/guidance/access" element={<GuidanceAccess />} />
         <Route path="/guide-astral" element={<ChatAstro />} />
         
-        {/* Routes avec lazy loading et Suspense */}
+        {/* Routes avec lazy loading et Suspense (protégées) */}
         <Route 
           path="/profile" 
           element={
