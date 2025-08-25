@@ -1,4 +1,4 @@
-import React from 'react';
+// React import not needed in TSX with jsx: 'react-jsx'
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { cn } from '../lib/utils';

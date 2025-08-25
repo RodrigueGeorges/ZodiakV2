@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import LoadingScreen from '../components/LoadingScreen';
@@ -24,17 +24,32 @@ export default function GuidanceShortRedirect() {
       }
 
       try {
-        // 1. Récupérer le token et les informations de tracking
-        console.log('🔍 Recherche du token dans la base de données...');
-        
-        // Test de connexion à Supabase
-        const { data: testData, error: testError } = await supabase
-          .from('guidance_token')
-          .select('count')
-          .limit(1);
-        
-        console.log('🔍 Test de connexion Supabase:', { testData, testError });
-        
+        // 1) Appeler la fonction Netlify d'abord (bypass RLS, source de vérité)
+        console.log('🔐 Appel fonction get-token (serverless)');
+        try {
+          const resp = await fetch(`/.netlify/functions/get-token?shortCode=${short}`, { method: 'GET' });
+          if (resp.status === 200) {
+            const payload = await resp.json();
+            console.log('✅ Token via function:', payload);
+            if (payload?.token) {
+              navigate(`/guidance/access?token=${payload.token}`, { replace: true });
+              return;
+            }
+          } else if (resp.status === 404) {
+            navigate('/guidance/access?error=notfound', { replace: true });
+            return;
+          } else if (resp.status === 410) {
+            navigate('/guidance/access?error=expired', { replace: true });
+            return;
+          } else {
+            console.log('ℹ️ get-token non 200:', resp.status);
+          }
+        } catch (fnErr) {
+          console.warn('⚠️ get-token failed, fallback to client query', fnErr);
+        }
+
+        // 2) Fallback: essayer via client Supabase (si des policies existent)
+        console.log('🔍 Fallback: requête Supabase côté client');
         const { data: tokenRow, error } = await supabase
           .from('guidance_token')
           .select('token, expires_at')

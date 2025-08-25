@@ -1,4 +1,4 @@
-import React from 'react';
+// React import not needed in TSX with jsx runtime
 import { motion } from 'framer-motion';
 
 interface GuidanceMeterProps {
