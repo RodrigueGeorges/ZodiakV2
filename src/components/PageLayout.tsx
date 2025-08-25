@@ -2,7 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 import StarryBackground from './StarryBackground';
-import { GRADIENTS, EFFECTS } from './constants/theme';
+import { GRADIENTS } from './constants/theme';
+import Logo from './Logo';
 
 interface PageLayoutProps {
   title: string;
@@ -50,6 +51,11 @@ export default function PageLayout({
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
+          {showLogo && (
+            <div className="flex justify-center mb-4">
+              <Logo size="lg" variant="cosmic" />
+            </div>
+          )}
   
           <h1
             className="page-title text-blue-400 bg-gradient-to-r from-blue-300 to-blue-500 text-transparent bg-clip-text"

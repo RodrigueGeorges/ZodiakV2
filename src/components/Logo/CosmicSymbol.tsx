@@ -7,7 +7,7 @@ interface CosmicSymbolProps {
 }
 
 const sizeMap = {
-  sm: { width: 48, height: 48, strokeWidth: 1.5 },
+  sm: { width: 64, height: 64, strokeWidth: 2 },
   md: { width: 128, height: 128, strokeWidth: 2.5 },
   lg: { width: 192, height: 192, strokeWidth: 3.5 },
 };
