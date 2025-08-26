@@ -96,7 +96,7 @@ export default function Home() {
           className="text-primary"
           aria-label="Logo Zodiak"
         />
-        <span className="text-2xl md:text-6xl font-bold font-cinzel bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 text-transparent bg-clip-text drop-shadow-[0_0_25px_rgba(59,130,246,0.9)] animate-cosmic-glow">
+        <span className="text-2xl md:text-6xl font-bold font-cinzel text-blue-400 drop-shadow-[0_0_25px_rgba(59,130,246,0.9)] animate-cosmic-glow">
           Zodiak
         </span>
       </div>
@@ -230,7 +230,7 @@ export default function Home() {
               <div className="absolute inset-0 bg-gradient-to-r from-blue-300/20 via-transparent to-cyan-300/20 blur-xl opacity-50" />
                             <div className="relative bg-gradient-to-r from-blue-300/10 to-cyan-300/10 rounded-full py-2 md:py-2 px-4 md:px-6 xl:px-10 2xl:px-14 inline-flex items-center gap-2 md:gap-3 border border-blue-300/20 shadow-2xl">
                 <Sparkle className="w-4 h-4 md:w-5 md:h-5 text-blue-300 animate-pulse" aria-hidden="true" />
-                <span className="text-base md:text-lg xl:text-xl 2xl:text-2xl font-cinzel font-semibold bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text animate-blue-pulse">
+                <span className="text-base md:text-lg xl:text-xl 2xl:text-2xl font-cinzel font-semibold text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.8)] animate-blue-pulse">
                   1 mois d'essai gratuit
                 </span>
                 <Sparkle className="w-4 h-4 md:w-5 md:h-5 text-blue-300 animate-pulse" aria-hidden="true" />
