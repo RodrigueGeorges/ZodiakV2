@@ -96,7 +96,7 @@ export default function Home() {
           className="text-primary"
           aria-label="Logo Zodiak"
         />
-        <span className="text-2xl md:text-6xl font-bold font-cinzel bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text drop-shadow-[0_0_20px_rgba(0,191,255,0.8)] animate-cosmic-glow">
+        <span className="text-2xl md:text-6xl font-bold font-cinzel bg-gradient-to-r from-blue-400 via-cyan-300 to-blue-500 text-transparent bg-clip-text drop-shadow-[0_0_25px_rgba(59,130,246,0.9)] animate-cosmic-glow">
           Zodiak
         </span>
       </div>
