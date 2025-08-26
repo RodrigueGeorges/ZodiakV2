@@ -38,10 +38,14 @@ async function getProkeralaToken(): Promise<string | null> {
     const clientSecret = process.env.PROKERALA_CLIENT_SECRET;
     if (!clientId || !clientSecret) return null;
     const authUrl = 'https://api.prokerala.com/token';
+    const params = new URLSearchParams();
+    params.append('grant_type', 'client_credentials');
+    params.append('client_id', clientId);
+    params.append('client_secret', clientSecret);
     const tokenRes = await fetch(authUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, grant_type: 'client_credentials' }),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString(),
     });
     if (!tokenRes.ok) return null;
     const tokenData = await tokenRes.json();
@@ -144,12 +148,18 @@ export async function calculateDailyTransits(date) {
       return getSimulatedTransits(date);
     }
 
-    // 4. Vérifier la configuration
-    const baseUrl = process.env.PROKERALA_BASE_URL;
-    if (!baseUrl) {
+    // 4. Vérifier la configuration et normaliser l'URL de base
+    const rawBaseUrl = process.env.PROKERALA_BASE_URL;
+    if (!rawBaseUrl) {
       console.log('⚠️ URL Prokerala manquante, utilisation de transits simulés');
       return getSimulatedTransits(date);
     }
+    // Normalisation: enlever trailing slashes
+    const trimmedBase = rawBaseUrl.replace(/\/+$/, '');
+    // Si l'URL contient déjà "/v2/astrology", on n'ajoute pas de doublon
+    const apiUrl = trimmedBase.includes('/v2/astrology')
+      ? `${trimmedBase}/transit`
+      : `${trimmedBase}/v2/astrology/transit`;
 
     // 5. Appel API Prokerala pour les transits
     const parisLatitude = 48.8566;
@@ -159,7 +169,7 @@ export async function calculateDailyTransits(date) {
     console.log(`📤 Appel API Prokerala pour ${date}...`);
     
     // Utiliser l'API de transits au lieu de natal-chart
-    const prokeralaRes = await fetch(`${baseUrl}/v2/astrology/transit`, {
+    const prokeralaRes = await fetch(apiUrl, {
       method: 'POST',
       headers: { 
         'Authorization': `Bearer ${accessToken}`, 
@@ -362,14 +372,15 @@ IMPORTANT : Chaque guidance doit être UNIQUE, professionnelle, bienveillante et
     console.log('📤 Envoi de la requête à OpenAI...');
     
     // 7. Appel à OpenAI
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+    let response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${openaiKey}`
       },
       body: JSON.stringify({
-        model: 'gpt-4-turbo-preview',
+        model,
         messages: [
           { role: 'system', content: 'Tu es un astrologue expert. Réponds UNIQUEMENT en JSON valide.' }, 
           { role: 'user', content: prompt }
@@ -379,6 +390,29 @@ IMPORTANT : Chaque guidance doit être UNIQUE, professionnelle, bienveillante et
         response_format: { type: 'json_object' },
       })
     });
+
+    // Retry simple en cas de 429
+    if (response.status === 429) {
+      console.warn('⚠️ OpenAI 429, nouvelle tentative après court délai...');
+      await new Promise(r => setTimeout(r, 1000));
+      response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${openaiKey}`
+        },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: 'Tu es un astrologue expert. Réponds UNIQUEMENT en JSON valide.' }, 
+            { role: 'user', content: prompt }
+          ],
+          max_tokens: 500,
+          temperature: 0.7,
+          response_format: { type: 'json_object' },
+        })
+      });
+    }
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -489,18 +523,28 @@ export async function sendSms(phone, guidance, name, userId = null) {
         });
 
         if (!error) {
-          upsertError = null;
-          break;
+          // Vérifier que la ligne existe bien
+          const { data: verifyRow } = await supabase
+            .from('guidance_token')
+            .select('id, short_code')
+            .eq('short_code', finalShortCode)
+            .eq('token', token)
+            .maybeSingle();
+
+          if (verifyRow) {
+            upsertError = null;
+            break;
+          }
         }
 
         // Si violation d'unicité, régénérer un code et réessayer
-        if (error.code === '23505' || (typeof error.message === 'string' && error.message.includes('unique') && error.message.includes('short_code'))) {
+        if (error && (error.code === '23505' || (typeof error.message === 'string' && error.message.includes('unique') && error.message.includes('short_code')))) {
           attempts++;
           finalShortCode = generateShortCode(10);
           continue;
         }
 
-        upsertError = error;
+        upsertError = error || new Error('Upsert failed without explicit error');
         break;
       }
 
@@ -520,6 +564,7 @@ export async function sendSms(phone, guidance, name, userId = null) {
       if (trackingError) {
         console.warn('⚠️ Erreur lors de la création du tracking SMS:', trackingError.message || trackingError);
       }
+      console.log('🔗 Lien SMS généré:', { shortCode: finalShortCode, token, userId });
       
       shortLink = `${appUrl}/g/${finalShortCode}`;
     } catch (error) {
@@ -531,6 +576,7 @@ export async function sendSms(phone, guidance, name, userId = null) {
   let smsContent;
   if (shortLink) {
     smsContent = `✨ Bonjour ${name?.split(' ')[0] || 'cher utilisateur'} !\n\nDécouvre ta guidance du jour ! 🌟\nLes astres ont un message spécial pour toi 👇\n${shortLink}\n(Valable 24h)`;
+    console.log('✉️ Contenu SMS (avec lien):', { shortLink });
   } else {
     smsContent = `✨ Bonjour ${name?.split(' ')[0] || 'cher utilisateur'} !\n\nDécouvre ta guidance du jour ! 🌟\n${guidance.summary}\n\n💖 Amour : ${guidance.love.text}\n💼 Travail : ${guidance.work.text}\n⚡ Énergie : ${guidance.energy.text}\n\nMantra : ${guidance.mantra}\n\nZodiak - Ton guide astral quotidien`;
   }
