@@ -1,55 +1,65 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { User, Calendar, Clock, MapPin, Sparkles, AlertCircle } from 'lucide-react';
 import { useAuth } from '../lib/hooks/useAuth';
 import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 import { StorageService } from '../lib/storage';
 import { AstrologyService } from '../lib/astrology';
-import { ButtonZodiak } from '../components/ButtonZodiak';
+import AuthLayout from '../components/AuthLayout';
 import LoadingScreen from '../components/LoadingScreen';
-import PageLayout from '../components/PageLayout';
-import { motion } from 'framer-motion';
-import { User, Calendar, Clock, MapPin, Star, CheckCircle } from 'lucide-react';
+import { Button } from '../components/ui/Button';
+import NatalRevealSplash from '../components/NatalRevealSplash';
+import { track } from '../lib/analytics';
+import { vibrate } from '../lib/haptics';
+
+interface RevealData {
+  firstName: string;
+  sunSign?: string;
+  moonSign?: string;
+  ascSign?: string;
+}
 
 export default function RegisterComplete() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { redirectTo } = useAuthRedirect();
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [reveal, setReveal] = useState<RevealData | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     birth_date: '',
     birth_time: '',
-    birth_place: ''
+    birth_place: '',
   });
 
   useEffect(() => {
-    const loadFormData = async () => {
+    const load = async () => {
       try {
-        const savedData = StorageService.getFormData();
-        if (savedData) {
-          setFormData({
-            name: savedData.name || '',
-            birth_date: savedData.birth_date || '',
-            birth_time: savedData.birth_time || '',
-            birth_place: savedData.birth_place || ''
-          });
+        const saved = StorageService.getFormData();
+        if (saved) {
+          setFormData((prev) => ({
+            ...prev,
+            name: saved.name || '',
+            birth_date: saved.birth_date || '',
+            birth_time: saved.birth_time || '',
+            birth_place: saved.birth_place || '',
+          }));
         }
-      } catch (err) {
-        console.error('Erreur lors du chargement des données:', err);
       } finally {
         setLoading(false);
       }
     };
-
-    loadFormData();
+    load();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user?.id) {
-      setError('Utilisateur non connecté');
+      setError("Tu n'es pas connecté·e.");
       return;
     }
 
@@ -57,17 +67,13 @@ export default function RegisterComplete() {
     setError(null);
 
     try {
-      // Calculer le thème natal
-      const birthData = {
+      const natalChart = await AstrologyService.calculateNatalChart({
         date_of_birth: formData.birth_date,
         time_of_birth: formData.birth_time,
-        location: formData.birth_place
-      };
+        location: formData.birth_place,
+      });
 
-      const natalChart = await AstrologyService.calculateNatalChart(birthData);
-
-      // Sauvegarder le profil complet
-      const profile = {
+      await StorageService.saveProfile({
         id: user.id,
         name: formData.name,
         birth_date: formData.birth_date,
@@ -75,155 +81,191 @@ export default function RegisterComplete() {
         birth_place: formData.birth_place,
         natal_chart: natalChart,
         subscription_status: 'trial',
-        trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 7 jours d'essai
+        trial_ends_at: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000
+        ).toISOString(),
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
+        updated_at: new Date().toISOString(),
+      });
 
-      await StorageService.saveProfile(profile);
-
-      // Nettoyer les données temporaires
       StorageService.clearFormData();
+      track('onboarding_completed', {
+        has_birth_time: Boolean(formData.birth_time),
+      });
+      vibrate('success');
 
-      // Rediriger vers la guidance
-      redirectTo('/guidance');
+      // Récupère Soleil/Lune/Asc pour le splash reveal — formats possibles
+      // (a) NatalChart de _astroEngine.ts : `sun.sign` / `moon.sign` / `ascendant.sign`
+      // (b) ancien format : `sun_sign`, `moon_sign`, etc.
+      type ChartShape = {
+        sun?: { sign?: string };
+        moon?: { sign?: string };
+        ascendant?: { sign?: string };
+        sun_sign?: string;
+        moon_sign?: string;
+        ascendant_sign?: string;
+      };
+      const chart = natalChart as unknown as ChartShape;
+      setReveal({
+        firstName: formData.name.split(' ')[0] || 'voyageur',
+        sunSign: chart.sun?.sign ?? chart.sun_sign,
+        moonSign: chart.moon?.sign ?? chart.moon_sign,
+        ascSign: chart.ascendant?.sign ?? chart.ascendant_sign,
+      });
+      // Le splash redirigera vers /guidance via onDone
+      return;
     } catch (err) {
-      console.error('Erreur lors de la sauvegarde:', err);
-      setError('Erreur lors de la sauvegarde du profil. Veuillez réessayer.');
+      console.error('Erreur sauvegarde:', err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Erreur lors de la sauvegarde. Réessaie.'
+      );
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
+  if (loading) return <LoadingScreen message="Préparation…" />;
   if (!user) {
     redirectTo('/login');
-    return <LoadingScreen />;
+    return <LoadingScreen message="Redirection…" />;
+  }
+
+  if (reveal) {
+    return (
+      <NatalRevealSplash
+        firstName={reveal.firstName}
+        sunSign={reveal.sunSign}
+        moonSign={reveal.moonSign}
+        ascSign={reveal.ascSign}
+        onDone={() => navigate('/guidance', { replace: true })}
+      />
+    );
   }
 
   return (
-    <PageLayout title="Compléter votre profil" subtitle="Dernière étape pour accéder à votre guidance">
-      <div className="max-w-2xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="bg-gradient-to-br from-cosmic-800/50 to-cosmic-900/50 rounded-lg p-8 border border-primary/20"
-        >
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-300 to-cyan-300 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Star className="w-8 h-8 text-cosmic-900" />
-            </div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text mb-2 animate-blue-glow">
-              Complétez votre profil
-            </h2>
-            <p className="text-gray-400">
-              Ces informations nous permettront de calculer votre thème natal et de vous proposer une guidance personnalisée
-            </p>
-          </div>
+    <AuthLayout
+      eyebrow="Dernière étape"
+      title="Donne-toi naissance"
+      subtitle="Quelques infos pour calculer ta carte du ciel — précieusement gardées."
+    >
+      <form onSubmit={handleSubmit} className="space-y-5">
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-start gap-2 rounded-xl border border-magenta-500/30 bg-magenta-500/8 px-4 py-3"
+          >
+            <AlertCircle className="w-4 h-4 text-magenta-400 flex-shrink-0 mt-0.5" />
+            <p className="text-caption text-magenta-200">{error}</p>
+          </motion.div>
+        )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Nom */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                <User className="w-4 h-4 inline mr-2" />
-                Nom complet
-              </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 bg-cosmic-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-300 transition-colors"
-                placeholder="Votre nom complet"
-                required
-              />
-            </div>
+        <FieldGroup
+          label="Prénom"
+          icon={<User className="w-4 h-4 text-aurora-300" />}
+          input={
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="input-cosmic"
+              placeholder="Ex : Camille"
+            />
+          }
+        />
 
-            {/* Date de naissance */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                <Calendar className="w-4 h-4 inline mr-2" />
-                Date de naissance
-              </label>
-              <input
-                type="date"
-                value={formData.birth_date}
-                onChange={(e) => setFormData({ ...formData, birth_date: e.target.value })}
-                className="w-full px-4 py-3 bg-cosmic-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-primary transition-colors"
-                required
-              />
-            </div>
+        <FieldGroup
+          label="Date de naissance"
+          icon={<Calendar className="w-4 h-4 text-aurora-300" />}
+          input={
+            <input
+              type="date"
+              required
+              value={formData.birth_date}
+              onChange={(e) =>
+                setFormData({ ...formData, birth_date: e.target.value })
+              }
+              className="input-cosmic"
+            />
+          }
+        />
 
-            {/* Heure de naissance */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                <Clock className="w-4 h-4 inline mr-2" />
-                Heure de naissance
-              </label>
-              <input
-                type="time"
-                value={formData.birth_time}
-                onChange={(e) => setFormData({ ...formData, birth_time: e.target.value })}
-                className="w-full px-4 py-3 bg-cosmic-800/50 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-primary transition-colors"
-                required
-              />
-            </div>
+        <FieldGroup
+          label="Heure de naissance"
+          icon={<Clock className="w-4 h-4 text-aurora-300" />}
+          help="Précise au mieux — l'ascendant en dépend."
+          input={
+            <input
+              type="time"
+              required
+              value={formData.birth_time}
+              onChange={(e) =>
+                setFormData({ ...formData, birth_time: e.target.value })
+              }
+              className="input-cosmic"
+            />
+          }
+        />
 
-            {/* Lieu de naissance */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                <MapPin className="w-4 h-4 inline mr-2" />
-                Lieu de naissance
-              </label>
-              <input
-                type="text"
-                value={formData.birth_place}
-                onChange={(e) => setFormData({ ...formData, birth_place: e.target.value })}
-                className="w-full px-4 py-3 bg-cosmic-800/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-primary transition-colors"
-                placeholder="Ville, Pays"
-                required
-              />
-            </div>
+        <FieldGroup
+          label="Lieu de naissance"
+          icon={<MapPin className="w-4 h-4 text-aurora-300" />}
+          input={
+            <input
+              type="text"
+              required
+              value={formData.birth_place}
+              onChange={(e) =>
+                setFormData({ ...formData, birth_place: e.target.value })
+              }
+              className="input-cosmic"
+              placeholder="Ville, Pays"
+            />
+          }
+        />
 
-            {error && (
-              <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-                <p className="text-red-400 text-sm">{error}</p>
-              </div>
-            )}
-
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <ButtonZodiak
-                type="button"
-                onClick={() => navigate('/')}
-                variant="outline"
-                className="flex-1"
-              >
-                Retour à l'accueil
-              </ButtonZodiak>
-              <ButtonZodiak
-                type="submit"
-                disabled={saving}
-                className="flex-1 bg-primary hover:bg-primary/90"
-              >
-                {saving ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                    Sauvegarde...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Terminer l'inscription
-                  </>
-                )}
-              </ButtonZodiak>
-            </div>
-          </form>
-        </motion.div>
-      </div>
-    </PageLayout>
+        <div className="flex flex-col sm:flex-row gap-3 pt-2">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={() => navigate('/')}
+            fullWidth
+          >
+            Retour
+          </Button>
+          <Button
+            type="submit"
+            variant="primary"
+            fullWidth
+            loading={saving}
+            iconLeft={!saving ? <Sparkles className="w-4 h-4" /> : undefined}
+          >
+            Calculer ma carte
+          </Button>
+        </div>
+      </form>
+    </AuthLayout>
   );
-} 
+}
+
+interface FieldGroupProps {
+  label: string;
+  icon?: React.ReactNode;
+  help?: string;
+  input: React.ReactNode;
+}
+function FieldGroup({ label, icon, help, input }: FieldGroupProps) {
+  return (
+    <div>
+      <label className="flex items-center gap-2 text-caption text-ivory-300 mb-2">
+        {icon}
+        {label}
+      </label>
+      {input}
+      {help && <p className="mt-1.5 text-micro text-ivory-400">{help}</p>}
+    </div>
+  );
+}

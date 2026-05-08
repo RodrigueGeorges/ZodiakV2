@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
 import { motion } from 'framer-motion';
-import { cn } from '../lib/utils';
-import StarryBackground from './StarryBackground';
-
-import InteractiveCard from './InteractiveCard';
-import { Shield, XCircle, AlertCircle } from 'lucide-react';
+import { XCircle, AlertTriangle } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 import { checkAdminAccess } from '../lib/config/admin';
+import AuroraBackground from './ui/AuroraBackground';
+import { Card } from './ui/Card';
+import { Button } from './ui/Button';
+import Logo from './Logo';
+import LoadingScreen from './LoadingScreen';
 
 interface AdminProtectionProps {
   children: React.ReactNode;
@@ -20,160 +21,109 @@ export default function AdminProtection({ children }: AdminProtectionProps) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    checkAdminAccessHandler();
-  }, []);
+    const check = async () => {
+      try {
+        setLoading(true);
+        const {
+          data: { user: currentUser },
+          error: authError,
+        } = await supabase.auth.getUser();
 
-  const checkAdminAccessHandler = async () => {
-    try {
-      setLoading(true);
+        if (authError || !currentUser) {
+          setIsAuthorized(false);
+          return;
+        }
+        setUser(currentUser);
 
-      // 1. Vérifier si l'utilisateur est connecté
-      const { data: { user: currentUser }, error: authError } = await supabase.auth.getUser();
-      
-      if (authError || !currentUser) {
-        console.log('❌ Utilisateur non connecté');
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', currentUser.id)
+          .single();
+
+        const authorized = checkAdminAccess(
+          currentUser.email,
+          currentUser.id,
+          profile?.role
+        );
+        setIsAuthorized(authorized);
+
+        if (!authorized) {
+          setTimeout(() => navigate('/', { replace: true }), 3000);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la vérification admin:', error);
         setIsAuthorized(false);
-        return;
+      } finally {
+        setLoading(false);
       }
-
-      setUser(currentUser);
-
-      // 2. Vérifier le rôle dans le profil (si vous avez un champ role)
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', currentUser.id)
-        .single();
-
-      // 3. Vérifier l'accès admin avec la fonction centralisée
-      const authorized = checkAdminAccess(
-        currentUser.email,
-        currentUser.id,
-        profile?.role
-      );
-
-      console.log('🔐 Vérification admin:', {
-        email: currentUser.email,
-        userId: currentUser.id,
-        role: profile?.role,
-        authorized
-      });
-
-      setIsAuthorized(authorized);
-
-      if (!authorized) {
-        // Rediriger vers la page d'accueil après un délai
-        setTimeout(() => {
-          navigate('/', { replace: true });
-        }, 3000);
-      }
-
-    } catch (error) {
-      console.error('❌ Erreur lors de la vérification admin:', error);
-      setIsAuthorized(false);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+    check();
+  }, [navigate]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/', { replace: true });
   };
 
-  // Écran de chargement
   if (loading) {
-    return (
-      <div className="min-h-screen bg-cosmic-900 flex items-center justify-center">
-        <StarryBackground />
-        <div className="text-center">
-          
-          <div className="mt-4 w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="mt-4 text-gray-400">Vérification des autorisations...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Vérification des autorisations…" />;
   }
 
-  // Accès refusé
   if (isAuthorized === false) {
     return (
-      <div className="min-h-screen bg-cosmic-900 relative">
-        <StarryBackground />
-        
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-2xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center"
-            >
-              <div className="mb-8">
-                <Logo size="md" variant="cosmic" />
-              </div>
-              
-              <InteractiveCard className="p-8">
-                <div className="flex flex-col items-center space-y-6">
-                  <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
-                    <XCircle className="w-8 h-8 text-primary" />
-                  </div>
-                  
-                  <div>
-                    <h1 className="text-2xl font-cinzel font-bold mb-2 text-primary">
-                      Accès Refusé
-                    </h1>
-                    <p className="text-primary mb-4">
-                      Vous n'avez pas les autorisations nécessaires pour accéder à cette page.
-                    </p>
-                    
-                    {user && (
-                      <div className="bg-primary/10 rounded-lg p-4 mb-4">
-                        <p className="text-sm text-primary">
-                          Connecté en tant que : <span className="font-medium">{user.email}</span>
-                        </p>
-                      </div>
-                    )}
-                    
-                    <div className="flex items-center justify-center space-x-2 text-primary mb-4">
-                      <AlertTriangle className="w-4 h-4" />
-                      <span className="text-sm">Redirection automatique dans 3 secondes...</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex space-x-4">
-                    <button
-                      onClick={() => navigate('/', { replace: true })}
-                      className={cn(
-                        'px-6 py-2 rounded-lg transition-colors',
-                        'bg-primary text-gray-900 hover:bg-primary/90'
-                      )}
-                    >
-                      Retour à l'accueil
-                    </button>
-                    
-                    <button
-                      onClick={handleLogout}
-                      className={cn(
-                        'px-6 py-2 rounded-lg transition-colors',
-                        'bg-gray-600 text-white hover:bg-gray-700'
-                      )}
-                    >
-                      Se déconnecter
-                    </button>
-                  </div>
-                </div>
-              </InteractiveCard>
-            </motion.div>
+      <div className="page-container relative">
+        <AuroraBackground variant="dim" />
+        <div className="relative z-10 mx-auto max-w-lg px-4 py-16">
+          <div className="flex justify-center mb-8">
+            <Logo size="md" />
           </div>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <Card variant="elevated">
+              <div className="p-8 text-center space-y-6">
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-magenta-500/15 ring-1 ring-magenta-500/30 text-magenta-400">
+                  <XCircle className="w-6 h-6" aria-hidden="true" />
+                </div>
+                <div>
+                  <h1 className="font-cinzel text-h2 text-ivory-50 mb-2">
+                    Accès refusé
+                  </h1>
+                  <p className="text-body text-ivory-300">
+                    Tu n'as pas les autorisations pour accéder à cette page.
+                  </p>
+                </div>
+                {user?.email && (
+                  <p className="text-caption text-ivory-400">
+                    Connecté en tant que{' '}
+                    <span className="text-ivory-100">{user.email}</span>
+                  </p>
+                )}
+                <p className="inline-flex items-center justify-center gap-2 text-micro uppercase tracking-[0.18em] text-amber-300">
+                  <AlertTriangle className="w-3.5 h-3.5" aria-hidden="true" />
+                  Redirection automatique dans 3 s.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                  <Button
+                    variant="primary"
+                    onClick={() => navigate('/', { replace: true })}
+                  >
+                    Retour à l'accueil
+                  </Button>
+                  <Button variant="ghost" onClick={handleLogout}>
+                    Se déconnecter
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </motion.div>
         </div>
       </div>
     );
   }
 
-  // Accès autorisé - afficher le contenu admin
-  return (
-    <div className="admin-protected">
-      {children}
-    </div>
-  );
-} 
+  return <>{children}</>;
+}

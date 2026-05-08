@@ -24,6 +24,11 @@
   status = 200
 
 [[redirects]]
+  from = "/webhook/meta"
+  to = "/.netlify/functions/meta-webhook"
+  status = 200
+
+[[redirects]]
   from = "/webhook/*"
   to = "/.netlify/functions/:splat"
   status = 200
@@ -55,13 +60,26 @@
 
 [functions]
   node_bundler = "esbuild"
-  external_node_modules = ["@supabase/supabase-js"]
+  external_node_modules = ["@supabase/supabase-js", "web-push"]
 
+# Cron horaire : à chaque heure, on dispatch aux profils dont
+# `guidance_hour` correspond à leur heure locale dans `profiles.timezone`.
+# Permet le multi-fuseau natif sans cron par timezone.
 [functions."send-daily-guidance"]
-  schedule = "0 8 * * *"
+  schedule = "0 * * * *"
 
+# Génération de la guidance du jour, à 23:00 UTC (donc 00:00 / 01:00 Paris
+# selon DST, soit avant que le tout premier user de la journée arrive à
+# son heure de réception). On garde un seul run /jour, le cache `daily_transits`
+# est partagé par tous les users.
 [functions."generate-guidance"]
-  schedule = "0 0 * * *"
+  schedule = "0 23 * * *"
+
+# Web Push : envoie les notifications navigateur en parallèle des canaux
+# WhatsApp/Instagram, à l'heure locale du user. Décalé de 5 min pour ne pas
+# entrer en concurrence avec `send-daily-guidance` sur la même minute.
+[functions."send-daily-push"]
+  schedule = "5 * * * *"
 
 [[headers]]
   for = "/*"
@@ -87,6 +105,14 @@
     [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
     X-Content-Type-Options = "nosniff"
+
+# Service worker : on désactive le cache pour que les nouvelles versions
+# soient toujours détectées sans attendre le TTL CDN.
+[[headers]]
+  for = "/service-worker.js"
+    [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Service-Worker-Allowed = "/"
 
 [[headers]]
   for = "/webhook/*"

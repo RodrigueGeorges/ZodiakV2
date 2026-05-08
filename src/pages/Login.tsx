@@ -1,35 +1,38 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { ButtonZodiak } from '../components/ButtonZodiak';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, Mail } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import AuthLayout from '../components/AuthLayout';
+import { Button } from '../components/ui/Button';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-
       if (error) {
-        setError(error.message);
+        setError(
+          error.message === 'Invalid login credentials'
+            ? 'Email ou mot de passe incorrect.'
+            : error.message
+        );
       } else {
-        navigate('/profile');
+        navigate('/guidance');
       }
-    } catch (error) {
+    } catch {
       setError('Une erreur est survenue lors de la connexion.');
     } finally {
       setLoading(false);
@@ -37,96 +40,102 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-cosmic-900 flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-md w-full"
-      >
-        <div className="bg-cosmic-800 rounded-2xl shadow-xl border border-primary/20 p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-cinzel text-primary mb-2">
-              Connexion
-            </h1>
-            <p className="text-gray-300">
-              Accédez à votre guidance astrale personnalisée
-            </p>
-          </div>
+    <AuthLayout
+      eyebrow="Bon retour"
+      title="Reconnecte-toi aux étoiles"
+      subtitle="Ta guidance t'attend, exactement où tu l'avais laissée."
+      footer={
+        <>
+          Pas encore de compte ?{' '}
+          <Link
+            to="/register"
+            className="text-aurora-300 hover:text-aurora-200 underline-offset-4 hover:underline"
+          >
+            Crée-le ici
+          </Link>
+        </>
+      }
+    >
+      <form onSubmit={handleLogin} className="space-y-5">
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-start gap-2 rounded-xl border border-magenta-500/30 bg-magenta-500/8 px-4 py-3"
+          >
+            <AlertCircle className="w-4 h-4 text-magenta-400 flex-shrink-0 mt-0.5" />
+            <p className="text-caption text-magenta-200">{error}</p>
+          </motion.div>
+        )}
 
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-3"
-            >
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-              <p className="text-red-400 text-sm">{error}</p>
-            </motion.div>
-          )}
-
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-300 focus:ring-2 focus:ring-blue-300/50 transition-colors"
-                placeholder="votre@email.com"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                Mot de passe
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-300 focus:ring-2 focus:ring-blue-300/50 transition-colors pr-12"
-                  placeholder="Votre mot de passe"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                >
-                  {showPassword ? '👁️' : '👁️‍🗨️'}
-                </button>
-              </div>
-            </div>
-
-            <ButtonZodiak
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-300 to-cyan-300 text-cosmic-900 font-semibold py-3"
-            >
-              {loading ? 'Connexion...' : 'Se connecter'}
-            </ButtonZodiak>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
-              Pas encore de compte ?{' '}
-              <button
-                onClick={() => navigate('/register')}
-                className="text-blue-300 hover:text-blue-200 transition-colors font-medium"
-              >
-                Créer un compte
-              </button>
-            </p>
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-caption text-ivory-300 mb-2"
+          >
+            Email
+          </label>
+          <div className="relative">
+            <Mail
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ivory-400"
+              aria-hidden="true"
+            />
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-cosmic !pl-9"
+              placeholder="toi@email.com"
+            />
           </div>
         </div>
-      </motion.div>
-    </div>
+
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-caption text-ivory-300 mb-2"
+          >
+            Mot de passe
+          </label>
+          <div className="relative">
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-cosmic !pr-11"
+              placeholder="••••••••"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'Masquer' : 'Afficher'}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ivory-400 hover:text-ivory-100 transition-colors p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300 rounded-md"
+            >
+              {showPassword ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <Button
+          type="submit"
+          variant="primary"
+          fullWidth
+          size="lg"
+          loading={loading}
+        >
+          Se connecter
+        </Button>
+      </form>
+    </AuthLayout>
   );
-} 
+}

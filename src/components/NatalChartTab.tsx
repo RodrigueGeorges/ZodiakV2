@@ -1,89 +1,116 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Stars, BookOpen, Eye } from 'lucide-react';
 import OpenAIService from '../lib/services/OpenAIService';
 import { StorageService } from '../lib/storage';
 import NatalSignature from './NatalSignature';
-import CosmicLoader from './CosmicLoader';
 import ZodiacWheel from './ZodiacWheel';
+import NatalArt from './NatalArt';
+import StoryShareButton from './StoryShareButton';
 import EmptyState from './EmptyState';
-import InteractiveCard from './InteractiveCard';
+import { Card } from './ui/Card';
+import { Button } from './ui/Button';
+import { SkeletonText } from './ui/Skeleton';
 import type { Profile } from '../lib/types/supabase';
 
 interface NatalChartTabProps {
   profile: Profile;
 }
 
-function NatalChartTab({ profile }: NatalChartTabProps) {
+interface PlanetLite {
+  name: string;
+  sign?: string;
+}
+
+export default function NatalChartTab({ profile }: NatalChartTabProps) {
   const [astroSummary, setAstroSummary] = useState<string | null>(null);
   const [interpretation, setInterpretation] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingSummary, setLoadingSummary] = useState(false);
+  const [loadingInterp, setLoadingInterp] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [view, setView] = useState<'art' | 'wheel'>('art');
 
-  const firstName = profile?.name?.split(' ')[0] || 'Utilisateur';
-  const natalChart = profile?.natal_chart ? 
-    (typeof profile.natal_chart === 'string' ? JSON.parse(profile.natal_chart) : profile.natal_chart) 
+  const firstName = profile?.name?.split(' ')[0] || 'voyageur';
+  const natalChart = profile?.natal_chart
+    ? typeof profile.natal_chart === 'string'
+      ? JSON.parse(profile.natal_chart)
+      : profile.natal_chart
     : null;
 
-  // Extraction robuste des 3 astres
-  const sunSign = natalChart?.planets?.find((p: { name: string; sign: string }) => p.name === 'Soleil')?.sign || 'Non disponible';
-  const moonSign = natalChart?.planets?.find((p: { name: string; sign: string }) => p.name === 'Lune')?.sign || 'Non disponible';
+  const sunSign =
+    natalChart?.planets?.find((p: PlanetLite) => p.name === 'Soleil')?.sign ||
+    'Non disponible';
+  const moonSign =
+    natalChart?.planets?.find((p: PlanetLite) => p.name === 'Lune')?.sign ||
+    'Non disponible';
   const ascendantSign = natalChart?.ascendant?.sign || 'Non disponible';
 
+  // Charge ou génère le résumé
   useEffect(() => {
-    const loadOrGenerateSummary = async () => {
+    const run = async () => {
       if (!natalChart || !profile) return;
-      if (profile.natal_summary && !astroSummary) {
+      if (profile.natal_summary) {
         setAstroSummary(profile.natal_summary);
         return;
       }
-      if (!profile.natal_summary && !astroSummary) {
-        setIsLoading(true);
-        try {
-          const summaryResponse = await OpenAIService.generateNatalSummary(natalChart, firstName);
-          if (summaryResponse.success && summaryResponse.data) {
-            setAstroSummary(summaryResponse.data);
-            const updatedProfile = { ...profile, natal_summary: summaryResponse.data };
-            await StorageService.saveProfile(updatedProfile);
-          } else {
-            throw new Error('Erreur lors de la génération du résumé');
-          }
-        } catch (err) {
-          setAstroSummary(`${firstName}, votre signature astrale révèle un Soleil en ${sunSign}, une Lune en ${moonSign} et un Ascendant en ${ascendantSign}. Cette combinaison unique façonne votre personnalité et votre façon d'aborder la vie.`);
-        } finally {
-          setIsLoading(false);
+      setLoadingSummary(true);
+      try {
+        const res = await OpenAIService.generateNatalSummary(natalChart, firstName);
+        if (res.success && res.data) {
+          setAstroSummary(res.data);
+          await StorageService.saveProfile({ ...profile, natal_summary: res.data });
+        } else {
+          setAstroSummary(
+            `${firstName}, ta signature astrale révèle un Soleil en ${sunSign}, une Lune en ${moonSign} et un Ascendant en ${ascendantSign}. Une combinaison qui te dessine, te ressemble, et que personne d'autre ne porte tout à fait comme toi.`
+          );
         }
+      } catch {
+        // fallback silencieux
+      } finally {
+        setLoadingSummary(false);
       }
     };
-    loadOrGenerateSummary();
-  }, [natalChart, profile, astroSummary, firstName, sunSign, moonSign, ascendantSign]);
+    run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id]);
 
+  // Charge ou génère l'interprétation détaillée
   useEffect(() => {
-    const generateInterpretation = async () => {
+    const run = async () => {
       if (!natalChart || !profile) return;
       if (profile.natal_chart_interpretation) {
         setInterpretation(profile.natal_chart_interpretation);
         return;
       }
-      setIsLoading(true);
+      setLoadingInterp(true);
       setError(null);
       try {
-        const interpretationResponse = await OpenAIService.generateNatalChartInterpretation(natalChart, firstName);
-        if (interpretationResponse.success && interpretationResponse.data) {
-          setInterpretation(interpretationResponse.data);
-          const updatedProfile = { ...profile, natal_chart_interpretation: interpretationResponse.data };
-          await StorageService.saveProfile(updatedProfile);
+        const res = await OpenAIService.generateNatalChartInterpretation(
+          natalChart,
+          firstName
+        );
+        if (res.success && res.data) {
+          setInterpretation(res.data);
+          await StorageService.saveProfile({
+            ...profile,
+            natal_chart_interpretation: res.data,
+          });
         } else {
-          throw new Error('Erreur lors de la génération de l\'interprétation');
+          throw new Error("Erreur lors de la génération de l'interprétation.");
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Une erreur est survenue lors de la génération de votre interprétation.');
+        setError(
+          err instanceof Error ? err.message : 'Une erreur est survenue.'
+        );
       } finally {
-        setIsLoading(false);
+        setLoadingInterp(false);
       }
     };
-    generateInterpretation();
-  }, [natalChart, profile?.natal_chart_interpretation, profile, firstName]);
+    run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id]);
 
+  // Nettoie une éventuelle réponse JSON.stringifiée
   let interpretationText = interpretation;
   try {
     const parsed = JSON.parse(interpretation || '');
@@ -91,7 +118,7 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
       interpretationText = parsed.data;
     }
   } catch {
-    // Ce n'est pas du JSON, on garde tel quel
+    /* texte brut */
   }
 
   if (!natalChart) {
@@ -99,58 +126,160 @@ function NatalChartTab({ profile }: NatalChartTabProps) {
       <EmptyState
         type="natal"
         action={{
-          label: "Compléter mon profil",
-          onClick: () => window.location.href = '/profile'
+          label: 'Compléter mon profil',
+          onClick: () => (window.location.href = '/profile'),
         }}
       />
     );
   }
 
   return (
-    <div className="flex flex-col items-center w-full gap-8">
-      {/* Carte du ciel agrandie et centrée */}
-      <div className="flex justify-center w-full">
-        <InteractiveCard className="shadow-xl rounded-2xl bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10 p-4 md:p-8 flex flex-col items-center max-w-2xl w-full">
-          <ZodiacWheel natalChart={natalChart} />
-        </InteractiveCard>
-      </div>
+    <div className="space-y-10">
+      {/* Bloc carte du ciel + œuvre cosmique */}
+      <Card variant="elevated" className="relative overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/10 via-transparent to-magenta-500/10"
+        />
+        <div className="relative p-6 md:p-10 flex flex-col items-center">
+          <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-2">
+            {view === 'art' ? 'Œuvre cosmique' : 'Carte du ciel'}
+          </p>
+          <h2 className="font-cinzel text-h2 md:text-display text-gradient-aurora mb-2 text-center">
+            {view === 'art' ? 'Ta signature visuelle' : 'Ton ciel à ta naissance'}
+          </h2>
+          <p className="text-caption text-ivory-300 text-center max-w-md mb-6">
+            {view === 'art'
+              ? 'Une composition unique générée à partir de ton ciel — ne ressemble à aucune autre.'
+              : 'La carte technique de ta naissance — survole les planètes.'}
+          </p>
 
-      {/* Signature astrale premium */}
-      <div className="w-full max-w-2xl mx-auto">
-        <NatalSignature sunSign={sunSign} moonSign={moonSign} ascendantSign={ascendantSign} />
-      </div>
-
-      {/* Bloc résumé premium, unique, personnalisé */}
-      {astroSummary && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="w-full max-w-3xl mx-auto bg-gradient-to-br from-primary/80 to-secondary/80 text-cosmic-900 rounded-2xl shadow-xl p-8 mb-2 border-2 border-primary/40 text-center font-cinzel text-xl md:text-2xl font-semibold bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text"
-        >
-          {astroSummary.replace(/^([A-Z][a-z]+),/i, `Cher ${firstName},`)}
-        </motion.div>
-      )}
-
-      {/* Interprétation détaillée premium */}
-      {interpretationText && (
-        <InteractiveCard className="w-full max-w-3xl mx-auto shadow-xl rounded-2xl bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 border-primary/10 p-8">
-          <div className="relative z-10">
-            <h3 className="text-2xl font-cinzel font-bold mb-4 text-primary text-center bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">Interprétation détaillée</h3>
-            <div className="text-lg leading-relaxed text-center text-primary">
-              {interpretationText.replace(/^([A-Z][a-z]+),/i, `Cher ${firstName},`)}
-            </div>
+          {/* Toggle Art / Carte */}
+          <div
+            role="tablist"
+            className="flex items-center gap-1 p-1 mb-6 rounded-full bg-night-900/70 ring-1 ring-night-700/80"
+          >
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'art'}
+              onClick={() => setView('art')}
+              className={`px-4 py-1.5 rounded-full text-caption font-cinzel transition-colors ${
+                view === 'art'
+                  ? 'bg-aurora-500/25 text-ivory-50 ring-1 ring-aurora-400/40'
+                  : 'text-ivory-300 hover:text-ivory-50'
+              }`}
+            >
+              <Eye className="w-3.5 h-3.5 inline mr-1.5" aria-hidden="true" />
+              Œuvre
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={view === 'wheel'}
+              onClick={() => setView('wheel')}
+              className={`px-4 py-1.5 rounded-full text-caption font-cinzel transition-colors ${
+                view === 'wheel'
+                  ? 'bg-aurora-500/25 text-ivory-50 ring-1 ring-aurora-400/40'
+                  : 'text-ivory-300 hover:text-ivory-50'
+              }`}
+            >
+              <Stars className="w-3.5 h-3.5 inline mr-1.5" aria-hidden="true" />
+              Carte
+            </button>
           </div>
-        </InteractiveCard>
-      )}
 
-      {/* Fallback ou loader */}
-      {isLoading && <CosmicLoader />}
-      {error && (
-        <div className="text-red-400 text-center mt-4">{error}</div>
-      )}
+          {view === 'art' ? (
+            <NatalArt chart={natalChart} size={460} />
+          ) : (
+            <ZodiacWheel natalChart={natalChart} size={400} />
+          )}
+
+          <div className="mt-6 flex flex-col sm:flex-row gap-3">
+            <StoryShareButton
+              variant="primary"
+              size="md"
+              label="Partager en story"
+              payload={{
+                type: 'natal',
+                firstName,
+                sunSign,
+                moonSign,
+                ascSign: ascendantSign,
+              }}
+            />
+            <Button
+              variant="ghost"
+              size="md"
+              onClick={() => window.print()}
+            >
+              Imprimer en poster
+            </Button>
+          </div>
+        </div>
+      </Card>
+
+      {/* Signature astrale */}
+      <NatalSignature
+        sunSign={sunSign}
+        moonSign={moonSign}
+        ascendantSign={ascendantSign}
+      />
+
+      {/* Résumé éditorial */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <Card variant="surface" className="relative">
+          <div className="p-6 md:p-10">
+            <div className="flex items-center gap-2 mb-3">
+              <Stars className="w-4 h-4 text-aurora-300" aria-hidden="true" />
+              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300">
+                Lecture rapide
+              </p>
+            </div>
+            {loadingSummary ? (
+              <SkeletonText lines={3} />
+            ) : astroSummary ? (
+              <p className="text-body-lg leading-relaxed text-ivory-100 italic font-cinzel">
+                « {astroSummary.replace(/^([A-Z][a-z]+),/i, `Cher·e ${firstName},`)} »
+              </p>
+            ) : null}
+          </div>
+        </Card>
+      </motion.div>
+
+      {/* Interprétation détaillée */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+      >
+        <Card variant="surface">
+          <div className="p-6 md:p-10">
+            <div className="flex items-center gap-2 mb-4">
+              <BookOpen className="w-4 h-4 text-aurora-300" aria-hidden="true" />
+              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300">
+                Interprétation détaillée
+              </p>
+            </div>
+            {loadingInterp ? (
+              <SkeletonText lines={6} />
+            ) : interpretationText ? (
+              <div className="prose prose-invert max-w-none text-ivory-200 leading-relaxed whitespace-pre-line">
+                {interpretationText.replace(
+                  /^([A-Z][a-z]+),/i,
+                  `Cher·e ${firstName},`
+                )}
+              </div>
+            ) : error ? (
+              <p className="text-magenta-400">{error}</p>
+            ) : null}
+          </div>
+        </Card>
+      </motion.div>
     </div>
   );
 }
-
-export default NatalChartTab;

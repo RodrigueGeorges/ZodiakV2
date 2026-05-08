@@ -1,0 +1,86 @@
+import { useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Card } from './ui/Card';
+import { BADGES, badgeToneClasses, BadgeDef } from '../lib/badges';
+import { cn } from '../lib/utils';
+import type { UserBadge } from '../lib/types/supabase';
+
+interface BadgesGridProps {
+  earned: UserBadge[];
+  className?: string;
+}
+
+/**
+ * Grille des badges silencieux. Les non-gagnés apparaissent en sépia
+ * estompé (incite à les découvrir) — pas de spoiler agressif.
+ */
+export default function BadgesGrid({ earned, className }: BadgesGridProps) {
+  const earnedById = useMemo(
+    () => new Map(earned.map((b) => [b.badge_id, b])),
+    [earned]
+  );
+
+  return (
+    <Card variant="elevated" className={cn('relative overflow-hidden', className)}>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/10 via-transparent to-magenta-500/10"
+      />
+      <div className="relative p-6 md:p-8">
+        <div className="mb-5 text-center">
+          <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-1">
+            Marqueurs cosmiques
+          </p>
+          <h3 className="font-cinzel text-h3 text-ivory-50">
+            {earned.length} / {BADGES.length}
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+          {BADGES.map((b, i) => {
+            const got = earnedById.has(b.id);
+            return <BadgeTile key={b.id} badge={b} got={got} index={i} />;
+          })}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+interface TileProps {
+  badge: BadgeDef;
+  got: boolean;
+  index: number;
+}
+function BadgeTile({ badge, got, index }: TileProps) {
+  const tone = badgeToneClasses[badge.tone];
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.03 }}
+      className={cn(
+        'relative aspect-square rounded-2xl flex flex-col items-center justify-center gap-1 ring-1 backdrop-blur-md',
+        got
+          ? `${tone.bg} ${tone.ring}`
+          : 'bg-night-900/60 ring-night-700/60 grayscale opacity-50'
+      )}
+      title={got ? `${badge.name} — ${badge.description}` : '— Marqueur à découvrir —'}
+    >
+      <span
+        className={cn('text-3xl', got ? tone.text : 'text-ivory-400')}
+        aria-hidden="true"
+      >
+        {badge.glyph}
+      </span>
+      <span
+        className={cn(
+          'px-1 text-center text-micro leading-tight font-cinzel',
+          got ? 'text-ivory-50' : 'text-ivory-400'
+        )}
+      >
+        {got ? badge.name : '—'}
+      </span>
+    </motion.div>
+  );
+}

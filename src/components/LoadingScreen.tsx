@@ -1,5 +1,6 @@
 import React from 'react';
 import CosmicLoader from './CosmicLoader';
+import AuroraBackground from './ui/AuroraBackground';
 
 interface LoadingScreenProps {
   message?: string;
@@ -8,18 +9,27 @@ interface LoadingScreenProps {
 
 function LoadingScreen({ message = 'Chargement...', error }: LoadingScreenProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full bg-cosmic-900 text-white">
-      <CosmicLoader />
-      {message && (
-        <div className="mt-6 text-lg text-primary font-semibold text-center animate-pulse" aria-live="polite">
-          {message}
-        </div>
-      )}
-      {error && (
-        <div className="mt-6 text-lg text-primary font-semibold text-center animate-pulse" aria-live="polite">
-          {error}
-        </div>
-      )}
+    <div className="relative min-h-screen w-full bg-night-950 overflow-hidden flex items-center justify-center">
+      <AuroraBackground variant="dim" withGrain={false} />
+      <div className="relative z-10 text-center">
+        <CosmicLoader size="md" />
+        {!error && (
+          <p
+            className="mt-6 text-caption text-ivory-200 font-cinzel tracking-wide"
+            aria-live="polite"
+          >
+            {message}
+          </p>
+        )}
+        {error && (
+          <p
+            className="mt-6 text-caption text-magenta-400 font-cinzel tracking-wide"
+            aria-live="polite"
+          >
+            {error}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,14 +1,45 @@
 /// <reference types="vite/client" />
 
+/**
+ * Variables d'environnement EXPOSÉES côté client.
+ *
+ * RÈGLE D'OR : tout ce qui finit ici se retrouve dans le bundle JS public.
+ * N'ajouter ICI QUE des clés "publiques par design" (Supabase anon key,
+ * URL publiques). Les secrets (OpenAI, Brevo, WhatsApp, Vonage, etc.) doivent
+ * UNIQUEMENT être configurés côté Netlify Functions sans préfixe `VITE_`.
+ */
 interface ImportMetaEnv {
   readonly VITE_SUPABASE_URL: string;
   readonly VITE_SUPABASE_ANON_KEY: string;
-  readonly VITE_OPENAI_API_KEY: string;
-  readonly VITE_ASTRO_API_URL: string;
-  readonly VITE_ASTRO_CLIENT_ID: string;
-  readonly VITE_ASTRO_CLIENT_SECRET: string;
-  readonly VITE_VONAGE_API_KEY: string;
-  readonly VITE_VONAGE_API_SECRET: string;
+
+  /** Sentry DSN — public par design. */
+  readonly VITE_SENTRY_DSN?: string;
+
+  /** URL absolue du site (utilisé pour build des liens canoniques). */
+  readonly VITE_NETLIFY_URL?: string;
+
+  /** Numéro WhatsApp business (E.164 sans le "+", ex: "33612345678") — public. */
+  readonly VITE_ZODIAK_WHATSAPP_NUMBER?: string;
+
+  /** Handle Instagram business (sans le "@") — public. */
+  readonly VITE_ZODIAK_INSTAGRAM_HANDLE?: string;
+
+  /** Clé publique VAPID pour Web Push — `npx web-push generate-vapid-keys`. */
+  readonly VITE_VAPID_PUBLIC_KEY?: string;
+
+  /** PostHog project key (publique par design). */
+  readonly VITE_POSTHOG_KEY?: string;
+  /** PostHog host (par défaut https://eu.i.posthog.com). */
+  readonly VITE_POSTHOG_HOST?: string;
+
+  // ─────────────────────────────────────────────────────────────────────
+  // SUPPRIMÉS (P0 sécurité — migration Meta) :
+  //   - VITE_OPENAI_API_KEY        → côté serveur uniquement (OPENAI_API_KEY)
+  //   - VITE_BREVO_API_KEY         → SMS retiré, Meta côté serveur
+  //   - VITE_VONAGE_API_KEY        → idem
+  //   - VITE_VONAGE_API_SECRET     → idem
+  //   - VITE_ASTRO_*               → astrologie côté serveur uniquement
+  // ─────────────────────────────────────────────────────────────────────
 }
 
 interface ImportMeta {

@@ -1,7 +1,10 @@
 import React, { Component, ErrorInfo } from 'react';
-import { Logger } from '../logging/Logger';
-import { ButtonZodiak } from '../../components/ButtonZodiak';
 import { RefreshCw, Home, AlertTriangle } from 'lucide-react';
+import { Logger } from '../logging/Logger';
+import AuroraBackground from '../../components/ui/AuroraBackground';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import Logo from '../../components/Logo';
 
 interface Props {
   children: React.ReactNode;
@@ -26,12 +29,11 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Générer un ID unique pour cette erreur
-    const errorId = `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+    const errorId = `error_${Date.now()}_${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
     this.setState({ errorId });
 
-    // Journaliser l'erreur avec plus de contexte
     Logger.error('React error boundary caught error', {
       error: error.message,
       stack: error.stack,
@@ -39,23 +41,11 @@ export class ErrorBoundary extends Component<Props, State> {
       errorId,
       url: window.location.href,
       userAgent: navigator.userAgent,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
-    // Appeler le callback personnalisé si fourni
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
-    }
-
-    // En production, envoyer à un service de monitoring (Sentry, etc.)
-    if (import.meta.env.PROD) {
-      // Sentry.captureException(error, {
-      //   extra: {
-      //     componentStack: errorInfo.componentStack,
-      //     errorId,
-      //     url: window.location.href
-      //   }
-      // });
     }
   }
 
@@ -72,92 +62,93 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   render() {
-    if (this.state.hasError) {
-      // Utiliser le fallback personnalisé si fourni
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
+    if (!this.state.hasError) return this.props.children;
+    if (this.props.fallback) return this.props.fallback;
 
-      return (
-        <div className="min-h-screen bg-cosmic-900 flex items-center justify-center px-4">
-          <div className="max-w-md w-full bg-cosmic-800 rounded-xl shadow-xl border border-primary/20 p-8 text-center">
-            {/* Icône d'erreur animée */}
-            <div className="mb-6">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-red-500/20 rounded-full mb-4">
-                <AlertTriangle className="w-8 h-8 text-red-400" />
+    return (
+      <div className="page-container relative">
+        <AuroraBackground variant="dim" />
+        <div className="relative z-10 mx-auto max-w-lg px-4 py-16">
+          <div className="flex justify-center mb-8">
+            <Logo size="md" />
+          </div>
+          <Card variant="elevated" className="relative overflow-hidden">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-magenta-500/10 to-aurora-500/10"
+            />
+            <div className="relative p-8 text-center space-y-6">
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-magenta-500/15 ring-1 ring-magenta-500/30 text-magenta-400">
+                <AlertTriangle className="w-6 h-6" aria-hidden="true" />
               </div>
-            </div>
 
-            {/* Titre et message */}
-            <h1 className="text-2xl font-bold text-primary mb-4 font-cinzel">
-              Oups ! Une erreur est survenue
-            </h1>
-            
-            <p className="text-gray-300 mb-6 leading-relaxed">
-              Nous sommes désolés, mais quelque chose s'est mal passé.
-              Notre équipe a été notifiée et travaille sur le problème.
-            </p>
-
-            {/* ID d'erreur pour le support */}
-            {this.state.errorId && (
-              <div className="mb-6 p-3 bg-cosmic-700 rounded-lg">
-                <p className="text-xs text-gray-400 mb-1">ID d'erreur pour le support :</p>
-                <code className="text-xs text-primary font-mono break-all">
-                  {this.state.errorId}
-                </code>
+              <div>
+                <h1 className="font-cinzel text-h2 text-ivory-50 mb-2">
+                  Le ciel s'est troublé
+                </h1>
+                <p className="text-body text-ivory-300">
+                  Une erreur inattendue s'est produite. On a noté l'incident,
+                  réessaie dans un instant.
+                </p>
               </div>
-            )}
 
-            {/* Actions de récupération */}
-            <div className="space-y-3">
-              <ButtonZodiak
-                onClick={this.handleRetry}
-                className="w-full bg-primary hover:bg-primary/90 text-cosmic-900 font-semibold"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Réessayer
-              </ButtonZodiak>
+              {this.state.errorId && (
+                <div className="rounded-xl bg-night-900/60 border border-night-700/60 px-4 py-3">
+                  <p className="text-micro uppercase tracking-[0.18em] text-ivory-400 mb-1">
+                    Identifiant pour le support
+                  </p>
+                  <code className="text-caption text-aurora-300 font-mono break-all">
+                    {this.state.errorId}
+                  </code>
+                </div>
+              )}
 
-              <ButtonZodiak
-                onClick={this.handleGoHome}
-                className="w-full bg-cosmic-700 hover:bg-cosmic-600 text-primary font-semibold"
-              >
-                <Home className="w-4 h-4 mr-2" />
-                Retour à l'accueil
-              </ButtonZodiak>
+              <div className="flex flex-col gap-2">
+                <Button
+                  variant="primary"
+                  fullWidth
+                  onClick={this.handleRetry}
+                  iconLeft={<RefreshCw className="w-4 h-4" />}
+                >
+                  Réessayer
+                </Button>
+                <Button
+                  variant="ghost"
+                  fullWidth
+                  onClick={this.handleGoHome}
+                  iconLeft={<Home className="w-4 h-4" />}
+                >
+                  Retour à l'accueil
+                </Button>
+                <Button
+                  variant="text"
+                  size="sm"
+                  fullWidth
+                  onClick={this.handleReload}
+                >
+                  Recharger la page
+                </Button>
+              </div>
 
-              <button
-                onClick={this.handleReload}
-                className="w-full px-4 py-2 text-sm text-gray-400 hover:text-primary transition-colors"
-              >
-                Recharger la page
-              </button>
-            </div>
-
-            {/* Informations de debug en développement */}
-            {import.meta.env.DEV && this.state.error && (
-              <details className="mt-6 text-left">
-                <summary className="text-sm text-gray-400 cursor-pointer hover:text-primary">
-                  Détails techniques (développement)
-                </summary>
-                <div className="mt-2 p-3 bg-cosmic-700 rounded text-xs text-red-300 font-mono overflow-auto max-h-32">
-                  <div className="mb-2">
-                    <strong>Message:</strong> {this.state.error.message}
-                  </div>
-                  <div>
-                    <strong>Stack:</strong>
-                    <pre className="whitespace-pre-wrap mt-1">
+              {import.meta.env.DEV && this.state.error && (
+                <details className="text-left">
+                  <summary className="cursor-pointer text-caption text-ivory-400 hover:text-aurora-300">
+                    Détails techniques (dev)
+                  </summary>
+                  <div className="mt-2 p-3 rounded-lg bg-night-900/80 text-micro text-magenta-300 font-mono overflow-auto max-h-40">
+                    <div className="mb-2">
+                      <strong>Message:</strong> {this.state.error.message}
+                    </div>
+                    <pre className="whitespace-pre-wrap">
                       {this.state.error.stack}
                     </pre>
                   </div>
-                </div>
-              </details>
-            )}
-          </div>
+                </details>
+              )}
+            </div>
+          </Card>
         </div>
-      );
-    }
-
-    return this.props.children;
+      </div>
+    );
   }
 }

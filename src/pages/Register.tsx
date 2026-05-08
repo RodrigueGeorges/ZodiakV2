@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { ButtonZodiak } from '../components/ButtonZodiak';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, Mail, ShieldCheck } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import AuthLayout from '../components/AuthLayout';
+import { Button } from '../components/ui/Button';
 
 export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -18,129 +20,154 @@ export default function Register() {
     setLoading(true);
     setError(null);
 
-    if (password !== confirmPassword) {
+    if (password.length < 8) {
+      setError('Choisis un mot de passe d\'au moins 8 caractères.');
+      setLoading(false);
+      return;
+    }
+    if (password !== confirm) {
       setError('Les mots de passe ne correspondent pas.');
       setLoading(false);
       return;
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
+      const { error } = await supabase.auth.signUp({ email, password });
       if (error) {
         setError(error.message);
       } else {
         navigate('/register/complete');
       }
-    } catch (error) {
-      setError('Une erreur est survenue lors de l\'inscription.');
+    } catch {
+      setError("Une erreur est survenue lors de l'inscription.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-cosmic-900 flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-md w-full"
-      >
-        <div className="bg-cosmic-800 rounded-2xl shadow-xl border border-primary/20 p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-cinzel text-primary mb-2">
-              Inscription
-            </h1>
-            <p className="text-gray-300">
-              Rejoignez l'aventure astrale
-            </p>
-          </div>
+    <AuthLayout
+      eyebrow="Crée ton compte"
+      title="Ouvre ta carte du ciel"
+      subtitle="Quelques secondes, et ton voyage commence."
+      footer={
+        <>
+          Déjà un compte ?{' '}
+          <Link
+            to="/login"
+            className="text-aurora-300 hover:text-aurora-200 underline-offset-4 hover:underline"
+          >
+            Connecte-toi
+          </Link>
+        </>
+      }
+    >
+      <form onSubmit={handleRegister} className="space-y-5">
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-start gap-2 rounded-xl border border-magenta-500/30 bg-magenta-500/8 px-4 py-3"
+          >
+            <AlertCircle className="w-4 h-4 text-magenta-400 flex-shrink-0 mt-0.5" />
+            <p className="text-caption text-magenta-200">{error}</p>
+          </motion.div>
+        )}
 
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-3"
-            >
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-              <p className="text-red-400 text-sm">{error}</p>
-            </motion.div>
-          )}
-
-          <form onSubmit={handleRegister} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-300 focus:ring-2 focus:ring-blue-300/50 transition-colors"
-                placeholder="votre@email.com"
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                Mot de passe
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-300 focus:ring-2 focus:ring-blue-300/50 transition-colors"
-                placeholder="Votre mot de passe"
-                required
-                minLength={6}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
-                Confirmer le mot de passe
-              </label>
-              <input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-4 py-3 bg-cosmic-700 border border-cosmic-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-300 focus:ring-2 focus:ring-blue-300/50 transition-colors"
-                placeholder="Confirmez votre mot de passe"
-                required
-                minLength={6}
-              />
-            </div>
-
-            <ButtonZodiak
-              type="submit"
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-300 to-cyan-300 text-cosmic-900 font-semibold py-3"
-            >
-              {loading ? 'Inscription...' : 'Créer un compte'}
-            </ButtonZodiak>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-gray-400 text-sm">
-              Déjà un compte ?{' '}
-              <button
-                onClick={() => navigate('/login')}
-                className="text-primary hover:text-secondary transition-colors font-medium"
-              >
-                Se connecter
-              </button>
-            </p>
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-caption text-ivory-300 mb-2"
+          >
+            Email
+          </label>
+          <div className="relative">
+            <Mail
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ivory-400"
+              aria-hidden="true"
+            />
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-cosmic !pl-9"
+              placeholder="toi@email.com"
+            />
           </div>
         </div>
-      </motion.div>
-    </div>
+
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-caption text-ivory-300 mb-2"
+          >
+            Mot de passe
+          </label>
+          <div className="relative">
+            <input
+              id="password"
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="new-password"
+              required
+              minLength={8}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-cosmic !pr-11"
+              placeholder="Au moins 8 caractères"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? 'Masquer' : 'Afficher'}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ivory-400 hover:text-ivory-100 transition-colors p-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300 rounded-md"
+            >
+              {showPassword ? (
+                <EyeOff className="w-4 h-4" />
+              ) : (
+                <Eye className="w-4 h-4" />
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label
+            htmlFor="confirm"
+            className="block text-caption text-ivory-300 mb-2"
+          >
+            Confirme le mot de passe
+          </label>
+          <input
+            id="confirm"
+            type={showPassword ? 'text' : 'password'}
+            autoComplete="new-password"
+            required
+            minLength={8}
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            className="input-cosmic"
+            placeholder="Répète ton mot de passe"
+          />
+        </div>
+
+        <Button
+          type="submit"
+          variant="primary"
+          fullWidth
+          size="lg"
+          loading={loading}
+        >
+          Créer mon compte
+        </Button>
+
+        <div className="flex items-center gap-2 pt-2 text-micro text-ivory-400">
+          <ShieldCheck className="w-3.5 h-3.5 text-aurora-300" aria-hidden="true" />
+          <span>1 mois d'essai · Sans engagement</span>
+        </div>
+      </form>
+    </AuthLayout>
   );
 }

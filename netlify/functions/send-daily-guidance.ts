@@ -1,751 +1,429 @@
 import { Handler } from '@netlify/functions';
 import { createClient } from '@supabase/supabase-js';
-// Supprimer l'import d'AstrologyService qui cause le problème
-// import { AstrologyService, NatalChart } from '../../src/lib/astrology';
-import type { Database, Profile } from '../../src/lib/types/supabase';
-import { toZonedTime, format } from 'date-fns-tz';
-import { randomUUID } from 'crypto';
+import {
+  sendWhatsAppTemplate,
+  sendInstagramText,
+  buildGuidanceShortLink,
+  getMetaConfig,
+  type Channel,
+  type SendResult,
+} from './_metaUtils';
 
-// Initialiser le client Supabase
+/**
+ * Cron horaire de la guidance quotidienne — version Meta (WhatsApp + Instagram).
+ *
+ * Exécution :  toutes les heures (cron `0 * * * *` configuré dans netlify.toml)
+ *
+ * Logique :
+ *   1. Calcule l'heure courante dans CHAQUE fuseau utilisateur. Sélectionne
+ *      les profils dont `guidance_hour` correspond ET `daily_guidance_enabled = true`
+ *      ET `subscription_status ∈ {active, trial}` ET un canal Meta configuré.
+ *   2. Idempotence : skip les profils qui ont déjà reçu un message outbound
+ *      `template` aujourd'hui (vérifié via `message_log` sur la date locale user).
+ *   3. Pour chaque profil : récupère ou génère un `guidance_token` valide 24h
+ *      avec un `short_code` unique.
+ *   4. Dispatch :
+ *      - WhatsApp : sendWhatsAppTemplate (HSM "guidance_quotidienne")
+ *      - Instagram : sendInstagramText (avec MESSAGE_TAG approuvé pour push 24h+)
+ *   5. Insère un `message_log` outbound (dont provider_message_id pour le
+ *      tracking via webhook).
+ *
+ * Idempotence + retry sûrs : un nouveau short_code n'est créé que si la ligne
+ * `guidance_token` du jour n'existe pas déjà pour ce user.
+ *
+ * Variables d'env requises : voir `_metaUtils.getMetaConfig()` + Supabase.
+ */
+
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const TIMEZONE = 'Europe/Paris'; // Fuseau horaire par défaut
+const BATCH_SIZE = 200;
 
-// Types nécessaires
-interface NatalChart {
-  planets: Array<{
-    name: string;
-    longitude: number;
-    house: number;
-    sign: string;
-    retrograde: boolean;
-  }>;
-  houses: Array<{
-    number: number;
-    sign: string;
-    degree: number;
-  }>;
-  ascendant: {
-    sign: string;
-    degree: number;
-  };
+// ─────────────────────────────────────────────────────────────────────────────
+// Types
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface ProfileForDispatch {
+  id: string;
+  name: string | null;
+  preferred_channel: Channel | null;
+  whatsapp_wa_id: string | null;
+  instagram_igsid: string | null;
+  daily_guidance_enabled: boolean | null;
+  guidance_hour: number | null;
+  timezone: string | null;
+  subscription_status: string | null;
 }
 
-// Cache pour les tokens Prokerala (évite de refaire l'auth à chaque appel)
-let prokeralaTokenCache: { token: string; expiresAt: number } | null = null;
-const TOKEN_CACHE_DURATION = 50 * 60 * 1000; // 50 minutes (tokens expirent en 1h)
+interface DailyGuidance {
+  id?: string;
+  user_id: string;
+  date: string;
+  summary?: string | null;
+}
 
-// Rate limiting pour éviter les appels trop fréquents
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const MAX_REQUESTS_PER_WINDOW = 5; // Max 5 appels par minute
+interface DispatchResult {
+  userId: string;
+  channel: Channel | null;
+  ok: boolean;
+  reason?: string;
+  errorCode?: string;
+}
 
-// Fonction pour obtenir un token Prokerala (avec cache)
-async function getProkeralaToken(): Promise<string | null> {
+// ─────────────────────────────────────────────────────────────────────────────
+// Helpers fuseau / date
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Renvoie { hour, dateISO } correspondant à `now` dans `tz`.
+ * On utilise Intl.DateTimeFormat (zéro dépendance, dispo Node 18+).
+ */
+function getLocalTime(tz: string, now: Date = new Date()): { hour: number; dateISO: string } {
   try {
-    // Vérifier le cache
-    if (prokeralaTokenCache && Date.now() < prokeralaTokenCache.expiresAt) {
-      return prokeralaTokenCache.token;
-    }
-
-    // Rate limiting
-    if (!checkRateLimit('prokerala_auth')) {
-      console.warn('Rate limit atteint pour l\'authentification Prokerala');
-      return null;
-    }
-
-    const clientId = process.env.PROKERALA_CLIENT_ID;
-    const clientSecret = process.env.PROKERALA_CLIENT_SECRET;
-    
-    if (!clientId || !clientSecret) {
-      console.warn('Configuration Prokerala manquante');
-      return null;
-    }
-
-    const authUrl = 'https://api.prokerala.com/token';
-    const tokenRes = await fetch(authUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        client_id: clientId, 
-        client_secret: clientSecret, 
-        grant_type: 'client_credentials' 
-      }),
+    const fmt = new Intl.DateTimeFormat('en-CA', {
+      timeZone: tz,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
     });
-
-    if (!tokenRes.ok) {
-      console.error('Échec de l\'authentification Prokerala:', tokenRes.status, tokenRes.statusText);
-      return null;
-    }
-
-    const tokenData = await tokenRes.json();
-    const accessToken = tokenData.access_token;
-    
-    if (!accessToken) {
-      console.error('Token d\'accès Prokerala manquant dans la réponse');
-      return null;
-    }
-
-    // Mettre en cache le token
-    prokeralaTokenCache = {
-      token: accessToken,
-      expiresAt: Date.now() + TOKEN_CACHE_DURATION
-    };
-
-    console.log('✅ Token Prokerala obtenu et mis en cache');
-    return accessToken;
-
-  } catch (error) {
-    console.error('Erreur lors de l\'obtention du token Prokerala:', error);
-    return null;
+    const parts = fmt.formatToParts(now).reduce<Record<string, string>>((acc, p) => {
+      acc[p.type] = p.value;
+      return acc;
+    }, {});
+    const hour = parseInt(parts.hour || '0', 10);
+    const dateISO = `${parts.year}-${parts.month}-${parts.day}`;
+    return { hour, dateISO };
+  } catch {
+    // Fallback UTC si tz invalide
+    const iso = now.toISOString();
+    return { hour: now.getUTCHours(), dateISO: iso.slice(0, 10) };
   }
 }
 
-// Fonction de rate limiting
-function checkRateLimit(identifier: string): boolean {
-  const now = Date.now();
-  const limit = rateLimitMap.get(identifier);
+// ─────────────────────────────────────────────────────────────────────────────
+// Idempotence : a-t-on déjà envoyé une guidance template à ce user aujourd'hui ?
+// ─────────────────────────────────────────────────────────────────────────────
 
-  if (!limit || now > limit.resetTime) {
-    rateLimitMap.set(identifier, {
-      count: 1,
-      resetTime: now + RATE_LIMIT_WINDOW
-    });
-    return true;
-  }
+async function alreadySentToday(userId: string, channel: Channel, dateISO: string): Promise<boolean> {
+  // On utilise sent_at::date côté SQL via filtre temporel simple.
+  // Plage [00:00, 24:00] de la journée locale du user est approximée par
+  // [dateISO, dateISO+1) ; pour un cron horaire, c'est largement suffisant.
+  const start = `${dateISO}T00:00:00.000Z`;
+  const end = `${dateISO}T23:59:59.999Z`;
 
-  if (limit.count >= MAX_REQUESTS_PER_WINDOW) {
+  const { count, error } = await supabase
+    .from('message_log')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('channel', channel)
+    .eq('direction', 'outbound')
+    .eq('message_type', 'template')
+    .gte('sent_at', start)
+    .lte('sent_at', end);
+
+  if (error) {
+    console.warn('[daily-guidance] alreadySentToday error', error.message);
     return false;
   }
-
-  limit.count++;
-  return true;
+  return (count ?? 0) > 0;
 }
 
-// Version optimisée de calculateDailyTransits avec cache Supabase
-async function calculateDailyTransits(date: string): Promise<Record<string, unknown>> {
-  try {
-    // 1. Vérifier le cache Supabase d'abord
-    const { data: cachedTransits, error: cacheError } = await supabase
-      .from('daily_transits')
-      .select('transit_data')
-      .eq('date', date)
-      .maybeSingle();
+// ─────────────────────────────────────────────────────────────────────────────
+// Token court de guidance (créé à la demande, expire 24h)
+// ─────────────────────────────────────────────────────────────────────────────
 
-    if (!cacheError && cachedTransits?.transit_data) {
-      console.log(`✅ Transits récupérés du cache pour ${date}`);
-      return cachedTransits.transit_data;
+function generateShortCode(length = 8): string {
+  // Sans caractères ambigus (0/O/1/l/I) pour éviter les erreurs de saisie/lecture
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
+  let out = '';
+  for (let i = 0; i < length; i++) out += chars[Math.floor(Math.random() * chars.length)];
+  return out;
+}
+
+function generateUUID(): string {
+  // crypto.randomUUID est disponible sur Node ≥ 14.17 (Netlify Functions OK)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const c: any = (globalThis as any).crypto;
+  if (c?.randomUUID) return c.randomUUID();
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (ch) => {
+    const r = (Math.random() * 16) | 0;
+    const v = ch === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+async function getOrCreateGuidanceToken(userId: string, dateISO: string): Promise<{
+  token: string;
+  shortCode: string;
+} | null> {
+  // 1. Existe-t-il déjà une ligne pour ce user à cette date ?
+  const { data: existing } = await supabase
+    .from('guidance_token')
+    .select('token, short_code, expires_at')
+    .eq('user_id', userId)
+    .eq('date', dateISO)
+    .maybeSingle();
+
+  if (existing && existing.short_code) {
+    const stillValid = existing.expires_at && new Date(existing.expires_at) > new Date();
+    if (stillValid) {
+      return { token: existing.token, shortCode: existing.short_code };
     }
-
-    // 2. Rate limiting pour les appels API
-    if (!checkRateLimit('prokerala_transits')) {
-      console.warn('Rate limit atteint pour les transits, utilisation de transits simulés');
-      return getSimulatedTransits(date);
-    }
-
-    // 3. Obtenir le token Prokerala
-    const accessToken = await getProkeralaToken();
-    if (!accessToken) {
-      console.warn('Impossible d\'obtenir le token Prokerala, utilisation de transits simulés');
-      return getSimulatedTransits(date);
-    }
-
-    // 4. Appel API Prokerala
-    const baseUrl = process.env.PROKERALA_BASE_URL;
-    if (!baseUrl) {
-      console.warn('URL Prokerala manquante, utilisation de transits simulés');
-      return getSimulatedTransits(date);
-    }
-
-    const parisLatitude = 48.8566;
-    const parisLongitude = 2.3522;
-    const datetime = `${date}T12:00:00Z`;
-
-    console.log(`🔄 Calcul des transits via Prokerala pour ${date}...`);
-
-    const prokeralaRes = await fetch(`${baseUrl}/astrology/natal-chart`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        datetime,
-        latitude: parisLatitude,
-        longitude: parisLongitude,
-        house_system: 'placidus',
-        chart_type: 'western',
-      })
-    });
-
-    if (!prokeralaRes.ok) {
-      const errorText = await prokeralaRes.text();
-      console.error(`Erreur API Prokerala (${prokeralaRes.status}):`, errorText);
-      return getSimulatedTransits(date);
-    }
-
-    const transitData = await prokeralaRes.json();
-    
-    // 5. Transformer et valider les données
-    const transits: Record<string, unknown> = {};
-    
-    if (transitData.planets && Array.isArray(transitData.planets)) {
-      transitData.planets.forEach((planet: any) => {
-        if (planet.name && planet.sign) {
-          transits[planet.name.toLowerCase()] = {
-            sign: planet.sign,
-            degree: planet.longitude || 0,
-            house: planet.house || 1,
-            retrograde: planet.is_retrograde === 'true'
-          };
-        }
-      });
-    }
-
-    // 6. Sauvegarder dans le cache Supabase
-    if (Object.keys(transits).length > 0) {
-      try {
-        await supabase
-          .from('daily_transits')
-          .upsert({
-            date,
-            transit_data: transits,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          });
-        console.log(`💾 Transits sauvegardés en cache pour ${date}`);
-      } catch (saveError) {
-        console.warn('Erreur lors de la sauvegarde des transits en cache:', saveError);
-      }
-    }
-
-    console.log(`✅ Transits calculés pour ${date}:`, Object.keys(transits));
-    return transits;
-
-  } catch (error) {
-    console.error('Erreur lors du calcul des transits:', error);
-    return getSimulatedTransits(date);
   }
-}
 
-// Fonction de fallback avec des transits simulés
-function getSimulatedTransits(date: string): Record<string, unknown> {
-  // Générer des transits cohérents basés sur la date
-  const dateObj = new Date(date);
-  const dayOfYear = Math.floor((dateObj.getTime() - new Date(dateObj.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
-  
-  // Utiliser le jour de l'année pour générer des positions cohérentes
-  const baseAngle = (dayOfYear / 365) * 360;
-  
-  return {
-    sun: { 
-      sign: getSignFromDegree(baseAngle), 
-      degree: baseAngle % 30,
-      house: Math.floor(baseAngle / 30) % 12 + 1,
-      retrograde: false
-    },
-    moon: { 
-      sign: getSignFromDegree(baseAngle * 13.2), // Lune plus rapide
-      degree: (baseAngle * 13.2) % 30,
-      house: Math.floor((baseAngle * 13.2) / 30) % 12 + 1,
-      retrograde: false
-    },
-    mercury: { 
-      sign: getSignFromDegree(baseAngle * 1.2), 
-      degree: (baseAngle * 1.2) % 30,
-      house: Math.floor((baseAngle * 1.2) / 30) % 12 + 1,
-      retrograde: Math.random() > 0.8
-    },
-    venus: { 
-      sign: getSignFromDegree(baseAngle * 0.8), 
-      degree: (baseAngle * 0.8) % 30,
-      house: Math.floor((baseAngle * 0.8) / 30) % 12 + 1,
-      retrograde: Math.random() > 0.9
-    },
-    mars: { 
-      sign: getSignFromDegree(baseAngle * 0.5), 
-      degree: (baseAngle * 0.5) % 30,
-      house: Math.floor((baseAngle * 0.5) / 30) % 12 + 1,
-      retrograde: Math.random() > 0.85
-    },
-    jupiter: { 
-      sign: getSignFromDegree(baseAngle * 0.08), 
-      degree: (baseAngle * 0.08) % 30,
-      house: Math.floor((baseAngle * 0.08) / 30) % 12 + 1,
-      retrograde: Math.random() > 0.7
-    },
-    saturn: { 
-      sign: getSignFromDegree(baseAngle * 0.03), 
-      degree: (baseAngle * 0.03) % 30,
-      house: Math.floor((baseAngle * 0.03) / 30) % 12 + 1,
-      retrograde: Math.random() > 0.6
-    },
-    uranus: { 
-      sign: getSignFromDegree(baseAngle * 0.01), 
-      degree: (baseAngle * 0.01) % 30,
-      house: Math.floor((baseAngle * 0.01) / 30) % 12 + 1,
-      retrograde: Math.random() > 0.5
-    },
-    neptune: { 
-      sign: getSignFromDegree(baseAngle * 0.007), 
-      degree: (baseAngle * 0.007) % 30,
-      house: Math.floor((baseAngle * 0.007) / 30) % 12 + 1,
-      retrograde: Math.random() > 0.4
-    },
-    pluto: { 
-      sign: getSignFromDegree(baseAngle * 0.004), 
-      degree: (baseAngle * 0.004) % 30,
-      house: Math.floor((baseAngle * 0.004) / 30) % 12 + 1,
-      retrograde: Math.random() > 0.3
-    }
-  };
-}
+  // 2. Sinon on crée. Avec retry sur collision unique short_code.
+  const token = generateUUID();
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
-// Fonction utilitaire pour obtenir le signe à partir d'un degré
-function getSignFromDegree(degree: number): string {
-  const signs = [
-    'Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo',
-    'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'
-  ];
-  const normalizedDegree = ((degree % 360) + 360) % 360;
-  const signIndex = Math.floor(normalizedDegree / 30);
-  return signs[signIndex];
-}
-
-// Logique OpenAI optimisée avec cache
-async function generateGuidanceForSms(natalChart: NatalChart, transits: Record<string, unknown>, date: string): Promise<{
-  summary: string;
-  love: { text: string; score: number };
-  work: { text: string; score: number };
-  energy: { text: string; score: number };
-  mantra: string;
-}> {
-  try {
-    // 1. Vérifier le cache pour cette combinaison thème natal + transits + date
-    const cacheKey = `guidance_${date}_${JSON.stringify(natalChart.planets.map(p => `${p.name}${p.sign}${p.house}`)).slice(0, 100)}_${JSON.stringify(transits).slice(0, 100)}`;
-    
-    const { data: cachedGuidance, error: cacheError } = await supabase
-      .from('guidance_cache')
-      .select('guidance_data')
-      .eq('cache_key', cacheKey)
-      .maybeSingle();
-
-    if (!cacheError && cachedGuidance?.guidance_data) {
-      console.log(`✅ Guidance récupérée du cache pour ${date}`);
-      return cachedGuidance.guidance_data;
-    }
-
-    // 2. Rate limiting pour OpenAI
-    if (!checkRateLimit('openai_guidance')) {
-      console.warn('Rate limit atteint pour OpenAI, utilisation de guidance par défaut');
-      return getDefaultGuidance();
-    }
-
-    // 3. Générer la guidance via OpenAI
-    console.log(`🔄 Génération de guidance via OpenAI pour ${date}...`);
-    
-    const prompt = `
-Tu es un astrologue expert, bienveillant et moderne, qui rédige des guidances quotidiennes pour une application innovante de guidance astrologique personnalisée.
-
-Ta mission :
-- Génère une guidance du jour inspirante, actionable, innovante et personnalisée, basée sur le thème natal (fourni) et les transits planétaires du jour (fournis).
-- Utilise un ton positif, motivant, accessible à tous, sans jargon technique.
-- Sois créatif et INNOVANT : propose chaque jour une guidance originale, évite toute répétition ou formulation déjà utilisée précédemment.
-- Structure la réponse en 4 parties :
-  1. Résumé général (2 phrases max, synthétique et engageant)
-  2. Amour : conseil concret et bienveillant (2-3 phrases, score sur 100)
-  3. Travail : conseil pratique et motivant (2-3 phrases, score sur 100)
-  4. Bien-être/Énergie : conseil pour l'équilibre personnel (2-3 phrases, score sur 100)
-- Termine par un mantra du jour ou une inspiration courte, adaptée à l'énergie du jour.
-- Sois créatif, mais toujours pertinent et encourageant.
-
-Format de réponse JSON attendu :
-{
-  "summary": "Résumé général du jour, positif et engageant.",
-  "love": { "text": "Conseil amour personnalisé.", "score": 0-100 },
-  "work": { "text": "Conseil travail personnalisé.", "score": 0-100 },
-  "energy": { "text": "Conseil bien-être personnalisé.", "score": 0-100 },
-  "mantra": "Mantra ou inspiration du jour."
-}
-
-Données à utiliser :
-- Thème natal : ${JSON.stringify(natalChart, null, 2)}
-- Transits du jour : ${JSON.stringify(transits, null, 2)}
-
-Exemple de ton attendu :
-- "Aujourd'hui, une belle énergie de renouveau t'invite à oser de nouvelles choses. Profite de cette dynamique pour avancer sereinement."
-- "Côté amour, exprime tes sentiments avec authenticité…"
-- "Au travail, une opportunité pourrait se présenter si tu restes ouvert…"
-- "Prends soin de ton énergie en t'accordant un moment de pause…"
-- "Mantra : 'Je m'ouvre aux belles surprises de l'univers.'"
-
-Génère la guidance du jour selon ce format et ce ton.`;
-
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'gpt-4-turbo-preview',
-        messages: [{ role: 'system', content: 'Tu es un astrologue expert.' }, { role: 'user', content: prompt }],
-        max_tokens: 400,
-        temperature: 0.7,
-        response_format: { type: 'json_object' },
-      })
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Erreur OpenAI (${response.status}):`, errorText);
-      return getDefaultGuidance();
-    }
-
-    const data = await response.json();
-    const guidance = JSON.parse(data.choices[0].message.content);
-
-    // 4. Valider et sauvegarder en cache
-    if (guidance && guidance.summary && guidance.love && guidance.work && guidance.energy) {
-      try {
-        await supabase
-          .from('guidance_cache')
-          .upsert({
-            cache_key: cacheKey,
-            guidance_data: guidance,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          });
-        console.log(`💾 Guidance sauvegardée en cache pour ${date}`);
-      } catch (saveError) {
-        console.warn('Erreur lors de la sauvegarde de la guidance en cache:', saveError);
-      }
-    }
-
-    return guidance;
-
-  } catch (error) {
-    console.error('Erreur lors de la génération de guidance:', error);
-    return getDefaultGuidance();
-  }
-}
-
-// Guidance par défaut en cas d'erreur
-function getDefaultGuidance(): {
-  summary: string;
-  love: { text: string; score: number };
-  work: { text: string; score: number };
-  energy: { text: string; score: number };
-  mantra: string;
-} {
-  return {
-    summary: "Les aspects planétaires du jour vous invitent à l'action réfléchie. Restez à l'écoute de votre intuition tout en avançant avec détermination vers vos objectifs.",
-    love: { 
-      text: "Vénus forme des aspects harmonieux qui favorisent les échanges authentiques. C'est le moment d'exprimer vos sentiments avec sincérité et d'ouvrir votre coeur à de nouvelles connexions.",
-      score: 75
-    },
-    work: { 
-      text: "Mercure soutient vos projets professionnels. Votre clarté d'esprit est un atout majeur aujourd'hui. Profitez de cette énergie pour communiquer vos idées et prendre des initiatives constructives.",
-      score: 80
-    },
-    energy: { 
-      text: "L'alignement des planètes vous apporte une belle vitalité. C'est une excellente journée pour démarrer de nouvelles activités physiques ou pour vous consacrer à des projets qui vous passionnent.",
-      score: 70
-    },
-    mantra: "Je m'ouvre aux belles surprises de l'univers et j'avance avec confiance."
-  };
-}
-
-// Logique SMS (utiliser Vonage au lieu de Brevo pour la cohérence)
-async function sendSms(phoneNumber: string, content: string): Promise<void> {
-  try {
-    // Vérifier si le service SMS est configuré
-    const apiKey = process.env.BREVO_API_KEY;
-    if (!apiKey) {
-      console.warn('⚠️ Service SMS non configuré (BREVO_API_KEY manquante)');
-      return;
-    }
-
-    const response = await fetch('https://api.brevo.com/v3/transactionalSMS/sms', {
-      method: 'POST',
-      headers: {
-        'api-key': apiKey,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        sender: 'Zodiak',
-        recipient: phoneNumber,
-        content: content,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      const errorMessage = errorData?.message || response.statusText;
-      
-      // Si le service SMS n'est pas activé, log un avertissement au lieu d'échouer
-      if (errorMessage.includes('not yet activated') || errorMessage.includes('SMS sending status')) {
-        console.warn(`⚠️ Service SMS non activé pour ${phoneNumber}: ${errorMessage}`);
-        return;
-      }
-      
-      throw new Error(`Erreur SMS: ${errorMessage}`);
-    }
-
-    console.log(`✅ SMS envoyé à ${phoneNumber}`);
-  } catch (error) {
-    console.error(`❌ Erreur lors de l'envoi du SMS à ${phoneNumber}:`, error);
-    throw error;
-  }
-}
-
-function generateShortCode(length = 8) {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
-}
-
-// --- Logique principale de la fonction ---
-
-const sendGuidanceSms = async (profile: Profile & { _guidanceDate?: string }) => {
-  if (!profile.phone || !profile.natal_chart) {
-    console.warn(`Profil incomplet pour l'utilisateur ${profile.id}.`);
-    return;
-  }
-  
-  try {
-    console.log(`🚀 Génération de guidance pour l'utilisateur ${profile.id}...`);
-    
-    // 1. Calculer les transits du jour
-    const today = profile._guidanceDate || format(toZonedTime(new Date(), TIMEZONE), 'yyyy-MM-dd', { timeZone: TIMEZONE });
-    const transits = await calculateDailyTransits(today);
-
-    // 2. Générer la guidance personnalisée
-    const guidance = await generateGuidanceForSms(profile.natal_chart as unknown as NatalChart, transits, today);
-    
-    // 3. Générer un token unique et un code court unique
-    const token = randomUUID();
-    let shortCode;
-    let isUnique = false;
-    // Boucle pour garantir l'unicité du shortCode
-    while (!isUnique) {
-      shortCode = generateShortCode();
-      const { data: existing } = await supabase.from('guidance_token').select('id').eq('short_code', shortCode).maybeSingle();
-      if (!existing) isUnique = true;
-    }
-    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-    await supabase.from('guidance_token').upsert({
-      user_id: profile.id,
-      token,
-      date: today,
-      expires_at: expiresAt,
-      short_code: shortCode
-    });
-    
-    // 4. Lien court
-    const appUrl = process.env.URL || 'https://zodiakv2.netlify.app';
-    const shortLink = `${appUrl}/g/${shortCode}`;
-    
-    // 5. Créer l'entrée de tracking
-    await supabase
-      .from('sms_tracking')
-      .insert({
-        user_id: profile.id,
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const shortCode = generateShortCode(attempt === 0 ? 8 : 10);
+    const { error } = await supabase.from('guidance_token').upsert(
+      {
+        user_id: userId,
+        token,
+        date: dateISO,
+        expires_at: expiresAt,
         short_code: shortCode,
-        token: token,
-        date: today,
-        sent_at: new Date().toISOString()
-      });
-    
-    // 6. Format du SMS avec teasing minimal et prénom personnalisé
-    const firstName = profile.name?.split(' ')[0] || 'cher utilisateur';
-    let phone = profile.phone;
-    // Correction du format du numéro (français)
-    if (phone && phone.startsWith('0')) {
-      phone = '+33' + phone.slice(1);
+      },
+      { onConflict: 'user_id,date' }
+    );
+    if (!error) return { token, shortCode };
+
+    const isUniqueViolation =
+      error.code === '23505' ||
+      (typeof error.message === 'string' && error.message.toLowerCase().includes('unique'));
+    if (!isUniqueViolation) {
+      console.error('[daily-guidance] guidance_token upsert error', error);
+      return null;
     }
-    const smsContent = `✨ Bonjour ${firstName} !\n\nDécouvre ta guidance du jour ! 🌟\nLes astres ont un message spécial pour toi 👇\n${shortLink}\n(Valable 24h)`;
-    console.log('Envoi SMS :', { to: phone, text: smsContent });
-    // 7. Envoyer le SMS
-    await sendSms(phone, smsContent);
+  }
+  return null;
+}
 
-    // 8. Sauvegarder la guidance dans la base de données pour la page web
-    await supabase
-      .from('daily_guidance')
-      .upsert({
-        user_id: profile.id,
-        date: today,
-        summary: guidance.summary,
-        love: guidance.love,
-        work: guidance.work,
-        energy: guidance.energy,
-      });
+// ─────────────────────────────────────────────────────────────────────────────
+// Dispatch d'un profil
+// ─────────────────────────────────────────────────────────────────────────────
 
-    // 9. Mettre à jour la date de dernière guidance envoyée
+async function dispatchOne(
+  profile: ProfileForDispatch,
+  guidance: DailyGuidance | null
+): Promise<DispatchResult> {
+  const tz = profile.timezone || 'Europe/Paris';
+  const { dateISO } = getLocalTime(tz);
+  const channel = profile.preferred_channel;
+
+  if (!channel) {
+    return { userId: profile.id, channel: null, ok: false, reason: 'NO_CHANNEL' };
+  }
+
+  // Skip si pas de canal configuré
+  if (channel === 'whatsapp' && !profile.whatsapp_wa_id) {
+    return { userId: profile.id, channel, ok: false, reason: 'NO_WA_ID' };
+  }
+  if (channel === 'instagram' && !profile.instagram_igsid) {
+    return { userId: profile.id, channel, ok: false, reason: 'NO_IGSID' };
+  }
+
+  // Skip si pas de guidance générée pour aujourd'hui
+  if (!guidance) {
+    return { userId: profile.id, channel, ok: false, reason: 'NO_GUIDANCE_TODAY' };
+  }
+
+  // Idempotence
+  if (await alreadySentToday(profile.id, channel, dateISO)) {
+    return { userId: profile.id, channel, ok: true, reason: 'ALREADY_SENT' };
+  }
+
+  // Token + lien court
+  const tk = await getOrCreateGuidanceToken(profile.id, dateISO);
+  if (!tk) {
+    return { userId: profile.id, channel, ok: false, reason: 'TOKEN_CREATE_FAILED' };
+  }
+  const shortLink = buildGuidanceShortLink(tk.shortCode);
+
+  const firstName = (profile.name?.split(' ')[0] || 'cher utilisateur').trim();
+  const cfg = getMetaConfig();
+
+  // Envoi
+  let result: SendResult;
+  if (channel === 'whatsapp') {
+    result = await sendWhatsAppTemplate({
+      to: profile.whatsapp_wa_id!,
+      templateName: cfg.guidanceTemplateName,
+      languageCode: cfg.guidanceTemplateLang,
+      // Le template approuvé par Meta DOIT correspondre à ces variables :
+      //   {{1}} = prénom
+      //   {{2}} = lien court (placeholder dans body OU dans button URL)
+      bodyParams: [{ text: firstName }, { text: shortLink }],
+      buttonUrlSuffix: tk.shortCode,
+    });
+  } else {
+    // Instagram : push hors fenêtre 24h → MESSAGE_TAG (à confirmer côté Meta)
+    // Pour la phase 1 on tente UPDATE ; passer à RESPONSE si on est sûr d'être
+    // dans la fenêtre, ou utiliser Recurring Notifications après opt-in user.
+    result = await sendInstagramText({
+      to: profile.instagram_igsid!,
+      text:
+        `✦ ${firstName}, ta guidance cosmique du jour est arrivée.\n\n` +
+        `${guidance.summary?.slice(0, 180) ?? 'Découvre ce que les astres te disent aujourd\'hui.'}\n\n` +
+        `Lis-la complète ici 👉 ${shortLink}\n(Valable 24h)`,
+      messagingType: 'UPDATE',
+    });
+  }
+
+  // Log dans message_log (success ou échec, pour audit)
+  await supabase.from('message_log').insert({
+    user_id: profile.id,
+    channel,
+    direction: 'outbound',
+    message_type: 'template',
+    template_name: channel === 'whatsapp' ? cfg.guidanceTemplateName : 'instagram_daily_guidance',
+    short_code: tk.shortCode,
+    provider_message_id: result.providerMessageId ?? null,
+    payload: { firstName, shortLink, raw: result.raw } as Record<string, unknown>,
+    sent_at: new Date().toISOString(),
+    failed_at: result.ok ? null : new Date().toISOString(),
+    error_code: result.errorCode ?? null,
+    error_message: result.errorMessage ?? null,
+  });
+
+  // Mise à jour profile.last_guidance_sent (rétrocompat colonne existante)
+  if (result.ok) {
     await supabase
       .from('profiles')
-      .update({ 
-        last_guidance_sent: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
+      .update({ last_guidance_sent: new Date().toISOString() })
       .eq('id', profile.id);
-
-    console.log(`✅ Guidance envoyée avec succès à l'utilisateur ${profile.id}`);
-
-  } catch (error) {
-    console.error(`❌ Erreur lors de l'envoi de la guidance à ${profile.id}:`, error);
-    
-    // Envoyer un SMS d'erreur simple si la génération échoue
-    try {
-      const fallbackMessage = `✨ Bonjour ${profile.name || 'cher utilisateur'} !
-
-Votre guidance quotidienne est prête sur l'application Zodiak.
-
-        Découvrez vos conseils personnalisés : ${process.env.URL || 'https://zodiakv2.netlify.app'}/guidance
-
-🌟 Que les astres vous guident !`;
-      
-      await sendSms(profile.phone, fallbackMessage);
-      
-      // Mettre à jour quand même la date d'envoi
-      await supabase
-        .from('profiles')
-        .update({ 
-          last_guidance_sent: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', profile.id);
-        
-      console.log(`✅ SMS de fallback envoyé à l'utilisateur ${profile.id}`);
-    } catch (fallbackError) {
-      console.error(`❌ Erreur même pour le SMS de fallback à ${profile.id}:`, fallbackError);
-    }
   }
-};
 
-const smsRateLimitMap = new Map<string, number>(); // userId -> timestamp dernier SMS
+  return {
+    userId: profile.id,
+    channel,
+    ok: result.ok,
+    reason: result.ok ? 'SENT' : 'SEND_FAILED',
+    errorCode: result.errorCode,
+  };
+}
 
-const canSendSms = (userId: string) => {
-  const now = Date.now();
-  const lastSent = smsRateLimitMap.get(userId) || 0;
-  if (now - lastSent < 60 * 1000) return false;
-  smsRateLimitMap.set(userId, now);
-  return true;
-};
-
-const BATCH_SIZE = 100;
+// ─────────────────────────────────────────────────────────────────────────────
+// Handler Netlify (cron horaire)
+// ─────────────────────────────────────────────────────────────────────────────
 
 const handler: Handler = async () => {
-  try {
-    console.log('🕐 Début de la vérification des guidances quotidiennes (batch)...');
-    let offset = 0;
-    let sentCount = 0;
-    let skippedCount = 0;
-    let errorCount = 0;
-    let total = 0;
-    
-    while (true) {
-      const { data: profiles, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('daily_guidance_sms_enabled', true)
-        .in('subscription_status', ['active', 'trial'])
-        .range(offset, offset + BATCH_SIZE - 1);
-      if (error) {
-        console.error('❌ Erreur lors de la récupération des profils:', error);
-        break;
-      }
-      if (!profiles || profiles.length === 0) break;
-      for (const profile of profiles) {
-        total++;
-        try {
-          if (!profile.phone) {
-            console.log(`⚠️ Utilisateur ${profile.id} n'a pas de numéro de téléphone`);
-            skippedCount++;
-            continue;
-          }
-          if (!profile.natal_chart) {
-            console.log(`⚠️ Utilisateur ${profile.id} n'a pas de thème natal`);
-            skippedCount++;
-            continue;
-          }
-          // Date du jour (Europe/Paris)
-          const todayParis = format(toZonedTime(new Date(), TIMEZONE), 'yyyy-MM-dd', { timeZone: TIMEZONE });
-          // Vérifier si la guidance du jour existe déjà
-          const { data: existingGuidance } = await supabase
-            .from('daily_guidance')
-            .select('*')
-            .eq('user_id', profile.id)
-            .eq('date', todayParis)
-            .maybeSingle();
-          if (!existingGuidance) {
-            console.log(`⏭️ Pas de guidance à envoyer pour ${profile.id}`);
-            skippedCount++;
-            continue;
-          }
-          // Rate limiting SMS (1/min/user)
-          if (!canSendSms(profile.id)) {
-            console.log(`⏭️ SMS déjà envoyé récemment à ${profile.id}, rate limited.`);
-            skippedCount++;
-            continue;
-          }
-          // Format international du numéro
-          let phone = profile.phone;
-          if (phone && phone.startsWith('0')) {
-            phone = '+33' + phone.slice(1);
-          }
-          const maskedPhone = phone ? phone.replace(/(\+?\d{2})(\d{2})\d{4}(\d{2})/, '$1$2******$3') : '';
-          // Générer ou récupérer le lien court
-          let shortCode;
-          let isUnique = false;
-          while (!isUnique) {
-            shortCode = generateShortCode();
-            const { data: existing } = await supabase.from('guidance_token').select('id').eq('short_code', shortCode).maybeSingle();
-            if (!existing) isUnique = true;
-          }
-          const appUrl = process.env.URL || 'https://zodiakv2.netlify.app';
-          const shortLink = `${appUrl}/g/${shortCode}`;
-          // SMS teasing
-          const firstName = profile.name?.split(' ')[0] || 'cher utilisateur';
-          const smsContent = `✨ Bonjour ${firstName} !\n\nDécouvre ta guidance du jour ! 🌟\nLes astres ont un message spécial pour toi 👇\n${shortLink}\n(Valable 24h)`;
-          console.log('Envoi SMS :', { to: maskedPhone, text: smsContent });
-          await sendSms(phone, smsContent);
-          sentCount++;
-        } catch (e) {
-          // Log d'erreur critique global (Sentry-ready)
-          console.error(`[CRITICAL] Erreur lors de l'envoi du SMS à ${profile.id}:`, e);
-          errorCount++;
-        }
-      }
-      offset += BATCH_SIZE;
+  const now = new Date();
+  const startedAt = Date.now();
+
+  // On parcourt tous les fuseaux, mais en pratique on filtre côté SQL par
+  // l'heure UTC qui correspond à `guidance_hour` du user. Comme on ne connaît
+  // pas l'offset à l'avance, on récupère TOUS les profils avec
+  // daily_guidance_enabled = true et un canal configuré, puis on filtre côté
+  // app par `getLocalTime(profile.timezone).hour === profile.guidance_hour`.
+  // Avec les volumes attendus (< 100k profils éligibles), c'est OK.
+  // Pour scaler au-delà, on précalculera `dispatch_utc_hour` en colonne.
+
+  let offset = 0;
+  let total = 0;
+  let dispatched = 0;
+  let skipped = 0;
+  let errors = 0;
+  const reasons: Record<string, number> = {};
+
+  // Eligibilité minimale côté SQL (gros filtre)
+  // - daily_guidance_enabled = true
+  // - subscription_status ∈ {active, trial}
+  // - au moins un canal configuré
+  while (true) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select(
+        'id, name, preferred_channel, whatsapp_wa_id, instagram_igsid, daily_guidance_enabled, guidance_hour, timezone, subscription_status'
+      )
+      .eq('daily_guidance_enabled', true)
+      .in('subscription_status', ['active', 'trial'])
+      .or('whatsapp_wa_id.not.is.null,instagram_igsid.not.is.null')
+      .range(offset, offset + BATCH_SIZE - 1);
+
+    if (error) {
+      console.error('[daily-guidance] select profiles failed', error.message);
+      break;
     }
-    console.log(`✅ Vérification terminée. ${sentCount} SMS envoyés, ${skippedCount} ignorés, ${errorCount} erreurs, ${total} profils traités.`);
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ 
-        message: 'Vérification des guidances terminée.',
-        sent: sentCount,
-        skipped: skippedCount,
-        errors: errorCount,
-        total
-      }),
-    };
-  } catch (error) {
-    console.error('❌ Erreur générale dans le handler:', error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ 
-        error: error instanceof Error ? error.message : 'Erreur inconnue',
-        message: 'Erreur lors de la vérification des guidances'
-      }),
-    };
+    if (!data || data.length === 0) break;
+
+    // Filtrage app : matching heure locale
+    const dueProfiles: ProfileForDispatch[] = [];
+    for (const p of data as ProfileForDispatch[]) {
+      total++;
+      const tz = p.timezone || 'Europe/Paris';
+      const { hour } = getLocalTime(tz, now);
+      if (p.guidance_hour === hour) {
+        dueProfiles.push(p);
+      }
+    }
+
+    if (dueProfiles.length === 0) {
+      offset += BATCH_SIZE;
+      continue;
+    }
+
+    // Récupérer les daily_guidance d'aujourd'hui pour ces users (par date locale).
+    // On groupe par date locale pour limiter les requêtes.
+    const guidanceByUserDate = new Map<string, DailyGuidance>();
+    const datesNeeded = new Set<string>();
+    const userDateMap = new Map<string, string>();
+    for (const p of dueProfiles) {
+      const tz = p.timezone || 'Europe/Paris';
+      const { dateISO } = getLocalTime(tz, now);
+      userDateMap.set(p.id, dateISO);
+      datesNeeded.add(dateISO);
+    }
+    for (const dateISO of datesNeeded) {
+      const userIds = dueProfiles.filter((p) => userDateMap.get(p.id) === dateISO).map((p) => p.id);
+      if (userIds.length === 0) continue;
+      const { data: gs } = await supabase
+        .from('daily_guidance')
+        .select('id, user_id, date, summary')
+        .in('user_id', userIds)
+        .eq('date', dateISO);
+      for (const g of (gs || []) as DailyGuidance[]) {
+        guidanceByUserDate.set(`${g.user_id}::${g.date}`, g);
+      }
+    }
+
+    // Dispatch séquentiel (volume modeste, on évite la rafale Meta API)
+    for (const p of dueProfiles) {
+      const dateISO = userDateMap.get(p.id) || '';
+      const guidance = guidanceByUserDate.get(`${p.id}::${dateISO}`) ?? null;
+      try {
+        const r = await dispatchOne(p, guidance);
+        reasons[r.reason || 'UNKNOWN'] = (reasons[r.reason || 'UNKNOWN'] || 0) + 1;
+        if (r.ok) dispatched++;
+        else if (r.reason === 'NO_GUIDANCE_TODAY' || r.reason?.startsWith('NO_')) skipped++;
+        else errors++;
+      } catch (e) {
+        console.error('[daily-guidance] dispatchOne crashed', { user: p.id, err: (e as Error).message });
+        errors++;
+      }
+    }
+
+    offset += BATCH_SIZE;
+
+    // Garde-fou temps d'exécution Netlify (10s sur free, 26s background)
+    if (Date.now() - startedAt > 8500) {
+      console.warn('[daily-guidance] time budget reached, stopping early');
+      break;
+    }
   }
+
+  const elapsed = Date.now() - startedAt;
+  console.log('[daily-guidance] done', { total, dispatched, skipped, errors, reasons, elapsedMs: elapsed });
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ total, dispatched, skipped, errors, reasons, elapsedMs: elapsed }),
+  };
 };
 
-export { handler }; 
+export { handler };

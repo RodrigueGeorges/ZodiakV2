@@ -1,7 +1,6 @@
 export * from './useAuth';
 export * from './useProfile';
 export * from './useGuidance';
-export * from './useGuidanceScheduler';
 export * from './useDebounce';
 export * from './useCache';
 export * from './useErrorHandler';

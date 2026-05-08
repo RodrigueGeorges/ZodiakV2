@@ -1,84 +1,149 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CreditCard, Shield, Star } from 'lucide-react';
+import {
+  Sparkles,
+  MessageCircle,
+  Compass,
+  BookOpen,
+  Check,
+  ArrowLeft,
+} from 'lucide-react';
+import PageLayout from '../components/PageLayout';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+
+const FEATURES = [
+  {
+    icon: Sparkles,
+    label: 'Guidance quotidienne premium',
+    description:
+      'Une lecture personnalisée chaque matin, sur ton canal préféré.',
+  },
+  {
+    icon: MessageCircle,
+    label: 'Livraison WhatsApp & Instagram',
+    description: 'Là où tu es déjà — pas une app de plus à ouvrir.',
+  },
+  {
+    icon: Compass,
+    label: 'Thème natal détaillé',
+    description: 'Carte du ciel, planètes, maisons, ascendant, mantra.',
+  },
+  {
+    icon: BookOpen,
+    label: 'Guide astral conversationnel',
+    description: 'Pose des questions, reçois des réponses adaptées à toi.',
+  },
+];
 
 export default function Subscribe() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-cosmic-900 flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-2xl w-full"
-      >
-        <div className="bg-cosmic-800 rounded-2xl shadow-xl border border-primary/20 p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold font-cinzel bg-gradient-to-r from-blue-300 via-blue-200 to-cyan-300 text-transparent bg-clip-text mb-4 animate-blue-glow">
-              🌟 Abonnement Premium
-            </h1>
-            <p className="text-gray-300 text-lg">
-              Débloquez votre potentiel astral complet
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-cosmic-700 rounded-xl p-6 border border-primary/20"
-            >
-              <div className="flex items-center mb-4">
-                <Star className="w-6 h-6 text-primary mr-3" />
-                <h3 className="text-xl font-semibold text-primary">Guidance Quotidienne</h3>
+    <PageLayout
+      eyebrow="Abonnement"
+      title="Le ciel à portée de main"
+      subtitle="Un essai gratuit d'un mois. Sans engagement, sans piège."
+      maxWidth="4xl"
+      showLogo={false}
+    >
+      <div className="space-y-8">
+        <Card variant="elevated" className="relative overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/12 via-transparent to-magenta-500/12"
+          />
+          <div className="relative grid md:grid-cols-2 gap-0">
+            {/* Bloc tarif */}
+            <div className="p-8 md:p-10 md:border-r border-night-700/60">
+              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-3">
+                Premium
+              </p>
+              <h2 className="font-cinzel text-display text-gradient-aurora mb-4">
+                Zodiak ✦
+              </h2>
+              <div className="flex items-baseline gap-2 mb-2">
+                <span className="font-cinzel text-display text-ivory-50">
+                  4,99 €
+                </span>
+                <span className="text-caption text-ivory-300">/ mois</span>
               </div>
-              <ul className="text-gray-300 space-y-2">
-                <li>• Messages personnalisés chaque jour</li>
-                <li>• Conseils amour, travail et énergie</li>
-                <li>• Mantras inspirants</li>
-                <li>• Notifications SMS</li>
-              </ul>
-            </motion.div>
+              <p className="text-caption text-ivory-300 mb-6">
+                7 jours offerts — annule à tout moment, en 1 clic.
+              </p>
+              <Button
+                variant="primary"
+                size="lg"
+                fullWidth
+                onClick={() => navigate('/profile')}
+                iconLeft={<Sparkles className="w-4 h-4" />}
+              >
+                Commencer mon essai gratuit
+              </Button>
+              <p className="mt-4 text-micro uppercase tracking-[0.18em] text-ivory-400 text-center">
+                Carte bancaire requise · Sans engagement
+              </p>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="bg-cosmic-700 rounded-xl p-6 border border-primary/20"
-            >
-              <div className="flex items-center mb-4">
-                <Shield className="w-6 h-6 text-primary mr-3" />
-                <h3 className="text-xl font-semibold text-primary">Fonctionnalités Avancées</h3>
-              </div>
-              <ul className="text-gray-300 space-y-2">
-                <li>• Thème natal détaillé</li>
-                <li>• Chat avec l'IA astrologique</li>
-                <li>• Historique complet</li>
-                <li>• Support prioritaire</li>
-              </ul>
-            </motion.div>
+            {/* Bloc features */}
+            <div className="p-8 md:p-10 space-y-4">
+              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-2">
+                Ce que tu débloques
+              </p>
+              {FEATURES.map(({ icon: Icon, label, description }, i) => (
+                <motion.div
+                  key={label}
+                  initial={{ opacity: 0, x: 12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1 + i * 0.08, duration: 0.5 }}
+                  className="flex gap-3"
+                >
+                  <div
+                    aria-hidden="true"
+                    className="flex-shrink-0 mt-0.5 w-8 h-8 rounded-full bg-aurora-500/15 ring-1 ring-aurora-400/30 flex items-center justify-center text-aurora-200"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-body font-cinzel text-ivory-50">
+                      {label}
+                    </p>
+                    <p className="text-caption text-ivory-300">{description}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
+        </Card>
 
-          <div className="text-center">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => navigate('/profile')}
-              className="bg-gradient-to-r from-primary to-secondary text-cosmic-900 font-bold py-4 px-8 rounded-xl text-lg hover:opacity-90 transition-opacity flex items-center justify-center mx-auto"
+        {/* Garanties */}
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            'Annulation en 1 clic',
+            'Données privées · jamais vendues',
+            'Support humain en français',
+          ].map((g) => (
+            <div
+              key={g}
+              className="rounded-2xl border border-night-700/60 bg-night-900/50 backdrop-blur-md px-4 py-3 flex items-center gap-3 text-caption text-ivory-200"
             >
-              <CreditCard className="w-5 h-5 mr-2" />
-              Commencer l'essai gratuit
-            </motion.button>
-            
-            <p className="text-gray-400 text-sm mt-4">
-              Essai gratuit de 7 jours • Annulation à tout moment
-            </p>
-          </div>
+              <Check className="w-4 h-4 text-aurora-300 shrink-0" aria-hidden="true" />
+              {g}
+            </div>
+          ))}
         </div>
-      </motion.div>
-    </div>
+
+        <div className="text-center">
+          <Button
+            variant="text"
+            size="sm"
+            onClick={() => navigate('/profile')}
+            iconLeft={<ArrowLeft className="w-3.5 h-3.5" />}
+          >
+            Retour au profil
+          </Button>
+        </div>
+      </div>
+    </PageLayout>
   );
 }

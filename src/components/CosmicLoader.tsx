@@ -1,52 +1,117 @@
 import { motion } from 'framer-motion';
+import { cn } from '../lib/utils';
 
-function CosmicLoader() {
+/**
+ * CosmicLoader v2 — un point lumineux aurora qui respire au centre de 3 anneaux
+ * concentriques. Plus de bleu cyan, plus de "petites étoiles filantes". Sobre,
+ * éditorial, conforme à la nouvelle DA.
+ */
+interface CosmicLoaderProps {
+  size?: 'sm' | 'md' | 'lg';
+  label?: string;
+  className?: string;
+}
+
+const sizeMap = {
+  sm: 'w-12 h-12',
+  md: 'w-20 h-20',
+  lg: 'w-28 h-28',
+};
+
+export default function CosmicLoader({
+  size = 'md',
+  label,
+  className,
+}: CosmicLoaderProps) {
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full">
-      <div className="relative w-24 h-24">
-        {/* Anneau cosmique */}
+    <div
+      role="status"
+      aria-live="polite"
+      aria-label={label || 'Chargement en cours'}
+      className={cn('flex flex-col items-center justify-center gap-5', className)}
+    >
+      <div className={cn('relative', sizeMap[size])}>
+        {/* Halo aurora pulsé en fond */}
         <motion.div
-          className="absolute inset-0 rounded-full border-4 border-blue-300/30"
+          aria-hidden="true"
+          className="absolute inset-0 rounded-full bg-aurora-500/30 blur-2xl"
+          animate={{ opacity: [0.4, 0.8, 0.4], scale: [0.95, 1.1, 0.95] }}
+          transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
+        />
+
+        {/* Anneau extérieur — rotation lente, ouvert (segment) */}
+        <motion.svg
+          viewBox="0 0 100 100"
+          className="absolute inset-0"
           animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
-        />
-        {/* Anneau secondaire */}
-        <motion.div
-          className="absolute inset-2 rounded-full border-2 border-cyan-300/30"
-          animate={{ rotate: -360 }}
-          transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
-        />
-        {/* Planète centrale */}
-        <motion.div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-gradient-to-br from-blue-300 to-cyan-300 shadow-lg"
-          animate={{ scale: [1, 1.1, 1] }}
-          transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-        />
-        {/* Étoiles filantes */}
-        {[...Array(3)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 rounded-full bg-white/80 shadow"
-            style={{
-              top: `${10 + i * 20}%`,
-              left: `${20 + i * 25}%`,
-            }}
-            animate={{
-              x: [0, 40, 0],
-              opacity: [1, 0, 1],
-            }}
-            transition={{
-              repeat: Infinity,
-              duration: 1.8 + i * 0.5,
-              delay: i * 0.4,
-              ease: 'easeInOut',
-            }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+        >
+          <defs>
+            <linearGradient id="auroraOuter" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#AB7AFF" stopOpacity="0" />
+              <stop offset="50%" stopColor="#AB7AFF" stopOpacity="0.9" />
+              <stop offset="100%" stopColor="#F472B6" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <circle
+            cx="50"
+            cy="50"
+            r="46"
+            fill="none"
+            stroke="url(#auroraOuter)"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeDasharray="180 110"
           />
-        ))}
+        </motion.svg>
+
+        {/* Anneau intérieur — sens inverse */}
+        <motion.svg
+          viewBox="0 0 100 100"
+          className="absolute inset-2"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+        >
+          <defs>
+            <linearGradient id="auroraInner" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#F472B6" stopOpacity="0" />
+              <stop offset="50%" stopColor="#F5B638" stopOpacity="0.7" />
+              <stop offset="100%" stopColor="#AB7AFF" stopOpacity="0" />
+            </linearGradient>
+          </defs>
+          <circle
+            cx="50"
+            cy="50"
+            r="40"
+            fill="none"
+            stroke="url(#auroraInner)"
+            strokeWidth="1"
+            strokeLinecap="round"
+            strokeDasharray="80 200"
+          />
+        </motion.svg>
+
+        {/* Cœur lumineux qui respire */}
+        <motion.div
+          aria-hidden="true"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          animate={{ scale: [0.85, 1.1, 0.85] }}
+          transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <div
+            className={cn(
+              'rounded-full bg-gradient-to-br from-ivory-50 via-aurora-200 to-magenta-400 shadow-glow-aurora',
+              size === 'sm' ? 'w-3 h-3' : size === 'md' ? 'w-5 h-5' : 'w-7 h-7'
+            )}
+          />
+        </motion.div>
       </div>
-      <span className="mt-6 text-blue-300 font-cinzel text-lg animate-pulse">Chargement cosmique...</span>
+
+      {label && (
+        <p className="text-caption text-ivory-300 font-cinzel tracking-wide animate-pulse">
+          {label}
+        </p>
+      )}
     </div>
   );
 }
-
-export default CosmicLoader; 

@@ -1,73 +1,179 @@
-import React, { useState, useEffect, useRef } from 'react';
-import PageLayout from '../components/PageLayout';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkle, Send } from 'lucide-react';
+import { Sparkles, Send, MessageCircle, Lock } from 'lucide-react';
 import { useAuth } from '../lib/hooks/useAuth';
+import PageLayout from '../components/PageLayout';
+import LoadingScreen from '../components/LoadingScreen';
+import { Card } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
+import { useChatMemory } from '../lib/hooks/useChatMemory';
+import { usePremium } from '../lib/hooks/usePremium';
+import { useMood } from '../lib/hooks/useMood';
+import { moonPhaseAt } from '../lib/moonPhase';
+import { vibrate } from '../lib/haptics';
+import { track } from '../lib/analytics';
+import { MOOD_LABELS } from '../components/MoodCheck';
+import { cn } from '../lib/utils';
 
-const SUGGESTIONS = [
-  "Quels sont mes points forts selon mon thème natal ?",
-  "Que puis-je attendre cette semaine ?",
-  "Un conseil pour mon couple ?",
-  "Comment surmonter mes défis actuels ?",
-  "Quel mantra me correspond aujourd'hui ?",
-  "Pourquoi je me sens fatigué(e) en ce moment ?",
-  "Comment améliorer mon bien-être ?",
-  "Quels transits m'influencent aujourd'hui ?"
+const BASE_SUGGESTIONS = [
+  'Quels sont mes points forts selon mon thème ?',
+  'À quoi m\'attendre cette semaine ?',
+  'Un conseil pour mon couple ?',
+  'Quel mantra me correspond aujourd\'hui ?',
+  'Pourquoi je me sens fatigué·e ?',
+  'Quels transits m\'influencent ce mois-ci ?',
 ];
 
-export default function ChatAstro() {
-  const { profile, user } = useAuth();
-  const firstName = profile?.name?.split(' ')[0] || 'Utilisateur';
-  const natalChart = profile?.natal_chart ? (typeof profile.natal_chart === 'string' ? JSON.parse(profile.natal_chart) : profile.natal_chart) : null;
+interface Message {
+  from: 'user' | 'bot';
+  text: string;
+}
 
-  // Mémoire conversationnelle
-  const [conversationId, setConversationId] = useState<string | null>(() => localStorage.getItem('astro_conversation_id'));
-  const [messages, setMessages] = useState<any[]>(() => {
-    const saved = localStorage.getItem('astro_conversation_history');
-    return saved ? JSON.parse(saved) : [
-      { from: 'bot', text: 'Bienvenue dans le Guide Astral ! Pose-moi une question sur ton thème, ta guidance ou ta vie.' }
-    ];
-  });
+/**
+ * ChatAstro v3 :
+ *  - Mémoire long-terme : persistance Supabase + replay des derniers messages
+ *  - Suggestions contextuelles : adaptées au mood + à la phase lunaire
+ *  - Quota : free = 5 msg/jour, premium = illimité
+ *  - Streaming visuel inchangé (typing letter-by-letter)
+ */
+export default function ChatAstro() {
+  const { profile, user, isLoading } = useAuth();
+  const { recentMessages, appendMessage } = useChatMemory();
+  const { todayMood } = useMood();
+  const { isPremium, quotas } = usePremium();
+  const firstName = profile?.name?.split(' ')[0] || 'voyageur';
+  const natalChart = profile?.natal_chart
+    ? typeof profile.natal_chart === 'string'
+      ? JSON.parse(profile.natal_chart)
+      : profile.natal_chart
+    : null;
+
+  const [conversationId, setConversationId] = useState<string | null>(() =>
+    typeof window !== 'undefined'
+      ? localStorage.getItem('astro_conversation_id')
+      : null
+  );
+
+  const greeting = useMemo<Message>(
+    () => ({
+      from: 'bot',
+      text: `Bienvenue ${firstName}. Je me souviens de nos conversations — pose-moi une question sur ton thème, ta guidance ou ta vie.`,
+    }),
+    [firstName]
+  );
+
+  const initialMessages = useMemo<Message[]>(() => {
+    // Si on a un historique récent en DB, on le rejoue (max 10 messages)
+    if (recentMessages.length > 0) {
+      const replay = recentMessages.slice(-10).map<Message>((m) => ({
+        from: m.role === 'assistant' ? 'bot' : 'user',
+        text: m.content,
+      }));
+      return [greeting, ...replay];
+    }
+    return [greeting];
+  }, [recentMessages, greeting]);
+
+  const [messages, setMessages] = useState<Message[]>([greeting]);
+  useEffect(() => {
+    setMessages(initialMessages);
+  }, [initialMessages]);
+
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const chatRef = useRef<HTMLDivElement>(null);
   const [typingText, setTypingText] = useState('');
-  const typingTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [todayUserMessages, setTodayUserMessages] = useState(0);
+  const chatRef = useRef<HTMLDivElement>(null);
+  const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Scroll auto
+  // Compteur de messages user pour aujourd'hui (quota free)
+  useEffect(() => {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const count = recentMessages.filter(
+      (m) => m.role === 'user' && m.created_at.slice(0, 10) === todayStr
+    ).length;
+    setTodayUserMessages(count);
+  }, [recentMessages]);
+
+  // Scroll auto en bas
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
-  }, [messages, loading]);
-
-  // Persistance locale
-  useEffect(() => {
-    localStorage.setItem('astro_conversation_history', JSON.stringify(messages));
-    if (conversationId) localStorage.setItem('astro_conversation_id', conversationId);
-  }, [messages, conversationId]);
+  }, [messages, loading, typingText]);
 
   // Reset si changement d'utilisateur
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     setConversationId(null);
-    setMessages([{ from: 'bot', text: 'Bienvenue dans le Guide Astral ! Pose-moi une question sur ton thème, ta guidance ou ta vie.' }]);
     localStorage.removeItem('astro_conversation_id');
-    localStorage.removeItem('astro_conversation_history');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
-  const handleSend = async (suggestion?: string) => {
-    const question = suggestion || input;
-    if (!question.trim() || loading) return;
-    // Vérification profil complet
-    if (!user?.id || !profile?.natal_chart || !profile?.name) {
-      setMessages(msgs => [...msgs, { from: 'bot', text: "Ton profil est incomplet. Merci de vérifier tes informations dans la page Profil (nom, thème natal, etc.)." }]);
-      setLoading(false);
+  const profileIncomplete = !user?.id || !profile?.natal_chart || !profile?.name;
+
+  // Suggestions contextuelles
+  const contextSuggestions = useMemo<string[]>(() => {
+    const out: string[] = [];
+    const phase = moonPhaseAt(new Date());
+    if (phase.kind === 'new') {
+      out.push('Quelle intention poser pour cette nouvelle lune ?');
+    } else if (phase.kind === 'full') {
+      out.push('Que vient révéler cette pleine lune dans ma vie ?');
+    }
+    if (todayMood) {
+      const moodFr = MOOD_LABELS[todayMood.mood].toLowerCase();
+      out.push(`Pourquoi je me sens ${moodFr} aujourd'hui ?`);
+    }
+    return out;
+  }, [todayMood]);
+
+  const allSuggestions = useMemo(
+    () => [...contextSuggestions, ...BASE_SUGGESTIONS].slice(0, 8),
+    [contextSuggestions]
+  );
+
+  const quotaReached =
+    !isPremium && todayUserMessages >= quotas.chatMessagesPerDay;
+
+  const send = async (suggestion?: string) => {
+    const question = (suggestion || input).trim();
+    if (!question || loading) return;
+    if (profileIncomplete) {
+      setMessages((m) => [
+        ...m,
+        {
+          from: 'bot',
+          text: 'Ton profil est incomplet. Va sur Profil pour ajouter ton nom et tes infos de naissance.',
+        },
+      ]);
       return;
     }
-    setMessages(msgs => [...msgs, { from: 'user', text: question }]);
+    if (quotaReached) {
+      track('paywall_seen', { feature: 'chat_quota' });
+      setMessages((m) => [
+        ...m,
+        {
+          from: 'bot',
+          text: `Tu as atteint la limite de ${quotas.chatMessagesPerDay} messages gratuits aujourd'hui. Passe en Premium pour me parler sans limite ✦`,
+        },
+      ]);
+      return;
+    }
+
+    setMessages((m) => [...m, { from: 'user', text: question }]);
     setInput('');
     setLoading(true);
     setTypingText('');
+    vibrate('tap');
+    track('chat_message_sent', {
+      mood: todayMood?.mood,
+      moon: moonPhaseAt(new Date()).kind,
+      premium: isPremium,
+    });
+    await appendMessage('user', question);
+    setTodayUserMessages((c) => c + 1);
+
     try {
       const res = await fetch('/.netlify/functions/astro-chatbot', {
         method: 'POST',
@@ -78,115 +184,256 @@ export default function ChatAstro() {
           natalChart,
           userId: user?.id,
           conversationId,
-        })
+          // Contexte enrichi pour la mémoire
+          mood: todayMood?.mood,
+          moonPhase: moonPhaseAt(new Date()).kind,
+          recentExchanges: recentMessages.slice(-6).map((m) => ({
+            role: m.role,
+            content: m.content,
+          })),
+        }),
       });
-      // Gestion simplifiée des réponses JSON
       const data = await res.json();
-      
+
       if (data.error) {
-        console.log('❌ Erreur du serveur:', data.error);
-        setMessages(msgs => [...msgs, { 
-          from: 'bot', 
-          text: "Désolé, j'ai rencontré une erreur. Merci de réessayer dans quelques instants." 
-        }]);
+        setMessages((m) => [
+          ...m,
+          { from: 'bot', text: 'Désolé, une erreur est survenue. Réessaie dans un instant.' },
+        ]);
         return;
       }
-      
+
       if (data.answer) {
         setConversationId(data.conversationId);
-        
-        // Effet typing lettre par lettre pour une meilleure UX
+        if (data.conversationId) {
+          try {
+            localStorage.setItem('astro_conversation_id', data.conversationId);
+          } catch {
+            /* ignore */
+          }
+        }
+        const fullText = data.answer as string;
+        await appendMessage('assistant', fullText, {
+          conversation_id: data.conversationId,
+        });
+
         let i = 0;
-        const fullText = data.answer;
-        setTypingText('');
-        
         if (typingTimeout.current) clearTimeout(typingTimeout.current);
-        
         const typeLetter = () => {
-          setTypingText(prev => prev + fullText[i]);
+          setTypingText((prev) => prev + fullText[i]);
           i++;
           if (i < fullText.length) {
-            typingTimeout.current = setTimeout(typeLetter, 15 + Math.random() * 25);
+            typingTimeout.current = setTimeout(
+              typeLetter,
+              10 + Math.random() * 18
+            );
           } else {
-            setMessages(msgs => [...msgs, { from: 'bot', text: fullText }]);
+            setMessages((m) => [...m, { from: 'bot', text: fullText }]);
             setTypingText('');
           }
         };
-        
         typeLetter();
-      } else {
-        console.log('❌ Pas de réponse dans les données:', data);
-        setMessages(msgs => [...msgs, { 
-          from: 'bot', 
-          text: "Je n'ai pas pu générer de réponse pour le moment. Merci de réessayer." 
-        }]);
       }
-    } catch (e) {
-      setMessages(msgs => [...msgs, { from: 'bot', text: "Erreur réseau ou serveur. Merci de réessayer plus tard." }]);
+    } catch {
+      setMessages((m) => [
+        ...m,
+        { from: 'bot', text: 'Erreur réseau. Réessaie plus tard.' },
+      ]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  if (!user?.id || !profile?.natal_chart || !profile?.name) {
-    return <div className="flex items-center justify-center h-full text-primary font-cinzel text-lg">Chargement du profil...</div>;
+  if (isLoading) {
+    return <LoadingScreen message="Connexion à ton guide…" />;
+  }
+
+  if (profileIncomplete) {
+    return (
+      <PageLayout
+        eyebrow="Guide astral"
+        title="Profil à compléter"
+        subtitle="Renseigne ton nom et tes infos de naissance pour discuter avec ton guide."
+      >
+        <Card variant="surface">
+          <div className="p-8 text-center">
+            <Button
+              variant="primary"
+              onClick={() => (window.location.href = '/profile')}
+            >
+              Compléter mon profil
+            </Button>
+          </div>
+        </Card>
+      </PageLayout>
+    );
   }
 
   return (
-    <PageLayout title="Guide Astral" subtitle="Pose tes questions à ton guide astrologique personnel" maxWidth="2xl">
-      <div className="flex flex-col flex-1 bg-cosmic-900/80 rounded-2xl shadow-xl border border-primary/20 p-4 overflow-y-auto pb-24 md:pb-0">
-        <div ref={chatRef} className="flex-1 overflow-y-auto space-y-4 pb-2">
+    <PageLayout
+      eyebrow="Guide astral"
+      title="Pose tes questions"
+      subtitle="Une conversation directe — je me souviens de nos précédents échanges."
+      maxWidth="3xl"
+      showLogo={false}
+      dim
+      headerSlot={
+        !isPremium ? (
+          <span className="text-micro text-ivory-300">
+            <span className="text-ivory-50 font-semibold">
+              {Math.max(0, quotas.chatMessagesPerDay - todayUserMessages)}
+            </span>{' '}
+            / {quotas.chatMessagesPerDay} aujourd'hui
+          </span>
+        ) : undefined
+      }
+    >
+      <Card variant="elevated" className="relative overflow-hidden flex flex-col">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/10 via-transparent to-magenta-500/8"
+        />
+
+        <div
+          ref={chatRef}
+          className="relative flex-1 overflow-y-auto p-6 space-y-4 max-h-[58vh] min-h-[360px]"
+        >
           {messages.map((msg, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
+              transition={{
+                type: 'spring',
+                stiffness: 280,
+                damping: 24,
+              }}
+              className={cn(
+                'flex',
+                msg.from === 'user' ? 'justify-end' : 'justify-start'
+              )}
             >
-              <div className={`rounded-xl px-4 py-2 text-base font-cinzel shadow
-                ${msg.from === 'user' ? 'bg-blue-300/80 text-cosmic-900' : 'bg-cosmic-800/80 text-blue-300'}
-                max-w-full sm:max-w-[80%] break-words whitespace-pre-line`}
+              <div
+                className={cn(
+                  'max-w-[85%] rounded-2xl px-4 py-3 text-body whitespace-pre-line shadow-sm',
+                  msg.from === 'user'
+                    ? 'bg-aurora-500 text-ivory-50 rounded-br-md'
+                    : 'bg-night-800/80 text-ivory-100 border border-night-700/80 rounded-bl-md'
+                )}
               >
-                {msg.from === 'bot' && <Sparkle className="inline w-4 h-4 mr-1 text-blue-200 align-middle" />} {msg.text}
+                {msg.from === 'bot' && (
+                  <span className="inline-flex items-center gap-1.5 text-micro uppercase tracking-[0.18em] text-aurora-300 mb-1">
+                    <Sparkles className="w-3 h-3" aria-hidden="true" />
+                    Guide
+                  </span>
+                )}
+                <div>
+                  {msg.from === 'bot' && <br />}
+                  {msg.text}
+                </div>
               </div>
             </motion.div>
           ))}
-          {/* Effet typing pour la réponse du bot */}
+
           {typingText && (
-            <div className="flex justify-start"><div className="animate-pulse px-4 py-2 bg-cosmic-800/80 text-blue-300 rounded-xl font-cinzel"><Sparkle className="inline w-4 h-4 mr-1 text-blue-200 align-middle" />{typingText}<span className="animate-blink">|</span></div></div>
+            <div className="flex justify-start">
+              <div className="max-w-[85%] rounded-2xl px-4 py-3 bg-night-800/80 text-ivory-100 border border-night-700/80 rounded-bl-md">
+                <span className="inline-flex items-center gap-1.5 text-micro uppercase tracking-[0.18em] text-aurora-300 mb-1">
+                  <Sparkles className="w-3 h-3" aria-hidden="true" />
+                  Guide
+                </span>
+                <br />
+                {typingText}
+                <span className="inline-block w-2 h-4 align-middle bg-aurora-300 ml-0.5 animate-pulse" />
+              </div>
+            </div>
           )}
+
           {loading && !typingText && (
-            <div className="flex justify-start"><div className="animate-pulse px-4 py-2 bg-cosmic-800/80 text-blue-300 rounded-xl font-cinzel">Le guide réfléchit...</div></div>
+            <div className="flex justify-start">
+              <div className="rounded-2xl px-4 py-3 bg-night-800/80 text-ivory-300 border border-night-700/80 italic">
+                Le guide consulte les étoiles…
+              </div>
+            </div>
           )}
         </div>
-        {/* Suggestions de questions */}
-        <div className="flex flex-wrap gap-2 mt-2 mb-4">
-          {SUGGESTIONS.map((s, i) => (
-            <button
-              key={i}
-              type="button"
-              className="flex items-center gap-1 px-3 py-1 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition text-sm font-cinzel"
-              onClick={() => handleSend(s)}
-              disabled={loading || !user?.id || !profile?.natal_chart || !profile?.name}
-            >
-              <Sparkle className="w-4 h-4" /> {s}
-            </button>
-          ))}
+
+        {/* Suggestions contextuelles */}
+        <div className="relative px-6 pt-2 pb-3 border-t border-night-700/60">
+          <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
+            {allSuggestions.map((s, i) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => send(s)}
+                disabled={loading || quotaReached}
+                className={cn(
+                  'shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-caption transition-colors disabled:opacity-50',
+                  i < contextSuggestions.length
+                    ? 'border-magenta-500/30 bg-magenta-500/8 hover:bg-magenta-500/15 text-ivory-100'
+                    : 'border-aurora-500/25 bg-aurora-500/8 hover:bg-aurora-500/15 text-ivory-200 hover:text-ivory-50'
+                )}
+              >
+                <Sparkles
+                  className={cn(
+                    'w-3.5 h-3.5',
+                    i < contextSuggestions.length
+                      ? 'text-magenta-300'
+                      : 'text-aurora-300'
+                  )}
+                />
+                {s}
+              </button>
+            ))}
+          </div>
         </div>
-        <form className="flex flex-col sm:flex-row gap-2 mt-2" onSubmit={e => { e.preventDefault(); handleSend(); }}>
-          <input
-            className="flex-1 rounded-lg px-4 py-2 bg-cosmic-800/80 border border-primary/20 text-primary focus:outline-none focus:ring-2 focus:ring-primary/40 font-cinzel"
-            placeholder="Pose ta question..."
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            disabled={loading}
-            autoFocus
-          />
-          <button type="submit" className="w-full sm:w-auto bg-primary text-cosmic-900 rounded-lg px-4 py-2 font-bold flex items-center gap-1 justify-center hover:bg-secondary transition disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary" disabled={loading || !input.trim() || !user?.id || !profile?.natal_chart || !profile?.name}>
-            <Send className="w-5 h-5" />
-            Envoyer
-          </button>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            send();
+          }}
+          className="relative flex items-center gap-2 p-4 border-t border-night-700/60 bg-night-900/40"
+        >
+          <div className="relative flex-1">
+            <MessageCircle
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ivory-400"
+              aria-hidden="true"
+            />
+            <input
+              className="input-cosmic !pl-9"
+              placeholder={
+                quotaReached
+                  ? 'Limite atteinte — passe en Premium pour continuer.'
+                  : 'Pose ta question…'
+              }
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              disabled={loading || quotaReached}
+              autoFocus
+            />
+          </div>
+          {quotaReached ? (
+            <Button
+              type="button"
+              variant="primary"
+              onClick={() => (window.location.href = '/subscribe')}
+              iconLeft={<Lock className="w-4 h-4" />}
+            >
+              Premium
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={loading || !input.trim()}
+              iconLeft={<Send className="w-4 h-4" />}
+            >
+              Envoyer
+            </Button>
+          )}
         </form>
-      </div>
+      </Card>
     </PageLayout>
   );
-} 
+}

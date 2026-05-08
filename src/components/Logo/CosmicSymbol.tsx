@@ -1,221 +1,210 @@
-import React from 'react';
+import { motion } from 'framer-motion';
 
+/**
+ * Logo glyph v3 — Cosmic Editorial cinematic.
+ *
+ * Symbole minimaliste qui se "compose" au load (Linear / Stripe-like) :
+ *   1. Cercle aurora ouvert qui se trace
+ *   2. Axes cardinaux qui apparaissent
+ *   3. Cœur lumineux qui pulse en respiration cosmique 5s
+ *
+ * SVG pur, ~2kB. Pas de Lottie pour rester ultra léger.
+ * Respect `prefers-reduced-motion` : version statique.
+ */
 interface CosmicSymbolProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
+  /** Si false, version totalement statique. */
   animated?: boolean;
+  /** Si true, animation "compose on load" depuis 0 (utilisé sur la landing). */
+  composeOnLoad?: boolean;
 }
 
 const sizeMap = {
-  sm: { width: 64, height: 64, strokeWidth: 2 },
-  md: { width: 128, height: 128, strokeWidth: 2.5 },
-  lg: { width: 192, height: 192, strokeWidth: 3.5 },
+  sm: 32,
+  md: 56,
+  lg: 96,
 };
 
-export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({ 
-  size = 'md', 
+export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
+  size = 'md',
   className = '',
-  animated = true 
+  animated = true,
+  composeOnLoad = false,
 }) => {
-  const { width, height, strokeWidth } = sizeMap[size];
-  const centerX = width / 2;
-  const centerY = height / 2;
-  
-  // Proportions optimisées pour éviter les chevauchements
-  const outerRadius = Math.min(width, height) * 0.38; // Réduit légèrement
-  const innerRadius = outerRadius * 0.62; // Ajusté pour éviter le chevauchement
-  const crosshairLength = outerRadius * 0.1; // Réduit pour éviter les débordements
-  
-  // Triangle "A" optimisé avec espacement
-  const triangleHeight = innerRadius * 0.8; // Réduit pour plus d'espace
-  const triangleWidth = triangleHeight * 0.7; // Plus fin pour éviter les chevauchements
-  const triangleTop = centerY - triangleHeight / 2;
-  const triangleBottom = centerY + triangleHeight / 2;
-  const triangleLeft = centerX - triangleWidth / 2;
-  const triangleRight = centerX + triangleWidth / 2;
-  const triangleMiddle = centerY + triangleHeight * 0.2; // Barre horizontale plus basse
+  const px = sizeMap[size];
 
-  // Calcul des positions des crosshairs pour éviter les débordements
-  const crosshairTop = centerY - outerRadius - crosshairLength;
-  const crosshairBottom = centerY + outerRadius + crosshairLength;
-  const crosshairLeft = centerX - outerRadius - crosshairLength;
-  const crosshairRight = centerX + outerRadius + crosshairLength;
+  // Le cercle ouvert : on contrôle stroke-dashoffset pour le tracer.
+  const circleLen = 2 * Math.PI * 22; // ~138px
 
   return (
-    <div className={`relative flex items-center justify-center ${className}`}>
-      <svg
-        width={width}
-        height={height}
-        viewBox={`0 0 ${width} ${height}`}
-        className={`${animated ? 'animate-cosmic-pulse' : ''}`}
-        style={{ 
-          filter: animated ? 'drop-shadow(0 0 8px rgba(0, 191, 255, 0.3))' : 'none',
-          transition: 'filter 0.3s ease-in-out'
+    <motion.svg
+      width={px}
+      height={px}
+      viewBox="0 0 64 64"
+      className={className}
+      style={{ overflow: 'visible' }}
+      role="img"
+      aria-label="Logo Zodiak"
+      initial={composeOnLoad ? { opacity: 0 } : { opacity: 1 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      <defs>
+        <linearGradient id="zk-aurora" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#FAF7F2" />
+          <stop offset="40%" stopColor="#C9A6FF" />
+          <stop offset="100%" stopColor="#F472B6" />
+        </linearGradient>
+        <radialGradient id="zk-core" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="#FAF7F2" stopOpacity="1" />
+          <stop offset="60%" stopColor="#AB7AFF" stopOpacity="0.95" />
+          <stop offset="100%" stopColor="#6F33F0" stopOpacity="0.6" />
+        </radialGradient>
+        <filter id="zk-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="1.2" />
+        </filter>
+      </defs>
+
+      {/* Halo doux */}
+      <motion.circle
+        cx="32"
+        cy="32"
+        r="28"
+        fill="url(#zk-aurora)"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.08 }}
+        transition={{ duration: 1.4, delay: composeOnLoad ? 1.0 : 0 }}
+      />
+
+      {/* Cercle ouvert principal — traceur progressif */}
+      <motion.g
+        animate={
+          animated
+            ? { rotate: 360 }
+            : undefined
+        }
+        transition={{
+          duration: 36,
+          repeat: Infinity,
+          ease: 'linear',
         }}
+        style={{ transformOrigin: '32px 32px' }}
       >
-        <defs>
-          {/* Gradient optimisé pour le glow */}
-          <radialGradient id="neonGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#00BFFF" stopOpacity="0.8" />
-            <stop offset="70%" stopColor="#0080FF" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#004080" stopOpacity="0" />
-          </radialGradient>
-          
-          {/* Gradient pour les cercles */}
-          <radialGradient id="circleGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#00BFFF" stopOpacity="1" />
-            <stop offset="80%" stopColor="#0080FF" stopOpacity="0.7" />
-            <stop offset="100%" stopColor="#004080" stopOpacity="0.1" />
-          </radialGradient>
-          
-          {/* Filtre de glow optimisé */}
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-            <feMerge> 
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-          
-          {/* Filtre néon plus subtil */}
-          <filter id="neon" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="1.5" result="neonBlur"/>
-            <feMerge> 
-              <feMergeNode in="neonBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-
-        {/* Cercle de glow de fond - optimisé */}
-        <circle
-          cx={centerX}
-          cy={centerY}
-          r={outerRadius + 8}
-          fill="url(#neonGlow)"
-          opacity="0.15"
-        />
-
-        {/* Cercle extérieur */}
-        <circle
-          cx={centerX}
-          cy={centerY}
-          r={outerRadius}
+        <motion.circle
+          cx="32"
+          cy="32"
+          r="22"
           fill="none"
-          stroke="url(#circleGlow)"
-          strokeWidth={strokeWidth}
-          filter="url(#glow)"
+          stroke="url(#zk-aurora)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeDasharray={`${circleLen * 0.7} ${circleLen * 0.3}`}
+          initial={
+            composeOnLoad
+              ? { strokeDashoffset: circleLen, opacity: 0 }
+              : { strokeDashoffset: 0, opacity: 1 }
+          }
+          animate={{ strokeDashoffset: 0, opacity: 1 }}
+          transition={{
+            duration: 1.4,
+            delay: composeOnLoad ? 0.1 : 0,
+            ease: [0.22, 1, 0.36, 1],
+          }}
         />
+      </motion.g>
 
-        {/* Cercle intérieur */}
-        <circle
-          cx={centerX}
-          cy={centerY}
-          r={innerRadius}
-          fill="none"
-          stroke="url(#circleGlow)"
-          strokeWidth={strokeWidth * 0.8}
-          filter="url(#glow)"
-        />
+      {/* Cercle intérieur */}
+      <motion.circle
+        cx="32"
+        cy="32"
+        r="14"
+        fill="none"
+        stroke="#C9A6FF"
+        strokeOpacity="0.45"
+        strokeWidth="0.75"
+        initial={composeOnLoad ? { opacity: 0, scale: 0.5 } : { opacity: 0.45 }}
+        animate={{ opacity: 0.45, scale: 1 }}
+        transition={{
+          duration: 0.7,
+          delay: composeOnLoad ? 0.7 : 0,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        style={{ transformOrigin: '32px 32px' }}
+      />
 
-        {/* Triangle "A" - côté gauche */}
-        <path
-          d={`M ${triangleLeft} ${triangleBottom} L ${centerX} ${triangleTop} L ${centerX} ${triangleMiddle} Z`}
-          fill="none"
-          stroke="#00BFFF"
-          strokeWidth={strokeWidth}
-          filter="url(#neon)"
+      {/* 4 axes courts */}
+      {[
+        [32, 4, 32, 8],
+        [32, 56, 32, 60],
+        [4, 32, 8, 32],
+        [56, 32, 60, 32],
+      ].map(([x1, y1, x2, y2], i) => (
+        <motion.line
+          key={i}
+          x1={x1}
+          y1={y1}
+          x2={x2}
+          y2={y2}
+          stroke="#C9A6FF"
+          strokeWidth="1.25"
+          strokeOpacity="0.7"
+          strokeLinecap="round"
+          initial={composeOnLoad ? { opacity: 0 } : { opacity: 0.7 }}
+          animate={{ opacity: 0.7 }}
+          transition={{
+            duration: 0.4,
+            delay: composeOnLoad ? 1.0 + i * 0.05 : 0,
+          }}
         />
+      ))}
 
-        {/* Triangle "A" - côté droit */}
-        <path
-          d={`M ${triangleRight} ${triangleBottom} L ${centerX} ${triangleTop} L ${centerX} ${triangleMiddle} Z`}
-          fill="none"
-          stroke="#00BFFF"
-          strokeWidth={strokeWidth}
-          filter="url(#neon)"
-        />
+      {/* Cœur central qui respire */}
+      <motion.circle
+        cx="32"
+        cy="32"
+        r="4.5"
+        fill="url(#zk-core)"
+        filter="url(#zk-glow)"
+        initial={composeOnLoad ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
+        animate={
+          animated
+            ? {
+                scale: [1, 1.18, 1],
+                opacity: 1,
+              }
+            : { scale: 1, opacity: 1 }
+        }
+        transition={{
+          duration: animated ? 5 : 0.6,
+          delay: composeOnLoad ? 1.3 : 0,
+          repeat: animated ? Infinity : 0,
+          ease: 'easeInOut',
+        }}
+        style={{ transformOrigin: '32px 32px' }}
+      />
+      <circle cx="32" cy="32" r="1.4" fill="#FAF7F2" />
 
-        {/* Barre horizontale du "A" - optimisée */}
-        <line
-          x1={triangleLeft + triangleWidth * 0.3}
-          y1={triangleMiddle}
-          x2={triangleRight - triangleWidth * 0.3}
-          y2={triangleMiddle}
-          stroke="#00BFFF"
-          strokeWidth={strokeWidth * 0.6}
-          filter="url(#neon)"
-        />
-
-        {/* Lignes de visée - optimisées pour éviter les débordements */}
-        <line
-          x1={centerX}
-          y1={crosshairTop}
-          x2={centerX}
-          y2={centerY - outerRadius}
-          stroke="#00BFFF"
-          strokeWidth={strokeWidth * 0.4}
-          filter="url(#neon)"
-        />
-        <line
-          x1={centerX}
-          y1={centerY + outerRadius}
-          x2={centerX}
-          y2={crosshairBottom}
-          stroke="#00BFFF"
-          strokeWidth={strokeWidth * 0.4}
-          filter="url(#neon)"
-        />
-        <line
-          x1={crosshairLeft}
-          y1={centerY}
-          x2={centerX - outerRadius}
-          y2={centerY}
-          stroke="#00BFFF"
-          strokeWidth={strokeWidth * 0.4}
-          filter="url(#neon)"
-        />
-        <line
-          x1={centerX + outerRadius}
-          y1={centerY}
-          x2={crosshairRight}
-          y2={centerY}
-          stroke="#00BFFF"
-          strokeWidth={strokeWidth * 0.4}
-          filter="url(#neon)"
-        />
-
-        {/* Points de visée - optimisés */}
-        <circle
-          cx={centerX}
-          cy={crosshairTop}
-          r={strokeWidth * 0.5}
-          fill="#00BFFF"
-          filter="url(#neon)"
-        />
-        <circle
-          cx={centerX}
-          cy={crosshairBottom}
-          r={strokeWidth * 0.5}
-          fill="#00BFFF"
-          filter="url(#neon)"
-        />
-        <circle
-          cx={crosshairLeft}
-          cy={centerY}
-          r={strokeWidth * 0.5}
-          fill="#00BFFF"
-          filter="url(#neon)"
-        />
-        <circle
-          cx={crosshairRight}
-          cy={centerY}
-          r={strokeWidth * 0.5}
-          fill="#00BFFF"
-          filter="url(#neon)"
-        />
-      </svg>
-    </div>
+      {/* Étoile décorative */}
+      <motion.circle
+        cx="48"
+        cy="14"
+        r="1"
+        fill="#FAF7F2"
+        initial={composeOnLoad ? { opacity: 0 } : { opacity: 0.85 }}
+        animate={
+          animated
+            ? { opacity: [0.4, 1, 0.4] }
+            : { opacity: 0.85 }
+        }
+        transition={{
+          duration: 3.4,
+          repeat: animated ? Infinity : 0,
+          ease: 'easeInOut',
+          delay: 0.5,
+        }}
+      />
+    </motion.svg>
   );
 };
 

@@ -1,87 +1,127 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-
-import StarryBackground from './StarryBackground';
-import { GRADIENTS } from './constants/theme';
+import AuroraBackground from './ui/AuroraBackground';
+import SectionHeader from './ui/SectionHeader';
 import Logo from './Logo';
+import { cn } from '../lib/utils';
 
+/**
+ * PageLayout v2 — squelette éditorial unique pour toutes les pages
+ * post-login. Compose : AuroraBackground, header (logo + titre éditorial),
+ * contenu animé. Réserve l'espace bottom-nav sur mobile.
+ *
+ *   - `title` / `subtitle` : header éditorial (centré).
+ *   - `eyebrow` : caps au-dessus du titre (ex : "PROFIL", "GUIDANCE").
+ *   - `headerSlot` : remplace complètement le header par du custom (ex :
+ *     bandeau spécial Guidance avec date du jour).
+ *   - `maxWidth` : largeur max du conteneur.
+ *   - `dim` : assombrit les halos pour les pages denses.
+ */
 interface PageLayoutProps {
-  title: string;
-  subtitle?: string;
-  children: React.ReactNode;
+  title?: ReactNode;
+  subtitle?: ReactNode;
+  eyebrow?: string;
   showLogo?: boolean;
-  maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | '7xl';
+  headerSlot?: ReactNode;
+  children: ReactNode;
+  maxWidth?:
+    | 'sm'
+    | 'md'
+    | 'lg'
+    | 'xl'
+    | '2xl'
+    | '3xl'
+    | '4xl'
+    | '5xl'
+    | '6xl'
+    | '7xl';
   className?: string;
+  contentClassName?: string;
+  /** Réduit l'opacité des halos pour densités élevées de contenu. */
+  dim?: boolean;
+  /** Désactive le padding-bottom mobile (utile pour pleines hauteurs : chat). */
+  fullHeight?: boolean;
 }
 
-const maxWidthClasses = {
-  sm: 'max-w-sm',
-  md: 'max-w-md',
-  lg: 'max-w-lg',
-  xl: 'max-w-xl',
-  '2xl': 'max-w-2xl',
-  '3xl': 'max-w-3xl',
-  '4xl': 'max-w-4xl',
-  '5xl': 'max-w-5xl',
-  '6xl': 'max-w-6xl',
-  '7xl': 'max-w-7xl',
-};
+const maxWidthClasses: Record<NonNullable<PageLayoutProps['maxWidth']>, string> =
+  {
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+    '2xl': 'max-w-2xl',
+    '3xl': 'max-w-3xl',
+    '4xl': 'max-w-4xl',
+    '5xl': 'max-w-5xl',
+    '6xl': 'max-w-6xl',
+    '7xl': 'max-w-7xl',
+  };
 
-export default function PageLayout({ 
-  title, 
-  subtitle, 
-  children, 
+export default function PageLayout({
+  title,
+  subtitle,
+  eyebrow,
   showLogo = true,
-  maxWidth = '4xl',
-  className = ''
+  headerSlot,
+  children,
+  maxWidth = '5xl',
+  className,
+  contentClassName,
+  dim = false,
+  fullHeight = false,
 }: PageLayoutProps) {
   return (
-    <div className="page-container safe-area-inset-top">
-      {/* Fond étoilé animé */}
-      <div className="page-background">
-        <StarryBackground />
-        <div className="absolute inset-0 bg-gradient-radial from-transparent via-cosmic-800/40 to-cosmic-900/90" />
-      </div>
+    <div className={cn('page-container safe-top', className)}>
+      <AuroraBackground variant={dim ? 'dim' : 'default'} />
 
-      <div className={`page-content ${maxWidthClasses[maxWidth]} safe-area-inset-bottom pb-24 md:pb-12 ${className}`}>
-        {/* Header premium harmonisé */}
-        <motion.div 
-          className="page-header"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {showLogo && (
-            <div className="flex justify-center mb-4">
-              <Logo size="lg" variant="cosmic" />
-            </div>
-          )}
-  
-          <h1
-            className="page-title text-blue-400 bg-gradient-to-r from-blue-300 to-blue-500 text-transparent bg-clip-text"
-            style={{
-              background: GRADIENTS.lunarSheenAnimated,
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
-              animation: 'sheen 3s linear infinite',
-              backgroundSize: '200% auto',
-            }}
-          >
-            {title}
-          </h1>
-          {subtitle && <p className="page-subtitle text-blue-300/80">{subtitle}</p>}
-        </motion.div>
+      <div
+        className={cn(
+          'relative z-10 mx-auto px-4 md:px-8 pt-6 md:pt-12',
+          fullHeight ? 'pb-6' : 'pb-28 md:pb-16',
+          maxWidthClasses[maxWidth],
+          contentClassName
+        )}
+      >
+        {/* Header */}
+        {title ? (
+          <div className="mb-10 md:mb-14 relative">
+            {showLogo && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                className="flex justify-center mb-6"
+              >
+                <Logo size="md" />
+              </motion.div>
+            )}
+            <SectionHeader
+              eyebrow={eyebrow}
+              title={title}
+              subtitle={subtitle}
+              align="center"
+              size="md"
+            />
+            {/* Slot complémentaire (ex: streak flame, bouton retour, compteur) */}
+            {headerSlot && (
+              <div className="mt-5 flex justify-center">
+                {headerSlot}
+              </div>
+            )}
+          </div>
+        ) : headerSlot ? (
+          <div className="mb-10 md:mb-14">{headerSlot}</div>
+        ) : null}
 
-        {/* Contenu de la page */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
+        {/* Contenu animé */}
+        <motion.main
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
         >
           {children}
-        </motion.div>
+        </motion.main>
       </div>
     </div>
   );
-} 
+}

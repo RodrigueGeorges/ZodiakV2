@@ -1,8 +1,17 @@
-// React import not needed in TSX with jsx: 'react-jsx'
 import { useLocation, useNavigate } from 'react-router-dom';
-import { User, Compass, MessageSquare, Sparkle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { User, Compass, Sparkles, MessageSquare, Heart } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../lib/hooks/useAuth';
+import { vibrate } from '../lib/haptics';
+
+const NAV = [
+  { path: '/guidance', icon: Sparkles, label: 'Guidance' },
+  { path: '/natal', icon: Compass, label: 'Natal' },
+  { path: '/friends', icon: Heart, label: 'Liens' },
+  { path: '/guide-astral', icon: MessageSquare, label: 'Guide' },
+  { path: '/profile', icon: User, label: 'Profil' },
+];
 
 function BottomNavBar() {
   const location = useLocation();
@@ -11,44 +20,65 @@ function BottomNavBar() {
 
   if (!user || location.pathname === '/') return null;
 
-  const navItems = [
-    { path: '/profile', icon: User, label: 'Profil' },
-    { path: '/natal', icon: Compass, label: 'Natal' },
-    { path: '/guidance', icon: MessageSquare, label: 'Guidance' },
-    { path: '/guide-astral', icon: Sparkle, label: 'Guide Astral' },
-  ];
-
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-cosmic-900/90 backdrop-blur-lg border-t border-blue-400/20 safe-area-inset-bottom md:hidden">
-      <div className="flex justify-around items-center px-2 py-1 md:py-2 gap-1">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.path;
-          
-          return (
-            <button
-              key={item.path}
-              onClick={() => navigate(item.path)}
-              className={cn(
-                'flex flex-col items-center gap-1 p-3 rounded-lg transition-all duration-200 outline-none',
-                'text-blue-400 hover:text-blue-300 focus:text-blue-400',
-                'focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-cosmic-900',
-                'min-h-[44px] min-w-[44px] justify-center',
-                isActive && 'bg-gradient-to-r from-blue-400/10 to-blue-600/10 text-blue-300'
-              )}
-              aria-label={item.label}
-              aria-current={isActive ? 'page' : undefined}
-              tabIndex={0}
-              role="link"
-            >
-              <Icon className="w-6 h-6" aria-hidden="true" />
-              <span className="text-xs font-medium leading-tight">{item.label}</span>
-            </button>
-          );
-        })}
+    <nav
+      aria-label="Navigation mobile"
+      className="md:hidden fixed bottom-0 inset-x-0 z-40 safe-bottom"
+    >
+      {/* Voile de transition pour faire fondre la nav dans la page */}
+      <div
+        aria-hidden="true"
+        className="absolute -top-12 inset-x-0 h-12 bg-gradient-to-t from-night-950 via-night-950/70 to-transparent pointer-events-none"
+      />
+      <div className="px-3 pb-3 pt-2">
+        <div className="flex items-center justify-around gap-1 rounded-3xl bg-night-900/85 backdrop-blur-md border border-night-700/80 shadow-card px-1.5 py-1.5">
+          {NAV.map((item) => {
+            const Icon = item.icon;
+            const active = location.pathname === item.path;
+            return (
+              <button
+                key={item.path}
+                onClick={() => {
+                  vibrate('tap');
+                  navigate(item.path);
+                }}
+                aria-label={item.label}
+                aria-current={active ? 'page' : undefined}
+                className={cn(
+                  'relative flex flex-col items-center justify-center gap-1 flex-1 rounded-2xl py-2 px-1 min-h-[48px] transition-colors',
+                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300',
+                  active ? 'text-ivory-50' : 'text-ivory-400'
+                )}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="bottomnav-active"
+                    transition={{
+                      type: 'spring',
+                      stiffness: 380,
+                      damping: 32,
+                    }}
+                    className="absolute inset-0 rounded-2xl bg-gradient-to-br from-aurora-500/25 via-aurora-500/10 to-magenta-500/20 ring-1 ring-aurora-400/30"
+                    aria-hidden="true"
+                  />
+                )}
+                <Icon
+                  className={cn(
+                    'relative w-5 h-5 transition-transform',
+                    active && 'text-aurora-200 scale-105'
+                  )}
+                  aria-hidden="true"
+                />
+                <span className="relative text-[11px] font-medium leading-none">
+                  {item.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
     </nav>
   );
 }
 
-export default BottomNavBar; 
+export default BottomNavBar;

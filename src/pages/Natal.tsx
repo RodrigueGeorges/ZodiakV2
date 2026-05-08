@@ -1,9 +1,9 @@
-import { useAuth } from '../lib/hooks/useAuth.tsx';
-import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import NatalChartTab from '../components/NatalChartTab';
-import CosmicLoader from '../components/CosmicLoader';
+import LoadingScreen from '../components/LoadingScreen';
 import PageLayout from '../components/PageLayout';
+import { useAuth } from '../lib/hooks/useAuth';
 
 export default function Natal() {
   const { profile, isLoading, isAuthenticated } = useAuth();
@@ -19,28 +19,23 @@ export default function Natal() {
   }, [isLoading, isAuthenticated, profile, navigate]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-cosmic-900">
-        <CosmicLoader />
-      </div>
-    );
+    return <LoadingScreen message="Calcul de ta carte du ciel…" />;
   }
-  
-  if (!profile) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-cosmic-900">
-        <div className="text-red-400 text-center">Profil non trouvé. Redirection...</div>
-      </div>
-    );
-  }
+
+  if (!profile) return <LoadingScreen message="Chargement de ton profil…" />;
+
+  const firstName = profile.name?.split(' ')[0] || 'voyageur';
 
   return (
     <PageLayout
-      title={`Thème Natal de ${profile.name?.split(' ')[0] || 'Utilisateur'}`}
-      subtitle="Votre carte du ciel, votre signature astrale et votre interprétation premium."
+      eyebrow="Thème natal"
+      title={`Ta carte, ${firstName}`}
+      subtitle="Le ciel exact de ta naissance, lu à travers l'aurora cosmique."
       maxWidth="5xl"
+      showLogo={false}
+      dim
     >
       <NatalChartTab profile={profile} />
     </PageLayout>
   );
-} 
+}

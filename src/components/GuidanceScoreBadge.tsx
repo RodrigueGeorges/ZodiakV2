@@ -1,36 +1,54 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import { cn } from '../lib/utils';
 
 interface GuidanceScoreBadgeProps {
   score: number;
   className?: string;
 }
 
-export function GuidanceScoreBadge({ score, className = '' }: GuidanceScoreBadgeProps) {
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'bg-gradient-to-r from-green-500/20 to-green-600/20 text-green-300 border-green-400/40 shadow-green-500/20';
-    if (score >= 60) return 'bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 text-yellow-300 border-yellow-400/40 shadow-yellow-500/20';
-    if (score >= 40) return 'bg-gradient-to-r from-orange-500/20 to-orange-600/20 text-orange-300 border-orange-400/40 shadow-orange-500/20';
-    return 'bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-300 border-red-400/40 shadow-red-500/20';
-  };
+/**
+ * Badge score aurora — toujours dans la palette de la DA, jamais
+ * vert/orange/rouge. La nuance est portée par l'intensité (full ↔ tamisée).
+ */
+export function GuidanceScoreBadge({ score, className }: GuidanceScoreBadgeProps) {
+  const pct = Math.min(Math.max(score, 0), 100);
 
-  const getScoreEmoji = (score: number) => {
-    if (score >= 80) return '🌟';
-    if (score >= 60) return '✨';
-    if (score >= 40) return '⭐';
-    return '💫';
-  };
+  // 4 paliers, tous dans la palette aurora/magenta/amber
+  let toneClass: string;
+  let label: string;
+  if (pct >= 75) {
+    toneClass = 'bg-aurora-500/15 text-aurora-200 ring-aurora-400/30';
+    label = 'Rayonnant';
+  } else if (pct >= 50) {
+    toneClass = 'bg-magenta-500/15 text-magenta-300 ring-magenta-500/30';
+    label = 'Vibrant';
+  } else if (pct >= 25) {
+    toneClass = 'bg-amber-400/15 text-amber-300 ring-amber-400/30';
+    label = 'Doux';
+  } else {
+    toneClass = 'bg-night-700/70 text-ivory-300 ring-ivory-200/15';
+    label = 'Recueilli';
+  }
 
   return (
-    <motion.span 
-      className={`px-3 py-1.5 rounded-full text-sm font-bold border-2 shadow-lg backdrop-blur-sm ${getScoreColor(score)} ${className}`}
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      whileHover={{ scale: 1.05 }}
+    <motion.span
+      initial={{ opacity: 0, y: -4 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.1 }}
+      className={cn(
+        'inline-flex items-center gap-2 px-3 py-1 rounded-full text-micro uppercase tracking-[0.14em] ring-1',
+        toneClass,
+        className
+      )}
+      title={`Intensité ${pct}%`}
     >
-      <span className="mr-1">{getScoreEmoji(score)}</span>
-      {score}%
+      <span className="text-caption font-semibold tracking-normal normal-case">
+        {pct}
+      </span>
+      <span aria-hidden="true" className="text-ivory-400/40">·</span>
+      <span>{label}</span>
     </motion.span>
   );
-} 
+}
+
+export default GuidanceScoreBadge;

@@ -1,152 +1,170 @@
-import React from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { cn } from '../lib/utils';
 
-interface ZodiacWheelProps {
-  natalChart: any;
-  className?: string;
+/**
+ * ZodiacWheel — roue zodiacale "Cosmic Editorial".
+ *
+ * Refonte v2 :
+ *   - SVG vectoriel propre, viewBox carré, responsive 100%.
+ *   - Anneaux aurora (gradient violet → magenta) au lieu du gold criard.
+ *   - Glyphes des signes en ivoire, planètes en aurora avec halo.
+ *   - Tooltip natif au survol d'une planète (nom + signe + degré).
+ *   - Animations entrantes par stagger (signes puis planètes).
+ *   - Accessible : `role="img"` + `aria-label`.
+ */
+interface Planet {
+  name: string;
+  sign?: string;
+  degree?: number;
+  longitude: number;
 }
 
-const zodiacSigns = [
-  { name: 'Bélier', symbol: '♈', startDegree: 0, color: '#D8CAB8' },
-  { name: 'Taureau', symbol: '♉', startDegree: 30, color: '#D8CAB8' },
-  { name: 'Gémeaux', symbol: '♊', startDegree: 60, color: '#D8CAB8' },
-  { name: 'Cancer', symbol: '♋', startDegree: 90, color: '#D8CAB8' },
-  { name: 'Lion', symbol: '♌', startDegree: 120, color: '#D8CAB8' },
-  { name: 'Vierge', symbol: '♍', startDegree: 150, color: '#D8CAB8' },
-  { name: 'Balance', symbol: '♎', startDegree: 180, color: '#D8CAB8' },
-  { name: 'Scorpion', symbol: '♏', startDegree: 210, color: '#D8CAB8' },
-  { name: 'Sagittaire', symbol: '♐', startDegree: 240, color: '#D8CAB8' },
-  { name: 'Capricorne', symbol: '♑', startDegree: 270, color: '#D8CAB8' },
-  { name: 'Verseau', symbol: '♒', startDegree: 300, color: '#D8CAB8' },
-  { name: 'Poissons', symbol: '♓', startDegree: 330, color: '#D8CAB8' }
+interface NatalChart {
+  planets?: Planet[];
+  ascendant?: { sign?: string; longitude?: number; degree?: number };
+}
+
+interface ZodiacWheelProps {
+  natalChart: NatalChart;
+  className?: string;
+  size?: number;
+}
+
+const ZODIAC = [
+  { name: 'Bélier', symbol: '♈' },
+  { name: 'Taureau', symbol: '♉' },
+  { name: 'Gémeaux', symbol: '♊' },
+  { name: 'Cancer', symbol: '♋' },
+  { name: 'Lion', symbol: '♌' },
+  { name: 'Vierge', symbol: '♍' },
+  { name: 'Balance', symbol: '♎' },
+  { name: 'Scorpion', symbol: '♏' },
+  { name: 'Sagittaire', symbol: '♐' },
+  { name: 'Capricorne', symbol: '♑' },
+  { name: 'Verseau', symbol: '♒' },
+  { name: 'Poissons', symbol: '♓' },
 ];
 
-const planetSymbols: { [key: string]: string } = {
-  'Soleil': '☀️',
-  'Lune': '🌙',
-  'Mercure': '☿',
-  'Vénus': '♀',
-  'Mars': '♂',
-  'Jupiter': '♃',
-  'Saturne': '♄',
-  'Uranus': '♅',
-  'Neptune': '♆',
-  'Pluton': '♇',
-  'Ascendant': '✨'
+const PLANET_GLYPH: Record<string, string> = {
+  Soleil: '☉',
+  Lune: '☾',
+  Mercure: '☿',
+  Vénus: '♀',
+  Mars: '♂',
+  Jupiter: '♃',
+  Saturne: '♄',
+  Uranus: '♅',
+  Neptune: '♆',
+  Pluton: '♇',
 };
 
-const planetColors: { [key: string]: string } = {
-  'Soleil': '#D8CAB8',
-  'Lune': '#D8CAB8',
-  'Mercure': '#D8CAB8',
-  'Vénus': '#D8CAB8',
-  'Mars': '#D8CAB8',
-  'Jupiter': '#D8CAB8',
-  'Saturne': '#D8CAB8',
-  'Uranus': '#D8CAB8',
-  'Neptune': '#D8CAB8',
-  'Pluton': '#D8CAB8',
-  'Ascendant': '#D8CAB8'
-};
+export default function ZodiacWheel({
+  natalChart,
+  className,
+  size = 320,
+}: ZodiacWheelProps) {
+  const [hover, setHover] = useState<string | null>(null);
 
-export default function ZodiacWheel({ natalChart, className = '' }: ZodiacWheelProps) {
-  const radius = 120;
-  const centerX = 150;
-  const centerY = 150;
+  const cx = 200;
+  const cy = 200;
+  const rOuter = 175;
+  const rInnerRing = 145;
+  const rPlanetTrack = 110;
+  const rHubInner = 60;
 
-  const getPlanetPosition = (planet: any) => {
-    const angle = (planet.longitude / 360) * 2 * Math.PI;
-    const planetRadius = radius - 20;
-    return {
-      x: centerX + planetRadius * Math.cos(angle - Math.PI / 2),
-      y: centerY + planetRadius * Math.sin(angle - Math.PI / 2)
-    };
-  };
-
-  const getSignPosition = (sign: any, index: number) => {
-    const angle = (sign.startDegree / 360) * 2 * Math.PI;
-    const signRadius = radius + 15;
-    return {
-      x: centerX + signRadius * Math.cos(angle - Math.PI / 2),
-      y: centerY + signRadius * Math.sin(angle - Math.PI / 2)
-    };
+  const polar = (deg: number, r: number) => {
+    // 0° = Bélier en haut (12h), sens trigo classique
+    const rad = ((deg - 90) * Math.PI) / 180;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className={`relative ${className}`}
+    <div
+      role="img"
+      aria-label="Carte du ciel — thème natal"
+      className={cn('relative w-full max-w-md mx-auto', className)}
+      style={{ aspectRatio: '1 / 1' }}
     >
-      <svg width="300" height="300" viewBox="0 0 300 300" className="w-full h-auto">
-        {/* Cercle extérieur */}
-        <circle
-          cx={centerX}
-          cy={centerY}
-          r={radius}
-          fill="none"
-          stroke="url(#gradient-border)"
-          strokeWidth="2"
-          className="drop-shadow-glow"
-        />
-
-        {/* Définition du gradient pour la bordure */}
+      <motion.svg
+        viewBox="0 0 400 400"
+        width="100%"
+        height="100%"
+        initial={{ opacity: 0, scale: 0.92 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        style={{ width: size, height: size, maxWidth: '100%' }}
+      >
         <defs>
-          <linearGradient id="gradient-border" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#D8CAB8" />
-            <stop offset="50%" stopColor="#BFAF80" />
-            <stop offset="100%" stopColor="#00CED1" />
+          <linearGradient id="zw-ring" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#AB7AFF" />
+            <stop offset="50%" stopColor="#F472B6" />
+            <stop offset="100%" stopColor="#F5B638" />
           </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-            <feMerge> 
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
+          <radialGradient id="zw-planet" cx="50%" cy="50%" r="60%">
+            <stop offset="0%" stopColor="#FAF7F2" />
+            <stop offset="55%" stopColor="#C9A6FF" />
+            <stop offset="100%" stopColor="#6F33F0" />
+          </radialGradient>
+          <radialGradient id="zw-hub" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#1F1F38" />
+            <stop offset="100%" stopColor="#0B0B1A" />
+          </radialGradient>
+          <filter id="zw-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1.6" />
           </filter>
         </defs>
 
-        {/* Lignes des maisons astrologiques */}
-        {Array.from({ length: 12 }, (_, i) => {
-          const angle = (i * 30 / 360) * 2 * Math.PI;
-          const x1 = centerX + (radius - 10) * Math.cos(angle - Math.PI / 2);
-          const y1 = centerY + (radius - 10) * Math.sin(angle - Math.PI / 2);
-          const x2 = centerX + (radius + 10) * Math.cos(angle - Math.PI / 2);
-          const y2 = centerY + (radius + 10) * Math.sin(angle - Math.PI / 2);
-          
-          return (
-            <line
-              key={`house-${i}`}
-              x1={x1}
-              y1={y1}
-              x2={x2}
-              y2={y2}
-              stroke="rgba(255, 255, 255, 0.3)"
-              strokeWidth="1"
-            />
-          );
-        })}
+        {/* Anneau extérieur */}
+        <circle
+          cx={cx}
+          cy={cy}
+          r={rOuter}
+          fill="none"
+          stroke="url(#zw-ring)"
+          strokeWidth="1.25"
+          opacity="0.85"
+        />
+        <circle
+          cx={cx}
+          cy={cy}
+          r={rInnerRing}
+          fill="none"
+          stroke="url(#zw-ring)"
+          strokeWidth="0.75"
+          opacity="0.5"
+        />
 
-        {/* Signes du zodiaque */}
-        {zodiacSigns.map((sign, index) => {
-          const pos = getSignPosition(sign, index);
+        {/* 12 graduations de signes */}
+        {ZODIAC.map((sign, i) => {
+          const startDeg = i * 30;
+          const inner = polar(startDeg, rInnerRing);
+          const outer = polar(startDeg, rOuter);
+          const labelPos = polar(startDeg + 15, (rOuter + rInnerRing) / 2);
           return (
             <motion.g
               key={sign.name}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.05 * i, duration: 0.4 }}
             >
+              <line
+                x1={inner.x}
+                y1={inner.y}
+                x2={outer.x}
+                y2={outer.y}
+                stroke="#C9A6FF"
+                strokeOpacity="0.25"
+                strokeWidth="0.75"
+              />
               <text
-                x={pos.x}
-                y={pos.y}
+                x={labelPos.x}
+                y={labelPos.y}
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fontSize="16"
-                fill={sign.color}
-                className="font-bold"
-                filter="url(#glow)"
+                fill="#FAF7F2"
+                opacity="0.85"
               >
                 {sign.symbol}
               </text>
@@ -154,88 +172,141 @@ export default function ZodiacWheel({ natalChart, className = '' }: ZodiacWheelP
           );
         })}
 
-        {/* Planètes du thème natal */}
-        {natalChart?.planets?.map((planet: any, index: number) => {
-          const pos = getPlanetPosition(planet);
+        {/* 12 maisons (cusps) — lignes très subtiles */}
+        {Array.from({ length: 12 }).map((_, i) => {
+          const a = polar(i * 30, rHubInner);
+          const b = polar(i * 30, rInnerRing);
+          return (
+            <line
+              key={`house-${i}`}
+              x1={a.x}
+              y1={a.y}
+              x2={b.x}
+              y2={b.y}
+              stroke="#5C5C82"
+              strokeOpacity="0.25"
+              strokeWidth="0.5"
+              strokeDasharray="2 3"
+            />
+          );
+        })}
+
+        {/* Hub central (esthétique) */}
+        <circle
+          cx={cx}
+          cy={cy}
+          r={rHubInner}
+          fill="url(#zw-hub)"
+          stroke="#171729"
+          strokeWidth="1"
+        />
+
+        {/* Planètes */}
+        {natalChart?.planets?.map((planet, i) => {
+          const pos = polar(planet.longitude, rPlanetTrack);
+          const labelPos = polar(planet.longitude, rPlanetTrack - 24);
+          const id = `planet-${planet.name}`;
+          const tooltip = `${planet.name}${planet.sign ? ' en ' + planet.sign : ''}${
+            typeof planet.degree === 'number'
+              ? ` · ${planet.degree.toFixed(1)}°`
+              : ''
+          }`;
           return (
             <motion.g
-              key={planet.name}
+              key={id}
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
+              transition={{ delay: 0.5 + i * 0.06, duration: 0.5 }}
+              onMouseEnter={() => setHover(tooltip)}
+              onMouseLeave={() => setHover(null)}
+              style={{ cursor: 'help' }}
             >
               <circle
                 cx={pos.x}
                 cy={pos.y}
-                r="8"
-                fill={planetColors[planet.name] || '#FFFFFF'}
-                stroke="#000000"
-                strokeWidth="1"
-                filter="url(#glow)"
+                r="9"
+                fill="url(#zw-planet)"
+                filter="url(#zw-glow)"
+                opacity="0.95"
               />
               <text
                 x={pos.x}
-                y={pos.y + 25}
+                y={pos.y + 1}
                 textAnchor="middle"
-                fontSize="10"
-                fill="white"
-                className="font-semibold"
+                dominantBaseline="middle"
+                fontSize="11"
+                fontWeight="600"
+                fill="#0B0B1A"
               >
-                {planet.name}
+                {PLANET_GLYPH[planet.name] || '✦'}
+              </text>
+              <text
+                x={labelPos.x}
+                y={labelPos.y}
+                textAnchor="middle"
+                fontSize="9"
+                fill="#EAE2D4"
+                opacity="0.7"
+              >
+                {planet.name.slice(0, 3)}
               </text>
             </motion.g>
           );
         })}
 
-        {/* Ascendant */}
-        {natalChart?.ascendant && (
+        {/* Ascendant — repère cardinal */}
+        {natalChart?.ascendant?.longitude !== undefined && (
           <motion.g
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2, duration: 0.4 }}
           >
-            <circle
-              cx={centerX}
-              cy={centerY - radius + 20}
-              r="6"
-              fill={planetColors['Ascendant']}
-              stroke="#000000"
-              strokeWidth="1"
-              filter="url(#glow)"
-            />
-            <text
-              x={centerX}
-              y={centerY - radius + 45}
-              textAnchor="middle"
-              fontSize="10"
-              fill="white"
-              className="font-semibold"
-            >
-              ASC
-            </text>
+            {(() => {
+              const asc = polar(natalChart.ascendant!.longitude!, rOuter + 14);
+              return (
+                <>
+                  <text
+                    x={asc.x}
+                    y={asc.y}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fontSize="10"
+                    fontFamily="Cinzel, serif"
+                    fill="#F472B6"
+                    letterSpacing="0.1em"
+                  >
+                    ASC
+                  </text>
+                </>
+              );
+            })()}
           </motion.g>
         )}
 
-        {/* Cercle central */}
-        <circle
-          cx={centerX}
-          cy={centerY}
-          r="15"
-          fill="url(#gradient-border)"
-          className="drop-shadow-glow"
-        />
+        {/* Glyphe central */}
         <text
-          x={centerX}
-          y={centerY}
+          x={cx}
+          y={cy}
           textAnchor="middle"
           dominantBaseline="middle"
-          fontSize="12"
-          fill="white"
-          className="font-bold"
+          fontSize="22"
+          fill="#C9A6FF"
+          opacity="0.9"
         >
-          🌟
+          ✦
         </text>
-      </svg>
-    </motion.div>
+      </motion.svg>
+
+      {/* Tooltip flottant */}
+      {hover && (
+        <motion.div
+          initial={{ opacity: 0, y: -4 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 px-3 py-1.5 rounded-full bg-night-900/95 border border-aurora-500/30 text-caption text-ivory-100 font-cinzel shadow-card backdrop-blur-md"
+        >
+          {hover}
+        </motion.div>
+      )}
+    </div>
   );
-} 
+}

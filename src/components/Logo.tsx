@@ -6,15 +6,28 @@ interface LogoProps {
   className?: string;
   style?: React.CSSProperties;
   variant?: 'classic' | 'cosmic';
+  withWordmark?: boolean;
+  wordmarkClassName?: string;
+  composeOnLoad?: boolean;
+  'aria-label'?: string;
 }
 
-export function Logo({ size = 'md', className = '', style, variant = 'cosmic' }: LogoProps) {
+export function Logo({
+  size = 'md',
+  className = '',
+  style,
+  withWordmark,
+  wordmarkClassName,
+  composeOnLoad,
+}: LogoProps) {
   return (
-    <CosmicLogo 
-      size={size} 
-      className={className} 
-      variant={variant}
+    <CosmicLogo
+      size={size}
+      className={className}
       style={style}
+      withWordmark={withWordmark}
+      wordmarkClassName={wordmarkClassName}
+      composeOnLoad={composeOnLoad}
     />
   );
 }
