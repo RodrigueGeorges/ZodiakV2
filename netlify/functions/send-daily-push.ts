@@ -1,4 +1,4 @@
-import { Handler, schedule } from '@netlify/functions';
+import { Handler } from '@netlify/functions';
 import { createClient } from '@supabase/supabase-js';
 import { sendPush } from './_pushUtils';
 
@@ -152,7 +152,7 @@ const handler: Handler = async () => {
   };
 };
 
-// Branché toutes les heures pile (utc).
-export const config = { schedule: '5 * * * *' };
+// Le schedule (5 * * * *) est défini dans netlify.toml côté
+// `[functions."send-daily-push"]` — on suit le même pattern que
+// `send-daily-guidance` et `generate-guidance` pour rester cohérents.
 export { handler };
-export const scheduled = schedule('5 * * * *', handler as never);
