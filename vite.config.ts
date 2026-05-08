@@ -24,36 +24,32 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
-    minify: 'terser',
+    // ⚠️ esbuild minifier (et pas terser). Terser réécrivait certains
+    // class statics + side effect imports d'une manière qui cassait le
+    // re-export de `AstrologyService` au runtime
+    // (Uncaught SyntaxError: Export 'AstrologyService' is not defined).
+    // esbuild est plus rapide ET plus stable sur les modules ES modernes.
+    minify: 'esbuild',
     sourcemap: true,
     outDir: 'dist',
     assetsDir: 'assets',
     rollupOptions: {
       output: {
-        // ⚠️ Manual chunks volontairement minimaux : on isole les libs qui
-        // sont massives ET indépendantes de notre code applicatif. On retire
-        // `utils` (luxon/clsx/tailwind-merge) car luxon est importé au top de
-        // `src/lib/astrology.ts` et certains chunks lazy (Guidance) ré-exportent
-        // `AstrologyService` ; quand Rollup tente de regrouper luxon dans `utils`,
-        // il déplace `AstrologyService` au mauvais endroit et casse le runtime
-        // avec : `Export 'AstrologyService' is not defined in module`.
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          motion: ['framer-motion'],
-          icons: ['lucide-react'],
-        },
+        // Pas de `manualChunks` : Vite/Rollup font un chunk splitting
+        // automatique très correct, et on évite les surprises de classes
+        // (comme `AstrologyService`) qui sont rapatriées dans un chunk
+        // qui ne les ré-exporte pas.
         format: 'es',
         entryFileNames: '[name].[hash].js',
         chunkFileNames: '[name].[hash].js',
-        assetFileNames: 'assets/[name].[hash][extname]'
-      }
+        assetFileNames: 'assets/[name].[hash][extname]',
+      },
     },
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    }
+  },
+  esbuild: {
+    // Strip console.* et debugger en production (équivalent terser drop_console).
+    drop: ['debugger'],
+    pure: ['console.log', 'console.debug', 'console.info'],
   },
   optimizeDeps: {
     include: ['lucide-react', 'react', 'react-dom', 'react-router-dom', 'framer-motion']
