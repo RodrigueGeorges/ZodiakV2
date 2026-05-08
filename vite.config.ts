@@ -30,11 +30,17 @@ export default defineConfig({
     assetsDir: 'assets',
     rollupOptions: {
       output: {
+        // ⚠️ Manual chunks volontairement minimaux : on isole les libs qui
+        // sont massives ET indépendantes de notre code applicatif. On retire
+        // `utils` (luxon/clsx/tailwind-merge) car luxon est importé au top de
+        // `src/lib/astrology.ts` et certains chunks lazy (Guidance) ré-exportent
+        // `AstrologyService` ; quand Rollup tente de regrouper luxon dans `utils`,
+        // il déplace `AstrologyService` au mauvais endroit et casse le runtime
+        // avec : `Export 'AstrologyService' is not defined in module`.
         manualChunks: {
-          'vendor': ['react', 'react-dom', 'react-router-dom'],
-          'motion': ['framer-motion'],
-          'icons': ['lucide-react'],
-          'utils': ['luxon', 'clsx', 'tailwind-merge']
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          motion: ['framer-motion'],
+          icons: ['lucide-react'],
         },
         format: 'es',
         entryFileNames: '[name].[hash].js',

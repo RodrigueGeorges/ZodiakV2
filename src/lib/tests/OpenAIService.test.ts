@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import OpenAIService from '../services/OpenAIService';
-import { NatalChart } from '../astrology';
+import type { NatalChart } from '../astrology';
 
 describe('OpenAIService', () => {
   const mockNatalChart: NatalChart = {
