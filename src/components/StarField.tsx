@@ -232,7 +232,7 @@ export default function StarField({
       gx.addColorStop(0.65, 'rgba(48, 52, 64, 0.014)');
       gx.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = gx;
-      ctx.globalAlpha = 0.52;
+      ctx.globalAlpha = 0.62;
       const rw = Math.max(w, h) * 1.85;
       const rh = Math.max(w, h) * 0.17;
       ctx.beginPath();
@@ -245,7 +245,7 @@ export default function StarField({
     const drawConstellationLines = (scrollOffset: number) => {
       if (!constellations) return;
       const { w, h } = sizeRef.current;
-      ctx.strokeStyle = 'rgba(210, 204, 192, 0.038)';
+      ctx.strokeStyle = 'rgba(212, 206, 194, 0.056)';
       ctx.lineWidth = Math.max(0.35, (dprRef.current || 1) * 0.28);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';

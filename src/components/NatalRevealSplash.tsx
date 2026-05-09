@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sun, Moon, Compass, Sparkles } from 'lucide-react';
-import AuroraBackground from './ui/AuroraBackground';
+import AppBackdrop from './AppBackdrop';
 import { cn } from '../lib/utils';
 
 interface NatalRevealSplashProps {
@@ -65,9 +65,9 @@ export default function NatalRevealSplash({
   }, [fastForward, onDone]);
 
   return (
-    <div className="fixed inset-0 z-[70] bg-night-950">
-      <AuroraBackground />
-        <div className="relative z-[1] isolate h-full flex flex-col items-center justify-center px-6 text-center">
+    <div className="fixed inset-0 z-[70] bg-black/75 backdrop-blur-[2px]">
+      <AppBackdrop grain />
+      <div className="relative z-[1] isolate h-full flex flex-col items-center justify-center px-6 text-center">
         {/* Phase 1 : intro */}
         <AnimatePresence mode="wait">
           {phase === 1 && (
@@ -137,7 +137,7 @@ export default function NatalRevealSplash({
                 Ta carte
               </h2>
               <p className="text-body text-ivory-200 max-w-md">
-                Le ciel exact de ta naissance, lu à travers l'aurora cosmique.
+                Voici le ciel exact de ta naissance, au service de tes réponses du quotidien.
               </p>
             </motion.div>
           )}
@@ -191,7 +191,7 @@ function RevealCorps({ icon, eyebrow, value, accent, halo }: RevealProps) {
           halo
         )}
       >
-        <span className={cn(accent, 'drop-shadow-[0_0_24px_rgba(201,166,255,0.6)]')}>
+        <span className={cn(accent, 'drop-shadow-[0_0_20px_rgba(170,133,88,0.45)]')}>
           {icon}
         </span>
       </motion.div>

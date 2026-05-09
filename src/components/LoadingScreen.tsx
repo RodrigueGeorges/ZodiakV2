@@ -1,6 +1,6 @@
 import React from 'react';
 import CosmicLoader from './CosmicLoader';
-import AuroraBackground from './ui/AuroraBackground';
+import AppBackdrop from './AppBackdrop';
 
 interface LoadingScreenProps {
   message?: string;
@@ -10,7 +10,7 @@ interface LoadingScreenProps {
 function LoadingScreen({ message = 'Chargement...', error }: LoadingScreenProps) {
   return (
     <div className="relative min-h-screen w-full bg-night-950 overflow-hidden flex items-center justify-center">
-      <AuroraBackground variant="dim" withGrain={false} />
+      <AppBackdrop vignette />
       <div className="relative z-[1] isolate text-center">
         <CosmicLoader size="md" />
         {!error && (

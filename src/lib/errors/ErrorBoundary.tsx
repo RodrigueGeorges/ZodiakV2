@@ -1,7 +1,7 @@
 import React, { Component, ErrorInfo } from 'react';
 import { RefreshCw, Home, AlertTriangle } from 'lucide-react';
 import { Logger } from '../logging/Logger';
-import AuroraBackground from '../../components/ui/AuroraBackground';
+import AppBackdrop from '../../components/AppBackdrop';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import Logo from '../../components/Logo';
@@ -67,7 +67,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
     return (
       <div className="page-container relative">
-        <AuroraBackground variant="dim" />
+        <AppBackdrop vignette grain />
         <div className="relative z-[1] isolate mx-auto max-w-lg px-4 py-16">
           <div className="flex justify-center mb-8">
             <Logo size="md" />

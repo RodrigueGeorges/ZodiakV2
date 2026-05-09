@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import AppBackdrop from './AppBackdrop';
 import Logo from './Logo';
 
 interface AuthLayoutProps {
@@ -17,7 +16,7 @@ interface AuthLayoutProps {
  * AuthLayout v3 — wrapper éditorial pour les pages auth.
  *
  * Refonte (mai 2026) :
- *   - Champ d'étoiles vivant en fond (StarField, pas AuroraBackground)
+ *   - Ciel global dans `App` ; surcouche grain/vignette via `AppBackdrop` si besoin.
  *   - Suppression de la "carte glass" : on respire, le formulaire est
  *     directement sur le ciel étoilé (façon CHANI / AskNova)
  *   - Eyebrow Cinzel small caps en or, encadré de filets décoratifs
@@ -31,9 +30,7 @@ export default function AuthLayout({
   footer,
 }: AuthLayoutProps) {
   return (
-    <div className="relative min-h-screen bg-night-950 safe-top safe-bottom overflow-hidden">
-      <AppBackdrop density={0.36} />
-
+    <div className="relative min-h-screen bg-transparent safe-top safe-bottom overflow-hidden">
       <div className="relative z-[1] isolate flex min-h-screen flex-col">
         <header className="px-6 md:px-12 py-8 border-b border-signal-600/15 md:border-b-0">
           <Link

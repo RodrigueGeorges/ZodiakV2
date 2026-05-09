@@ -19,6 +19,7 @@ import GuidanceShortRedirect from './pages/GuidanceShortRedirect';
 import ChatAstro from './pages/ChatAstro';
 import ReferralLanding from './pages/ReferralLanding';
 import LoadingScreen from './components/LoadingScreen';
+import StarField from './components/StarField';
 import { identify, trackPageView } from './lib/analytics';
 import './index.css';
 
@@ -34,9 +35,10 @@ const Calendar = lazy(() => import('./pages/Calendar'));
 const PageLoader = () => <LoadingScreen message="Préparation de la page…" />;
 
 const pageVariants = {
-  initial: { opacity: 0, y: 14 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -10 },
+  /** Pas de translation : éviter transform sur le conteneur de routes (stacking). */
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
 };
 
 function AnimatedRoutes() {
@@ -55,11 +57,8 @@ function AnimatedRoutes() {
         exit="exit"
         variants={pageVariants}
         transition={{
-          // Spring physique au lieu d'une cubic-bezier — plus naturel.
-          type: 'spring',
-          stiffness: 220,
-          damping: 28,
-          mass: 0.8,
+          duration: 0.35,
+          ease: [0.22, 1, 0.36, 1],
         }}
       >
         <Routes location={location}>
@@ -158,6 +157,23 @@ function App() {
 
   return (
     <>
+      {/*
+       * Ciel unique (viewport) : hors motion.div routes — sinon translate Framer casse fixed.
+       */}
+      <div
+        className="pointer-events-none fixed inset-0 z-[2]"
+        aria-hidden
+      >
+        <StarField
+          density={0.14}
+          nebula
+          milkyWay
+          constellations
+          mountains
+          parallax
+        />
+      </div>
+
       <Suspense fallback={null}>
         <StarParticleCursor showCursor />
       </Suspense>

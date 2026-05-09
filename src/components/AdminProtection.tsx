@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { XCircle, AlertTriangle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { checkAdminAccess } from '../lib/config/admin';
-import AuroraBackground from './ui/AuroraBackground';
+import AppBackdrop from './AppBackdrop';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import Logo from './Logo';
@@ -73,7 +73,7 @@ export default function AdminProtection({ children }: AdminProtectionProps) {
   if (isAuthorized === false) {
     return (
       <div className="page-container relative">
-        <AuroraBackground variant="dim" />
+        <AppBackdrop vignette grain />
         <div className="relative z-[1] isolate mx-auto max-w-lg px-4 py-16">
           <div className="flex justify-center mb-8">
             <Logo size="md" />

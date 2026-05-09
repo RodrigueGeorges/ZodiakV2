@@ -2,11 +2,8 @@ import React, { ReactNode } from 'react';
 import { Card } from './ui/Card';
 
 /**
- * InteractiveCard — alias rétrocompat vers la primitive `Card` (v2 aurora).
- *
- * Le code legacy importait souvent ce composant. On le garde comme un thin
- * wrapper pour migrer progressivement. Pour le code neuf, importer
- * directement `Card` depuis `components/ui`.
+ * InteractiveCard — wrapper mince autour de `Card` (interaction + padding).
+ * Préférer `Card` directement pour le code neuf.
  */
 interface InteractiveCardProps {
   children: ReactNode;

@@ -10,7 +10,6 @@ import {
   Sun,
 } from 'lucide-react';
 import Logo from '../components/Logo';
-import AppBackdrop from '../components/AppBackdrop';
 import RitualIngress from '../components/RitualIngress';
 import CosmicWheel from '../components/CosmicWheel';
 import LiveCounter from '../components/LiveCounter';
@@ -23,12 +22,9 @@ import { moonPhaseAt } from '../lib/moonPhase';
 import { cn } from '../lib/utils';
 
 /**
- * Home — landing (vide noir, accents or `#aa8558`, curseur particules au niveau App).
+ * Home — landing Zodiak.
  *
- * - Fond froid, chrome `signal`, accents or sur l’éditorial.
- * - Protocole monospace (eyebrows, méta) + serif pour le sens.
- * - Ciel atlas discret (Voie lactée + constellations + relief) — sans effets « arcade ».
- * - Curseur particules au niveau App ; densité d’étoiles modérée ici pour coexister.
+ * Fond : ciel + constellations globaux (`App`). Coque transparente ; cartes en verre sombre.
  */
 export default function Home() {
   const { isLoading, user } = useAuth();
@@ -52,16 +48,7 @@ export default function Home() {
   const moonNow = moonPhaseAt(new Date());
 
   return (
-    <div className="relative bg-night-950 text-ivory-50 overflow-x-hidden">
-      <AppBackdrop
-        density={0.15}
-        nebula
-        milkyWay
-        constellations
-        mountains
-        parallax
-      />
-
+    <div className="relative bg-transparent text-ivory-50 overflow-x-hidden min-h-screen">
       <div className="relative z-[1] isolate">
       {/* Header */}
       <header className="absolute z-30 top-0 inset-x-0 px-6 md:px-10 lg:px-14 py-5 md:py-6 flex items-center justify-between border-b border-signal-600/20 bg-night-950/50 backdrop-blur-[8px]">
@@ -528,7 +515,7 @@ function RitualCard({ icon, title, kicker, text }: RitualCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.8 }}
-      className="relative bg-night-950 hover:bg-night-900/55 transition-colors duration-200 ease-brutal group p-8 md:p-12 flex flex-col shadow-[inset_0_1px_0_rgba(127,160,144,0.06)]"
+      className="relative bg-night-900/55 hover:bg-night-900/65 backdrop-blur-md border border-signal-600/22 group p-8 md:p-12 flex flex-col shadow-[inset_0_1px_0_rgba(170,133,88,0.08)] transition-colors duration-200 ease-brutal"
     >
       <span className="protocol-caption text-signal-500/80 mb-3 normal-case tracking-[0.14em]">{kicker}</span>
       <h3 className="font-serif text-h1 text-ivory-50 mb-5 leading-tight">
@@ -589,7 +576,7 @@ function PriceCard({
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.8 }}
       className={cn(
-        'relative h-full flex flex-col rounded-sm bg-night-950 border border-signal-600/18',
+        'relative h-full flex flex-col rounded-sm bg-night-900/45 backdrop-blur-md border border-signal-600/22',
         'hover:bg-night-900/50 transition-colors duration-200 ease-brutal p-8 md:p-10',
         highlighted && 'bg-night-900/30 border-signal-400/35 shadow-[inset_0_1px_0_rgba(170,133,88,0.12)]',
       )}

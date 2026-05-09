@@ -1,4 +1,3 @@
-export { default as AuroraBackground } from './AuroraBackground';
 export { Card, CardHeader, CardBody, CardFooter } from './Card';
 export type { CardProps } from './Card';
 export { Button, default as ButtonDefault } from './Button';

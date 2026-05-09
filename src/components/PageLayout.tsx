@@ -1,23 +1,19 @@
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import AppBackdrop from './AppBackdrop';
 import SectionHeader from './ui/SectionHeader';
 import Logo from './Logo';
 import { cn } from '../lib/utils';
+import AppBackdrop from './AppBackdrop';
 
 /**
- * PageLayout v4 — cohérent avec la landing (AppBackdrop : étoiles + grain + vignette).
- *   - Spacing radicalement augmenté (top 12-20, mb-16-24).
- *   - Suppression du gradient automatique sur le titre (titlePlain = true par défaut).
+ * PageLayout — structure pages (`App` affiche déjà le ciel).
  *
- *   - `title` / `subtitle` : header éditorial (centré).
- *   - `eyebrow` : protocol-caption (mono signal), via SectionHeader.
- *   - `headerSlot` : remplace complètement le header.
- *   - `maxWidth` : largeur max du conteneur.
- *   - `dim` : réduit la densité d'étoiles pour les pages denses.
- *   - `nebula` : active la nébuleuse de fond (true par défaut).
+ * Props utiles : `title`/`subtitle`/`eyebrow`, `maxWidth`,
+ * `withAmbientOverlays` (grain+vignette), `fullHeight`.
  */
 interface PageLayoutProps {
+  /** Grain + vignette (le champ d’étoiles reste monté dans `App`). */
+  withAmbientOverlays?: boolean;
   title?: ReactNode;
   subtitle?: ReactNode;
   eyebrow?: string;
@@ -37,10 +33,6 @@ interface PageLayoutProps {
     | '7xl';
   className?: string;
   contentClassName?: string;
-  /** Réduit la densité du champ d'étoiles. */
-  dim?: boolean;
-  /** Désactive la nébuleuse (utile pour pages très denses). */
-  noNebula?: boolean;
   /** Désactive le padding-bottom mobile. */
   fullHeight?: boolean;
   /**
@@ -74,24 +66,20 @@ export default function PageLayout({
   maxWidth = '5xl',
   className,
   contentClassName,
-  dim = false,
-  noNebula = false,
+  withAmbientOverlays = false,
   fullHeight = false,
   titlePlain = true,
 }: PageLayoutProps) {
   return (
     <div
       className={cn(
-        'relative min-h-screen bg-night-950 safe-top overflow-hidden',
+        'relative min-h-screen bg-transparent safe-top overflow-hidden',
         className,
       )}
     >
-      {/* Champ d'étoiles vivant (canvas, parallaxe scroll) */}
-      <AppBackdrop
-        dim={dim}
-        nebula={!noNebula}
-        parallax
-      />
+      {withAmbientOverlays ? (
+        <AppBackdrop vignette grain />
+      ) : null}
 
       <div
         className={cn(
