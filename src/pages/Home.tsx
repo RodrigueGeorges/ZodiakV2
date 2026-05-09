@@ -1,6 +1,11 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from 'framer-motion';
 import {
   ArrowRight,
   Compass,
@@ -20,6 +25,22 @@ import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 import { moonPhaseAt } from '../lib/moonPhase';
 import { cn } from '../lib/utils';
 
+const heroReveal = {
+  hidden: {},
+  show: {
+    transition: { staggerChildren: 0.1, delayChildren: 0.06 },
+  },
+};
+
+const heroItem = {
+  hidden: { opacity: 0, y: 26 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
+  },
+};
+
 /**
  * Home — landing Zodiak.
  *
@@ -29,12 +50,38 @@ export default function Home() {
   const { isLoading, user } = useAuth();
   const { shouldRedirect } = useAuthRedirect();
   const navigate = useNavigate();
+  const heroRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+  const [headerSolid, setHeaderSolid] = useState(false);
+
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const haloY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduceMotion ? [0, 0] : [0, 88],
+  );
+  const haloY2 = useTransform(
+    scrollYProgress,
+    [0, 1],
+    reduceMotion ? [0, 0] : [0, 36],
+  );
+  const haloOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0.35]);
 
   useEffect(() => {
     if (user) {
       navigate('/guidance', { replace: true });
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    const onScroll = () => setHeaderSolid(window.scrollY > 40);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   if ((isLoading && user === null) || shouldRedirect) {
     return (
@@ -49,73 +96,116 @@ export default function Home() {
   return (
     <div className="relative bg-transparent text-ivory-50 overflow-x-hidden min-h-screen">
       <div className="relative z-[1] isolate">
-      {/* Header */}
-      <header className="absolute z-30 top-0 inset-x-0 px-6 md:px-10 lg:px-14 py-5 md:py-6 flex items-center justify-between border-b border-white/12 bg-black/25 backdrop-blur-md">
+      {/* Header — fixe, intensité selon le scroll */}
+      <header
+        className={cn(
+          'fixed z-30 top-0 inset-x-0 px-6 md:px-10 lg:px-14 py-4 md:py-5 flex items-center justify-between border-b transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-brutal safe-top',
+          headerSolid
+            ? 'border-white/[0.14] bg-black/60 backdrop-blur-xl shadow-[0_1px_0_rgba(56,189,248,0.07)]'
+            : 'border-white/10 bg-black/15 backdrop-blur-lg',
+        )}
+      >
         <Link
           to="/"
           className="flex items-center gap-3 group"
           aria-label="Accueil Zodiak"
         >
           <Logo size="sm" composeOnLoad />
-          <span className="font-sans font-semibold text-h3 text-ivory-50 tracking-tight group-hover:text-aurora-400 transition-colors duration-200 ease-brutal">
+          <span className="font-display text-h3 text-ivory-50 tracking-[-0.02em] font-medium group-hover:text-aurora-400 transition-colors duration-300 ease-brutal">
             Zodiak
           </span>
         </Link>
         <div className="flex items-center gap-3 md:gap-5">
           <Link
             to="/login"
-            className="hidden sm:inline-block text-caption text-ivory-400 hover:text-ivory-50 transition-colors duration-200 ease-brutal underline-offset-4"
+            className="hidden sm:inline-block text-caption text-ivory-400 hover:text-ivory-50 transition-colors duration-300 ease-brutal underline-offset-4 hover:underline decoration-aurora-400/40"
           >
             Se connecter
           </Link>
-          <ButtonLink to="/register" variant="primary" size="sm">
+          <ButtonLink to="/register" variant="primary" size="sm" className="shadow-[0_0_24px_-8px_rgba(56,189,248,0.45)]">
             Essayer gratuitement
           </ButtonLink>
         </div>
       </header>
 
-      {/* Hero — logo, marque, tagline (épuré) */}
+      {/* Hero — immersion : halos parallax, anneaux, display Fraunces */}
       <section
-        className="relative min-h-[100svh] flex flex-col justify-center items-center px-6 md:px-10 pt-28 pb-20 md:pt-32 md:pb-28"
+        ref={heroRef}
+        className="relative min-h-[100svh] flex flex-col justify-center items-center px-6 md:px-10 pt-32 pb-24 md:pt-36 md:pb-32 overflow-hidden"
         aria-labelledby="hero-title"
       >
+        <motion.div
+          style={{ y: haloY, opacity: haloOpacity }}
+          className="hero-parallax-layer pointer-events-none absolute inset-0 hero-aurora-bloom"
+          aria-hidden
+        />
+        <motion.div
+          style={{ y: haloY2 }}
+          className="hero-parallax-layer pointer-events-none absolute inset-x-0 bottom-0 h-[45%] hero-aurora-bloom-warm"
+          aria-hidden
+        />
         <div
-          className="absolute inset-x-0 top-[18%] h-[42vh] max-h-[520px] bg-gradient-to-b from-aurora-500/[0.06] via-transparent to-transparent pointer-events-none"
+          className="absolute inset-x-0 top-[8%] h-[50vh] max-h-[620px] bg-gradient-to-b from-aurora-500/[0.08] via-aurora-600/[0.02] to-transparent pointer-events-none"
           aria-hidden
         />
 
+        <div className="hero-orbit" aria-hidden>
+          <span className="hero-orbit-ring" />
+          <span className="hero-orbit-ring" />
+          <span className="hero-orbit-ring" />
+        </div>
+
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 flex flex-col items-center text-center max-w-[32rem] mx-auto"
+          variants={heroReveal}
+          initial="hidden"
+          animate="show"
+          className="relative z-10 flex flex-col items-center text-center max-w-[40rem] mx-auto"
         >
-          <div className="mb-8 md:mb-10 flex justify-center">
+          <motion.div variants={heroItem} className="relative mb-9 md:mb-11 flex justify-center">
+            <span
+              aria-hidden
+              className="absolute inset-0 -m-6 rounded-full bg-aurora-400/[0.07] blur-3xl scale-110"
+            />
             <Logo size="lg" composeOnLoad />
-          </div>
+          </motion.div>
 
-          <h1
-            id="hero-title"
-            className="font-sans font-semibold text-[clamp(2.75rem,9vw,4.5rem)] tracking-[-0.045em] leading-[0.98] text-ivory-50"
+          <motion.div variants={heroItem} className="space-y-2 md:space-y-3">
+            <p className="eyebrow-ritual text-ivory-500/90 text-[0.65rem] md:text-micro">
+              Guidance astrale · thème natal
+            </p>
+            <h1
+              id="hero-title"
+              className="font-hero-display font-light text-[clamp(3.25rem,10.5vw,5.25rem)] leading-[0.94] text-ivory-50"
+            >
+              <span className="text-gradient-gold">Zodiak</span>
+            </h1>
+          </motion.div>
+
+          <motion.p
+            variants={heroItem}
+            className="mt-8 md:mt-10 text-[clamp(1.06rem,2.5vw,1.38rem)] leading-[1.55] font-light text-ivory-200/95 max-w-[26rem] md:max-w-[34rem] mx-auto"
           >
-            Zodiak
-          </h1>
+            Une lecture{' '}
+            <span className="text-ivory-50 font-normal">personnelle du ciel</span>, chaque matin — calibrée sur ta naissance, sans nouvelle appli à installer.
+          </motion.p>
 
-          <p className="mt-6 md:mt-8 text-[clamp(1.05rem,2.8vw,1.35rem)] leading-relaxed font-light text-ivory-200/95 max-w-[22rem] md:max-w-none">
-            Une lecture astrale <span className="text-ivory-50">personnelle</span>, chaque matin — à partir de ta naissance, sans appli à installer.
-          </p>
-
-          <p className="mt-5 text-caption text-ivory-500 font-mono uppercase tracking-[0.12em]">
+          <motion.p
+            variants={heroItem}
+            className="mt-6 font-mono text-[0.7rem] sm:text-caption uppercase tracking-[0.14em] text-aurora-300/90"
+          >
             7 jours offerts · sans carte bancaire
-          </p>
+          </motion.p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
+          <motion.div
+            variants={heroItem}
+            className="mt-11 flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto"
+          >
             <ButtonLink
               to="/register"
               variant="primary"
               size="lg"
               iconLeft={<Sparkles className="w-4 h-4" />}
-              className="w-full sm:w-auto min-w-[200px]"
+              className="w-full sm:w-auto min-w-[220px] landing-primary-cta-glow transition-shadow duration-300"
             >
               Commencer
             </ButtonLink>
@@ -123,18 +213,22 @@ export default function Home() {
               to="/login"
               variant="ghost"
               size="lg"
-              className="w-full sm:w-auto min-w-[200px]"
+              className="w-full sm:w-auto min-w-[220px] border-white/20 hover:border-aurora-400/35 hover:bg-white/[0.04]"
             >
               Se connecter
             </ButtonLink>
-          </div>
+          </motion.div>
         </motion.div>
       </section>
 
-      {/* Réassurance — une seule ligne, pas d’anneaux décoratifs */}
-      <section className="relative z-10 border-y border-white/10 py-9 px-6">
-        <p className="max-w-2xl mx-auto text-center text-body text-ivory-400 leading-relaxed">
-          Basé sur <span className="text-ivory-200">ton thème de naissance</span> — pas sur un texte identique pour tout le monde. Tes données restent en Europe.
+      {/* Réassurance */}
+      <section className="relative z-10 border-y border-white/10 py-12 md:py-14 px-6 reassurance-band">
+        <p className="max-w-2xl mx-auto text-center text-body-lg text-ivory-300/95 leading-relaxed">
+          Construit sur{' '}
+          <span className="text-ivory-100 font-medium">ton thème de naissance</span>
+          , pas sur un texte générique. Données hébergées en{' '}
+          <span className="text-aurora-300/95">Europe</span>
+          .
         </p>
       </section>
 
@@ -157,41 +251,48 @@ export default function Home() {
         }
       />
 
-      {/* ─── CHAPITRE 3 : TROIS RITUELS ─────────────────────────── */}
-      <section className="relative py-24 md:py-40 px-6 border-t border-white/10">
+      {/* ─── CHAPITRE 3 : TROIS RITUELS (bento) ─────────────────── */}
+      <section className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/10">
         <div className="relative max-w-6xl mx-auto">
-          <div className="text-center mb-16 md:mb-24">
-            <p className="protocol-caption text-ivory-400 mb-8">
+          <div className="text-center mb-16 md:mb-24 max-w-3xl mx-auto space-y-7">
+            <p className="protocol-caption text-ivory-400">
               Rituels
             </p>
-            <h2 className="font-sans font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
+            <h2 className="font-display font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
               Trois façons{' '}
               <span className="italic-editorial font-light text-aurora-400">d’être guidé.</span>
             </h2>
-            <p className="mt-7 text-body-lg text-ivory-400/90 max-w-2xl mx-auto leading-[1.7]">
+            <p className="text-body-lg text-ivory-400/90 leading-[1.75]">
               Pas trois apps, pas trois abonnements. Une seule expérience qui
-              t'accompagne du matin au soir.
+              t’accompagne du matin au soir.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-px bg-white/12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 gap-5 lg:gap-px lg:rounded-sm lg:overflow-hidden lg:border lg:border-white/12 lg:bg-white/12">
             <RitualCard
-              icon={<Sun className="w-5 h-5" />}
+              featured
+              index={1}
+              className="lg:col-span-2 lg:row-span-2"
+              icon={<Sun className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-300" />}
               title="Guidance du jour"
               kicker="Chaque matin · 1 message"
-              text="Une lecture courte du ciel, calibrée sur ton thème natal. Livrée sur WhatsApp ou Instagram à l'heure que tu choisis."
+              text="Une lecture courte du ciel, calibrée sur ton thème natal. Livrée sur WhatsApp ou Instagram à l’heure que tu choisis."
             />
             <RitualCard
+              index={2}
+              className="lg:col-span-1 lg:row-span-1"
               icon={<MessageCircle className="w-5 h-5" />}
               title="Guide astral IA"
               kicker="À toute heure · sans limite"
               text="Pose tes questions, reçois des réponses adaptées à ton thème. La voix se souvient de toi — plus tu échanges, mieux elle te lit."
             />
             <RitualCard
+              index={3}
+              className="lg:col-span-1 lg:row-span-1"
               icon={<Heart className="w-5 h-5" />}
               title="Liens & synastrie"
               kicker="En quelques secondes"
-              text="Compare ton ciel à celui d'un proche. Compatibilité, tensions, points forts — illustré, expliqué, partageable."
+              text="Compare ton ciel à celui d’un proche. Compatibilité, tensions, points forts — illustré, expliqué, partageable."
             />
           </div>
         </div>
@@ -442,6 +543,7 @@ export default function Home() {
             variant="primary"
             size="lg"
             iconLeft={<Sparkles className="w-4 h-4" />}
+            className="landing-primary-cta-glow transition-shadow duration-300"
           >
             Démarrer gratuitement
           </ButtonLink>
@@ -473,7 +575,8 @@ interface ChapterProps {
 }
 function Chapter({ eyebrow, title, body }: ChapterProps) {
   return (
-    <section className="relative z-[1] py-20 md:py-28 px-6 border-t border-white/10">
+    <section className="relative z-[1] py-22 md:py-32 px-6 border-t border-white/10 overflow-hidden">
+      <div className="chapter-halo" aria-hidden />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -484,7 +587,7 @@ function Chapter({ eyebrow, title, body }: ChapterProps) {
         <p className="protocol-caption text-ivory-400 mb-8 md:mb-10 max-w-xl mx-auto">
           {eyebrow}
         </p>
-        <h2 className="font-sans font-extralight text-display text-ivory-50 leading-[0.96] mb-10 tracking-[-0.03em]">
+        <h2 className="font-display font-extralight text-display text-ivory-50 leading-[0.96] mb-10 tracking-[-0.03em]">
           {title}
         </h2>
         <p className="text-body-lg text-ivory-400/90 leading-relaxed">{body}</p>
@@ -498,25 +601,81 @@ interface RitualCardProps {
   title: string;
   kicker: string;
   text: string;
+  /** Carte principale du bento (plus grande, halo). */
+  featured?: boolean;
+  /** Numéro décoratif (01, 02…). */
+  index?: number;
+  className?: string;
 }
-function RitualCard({ icon, title, kicker, text }: RitualCardProps) {
+function RitualCard({
+  icon,
+  title,
+  kicker,
+  text,
+  featured = false,
+  index,
+  className,
+}: RitualCardProps) {
   return (
     <motion.article
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.8 }}
-      className="relative bg-white/[0.04] hover:bg-white/[0.06] backdrop-blur-md border border-white/12 group p-8 md:p-12 flex flex-col shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-colors duration-200 ease-brutal"
+      transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ y: featured ? -2 : -1 }}
+      className={cn(
+        'relative backdrop-blur-md border border-white/12 group flex flex-col overflow-hidden',
+        'shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[border-color,background-color,transform] duration-300 ease-brutal',
+        'hover:border-white/22',
+        featured
+          ? 'ritual-card-featured p-8 md:p-12 lg:p-14 lg:min-h-[min(68vh,540px)]'
+          : 'bg-white/[0.04] hover:bg-white/[0.07] p-8 md:p-10',
+        className,
+      )}
     >
-      <span className="protocol-caption text-ivory-500 mb-3 normal-case tracking-[0.14em]">{kicker}</span>
-      <h3 className="font-sans font-light text-h1 text-ivory-50 mb-5 leading-tight">
+      {index != null && (
+        <span
+          aria-hidden
+          className={cn(
+            'pointer-events-none select-none absolute font-display font-extralight leading-none text-white/[0.05]',
+            featured
+              ? 'top-5 right-5 md:top-7 md:right-8 text-[clamp(3.5rem,14vw,9rem)]'
+              : 'top-4 right-5 text-[clamp(2.25rem,6vw,3.25rem)] opacity-90',
+          )}
+        >
+          {String(index).padStart(2, '0')}
+        </span>
+      )}
+
+      <div
+        className={cn(
+          'mb-6 inline-flex items-center justify-center rounded-full border text-aurora-300 transition-colors duration-300',
+          featured
+            ? 'h-14 w-14 border-aurora-400/30 bg-aurora-500/[0.09] shadow-[0_0_40px_-16px_rgba(56,189,248,0.5)]'
+            : 'h-11 w-11 border-white/15 bg-white/[0.04]',
+        )}
+      >
+        {icon}
+      </div>
+
+      <span className="protocol-caption text-ivory-500 mb-3 normal-case tracking-[0.14em] relative z-[1]">
+        {kicker}
+      </span>
+      <h3
+        className={cn(
+          'font-display font-light text-ivory-50 mb-5 leading-[1.08] tracking-[-0.02em] relative z-[1]',
+          featured ? 'text-[clamp(1.85rem,4vw,2.75rem)]' : 'text-h1',
+        )}
+      >
         {title}
       </h3>
-      <p className="text-body text-ivory-400/95 leading-[1.7] flex-1">{text}</p>
-      <div className="mt-10 flex items-center gap-3 text-aurora-400">
-        <span className="block h-px w-10 bg-aurora-400/55 group-hover:w-16 transition-all duration-300 ease-brutal" />
-        <span className="opacity-80 group-hover:opacity-100 transition-opacity">
-          {icon}
+      <p className="text-body text-ivory-400/95 leading-[1.75] flex-1 relative z-[1]">
+        {text}
+      </p>
+      <div className="mt-10 lg:mt-12 flex items-center gap-3 text-aurora-400 relative z-[1]">
+        <span className="block h-px w-10 bg-aurora-400/55 group-hover:w-20 transition-all duration-500 ease-brutal" />
+        <span className="text-micro font-mono uppercase tracking-[0.2em] text-ivory-500 group-hover:text-aurora-300/90 transition-colors">
+          Détail
         </span>
       </div>
     </motion.article>

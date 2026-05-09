@@ -272,6 +272,107 @@ a {
   }
 }
 
+/* ─── Landing immersive (hero, bento, CTA) ─── */
+
+.hero-parallax-layer {
+  will-change: transform;
+}
+
+/* Anneaux subtils — focus sur le glyphe (sans GIF, perf-friendly) */
+.hero-orbit {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  translate: -50% -50%;
+  width: min(88vw, 28rem);
+  height: min(88vw, 28rem);
+  pointer-events: none;
+  z-index: 0;
+}
+.hero-orbit-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.12);
+  opacity: 0.85;
+}
+.hero-orbit-ring:nth-child(2) {
+  inset: 8%;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+.hero-orbit-ring:nth-child(3) {
+  inset: 18%;
+  border-color: rgba(56, 189, 248, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-parallax-layer {
+    will-change: auto;
+    transform: none !important;
+  }
+}
+
+/* Titre display landing — Fraunces, optical sizing */
+.font-hero-display {
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  font-variation-settings: 'SOFT' 50, 'WONK' 0.35;
+  letter-spacing: -0.04em;
+}
+
+/* Halo radial hero (couche additionnelle au-dessus du ciel global) */
+.hero-aurora-bloom {
+  background:
+    radial-gradient(ellipse 100% 70% at 50% 42%, rgba(56, 189, 248, 0.14), transparent 58%),
+    radial-gradient(ellipse 80% 55% at 50% 58%, rgba(14, 165, 233, 0.06), transparent 62%);
+}
+
+.hero-aurora-bloom-warm {
+  background: radial-gradient(ellipse 90% 50% at 50% 100%, rgba(56, 189, 248, 0.09), transparent 55%);
+}
+
+/* Carte rituel mise en avant — profondeur éditoriale */
+.ritual-card-featured {
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.03) 45%, rgba(0, 0, 0, 0.15) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 40px 100px -48px rgba(0, 0, 0, 0.85);
+}
+
+.landing-primary-cta-glow {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 22px 60px -28px rgba(56, 189, 248, 0.45);
+}
+
+.landing-primary-cta-glow:hover {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.14) inset,
+    0 28px 72px -32px rgba(56, 189, 248, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-primary-cta-glow,
+  .landing-primary-cta-glow:hover {
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+  }
+}
+
+/* Bande réassurance — bandeau éditorial */
+.reassurance-band {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 100%);
+}
+
+/* Chapitre — halo typographique */
+.chapter-halo {
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 70%;
+  background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(56, 189, 248, 0.07), transparent 70%);
+  pointer-events: none;
+}
+
 .safe-top    { padding-top:    env(safe-area-inset-top);    }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
