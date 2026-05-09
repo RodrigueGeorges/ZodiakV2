@@ -10,7 +10,6 @@ import {
   Sun,
 } from 'lucide-react';
 import Logo from '../components/Logo';
-import RitualIngress from '../components/RitualIngress';
 import CosmicWheel from '../components/CosmicWheel';
 import LiveCounter from '../components/LiveCounter';
 import FAQ from '../components/FAQ';
@@ -70,78 +69,72 @@ export default function Home() {
             Se connecter
           </Link>
           <ButtonLink to="/register" variant="primary" size="sm">
-            Commencer
+            Essayer gratuitement
           </ButtonLink>
         </div>
       </header>
 
-      {/* Hero — typo d’abord, une seule carte d’aperçu */}
+      {/* Hero — logo, marque, tagline (épuré) */}
       <section
-        className="relative min-h-[100svh] flex flex-col justify-center px-6 md:px-10 lg:px-14 pt-28 pb-24 md:pt-32 md:pb-28"
+        className="relative min-h-[100svh] flex flex-col justify-center items-center px-6 md:px-10 pt-28 pb-20 md:pt-32 md:pb-28"
         aria-labelledby="hero-title"
       >
-        <div className="absolute inset-x-0 top-1/4 h-[38vh] max-h-[400px] bg-gradient-to-b from-aurora-500/[0.045] via-transparent to-transparent pointer-events-none" aria-hidden="true" />
+        <div
+          className="absolute inset-x-0 top-[18%] h-[42vh] max-h-[520px] bg-gradient-to-b from-aurora-500/[0.06] via-transparent to-transparent pointer-events-none"
+          aria-hidden
+        />
 
-        <div className="relative z-10 mx-auto w-full max-w-[1100px]">
-          <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(320px,400px)] gap-14 lg:gap-20 items-start">
-            <div className="text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
-              <p className="protocol-caption mb-8 text-ivory-400">
-                Thème natal · guidance quotidienne
-              </p>
-              <h1
-                id="hero-title"
-                className="font-sans font-extralight text-[clamp(2.35rem,6.2vw,4.25rem)] leading-[1.02] tracking-[-0.04em] text-ivory-50"
-              >
-                Une lecture
-                <br />
-                <span className="italic-editorial font-light text-aurora-400">
-                  où tu ouvres les yeux.
-                </span>
-              </h1>
-              <p className="mt-8 text-body-lg text-ivory-400/90 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Un message par jour — calibré sur ton ciel réel — sur{' '}
-                <span className="text-ivory-50/95">WhatsApp</span>
-                {' ou '}
-                <span className="text-ivory-50/95">Instagram</span>, à l’heure que tu fixes.
-                Sans appli ni fil d’actus à désosser.
-              </p>
-
-              <div className="mt-10 flex flex-col sm:flex-row items-center lg:items-start gap-4">
-                <ButtonLink
-                  to="/register"
-                  variant="primary"
-                  size="lg"
-                  iconLeft={<Sparkles className="w-4 h-4" />}
-                  className="w-full sm:w-auto"
-                >
-                  Commencer l’essai
-                </ButtonLink>
-                <ButtonLink
-                  to="/login"
-                  variant="ghost"
-                  size="lg"
-                  className="w-full sm:w-auto"
-                >
-                  Connexion
-                </ButtonLink>
-              </div>
-              <p className="mt-6 font-mono text-[10px] tracking-[0.2em] uppercase text-ivory-500">
-                7 jours offerts · sans carte bancaire
-              </p>
-            </div>
-
-            <div className="flex justify-center lg:justify-end lg:sticky lg:top-28">
-              <RitualIngress />
-            </div>
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
+          className="relative z-10 flex flex-col items-center text-center max-w-[32rem] mx-auto"
+        >
+          <div className="mb-8 md:mb-10 flex justify-center">
+            <Logo size="lg" composeOnLoad />
           </div>
-        </div>
+
+          <h1
+            id="hero-title"
+            className="font-sans font-semibold text-[clamp(2.75rem,9vw,4.5rem)] tracking-[-0.045em] leading-[0.98] text-ivory-50"
+          >
+            Zodiak
+          </h1>
+
+          <p className="mt-6 md:mt-8 text-[clamp(1.05rem,2.8vw,1.35rem)] leading-relaxed font-light text-ivory-200/95 max-w-[22rem] md:max-w-none">
+            Une lecture astrale <span className="text-ivory-50">personnelle</span>, chaque matin — à partir de ta naissance, sans appli à installer.
+          </p>
+
+          <p className="mt-5 text-caption text-ivory-500 font-mono uppercase tracking-[0.12em]">
+            7 jours offerts · sans carte bancaire
+          </p>
+
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
+            <ButtonLink
+              to="/register"
+              variant="primary"
+              size="lg"
+              iconLeft={<Sparkles className="w-4 h-4" />}
+              className="w-full sm:w-auto min-w-[200px]"
+            >
+              Commencer
+            </ButtonLink>
+            <ButtonLink
+              to="/login"
+              variant="ghost"
+              size="lg"
+              className="w-full sm:w-auto min-w-[200px]"
+            >
+              Se connecter
+            </ButtonLink>
+          </div>
+        </motion.div>
       </section>
 
       {/* Réassurance — une seule ligne, pas d’anneaux décoratifs */}
-      <section className="relative z-10 border-y border-white/10 py-12 px-6">
-        <p className="max-w-3xl mx-auto text-center font-mono text-caption text-ivory-500 leading-relaxed">
-          Ouvertures qui comptent · Données en Europe · Jamais revendues · Sans
-          engagement · Annulation en un clic.
+      <section className="relative z-10 border-y border-white/10 py-9 px-6">
+        <p className="max-w-2xl mx-auto text-center text-body text-ivory-400 leading-relaxed">
+          Basé sur <span className="text-ivory-200">ton thème de naissance</span> — pas sur un texte identique pour tout le monde. Tes données restent en Europe.
         </p>
       </section>
 
@@ -159,9 +152,7 @@ export default function Home() {
         }
         body={
           <span className="not-italic">
-            Ce que tu lis sur ton fil chaque matin part de ce ciel&nbsp;: mêmes transits,
-            mêmes degrés rattachés à ta carte. Pas de formule toute faite — une grille
-            tissée sur ton thème.
+            Chaque message part de <strong className="font-medium text-ivory-200">ton thème</strong> et du ciel du jour — pas d’un même texte pour tout le monde.
           </span>
         }
       />
@@ -452,7 +443,7 @@ export default function Home() {
             size="lg"
             iconLeft={<Sparkles className="w-4 h-4" />}
           >
-            Commencer maintenant
+            Démarrer gratuitement
           </ButtonLink>
           <p className="mt-5 eyebrow-ritual text-ivory-400/80">
             7 jours offerts · sans CB
