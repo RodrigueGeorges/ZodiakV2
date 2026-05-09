@@ -30,6 +30,7 @@ export default function SectionDivider({ className }: SectionDividerProps) {
         aria-hidden="true"
         className="shrink-0 text-aurora-400/85"
       >
+        {[
           { cx: 6, op: 0.5 },
           { cx: 26, op: 0.85 },
           { cx: 46, op: 0.5 },

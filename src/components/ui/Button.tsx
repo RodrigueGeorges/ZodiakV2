@@ -17,7 +17,7 @@ export type ButtonVariant =
   | 'ritual';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
-const buttonVariants = cva(
+export const buttonVariants = cva(
   [
     'relative inline-flex items-center justify-center rounded-full font-medium tracking-wide',
     'transition-colors duration-300 ease-ritual',

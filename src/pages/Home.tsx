@@ -24,12 +24,27 @@ import { RevealLine } from '../components/RevealHeading';
 import CosmicWheel from '../components/CosmicWheel';
 import LiveCounter from '../components/LiveCounter';
 import FAQ from '../components/FAQ';
-import { Button } from '../components/ui/Button';
+import { ButtonLink } from '../components/ui/ButtonLink';
 import CosmicLoader from '../components/CosmicLoader';
 import { useAuth } from '../lib/hooks/useAuth';
 import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
+import { useMediaQuery } from '../lib/hooks/useMediaQuery';
 import { moonPhaseAt } from '../lib/moonPhase';
 import { cn } from '../lib/utils';
+
+const ROMAN_TO_NUM: Record<string, string> = {
+  I: '1',
+  II: '2',
+  III: '3',
+  IV: '4',
+  V: '5',
+  VI: '6',
+  VII: '7',
+};
+
+function romanAriaLabel(roman: string): string {
+  return `Chapitre ${ROMAN_TO_NUM[roman] ?? roman}`;
+}
 
 /**
  * Home v3 — landing "Cosmic Editorial Ritual" (mai 2026).
@@ -58,6 +73,7 @@ export default function Home() {
   const { isLoading, user } = useAuth();
   const { shouldRedirect } = useAuthRedirect();
   const navigate = useNavigate();
+  const isCompactSky = useMediaQuery('(max-width: 640px)');
 
   const { scrollY } = useScroll();
   const heroTitleY = useTransform(scrollY, [0, 600], [0, -40]);
@@ -83,11 +99,11 @@ export default function Home() {
     <div className="relative bg-night-950 text-ivory-50 overflow-x-hidden">
       {/* Champ d'étoiles vivant — couvre toute la page */}
       <StarField
-        density={1}
+        density={isCompactSky ? 0.72 : 1}
         nebula
-        milkyWay
-        constellations
-        shootingStars
+        milkyWay={!isCompactSky}
+        constellations={!isCompactSky}
+        shootingStars={!isCompactSky}
       />
 
       {/* Header transparent ultra-léger */}
@@ -109,18 +125,17 @@ export default function Home() {
           >
             Se connecter
           </Link>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => navigate('/register')}
-          >
+          <ButtonLink to="/register" variant="primary" size="sm">
             Commencer
-          </Button>
+          </ButtonLink>
         </div>
       </header>
 
       {/* ─── CHAPITRE 1 : HERO ──────────────────────────────────── */}
-      <section className="relative min-h-[100svh] flex items-center px-6 md:px-12 pt-32 md:pt-40 pb-20 md:pb-32 overflow-hidden">
+      <section
+        className="relative min-h-[100svh] flex items-center px-6 md:px-12 pt-32 md:pt-40 pb-20 md:pb-32 overflow-hidden"
+        aria-labelledby="hero-title"
+      >
         {/* Voile dégradé bas pour fixer la lecture */}
         <div
           aria-hidden="true"
@@ -139,7 +154,8 @@ export default function Home() {
               transition={{ duration: 0.9, delay: 0.2 }}
               className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/55 mb-3 md:mb-4 text-center lg:text-left"
             >
-              I
+              <span className="sr-only">{romanAriaLabel('I')}</span>
+              <span aria-hidden="true">I</span>
             </motion.p>
             <motion.p
               initial={{ opacity: 0, y: 8 }}
@@ -154,7 +170,10 @@ export default function Home() {
               <span>Lecture sur ta carte du ciel</span>
             </motion.p>
 
-            <h1 className="font-serif leading-[0.92] tracking-[-0.025em] text-[clamp(3rem,8vw,7rem)]">
+            <h1
+              id="hero-title"
+              className="font-serif leading-[0.92] tracking-[-0.025em] text-[clamp(3rem,8vw,7rem)]"
+            >
               <RevealLine delay={0.28} className="text-ivory-50">
                 Le ciel t&apos;écrit.
               </RevealLine>
@@ -195,23 +214,23 @@ export default function Home() {
               className="mt-10 md:mt-12 flex flex-col items-center lg:items-start gap-5"
             >
               <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
-                <Button
+                <ButtonLink
+                  to="/register"
                   variant="primary"
                   size="lg"
-                  onClick={() => navigate('/register')}
                   iconLeft={<Sparkles className="w-4 h-4" />}
                   className="w-full sm:w-auto"
                 >
                   Découvrir ma carte
-                </Button>
-                <Button
+                </ButtonLink>
+                <ButtonLink
+                  to="/login"
                   variant="ghost"
                   size="lg"
-                  onClick={() => navigate('/login')}
                   className="w-full sm:w-auto"
                 >
                   J'ai déjà un compte
-                </Button>
+                </ButtonLink>
               </div>
               <p className="eyebrow-ritual text-ivory-400/80">
                 7 jours offerts · sans carte · annulable en 1 clic
@@ -266,7 +285,7 @@ export default function Home() {
         </div>
       </section>
 
-      <SectionDivider className="max-w-3xl mx-auto opacity-70" />
+      <SectionDivider className="hidden sm:flex max-w-3xl mx-auto opacity-70" />
 
       {/* ─── BANDEAU ZODIAC ─────────────────────────────────────── */}
       <section className="relative py-16 md:py-20 px-0 border-b border-ivory-50/[0.06]">
@@ -274,24 +293,28 @@ export default function Home() {
         <ZodiacStrip variant="marquee" duration={68} />
       </section>
 
-      {/* Illustration cosmique (domaine public) — frise très discrète */}
+      {/* Frise cosmique locale (SVG léger, pas de hotlink CDN) */}
       <section
-        aria-label="Illustration cosmique"
+        aria-hidden="true"
         className="relative border-b border-ivory-50/[0.06] overflow-hidden"
       >
         <div className="relative h-32 md:h-44 w-full">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Andromeda_Galaxy_%28with_h-alpha%29.jpg/1280px-Andromeda_Galaxy_%28with_h-alpha%29.jpg"
-            alt="Galaxie d’Andromède (image grand public, domaine public)"
-            width={1200}
-            height={400}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.2] mix-blend-screen"
-          />
+          <picture>
+            <source type="image/svg+xml" srcSet="/images/cosmic-strip.svg" />
+            <img
+              src="/images/cosmic-strip.svg"
+              alt=""
+              width={1600}
+              height={380}
+              loading="lazy"
+              decoding="async"
+              fetchPriority="low"
+              className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.55] md:opacity-[0.65] mix-blend-screen pointer-events-none"
+            />
+          </picture>
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-b from-night-950 via-night-950/75 to-night-950"
+            className="absolute inset-0 bg-gradient-to-b from-night-950 via-night-950/78 to-night-950 pointer-events-none"
           />
         </div>
       </section>
@@ -311,18 +334,10 @@ export default function Home() {
         }
         body={
           <>
-            Aujourd'hui {' '}
-            {new Date().toLocaleDateString('fr-FR', {
-              weekday: 'long',
-              day: 'numeric',
-              month: 'long',
-            })}
-            , la Lune est à <span className="text-aurora-300 font-medium">
-              {Math.round(moonNow.illumination * 100)} %
-            </span>{' '}
-            de luminosité. Chaque guidance que tu lis part de ce ciel —
-            croisé au degré près avec ton thème natal. Précis, vivant,
-            <em className="italic-editorial text-ivory-50"> jamais générique.</em>
+            Après la Lune que tu vois plus haut, la suite se joue dans le texte :
+            chaque jour, on relie les transits du moment à tes maisons et à tes
+            degrés. Pas une phrase passe-partout&nbsp;— une grille personnalisée,
+            <em className="italic-editorial text-ivory-50"> ta carte en filigrane.</em>
           </>
         }
       />
@@ -332,7 +347,8 @@ export default function Home() {
         <div className="relative max-w-6xl mx-auto">
           <div className="text-center mb-16 md:mb-24">
             <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-3">
-              III
+              <span className="sr-only">{romanAriaLabel('III')}</span>
+              <span aria-hidden="true">III</span>
             </p>
             <p className="eyebrow-ritual flex items-center justify-center gap-3 mb-6">
               <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
@@ -383,7 +399,8 @@ export default function Home() {
             className="order-2 md:order-1"
           >
             <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-3 md:mb-4">
-              IV
+              <span className="sr-only">{romanAriaLabel('IV')}</span>
+              <span aria-hidden="true">IV</span>
             </p>
             <p className="eyebrow-ritual flex items-center gap-3 mb-5">
               <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
@@ -405,13 +422,13 @@ export default function Home() {
               <FeatureLi>Ascendant, planètes, maisons, aspects</FeatureLi>
               <FeatureLi>Œuvre générative à imprimer ou partager</FeatureLi>
             </ul>
-            <Button
+            <ButtonLink
+              to="/register"
               variant="primary"
-              onClick={() => navigate('/register')}
               iconLeft={<Compass className="w-4 h-4" />}
             >
               Voir ma carte
-            </Button>
+            </ButtonLink>
           </motion.div>
 
           <motion.div
@@ -434,7 +451,8 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 md:mb-20">
             <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-4">
-              V
+              <span className="sr-only">{romanAriaLabel('V')}</span>
+              <span aria-hidden="true">V</span>
             </p>
             <div className="mb-7 flex justify-center">
               <LiveCounter />
@@ -460,7 +478,6 @@ export default function Home() {
               priceSuffix="/ mois"
               hint="Idéal pour essayer"
               ctaLabel="Commencer mon essai"
-              onCta={() => navigate('/register')}
               features={[
                 'Guidance quotidienne illimitée',
                 'Chat astral IA (mémoire long-terme)',
@@ -479,7 +496,6 @@ export default function Home() {
               highlighted
               hint="Tu économises 38 € sur l'année"
               ctaLabel="Choisir l'annuel"
-              onCta={() => navigate('/register')}
               features={[
                 'Tout du plan mensuel',
                 '2 mois offerts',
@@ -496,7 +512,6 @@ export default function Home() {
               hint="Offre fondateur · 100 places"
               badge="Édition limitée"
               ctaLabel="Devenir fondateur"
-              onCta={() => navigate('/register')}
               features={[
                 'Tout, pour toujours',
                 'Aucun renouvellement',
@@ -518,7 +533,8 @@ export default function Home() {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14 md:mb-16">
             <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-3">
-              VI
+              <span className="sr-only">{romanAriaLabel('VI')}</span>
+              <span aria-hidden="true">VI</span>
             </p>
             <p className="eyebrow-ritual flex items-center justify-center gap-3 mb-6">
               <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
@@ -620,7 +636,8 @@ export default function Home() {
           className="max-w-3xl mx-auto"
         >
           <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-3">
-            VII
+            <span className="sr-only">{romanAriaLabel('VII')}</span>
+            <span aria-hidden="true">VII</span>
           </p>
           <p className="eyebrow-ritual flex items-center justify-center gap-3 mb-7">
             <span aria-hidden="true" className="block h-px w-12 bg-aurora-400/50" />
@@ -634,14 +651,14 @@ export default function Home() {
               Tu peux savoir aussi.
             </span>
           </h2>
-          <Button
+          <ButtonLink
+            to="/register"
             variant="primary"
             size="lg"
-            onClick={() => navigate('/register')}
             iconLeft={<Sparkles className="w-4 h-4" />}
           >
             Commencer maintenant
-          </Button>
+          </ButtonLink>
           <p className="mt-5 eyebrow-ritual text-ivory-400/80">
             7 jours offerts · sans CB
           </p>
@@ -649,7 +666,7 @@ export default function Home() {
 
         <footer className="mt-24 md:mt-32 eyebrow-ritual text-ivory-400/60 flex items-center justify-center gap-3">
           <Logo size="sm" />
-          <span>Zodiak · Ton ciel, chaque matin.</span>
+          <span>Zodiak · Le ciel t&apos;écrit.</span>
         </footer>
       </section>
     </div>
@@ -677,7 +694,8 @@ function Chapter({ roman, eyebrow, title, body }: ChapterProps) {
         className="relative max-w-3xl mx-auto text-center"
       >
         <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-3 md:mb-4">
-          {roman}
+          <span className="sr-only">{romanAriaLabel(roman)}</span>
+          <span aria-hidden="true">{roman}</span>
         </p>
         <p className="eyebrow-ritual flex items-center justify-center gap-3 mb-6">
           <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
@@ -744,7 +762,8 @@ interface PriceCardProps {
   hint?: string;
   highlighted?: boolean;
   ctaLabel: string;
-  onCta: () => void;
+  /** Route d’inscription (lien réel plutôt que history.push). */
+  ctaTo?: string;
   features: string[];
 }
 function PriceCard({
@@ -756,7 +775,7 @@ function PriceCard({
   hint,
   highlighted = false,
   ctaLabel,
-  onCta,
+  ctaTo = '/register',
   features,
 }: PriceCardProps) {
   return (
@@ -813,16 +832,16 @@ function PriceCard({
         ))}
       </ul>
 
-      <Button
+      <ButtonLink
+        to={ctaTo}
         variant={highlighted ? 'primary' : 'ghost'}
         size="lg"
         fullWidth
-        onClick={onCta}
         iconRight={<ArrowRight className="w-4 h-4" />}
         className="mt-auto"
       >
         {ctaLabel}
-      </Button>
+      </ButtonLink>
     </motion.div>
   );
 }

@@ -74,13 +74,20 @@ a {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  /*
+   * On réduit surtout les animations (boucles, twinkle canvas, etc.).
+   * On évite de forcer transition-duration à ~0 sur * : cela cassait trop
+   * de feedbacks légitimes (hover, rings focus internes aux composants).
+   */
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms !important;
+    animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
   }
 }
 
@@ -123,7 +130,7 @@ a {
   }
 
   .input-cosmic {
-    @apply w-full rounded-md bg-night-900/60 border border-ivory-50/[0.08] px-4 py-3 text-ivory-100 placeholder-ivory-400/60;
+    @apply appearance-none w-full rounded-md bg-night-900/60 border border-ivory-50/[0.08] px-4 py-3 text-ivory-100 placeholder-ivory-400/60;
     @apply focus:outline-none focus:border-aurora-400/50 focus:ring-0 transition-colors;
   }
 
