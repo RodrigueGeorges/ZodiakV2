@@ -47,7 +47,7 @@ export default function CosmicLoader({
           <defs>
             <linearGradient id="auroraOuter" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#fbf3dd" stopOpacity="0" />
-              <stop offset="50%" stopColor="#aa8558" stopOpacity="0.85" />
+              <stop offset="50%" stopColor="#38bdf8" stopOpacity="0.85" />
               <stop offset="100%" stopColor="#5a472e" stopOpacity="0" />
             </linearGradient>
           </defs>
@@ -72,7 +72,7 @@ export default function CosmicLoader({
         >
           <defs>
             <linearGradient id="auroraInner" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#aa8558" stopOpacity="0" />
+              <stop offset="0%" stopColor="#38bdf8" stopOpacity="0" />
               <stop offset="50%" stopColor="#ead183" stopOpacity="0.65" />
               <stop offset="100%" stopColor="#fbf3dd" stopOpacity="0" />
             </linearGradient>

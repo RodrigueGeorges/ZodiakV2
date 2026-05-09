@@ -107,11 +107,11 @@ export default function CosmicWheel({
           {/* Gradient pour le bord extérieur */}
           <linearGradient id="rim-gradient" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stopColor="#fbf3dd" stopOpacity="0.75" />
-            <stop offset="50%" stopColor="#aa8558" stopOpacity="0.65" />
+            <stop offset="50%" stopColor="#38bdf8" stopOpacity="0.65" />
             <stop offset="100%" stopColor="#5a472e" stopOpacity="0.55" />
           </linearGradient>
           <linearGradient id="house-gradient" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#aa8558" stopOpacity="0.35" />
+            <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.35" />
             <stop offset="100%" stopColor="#c9ae8c" stopOpacity="0.3" />
           </linearGradient>
           <radialGradient id="planet-glow" cx="50%" cy="50%" r="50%">

@@ -178,7 +178,7 @@ function parseFramerColor(color: string): { r: number; g: number; b: number } {
       b: parseInt(hexMatch[3]!, 16) / 255,
     };
   }
-  return { r: 170 / 255, g: 133 / 255, b: 88 / 255 };
+  return { r: 56 / 255, g: 189 / 255, b: 248 / 255 };
 }
 
 export interface StarParticleCursorProps {
@@ -206,7 +206,7 @@ const MOUSE_ATTRIBUTE_COUNT = 4;
 const DEFAULTS = {
   hideOnMobile: 'hide' as const,
   showCursor: false,
-  starColor: '#aa8558',
+  starColor: '#7dd3fc',
   particleSize: 8,
   minParticleSize: 5,
   blurAmount: 8,

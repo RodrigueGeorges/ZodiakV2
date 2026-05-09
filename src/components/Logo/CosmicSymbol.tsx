@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 
 /**
- * Glyphe marque : orbite tronquée + cardinaux discrets + foyer or (#aa8558).
+ * Glyphe marque : orbite tronquée + cardinaux discrets + foyer glace (#38bdf8).
  * Magenta réservé aux rituels in-app.
  */
 interface CosmicSymbolProps {
@@ -43,19 +43,19 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
       transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
     >
       <defs>
-        <linearGradient id="zk-mark-gold" x1="14" y1="14" x2="50" y2="52" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#F4ECDB" stopOpacity={0.95} />
-          <stop offset="100%" stopColor="#aa8558" />
+        <linearGradient id="zk-mark-frost" x1="14" y1="14" x2="50" y2="52" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#fafafa" stopOpacity={0.95} />
+          <stop offset="100%" stopColor="#38bdf8" />
         </linearGradient>
         <radialGradient id="zk-mark-core" cx="50%" cy="45%" r="55%">
-          <stop offset="0%" stopColor="#FBF3DD" stopOpacity={1} />
-          <stop offset="55%" stopColor="#DFBA62" />
-          <stop offset="100%" stopColor="#8f6f47" stopOpacity={0.4} />
+          <stop offset="0%" stopColor="#e0f2fe" stopOpacity={1} />
+          <stop offset="55%" stopColor="#38bdf8" />
+          <stop offset="100%" stopColor="#0369a1" stopOpacity={0.35} />
         </radialGradient>
       </defs>
 
       {/* Foyer diffus très bas */}
-      <circle cx="32" cy="32" r="29" fill="rgba(143, 111, 71, 0.06)" />
+      <circle cx="32" cy="32" r="29" fill="rgba(56, 189, 248, 0.07)" />
 
       {/* Orbite : arc incomplet */}
       {runMotion ? (
@@ -73,7 +73,7 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
             cy="32"
             r="24"
             fill="none"
-            stroke="url(#zk-mark-gold)"
+            stroke="url(#zk-mark-frost)"
             strokeWidth="1.35"
             strokeLinecap="round"
             strokeDasharray={`${circleLen * 0.62} ${circleLen}`}
@@ -95,7 +95,7 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
             cy="32"
             r="24"
             fill="none"
-            stroke="url(#zk-mark-gold)"
+            stroke="url(#zk-mark-frost)"
             strokeWidth="1.35"
             strokeLinecap="round"
             strokeDasharray={`${circleLen * 0.62} ${circleLen}`}
@@ -109,7 +109,7 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
         cy="32"
         r="16.5"
         fill="none"
-        stroke="#c9ae8c"
+        stroke="#7dd3fc"
         strokeOpacity={0.24}
         strokeWidth="0.5"
       />
@@ -127,7 +127,7 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
           y1={y1}
           x2={x2}
           y2={y2}
-          stroke="#c9ae8c"
+          stroke="#7dd3fc"
           strokeOpacity={0.52}
           strokeWidth="1.1"
           strokeLinecap="round"
@@ -180,14 +180,14 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
           ease: [0.16, 1, 0.3, 1],
         }}
       />
-      <circle cx="32" cy="32" r="0.95" fill="#F4ECDB" fillOpacity={0.95} />
+      <circle cx="32" cy="32" r="0.95" fill="#fafafa" fillOpacity={0.95} />
 
       {/* Repère résiduel (étoile de mesure — discret, signal) */}
       <motion.circle
         cx="50"
         cy="15"
         r="0.9"
-        fill="#aa8558"
+        fill="#38bdf8"
         fillOpacity={0.85}
         initial={composeOnLoad ? { opacity: 0 } : { opacity: 0.85 }}
         animate={

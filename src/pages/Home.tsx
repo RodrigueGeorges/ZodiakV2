@@ -51,21 +51,21 @@ export default function Home() {
     <div className="relative bg-transparent text-ivory-50 overflow-x-hidden min-h-screen">
       <div className="relative z-[1] isolate">
       {/* Header */}
-      <header className="absolute z-30 top-0 inset-x-0 px-6 md:px-10 lg:px-14 py-5 md:py-6 flex items-center justify-between border-b border-signal-600/20 bg-night-950/50 backdrop-blur-[8px]">
+      <header className="absolute z-30 top-0 inset-x-0 px-6 md:px-10 lg:px-14 py-5 md:py-6 flex items-center justify-between border-b border-white/12 bg-black/25 backdrop-blur-md">
         <Link
           to="/"
           className="flex items-center gap-3 group"
           aria-label="Accueil Zodiak"
         >
           <Logo size="sm" composeOnLoad />
-          <span className="font-serif text-h3 text-ivory-50 tracking-tight group-hover:text-signal-300 transition-colors duration-200 ease-brutal">
+          <span className="font-sans font-semibold text-h3 text-ivory-50 tracking-tight group-hover:text-aurora-400 transition-colors duration-200 ease-brutal">
             Zodiak
           </span>
         </Link>
         <div className="flex items-center gap-3 md:gap-5">
           <Link
             to="/login"
-            className="hidden sm:inline-block text-caption text-ivory-200 hover:text-signal-300 transition-colors duration-200 ease-brutal underline-offset-4"
+            className="hidden sm:inline-block text-caption text-ivory-400 hover:text-ivory-50 transition-colors duration-200 ease-brutal underline-offset-4"
           >
             Se connecter
           </Link>
@@ -80,25 +80,25 @@ export default function Home() {
         className="relative min-h-[100svh] flex flex-col justify-center px-6 md:px-10 lg:px-14 pt-28 pb-24 md:pt-32 md:pb-28"
         aria-labelledby="hero-title"
       >
-        <div className="absolute inset-x-0 top-1/4 h-[38vh] max-h-[400px] bg-gradient-to-b from-signal-400/[0.035] via-transparent to-transparent pointer-events-none" aria-hidden="true" />
+        <div className="absolute inset-x-0 top-1/4 h-[38vh] max-h-[400px] bg-gradient-to-b from-aurora-500/[0.045] via-transparent to-transparent pointer-events-none" aria-hidden="true" />
 
         <div className="relative z-10 mx-auto w-full max-w-[1100px]">
           <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(320px,400px)] gap-14 lg:gap-20 items-start">
             <div className="text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
-              <p className="protocol-caption mb-8 text-signal-400/80">
+              <p className="protocol-caption mb-8 text-ivory-400">
                 Thème natal · guidance quotidienne
               </p>
               <h1
                 id="hero-title"
-                className="font-serif text-[clamp(2.35rem,6.2vw,4.25rem)] leading-[1.05] tracking-[-0.03em] text-ivory-50"
+                className="font-sans font-extralight text-[clamp(2.35rem,6.2vw,4.25rem)] leading-[1.02] tracking-[-0.04em] text-ivory-50"
               >
                 Une lecture
                 <br />
-                <span className="italic-editorial text-aurora-400">
+                <span className="italic-editorial font-light text-aurora-400">
                   où tu ouvres les yeux.
                 </span>
               </h1>
-              <p className="mt-8 text-body-lg text-ivory-200/75 leading-relaxed max-w-xl mx-auto lg:mx-0">
+              <p className="mt-8 text-body-lg text-ivory-400/90 leading-relaxed max-w-xl mx-auto lg:mx-0">
                 Un message par jour — calibré sur ton ciel réel — sur{' '}
                 <span className="text-ivory-50/95">WhatsApp</span>
                 {' ou '}
@@ -125,7 +125,7 @@ export default function Home() {
                   Connexion
                 </ButtonLink>
               </div>
-              <p className="mt-6 font-mono text-[10px] tracking-[0.2em] uppercase text-signal-500/70">
+              <p className="mt-6 font-mono text-[10px] tracking-[0.2em] uppercase text-ivory-500">
                 7 jours offerts · sans carte bancaire
               </p>
             </div>
@@ -138,8 +138,8 @@ export default function Home() {
       </section>
 
       {/* Réassurance — une seule ligne, pas d’anneaux décoratifs */}
-      <section className="relative z-10 border-y border-signal-600/15 py-12 px-6">
-        <p className="max-w-3xl mx-auto text-center font-mono text-caption text-signal-300/75 leading-relaxed">
+      <section className="relative z-10 border-y border-white/10 py-12 px-6">
+        <p className="max-w-3xl mx-auto text-center font-mono text-caption text-ivory-500 leading-relaxed">
           Ouvertures qui comptent · Données en Europe · Jamais revendues · Sans
           engagement · Annulation en un clic.
         </p>
@@ -167,23 +167,23 @@ export default function Home() {
       />
 
       {/* ─── CHAPITRE 3 : TROIS RITUELS ─────────────────────────── */}
-      <section className="relative py-24 md:py-40 px-6 border-t border-signal-600/12">
+      <section className="relative py-24 md:py-40 px-6 border-t border-white/10">
         <div className="relative max-w-6xl mx-auto">
           <div className="text-center mb-16 md:mb-24">
-            <p className="protocol-caption text-signal-400/80 mb-8">
+            <p className="protocol-caption text-ivory-400 mb-8">
               Rituels
             </p>
-            <h2 className="font-serif text-display text-ivory-50 leading-[0.98] tracking-tight">
+            <h2 className="font-sans font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
               Trois façons{' '}
-              <span className="italic-editorial text-aurora-400">d’être guidé.</span>
+              <span className="italic-editorial font-light text-aurora-400">d’être guidé.</span>
             </h2>
-            <p className="mt-7 text-body-lg text-ivory-300/80 max-w-2xl mx-auto leading-[1.7]">
+            <p className="mt-7 text-body-lg text-ivory-400/90 max-w-2xl mx-auto leading-[1.7]">
               Pas trois apps, pas trois abonnements. Une seule expérience qui
               t'accompagne du matin au soir.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-px bg-signal-600/25">
+          <div className="grid md:grid-cols-3 gap-px bg-white/12">
             <RitualCard
               icon={<Sun className="w-5 h-5" />}
               title="Guidance du jour"
@@ -207,7 +207,7 @@ export default function Home() {
       </section>
 
       {/* ─── CHAPITRE 4 : ŒUVRE QUI TE RESSEMBLE ────────────────── */}
-      <section className="relative py-24 md:py-40 px-6 border-t border-signal-600/12 overflow-hidden">
+      <section className="relative py-24 md:py-40 px-6 border-t border-white/10 overflow-hidden">
         <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-14 md:gap-24 items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -216,21 +216,21 @@ export default function Home() {
             transition={{ duration: 0.9 }}
             className="order-2 md:order-1"
           >
-            <p className="protocol-caption text-signal-400/80 mb-6 md:mb-8">
+            <p className="protocol-caption text-ivory-400 mb-6 md:mb-8">
               Carte natale
             </p>
-            <h2 className="font-serif text-display text-ivory-50 mb-8 leading-[0.98] tracking-tight">
+            <h2 className="font-sans font-extralight text-display text-ivory-50 mb-8 leading-[0.96] tracking-[-0.03em]">
               Ton ciel
               <br />
-              <span className="italic-editorial text-aurora-400">figé puis animé.</span>
+              <span className="italic-editorial font-light text-aurora-400">figé puis animé.</span>
             </h2>
-            <p className="drop-cap-edit text-body-lg text-ivory-200/90 leading-[1.7] mb-8">
+            <p className="drop-cap-edit text-body-lg text-ivory-400/95 leading-[1.7] mb-8">
               On calcule ton thème natal au degré près à partir de ta date,
               ton heure et ton lieu de naissance. Tu vois tes douze signes,
               tes maisons, tes sept planètes — et les aspects qu'elles forment
               entre elles. Vivant, animé, partageable.
             </p>
-            <ul className="space-y-3 mb-10 text-body text-ivory-200">
+            <ul className="space-y-3 mb-10 text-body text-ivory-300">
               <FeatureLi>Calcul précis (Swiss Ephemeris-grade)</FeatureLi>
               <FeatureLi>Ascendant, planètes, maisons, aspects</FeatureLi>
               <FeatureLi>Œuvre générative à imprimer ou partager</FeatureLi>
@@ -259,26 +259,26 @@ export default function Home() {
       {/* ─── CHAPITRE 5 : PRICING ───────────────────────────────── */}
       <section
         id="pricing"
-        className="relative py-24 md:py-40 px-6 border-t border-signal-600/12"
+        className="relative py-24 md:py-40 px-6 border-t border-white/10"
       >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 md:mb-20">
-            <p className="protocol-caption text-signal-400/80 mb-8 md:mb-10">
+            <p className="protocol-caption text-ivory-400 mb-8 md:mb-10">
               Tarifs
             </p>
             <div className="mb-10 flex justify-center">
               <LiveCounter />
             </div>
-            <h2 className="font-serif text-display text-ivory-50 leading-[0.98] tracking-tight">
-              Choisis ce qui te <span className="italic-editorial text-aurora-400">ressemble.</span>
+            <h2 className="font-sans font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
+              Choisis ce qui te <span className="italic-editorial font-light text-aurora-400">ressemble.</span>
             </h2>
-            <p className="mt-7 text-body-lg text-ivory-300/80 max-w-xl mx-auto leading-[1.7]">
+            <p className="mt-7 text-body-lg text-ivory-400/90 max-w-xl mx-auto leading-[1.7]">
               Pas de pub, pas de revente de données, pas de paliers cachés.
               Tu paies une fois, tu profites de tout.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-px bg-signal-600/25 items-stretch">
+          <div className="grid md:grid-cols-3 gap-px bg-white/12 items-stretch">
             <PriceCard
               eyebrow="Mensuel"
               price="8,99 €"
@@ -336,13 +336,13 @@ export default function Home() {
       </section>
 
       {/* ─── FAQ ────────────────────────────────────────────────── */}
-      <section className="relative py-24 md:py-32 px-6 border-t border-signal-600/12">
+      <section className="relative py-24 md:py-32 px-6 border-t border-white/10">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14 md:mb-16">
-            <p className="protocol-caption text-signal-400/80 mb-8">
+            <p className="protocol-caption text-ivory-400 mb-8">
               Questions
             </p>
-            <h2 className="font-serif text-display text-ivory-50 leading-[0.98] tracking-tight">
+            <h2 className="font-sans font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
               Tu te demandes <span className="italic-editorial text-aurora-400">peut-être…</span>
             </h2>
           </div>
@@ -428,7 +428,7 @@ export default function Home() {
       </section>
 
       {/* ─── CHAPITRE 6 : CTA FINAL ─────────────────────────────── */}
-      <section className="relative py-24 md:py-40 px-6 text-center border-t border-signal-600/12">
+      <section className="relative py-24 md:py-40 px-6 text-center border-t border-white/10">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -436,13 +436,13 @@ export default function Home() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-3xl mx-auto"
         >
-          <p className="protocol-caption text-signal-400/85 mb-10">
+          <p className="protocol-caption text-ivory-400 mb-10">
             Prochain pas
           </p>
-          <h2 className="font-serif text-display-xl text-ivory-50 leading-[1.02] mb-10 md:mb-12 tracking-tight">
+          <h2 className="font-sans font-extralight text-display-xl text-ivory-50 leading-[1.02] mb-10 md:mb-12 tracking-[-0.03em]">
             Le ciel travaille en silence.
             <br />
-            <span className="italic-editorial text-aurora-400">
+            <span className="italic-editorial font-light text-aurora-400">
               Toi aussi, tu peux t’y mettre.
             </span>
           </h2>
@@ -459,7 +459,7 @@ export default function Home() {
           </p>
         </motion.div>
 
-        <footer className="mt-24 md:mt-32 text-center font-mono text-[11px] tracking-[0.12em] text-signal-500/65 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+        <footer className="mt-24 md:mt-32 text-center font-mono text-[11px] tracking-[0.12em] text-ivory-500 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
           <Logo size="sm" />
           <span className="text-ivory-400/80 normal-case tracking-normal font-sans text-micro">
             Zodiak · Le ciel t&apos;écrit.
@@ -482,7 +482,7 @@ interface ChapterProps {
 }
 function Chapter({ eyebrow, title, body }: ChapterProps) {
   return (
-    <section className="relative z-[1] py-20 md:py-28 px-6 border-t border-signal-600/12">
+    <section className="relative z-[1] py-20 md:py-28 px-6 border-t border-white/10">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -490,13 +490,13 @@ function Chapter({ eyebrow, title, body }: ChapterProps) {
         transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
         className="relative max-w-2xl mx-auto text-center"
       >
-        <p className="protocol-caption text-signal-400/85 mb-8 md:mb-10 max-w-xl mx-auto">
+        <p className="protocol-caption text-ivory-400 mb-8 md:mb-10 max-w-xl mx-auto">
           {eyebrow}
         </p>
-        <h2 className="font-serif text-display text-ivory-50 leading-[0.98] mb-10 tracking-tight">
+        <h2 className="font-sans font-extralight text-display text-ivory-50 leading-[0.96] mb-10 tracking-[-0.03em]">
           {title}
         </h2>
-        <p className="text-body-lg text-ivory-200/82 leading-relaxed">{body}</p>
+        <p className="text-body-lg text-ivory-400/90 leading-relaxed">{body}</p>
       </motion.div>
     </section>
   );
@@ -515,15 +515,15 @@ function RitualCard({ icon, title, kicker, text }: RitualCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.8 }}
-      className="relative bg-night-900/55 hover:bg-night-900/65 backdrop-blur-md border border-signal-600/22 group p-8 md:p-12 flex flex-col shadow-[inset_0_1px_0_rgba(170,133,88,0.08)] transition-colors duration-200 ease-brutal"
+      className="relative bg-white/[0.04] hover:bg-white/[0.06] backdrop-blur-md border border-white/12 group p-8 md:p-12 flex flex-col shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-colors duration-200 ease-brutal"
     >
-      <span className="protocol-caption text-signal-500/80 mb-3 normal-case tracking-[0.14em]">{kicker}</span>
-      <h3 className="font-serif text-h1 text-ivory-50 mb-5 leading-tight">
+      <span className="protocol-caption text-ivory-500 mb-3 normal-case tracking-[0.14em]">{kicker}</span>
+      <h3 className="font-sans font-light text-h1 text-ivory-50 mb-5 leading-tight">
         {title}
       </h3>
-      <p className="text-body text-ivory-200/85 leading-[1.7] flex-1">{text}</p>
-      <div className="mt-10 flex items-center gap-3 text-signal-400">
-        <span className="block h-px w-10 bg-signal-400/55 group-hover:w-16 transition-all duration-300 ease-brutal" />
+      <p className="text-body text-ivory-400/95 leading-[1.7] flex-1">{text}</p>
+      <div className="mt-10 flex items-center gap-3 text-aurora-400">
+        <span className="block h-px w-10 bg-aurora-400/55 group-hover:w-16 transition-all duration-300 ease-brutal" />
         <span className="opacity-80 group-hover:opacity-100 transition-opacity">
           {icon}
         </span>
@@ -537,7 +537,7 @@ function FeatureLi({ children }: { children: ReactNode }) {
     <li className="flex items-start gap-3">
       <span
         aria-hidden="true"
-        className="flex-shrink-0 mt-2.5 block h-px w-4 bg-signal-400/55"
+        className="flex-shrink-0 mt-2.5 block h-px w-4 bg-aurora-400/50"
       />
       <span>{children}</span>
     </li>
@@ -576,9 +576,9 @@ function PriceCard({
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.8 }}
       className={cn(
-        'relative h-full flex flex-col rounded-sm bg-night-900/45 backdrop-blur-md border border-signal-600/22',
-        'hover:bg-night-900/50 transition-colors duration-200 ease-brutal p-8 md:p-10',
-        highlighted && 'bg-night-900/30 border-signal-400/35 shadow-[inset_0_1px_0_rgba(170,133,88,0.12)]',
+        'relative h-full flex flex-col rounded-sm bg-white/[0.04] backdrop-blur-md border border-white/12',
+        'hover:bg-white/[0.06] transition-colors duration-200 ease-brutal p-8 md:p-10',
+        highlighted && 'bg-white/[0.07] border-aurora-400/35 shadow-[inset_0_1px_0_rgba(56,189,248,0.15)]',
       )}
     >
       {highlighted && (
@@ -589,22 +589,22 @@ function PriceCard({
       )}
 
       <div className="flex items-center justify-between mb-6">
-        <span className="protocol-caption text-signal-400/90">{eyebrow}</span>
+        <span className="protocol-caption text-ivory-400">{eyebrow}</span>
         {badge && (
-          <span className="font-mono text-[10px] uppercase tracking-[0.16em] px-2 py-1 rounded-sm border border-signal-500/40 text-signal-300">
+          <span className="font-mono text-[10px] uppercase tracking-[0.16em] px-2 py-1 rounded-sm border border-white/20 text-ivory-300">
             {badge}
           </span>
         )}
       </div>
 
       <div className="flex items-baseline gap-2 mb-2">
-        <span className="font-serif text-[clamp(3rem,5vw,4rem)] text-ivory-50 leading-none">
+        <span className="font-sans font-extralight text-[clamp(3rem,5vw,4rem)] text-ivory-50 leading-none">
           {price}
         </span>
         <span className="text-caption text-ivory-300/80">{priceSuffix}</span>
       </div>
       {perMonth && (
-        <p className="text-caption text-signal-300/90 mb-1">{perMonth}</p>
+        <p className="text-caption text-ivory-400 mb-1">{perMonth}</p>
       )}
       {hint && (
         <p className="text-caption text-ivory-300/70 italic-editorial mb-7">
@@ -612,12 +612,12 @@ function PriceCard({
         </p>
       )}
 
-      <ul className="space-y-3 text-body text-ivory-200/90 mb-10">
+      <ul className="space-y-3 text-body text-ivory-300/95 mb-10">
         {features.map((f) => (
           <li key={f} className="flex items-start gap-3">
             <span
               aria-hidden="true"
-              className="flex-shrink-0 mt-2.5 block h-px w-4 bg-signal-400/55"
+              className="flex-shrink-0 mt-2.5 block h-px w-4 bg-aurora-400/50"
             />
             <span>{f}</span>
           </li>

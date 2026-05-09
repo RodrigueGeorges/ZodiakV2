@@ -21,24 +21,24 @@ export const buttonVariants = cva(
   [
     'relative inline-flex items-center justify-center rounded-sm font-medium tracking-wide',
     'transition-colors duration-200 ease-brutal',
-    'focus:outline-none focus-visible:ring-1 focus-visible:ring-signal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
+    'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
     'disabled:opacity-40 disabled:cursor-not-allowed',
   ],
   {
     variants: {
       variant: {
         primary:
-          'bg-aurora-400 text-night-950 hover:bg-aurora-300 active:bg-aurora-500 font-semibold',
+          'bg-ivory-50 text-night-950 hover:bg-white active:bg-ivory-200 font-semibold tracking-tight',
         secondary:
-          'bg-ivory-50/[0.04] text-ivory-50 hover:bg-ivory-50/[0.08] border border-ivory-50/[0.10]',
+          'bg-white/[0.04] text-ivory-50 hover:bg-white/[0.07] border border-white/12',
         ghost:
-          'bg-transparent text-ivory-100 border border-ivory-50/[0.18] hover:border-signal-400/50 hover:text-signal-300',
+          'bg-transparent text-ivory-100 border border-white/15 hover:border-white/40 hover:text-ivory-50',
         danger:
           'bg-transparent text-magenta-400 border border-magenta-500/30 hover:bg-magenta-500/10 hover:border-magenta-500/50',
         text:
           'bg-transparent text-aurora-400 hover:text-aurora-300 underline-offset-4 hover:underline border-0',
         ritual:
-          'bg-ivory-50 text-night-950 hover:bg-ivory-100 active:bg-ivory-200 font-semibold',
+          'bg-ivory-50 text-night-950 hover:bg-white active:bg-ivory-200 font-semibold tracking-tight',
       },
       size: {
         sm: 'h-9  px-5 text-caption gap-1.5',

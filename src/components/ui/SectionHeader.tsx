@@ -3,15 +3,8 @@ import { motion } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
 /**
- * SectionHeader v4 — même langage que la landing (mono signal pour eyebrow).
- *   title   → Fraunces sculpté, ÉNORME, couleur ivoire crème
- *   subtitle → Fraunces italique en taupe doux
- *
- * Refonte :
- *   - Fini le text-gradient-aurora (couleur unie ivoire désormais)
- *   - Filets décoratifs encadrant l'eyebrow (signature éditoriale)
- *   - Titres beaucoup plus gros (echelle clamp + display-xl)
- *   - Sous-titre en italique éditorial doux
+ * SectionHeader — titrage type apps astro contemporaines :
+ * métadonnées mono, titre sans ultra-léger (Co–Star-esque), corps neutre.
  */
 interface SectionHeaderProps {
   eyebrow?: ReactNode;
@@ -56,22 +49,22 @@ export default function SectionHeader({
       {eyebrow && (
         <p
           className={cn(
-            'protocol-caption text-signal-400/85',
+            'protocol-caption text-ivory-400',
             align === 'center'
               ? 'flex items-center justify-center gap-4'
               : 'inline-flex items-center gap-4',
           )}
         >
-          <span aria-hidden="true" className="block h-px w-10 bg-signal-500/40" />
+          <span aria-hidden="true" className="block h-px w-10 bg-white/25" />
           <span>{eyebrow}</span>
-          <span aria-hidden="true" className="block h-px w-10 bg-signal-500/40" />
+          <span aria-hidden="true" className="block h-px w-10 bg-white/25" />
         </p>
       )}
 
       <h1
         className={cn(
-          'font-serif leading-[0.95]',
-          titlePlain ? 'text-ivory-50' : '',
+          'font-sans font-extralight leading-[0.98] tracking-tight',
+          titlePlain && 'text-ivory-50',
           sizeStyles[size],
         )}
       >
@@ -81,7 +74,7 @@ export default function SectionHeader({
       {subtitle && (
         <p
           className={cn(
-            'text-body-lg text-ivory-300/90 italic-editorial',
+            'text-body-lg text-ivory-400/95 font-light',
             align === 'center' ? 'mx-auto max-w-2xl' : '',
           )}
         >

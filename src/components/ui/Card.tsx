@@ -3,16 +3,7 @@ import { motion, HTMLMotionProps } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
 /**
- * Card — surface noire + filet « signal » (bronze / or discret).
- *
- * - `variant="surface"` (default) : fond night-900/40, bordure hairline or
- * - `variant="elevated"` : surface plus marquée (mantras, hero blocks)
- * - `variant="ghost"`    : transparent, juste une fine bordure
- * - `interactive`        : lift subtil au hover
- *
- * Refonte : suppression des gradients internes, des halos cumulés, des
- * "reflets aurora" en haut. On reste éditorial : juste du noir profond
- * + une bordure or à 8%. Le contenu fait le travail.
+ * Card — surface glass « brutal cosmos » : noir + hairline blanc + accent glace au besoin.
  */
 export interface CardProps extends Omit<HTMLMotionProps<'div'>, 'ref'> {
   variant?: 'surface' | 'elevated' | 'ghost';
@@ -24,11 +15,11 @@ export interface CardProps extends Omit<HTMLMotionProps<'div'>, 'ref'> {
 
 const variantStyles: Record<NonNullable<CardProps['variant']>, string> = {
   surface:
-    'bg-night-900/42 border border-signal-600/18 backdrop-blur-sm',
+    'bg-white/[0.04] border border-white/10 backdrop-blur-md',
   elevated:
-    'bg-night-900/55 border border-signal-500/28 backdrop-blur-md shadow-editorial shadow-[inset_0_1px_0_rgba(170,133,88,0.1),inset_0_-1px_0_rgba(7,9,13,0.45)]',
+    'bg-white/[0.06] border border-white/14 backdrop-blur-md shadow-editorial shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_-1px_0_rgba(0,0,0,0.5)]',
   ghost:
-    'bg-transparent border border-signal-600/15',
+    'bg-transparent border border-white/10',
 };
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
@@ -42,7 +33,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
         'relative rounded-sm overflow-hidden transition-colors duration-200 ease-brutal',
         variantStyles[variant],
         interactive &&
-          'cursor-pointer hover:border-signal-400/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-signal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
+          'cursor-pointer hover:border-aurora-400/35 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
         glow && 'shadow-glow-aurora',
         className,
       )}
@@ -74,7 +65,7 @@ export function CardBody({ className, children, ...rest }: CardSubProps) {
 export function CardFooter({ className, children, ...rest }: CardSubProps) {
   return (
     <div
-      className={cn('px-7 py-4 border-t border-signal-600/15', className)}
+      className={cn('px-7 py-4 border-t border-white/10', className)}
       {...rest}
     >
       {children}

@@ -1,7 +1,7 @@
 /**
- * Zodiak — design tokens (mai 2026)
- * Modèle actuel : vide noir (#000), accents or patiné (#aa8558) + bronze « signal »,
- * typographie Inter / Fraunces / JetBrains Mono. Magenta réservé aux rituels ponctuels.
+ * Zodiak — charte « brutal cosmos » (2026)
+ * Référence d’esprit : marketing Co–Star (noir, typo massive, mono pour le protocole,
+ * quasi pas de déco) + couche ciel atlas bleu (accent `aurora` = glace, pas or).
  */
 import forms from '@tailwindcss/forms';
 
@@ -28,41 +28,37 @@ export default {
           950: '#000000',
         },
 
-        // Chrome UI / filets — aligné or patiné (template StarParticleCursor)
+        // Filets & chrome — hairlines blancs (pas bronze)
         signal: {
-          200: '#e8dcc8',
-          300: '#c9ae8c',
-          400: '#aa8558',
-          500: '#8f6f47',
-          600: '#5a472e',
+          200: 'rgba(255,255,255,0.22)',
+          300: 'rgba(255,255,255,0.16)',
+          400: 'rgba(255,255,255,0.9)',
+          500: 'rgba(255,255,255,0.45)',
+          600: 'rgba(255,255,255,0.1)',
         },
 
-        // ─────── Papier crème (texte, surfaces claires) ───────
-        // Ivoire chaud calcaire. JAMAIS blanc pur (trop clinique).
+        // ─────── Texte & surfaces claires (neutre froid, type Co–Star) ───────
         ivory: {
-          50:  '#F4ECDB',
-          100: '#EFE5CD',
-          200: '#E4D8B8',
-          300: '#D4C49A',
-          400: '#A8987A',
-          500: '#7A6E55',
+          50:  '#fafafa',
+          100: '#f4f4f5',
+          200: '#e4e4e7',
+          300: '#d4d4d8',
+          400: '#a1a1aa',
+          500: '#71717a',
         },
 
-        // ─────── ACCENT UNIQUE — Or alchimique ───────
-        // Inspiré des dorures de manuscrits enluminés et des ors patinés.
-        // C'est LA couleur de signature. Utilisée partout où il faut un accent.
-        // (Ex-aurora violet → désormais or. Toutes les pages héritent.)
+        // ─────── Accent unique = glace / ciel (cohérent StarField bleu) ───────
         aurora: {
-          50:  '#FBF3DD',
-          100: '#F4E4B0',
-          200: '#EAD183',
-          300: '#DFBA62',
-          400: '#aa8558',
-          500: '#8f6f47',
-          600: '#6d4a33',
-          700: '#825D22',
-          800: '#5A4017',
-          900: '#3A290F',
+          50:  '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
         },
 
         // ─────── Magenta cosmique (RITUEL UNIQUEMENT) ───────
@@ -74,19 +70,16 @@ export default {
           600: '#9F4179',
         },
 
-        // ─────── Ocre désertique (chaleur secondaire) ───────
-        // Pour les moments solaires (lever, vitalité). Très ponctuel.
         amber: {
-          200: '#F0DBB1',
-          300: '#E5C285',
-          400: '#aa8558',
-          500: '#B8862F',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#f59e0b',
         },
 
-        // ─────── Aliases rétrocompat ───────
-        primary:   '#aa8558',
-        secondary: '#C9619B',  // magenta.500
-        accent:    '#aa8558',
+        primary:   '#38bdf8',
+        secondary: '#C9619B',
+        accent:    '#38bdf8',
         cosmic: {
           800: '#0f0d0c',
           900: '#080706',
@@ -170,11 +163,10 @@ export default {
       backgroundImage: {
         // Halos très très subtils — invisibles à l'œil mais présents en couche.
         // Plus de "aurora" multicolore néon. Juste de l'or qui respire.
-        'cosmic':       'radial-gradient(ellipse 85% 55% at 18% 8%, rgba(127,160,144,0.07), transparent 72%), radial-gradient(ellipse 70% 45% at 88% 92%, rgba(212,166,86,0.045), transparent 65%)',
-        'cosmic-dim':   'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(127,160,144,0.04), transparent 70%)',
-        // Rétrocompat (anciens noms qui sont encore utilisés ailleurs)
-        'aurora':       'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212,166,86,0.06), transparent 70%)',
-        'aurora-soft':  'linear-gradient(135deg, rgba(127,160,144,0.06), rgba(212,166,86,0.03))',
+        'cosmic':       'radial-gradient(ellipse 85% 55% at 18% 8%, rgba(56,189,248,0.08), transparent 72%), radial-gradient(ellipse 70% 45% at 88% 92%, rgba(14,165,233,0.05), transparent 65%)',
+        'cosmic-dim':   'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(56,189,248,0.05), transparent 70%)',
+        'aurora':       'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(56,189,248,0.07), transparent 70%)',
+        'aurora-soft':  'linear-gradient(135deg, rgba(56,189,248,0.08), rgba(14,165,233,0.04))',
         'gradient-text': 'none',
         // Texture grain papier (overlay subtil sur les surfaces)
         'grain': "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E\")",
@@ -182,7 +174,7 @@ export default {
 
       boxShadow: {
         // Plus de shadow-glow violent. Tout devient invisible ou hairline.
-        'glow-aurora':  '0 0 60px -20px rgba(212, 166, 86, 0.25)',
+        'glow-aurora':  '0 0 60px -20px rgba(56, 189, 248, 0.22)',
         'glow-magenta': '0 0 60px -20px rgba(201, 97, 155, 0.20)',
         'card':         'none',
         'card-hover':   '0 1px 0 rgba(244,236,219,0.04) inset',

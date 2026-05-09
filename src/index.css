@@ -1,6 +1,6 @@
 /*
- * Zodiak — index.css (bundle Vite · Fontsource)
- * Modèle DA : fond #000, or #aa8558, utilitaires légers (grain / vignette optionnels).
+ * Zodiak — index.css
+ * Charte « brutal cosmos » : noir, neutres froids, accent glace (#38bdf8).
  */
 
 @tailwind base;
@@ -12,18 +12,18 @@
  * ────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  --color-bg:     #000000;  /* Vide pur — DA « StarParticleCursor » (Framer template) */
-  --color-fg:     #f5efe3;  /* Ivoire très légèrement chaud */
-  --color-accent: #aa8558;  /* Or du template (couleur des traînées étoiles) */
-  --color-signal: rgba(170, 133, 88, 0.55); /* repères UI — même famille que l’or principal */
-  --color-mute:   #A8987A;  /* Taupe */
+  --color-bg:     #000000;
+  --color-fg:     #fafafa;
+  --color-accent: #38bdf8;
+  --color-signal: rgba(255, 255, 255, 0.45);
+  --color-mute:   #a1a1aa;
 
-  /* Jetons motion & focus (alignés tailwind `ease-ritual`, `duration-ritual-*`) */
+  /* Jetons motion & focus */
   --zodiak-ease-ritual: cubic-bezier(0.22, 1, 0.36, 1);
   --zodiak-duration-sm: 200ms;
   --zodiak-duration-md: 450ms;
   --zodiak-duration-lg: 700ms;
-  --zodiak-focus-ring: 1px solid rgba(170, 133, 88, 0.75);
+  --zodiak-focus-ring: 1px solid rgba(56, 189, 248, 0.75);
   --zodiak-focus-offset: 2px;
 }
 
@@ -42,8 +42,8 @@ body {
 
 /* Sélection texte */
 ::selection {
-  background: rgba(170, 133, 88, 0.28);
-  color: #f5efe3;
+  background: rgba(56, 189, 248, 0.22);
+  color: #fafafa;
 }
 
 a {
@@ -58,7 +58,7 @@ a {
     outline: none;
     box-shadow:
       0 0 0 var(--zodiak-focus-offset) #000000,
-      0 0 0 calc(var(--zodiak-focus-offset) + 1px) rgba(170, 133, 88, 0.65);
+      0 0 0 calc(var(--zodiak-focus-offset) + 1px) rgba(56, 189, 248, 0.55);
     border-radius: 2px;
   }
 }
@@ -99,54 +99,53 @@ a {
 
   /* Helpers pages (titres centrés, noms de classes hérités `.card-aurora`, etc.) */
   .page-title {
-    @apply font-serif text-display text-ivory-50 text-center;
-    letter-spacing: -0.02em;
+    @apply font-sans font-extralight text-display text-ivory-50 text-center tracking-tight;
+    letter-spacing: -0.03em;
   }
   .page-subtitle {
-    @apply font-serif italic text-body-lg text-ivory-200/80 text-center mt-3 mb-6;
+    @apply font-sans text-body-lg text-ivory-400/90 text-center mt-3 mb-6 font-light;
   }
 
   .card-aurora {
-    @apply rounded-sm border border-signal-600/18 bg-night-900/40 backdrop-blur-sm transition-colors duration-200 ease-brutal;
+    @apply rounded-sm border border-white/10 bg-white/[0.04] backdrop-blur-md transition-colors duration-200 ease-brutal;
   }
   .card-aurora:hover {
-    @apply border-signal-400/35;
+    @apply border-white/18 bg-white/[0.06];
   }
 
   .btn-aurora {
-    @apply inline-flex items-center justify-center gap-2 px-7 py-3 rounded-sm font-medium tracking-wide;
-    @apply bg-aurora-400 text-night-950 hover:bg-aurora-300 transition-colors duration-200 ease-brutal;
-    @apply focus:outline-none focus-visible:ring-1 focus-visible:ring-signal-300 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950;
+    @apply inline-flex items-center justify-center gap-2 px-7 py-3 rounded-sm font-medium tracking-tight;
+    @apply bg-ivory-50 text-night-950 hover:bg-white transition-colors duration-200 ease-brutal;
+    @apply focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950;
   }
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-sm transition-colors duration-200 ease-brutal;
-    @apply border border-ivory-50/15 text-ivory-100 hover:border-signal-400/45 hover:text-signal-300;
+    @apply border border-white/15 text-ivory-100 hover:border-white/35 hover:text-ivory-50;
   }
 
   .input-cosmic {
-    @apply appearance-none w-full rounded-sm bg-night-900/60 border border-signal-600/20 px-4 py-3 text-ivory-100 placeholder-ivory-400/60;
-    @apply focus:outline-none focus:border-signal-400/55 focus:ring-0 transition-colors duration-200 ease-brutal;
+    @apply appearance-none w-full rounded-sm bg-white/[0.04] border border-white/12 px-4 py-3 text-ivory-50 placeholder-ivory-500/70;
+    @apply focus:outline-none focus:border-aurora-400/50 focus:ring-0 transition-colors duration-200 ease-brutal;
   }
 
   /* ─────── Nouveautés éditoriales ─────── */
 
   /* Filet décoratif horizontal (signature éditoriale) */
   .editorial-rule {
-    @apply relative inline-block w-12 h-px bg-aurora-400/60;
+    @apply relative inline-block w-12 h-px bg-white/35;
   }
   .editorial-rule-long {
-    @apply relative inline-block w-24 h-px bg-aurora-400/40;
+    @apply relative inline-block w-24 h-px bg-white/22;
   }
 
-  /* Eyebrow rituel : Cinzel small caps avec letter-spacing fort */
+  /* Protocole : mono capitales (esprit editorial apps astro modernes) */
   .eyebrow-ritual {
-    @apply font-cinzel text-micro uppercase text-aurora-400/90;
-    letter-spacing: 0.32em;
+    @apply font-mono text-micro uppercase text-ivory-400 tracking-[0.28em];
   }
 
   /* Métadonnées / labels protocole */
   .protocol-caption {
-    @apply font-mono text-[11px] uppercase tracking-[0.22em] text-[#aa8558]/85;
+    @apply font-mono text-[11px] uppercase tracking-[0.22em] text-ivory-400;
   }
 
   /* Grain + vignette discrète pour immersion sans saturer l’œil */
@@ -156,8 +155,8 @@ a {
     inset: 0;
     z-index: 0;
     background:
-      radial-gradient(ellipse 125% 100% at 50% 50%, transparent 42%, rgba(0, 0, 0, 0.75) 100%),
-      radial-gradient(circle at 50% 0%, rgba(170, 133, 88, 0.05), transparent 52%);
+      radial-gradient(ellipse 125% 100% at 50% 50%, transparent 42%, rgba(0, 0, 0, 0.78) 100%),
+      radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.045), transparent 52%);
     mix-blend-mode: normal;
   }
   .da-grain {
@@ -188,7 +187,7 @@ a {
     width: 6px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(170, 133, 88, 0.35);
+    background: rgba(56, 189, 248, 0.32);
     border-radius: 999px;
   }
   .scrollbar-thin::-webkit-scrollbar-track {
@@ -200,37 +199,42 @@ a {
  * Utilitaires non triviaux
  * ────────────────────────────────────────────────────────────────────────── */
 
-/* Titre accent : or unie (sans gradient arc-en-ciel). */
+/* Titre accent uni (glace). */
 .text-gradient-aurora {
   background: none;
   -webkit-background-clip: initial;
   background-clip: initial;
-  color: #aa8558;
-  -webkit-text-fill-color: #aa8558;
+  color: #38bdf8;
+  -webkit-text-fill-color: #38bdf8;
 }
 
-/* Variante : gradient or → ivoire (pour les hero qui veulent un peu d'éclat) */
+/* Gradient glace pour hero ponctuel */
 .text-gradient-gold {
-  background: linear-gradient(180deg, #f4ecdb 0%, #aa8558 100%);
+  background: linear-gradient(180deg, #fafafa 0%, #38bdf8 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
 }
 
-/* Lettrine éditoriale (Fraunces or) */
+/* Accent éditorial = sans léger italique (lisible, type apps modernes) */
+.italic-editorial {
+  font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
+  font-style: italic;
+  font-feature-settings: 'kern', 'liga', 'salt';
+}
+
+/* Lettrine — accent glace */
 .drop-cap-edit::first-letter {
   float: left;
-  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
   font-size: 3.25rem;
   line-height: 0.82;
   padding-right: 0.45rem;
   padding-top: 0.12rem;
-  font-weight: 500;
+  font-weight: 200;
   font-style: italic;
-  color: #aa8558;
-  font-feature-settings: 'kern', 'liga', 'salt';
-  font-variation-settings: 'opsz' 144, 'SOFT' 100;
+  color: #38bdf8;
 }
 
 @media (max-width: 640px) {
@@ -250,18 +254,10 @@ a {
   }
 }
 
-/* Italique éditorial (Fraunces optimisé pour l'italique) */
-.italic-editorial {
-  font-family: 'Fraunces Variable', 'Fraunces', 'Cormorant Garamond', Georgia, serif;
-  font-style: italic;
-  font-feature-settings: 'kern', 'liga', 'salt';
-  font-variation-settings: 'opsz' 144, 'SOFT' 100;
-}
-
 .safe-top    { padding-top:    env(safe-area-inset-top);    }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
-/* Scrollbar discrète globale (or au lieu de violet) */
+/* Scrollbar discrète globale */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -270,11 +266,11 @@ a {
   background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(170, 133, 88, 0.38);
+  background: rgba(56, 189, 248, 0.35);
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(170, 133, 88, 0.58);
+  background: rgba(56, 189, 248, 0.55);
 }
 
 @media print {

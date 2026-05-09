@@ -48,7 +48,7 @@ export default function FAQ({ items, className }: FAQProps) {
                   'flex-shrink-0 mt-2 w-8 h-8 rounded-md border flex items-center justify-center transition-all duration-200 ease-brutal',
                   open
                     ? 'border-aurora-400/60 rotate-45'
-                    : 'border-signal-600/20 group-hover:border-signal-400/45',
+                    : 'border-white/15 group-hover:border-white/35',
                 )}
               >
                 <Plus
