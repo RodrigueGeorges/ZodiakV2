@@ -547,7 +547,7 @@ export default function Home() {
                 ),
               },
               {
-                q: 'L'astrologie, c'est sérieux ?',
+                q: "L'astrologie, c'est sérieux ?",
                 a: (
                   <>
                     On ne prétend pas prédire ton avenir. Zodiak est un
