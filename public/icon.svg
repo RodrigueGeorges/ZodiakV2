@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
-  <rect width="512" height="512" rx="112" fill="#07090D"/>
-  <circle cx="256" cy="256" r="232" stroke="#12161E" stroke-width="3"/>
+  <rect width="512" height="512" rx="112" fill="#000000"/>
+  <circle cx="256" cy="256" r="232" stroke="#1A1714" stroke-width="3"/>
   <circle
     cx="256"
     cy="256"
     r="132"
     fill="none"
-    stroke="#7FA090"
+    stroke="#C9AE8C"
     stroke-opacity="0.24"
     stroke-width="2.5"
   />
@@ -21,26 +21,26 @@
     stroke-dasharray="650 907"
     transform="rotate(-42 256 256)"
   />
-  <line x1="256" y1="64" x2="256" y2="104" stroke="#7FA090" stroke-width="11" stroke-linecap="round" stroke-opacity="0.55"/>
-  <line x1="256" y1="408" x2="256" y2="448" stroke="#7FA090" stroke-width="11" stroke-linecap="round" stroke-opacity="0.55"/>
-  <line x1="64" y1="256" x2="104" y2="256" stroke="#7FA090" stroke-width="11" stroke-linecap="round" stroke-opacity="0.55"/>
-  <line x1="448" y1="256" x2="408" y2="256" stroke="#7FA090" stroke-width="11" stroke-linecap="round" stroke-opacity="0.55"/>
+  <line x1="256" y1="64" x2="256" y2="104" stroke="#C9AE8C" stroke-width="11" stroke-linecap="round" stroke-opacity="0.5"/>
+  <line x1="256" y1="408" x2="256" y2="448" stroke="#C9AE8C" stroke-width="11" stroke-linecap="round" stroke-opacity="0.5"/>
+  <line x1="64" y1="256" x2="104" y2="256" stroke="#C9AE8C" stroke-width="11" stroke-linecap="round" stroke-opacity="0.5"/>
+  <line x1="448" y1="256" x2="408" y2="256" stroke="#C9AE8C" stroke-width="11" stroke-linecap="round" stroke-opacity="0.5"/>
   <circle cx="256" cy="256" r="48" fill="none" stroke="url(#zkic2)" stroke-width="5" stroke-opacity="0.32"/>
   <circle cx="256" cy="256" r="26" fill="url(#zkic3)"/>
   <circle cx="256" cy="256" r="9" fill="#F4ECDB"/>
   <defs>
     <linearGradient id="zkic" x1="88" y1="88" x2="424" y2="424" gradientUnits="userSpaceOnUse">
       <stop stop-color="#F4ECDB"/>
-      <stop offset="1" stop-color="#D4A656"/>
+      <stop offset="1" stop-color="#AA8558"/>
     </linearGradient>
     <linearGradient id="zkic2" x1="208" y1="208" x2="304" y2="304" gradientUnits="userSpaceOnUse">
       <stop stop-color="#DFBA62" stop-opacity="0.45"/>
-      <stop offset="1" stop-color="#7FA090" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#8F6F47" stop-opacity="0.35"/>
     </linearGradient>
     <radialGradient id="zkic3" cx="45%" cy="38%" r="65%">
       <stop stop-color="#FBF3DD"/>
-      <stop offset="0.65" stop-color="#D4A656"/>
-      <stop offset="1" stop-color="#7FA090" stop-opacity="0.45"/>
+      <stop offset="0.65" stop-color="#AA8558"/>
+      <stop offset="1" stop-color="#5A472E" stop-opacity="0.42"/>
     </radialGradient>
   </defs>
 </svg>

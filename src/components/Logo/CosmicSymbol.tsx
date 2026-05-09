@@ -1,9 +1,8 @@
 import { motion, useReducedMotion } from 'framer-motion';
 
 /**
- * Glyphe Logo v4 — « Oracle instrument » : arc d’orbite incomplet + repères cardinaux
- * + foyer doré minimal. Palette alignée DA : void / signal / or alchimique.
- * Jamais de néon magenta sur le marqueur — réserve magenta aux rituels in-app uniquement.
+ * Glyphe marque : orbite tronquée + cardinaux discrets + foyer or (#aa8558).
+ * Magenta réservé aux rituels in-app.
  */
 interface CosmicSymbolProps {
   size?: 'sm' | 'md' | 'lg';
@@ -46,17 +45,17 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
       <defs>
         <linearGradient id="zk-mark-gold" x1="14" y1="14" x2="50" y2="52" gradientUnits="userSpaceOnUse">
           <stop offset="0%" stopColor="#F4ECDB" stopOpacity={0.95} />
-          <stop offset="100%" stopColor="#D4A656" />
+          <stop offset="100%" stopColor="#aa8558" />
         </linearGradient>
         <radialGradient id="zk-mark-core" cx="50%" cy="45%" r="55%">
           <stop offset="0%" stopColor="#FBF3DD" stopOpacity={1} />
           <stop offset="55%" stopColor="#DFBA62" />
-          <stop offset="100%" stopColor="#7FA090" stopOpacity={0.45} />
+          <stop offset="100%" stopColor="#8f6f47" stopOpacity={0.4} />
         </radialGradient>
       </defs>
 
-      {/* Foyer diffus très bas (profondeur, pas glow cheap) */}
-      <circle cx="32" cy="32" r="29" fill="rgba(127,160,144,0.04)" />
+      {/* Foyer diffus très bas */}
+      <circle cx="32" cy="32" r="29" fill="rgba(143, 111, 71, 0.06)" />
 
       {/* Orbite : arc incomplet */}
       {runMotion ? (
@@ -110,8 +109,8 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
         cy="32"
         r="16.5"
         fill="none"
-        stroke="#7FA090"
-        strokeOpacity={0.22}
+        stroke="#c9ae8c"
+        strokeOpacity={0.24}
         strokeWidth="0.5"
       />
 
@@ -128,8 +127,8 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
           y1={y1}
           x2={x2}
           y2={y2}
-          stroke="#7FA090"
-          strokeOpacity={0.55}
+          stroke="#c9ae8c"
+          strokeOpacity={0.52}
           strokeWidth="1.1"
           strokeLinecap="round"
           initial={composeOnLoad ? { opacity: 0 } : { opacity: 1 }}
@@ -188,7 +187,7 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
         cx="50"
         cy="15"
         r="0.9"
-        fill="#9BB8AA"
+        fill="#aa8558"
         fillOpacity={0.85}
         initial={composeOnLoad ? { opacity: 0 } : { opacity: 0.85 }}
         animate={

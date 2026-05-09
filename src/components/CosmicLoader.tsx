@@ -2,9 +2,7 @@ import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
 
 /**
- * CosmicLoader v2 — un point lumineux aurora qui respire au centre de 3 anneaux
- * concentriques. Plus de bleu cyan, plus de "petites étoiles filantes". Sobre,
- * éditorial, conforme à la nouvelle DA.
+ * CosmicLoader — anneaux concentriques or / ivoire (chargement).
  */
 interface CosmicLoaderProps {
   size?: 'sm' | 'md' | 'lg';
@@ -31,10 +29,10 @@ export default function CosmicLoader({
       className={cn('flex flex-col items-center justify-center gap-5', className)}
     >
       <div className={cn('relative', sizeMap[size])}>
-        {/* Halo aurora pulsé en fond */}
+        {/* Halo doux en fond */}
         <motion.div
           aria-hidden="true"
-          className="absolute inset-0 rounded-full bg-aurora-500/30 blur-2xl"
+          className="absolute inset-0 rounded-full bg-aurora-400/25 blur-2xl"
           animate={{ opacity: [0.4, 0.8, 0.4], scale: [0.95, 1.1, 0.95] }}
           transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }}
         />
@@ -48,9 +46,9 @@ export default function CosmicLoader({
         >
           <defs>
             <linearGradient id="auroraOuter" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#AB7AFF" stopOpacity="0" />
-              <stop offset="50%" stopColor="#AB7AFF" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#F472B6" stopOpacity="0" />
+              <stop offset="0%" stopColor="#fbf3dd" stopOpacity="0" />
+              <stop offset="50%" stopColor="#aa8558" stopOpacity="0.85" />
+              <stop offset="100%" stopColor="#5a472e" stopOpacity="0" />
             </linearGradient>
           </defs>
           <circle
@@ -74,9 +72,9 @@ export default function CosmicLoader({
         >
           <defs>
             <linearGradient id="auroraInner" x1="100%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#F472B6" stopOpacity="0" />
-              <stop offset="50%" stopColor="#F5B638" stopOpacity="0.7" />
-              <stop offset="100%" stopColor="#AB7AFF" stopOpacity="0" />
+              <stop offset="0%" stopColor="#aa8558" stopOpacity="0" />
+              <stop offset="50%" stopColor="#ead183" stopOpacity="0.65" />
+              <stop offset="100%" stopColor="#fbf3dd" stopOpacity="0" />
             </linearGradient>
           </defs>
           <circle

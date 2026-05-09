@@ -3,16 +3,10 @@ import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
 
 /**
- * ZodiacWheel — roue zodiacale "Cosmic Editorial".
- *
- * Refonte v2 :
- *   - SVG vectoriel propre, viewBox carré, responsive 100%.
- *   - Anneaux aurora (gradient violet → magenta) au lieu du gold criard.
- *   - Glyphes des signes en ivoire, planètes en aurora avec halo.
- *   - Tooltip natif au survol d'une planète (nom + signe + degré).
- *   - Animations entrantes par stagger (signes puis planètes).
- *   - Accessible : `role="img"` + `aria-label`.
+ * ZodiacWheel — roue du thème natal (anneaux or / bronze sur vide noir).
+ * SVG responsive, glyphes ivoire, tooltips planètes, animations d’entrée.
  */
+
 interface Planet {
   name: string;
   sign?: string;
@@ -97,18 +91,18 @@ export default function ZodiacWheel({
       >
         <defs>
           <linearGradient id="zw-ring" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#AB7AFF" />
-            <stop offset="50%" stopColor="#F472B6" />
-            <stop offset="100%" stopColor="#F5B638" />
+            <stop offset="0%" stopColor="#fbf3dd" />
+            <stop offset="50%" stopColor="#aa8558" />
+            <stop offset="100%" stopColor="#5a472e" />
           </linearGradient>
           <radialGradient id="zw-planet" cx="50%" cy="50%" r="60%">
-            <stop offset="0%" stopColor="#FAF7F2" />
-            <stop offset="55%" stopColor="#C9A6FF" />
-            <stop offset="100%" stopColor="#6F33F0" />
+            <stop offset="0%" stopColor="#f4ecdb" />
+            <stop offset="55%" stopColor="#c9ae8c" />
+            <stop offset="100%" stopColor="#3d3832" />
           </radialGradient>
           <radialGradient id="zw-hub" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#1F1F38" />
-            <stop offset="100%" stopColor="#0B0B1A" />
+            <stop offset="0%" stopColor="#1a1714" />
+            <stop offset="100%" stopColor="#000000" />
           </radialGradient>
           <filter id="zw-glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="1.6" />
@@ -153,8 +147,8 @@ export default function ZodiacWheel({
                 y1={inner.y}
                 x2={outer.x}
                 y2={outer.y}
-                stroke="#C9A6FF"
-                strokeOpacity="0.25"
+                stroke="#aa8558"
+                strokeOpacity="0.22"
                 strokeWidth="0.75"
               />
               <text
@@ -163,7 +157,7 @@ export default function ZodiacWheel({
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fontSize="16"
-                fill="#FAF7F2"
+                fill="#f4ecdb"
                 opacity="0.85"
               >
                 {sign.symbol}
@@ -236,7 +230,7 @@ export default function ZodiacWheel({
                 dominantBaseline="middle"
                 fontSize="11"
                 fontWeight="600"
-                fill="#0B0B1A"
+                fill="#080706"
               >
                 {PLANET_GLYPH[planet.name] || '✦'}
               </text>
@@ -272,7 +266,7 @@ export default function ZodiacWheel({
                     dominantBaseline="middle"
                     fontSize="10"
                     fontFamily="Cinzel, serif"
-                    fill="#F472B6"
+                    fill="#c9619b"
                     letterSpacing="0.1em"
                   >
                     ASC
@@ -290,7 +284,7 @@ export default function ZodiacWheel({
           textAnchor="middle"
           dominantBaseline="middle"
           fontSize="22"
-          fill="#C9A6FF"
+          fill="#aa8558"
           opacity="0.9"
         >
           ✦

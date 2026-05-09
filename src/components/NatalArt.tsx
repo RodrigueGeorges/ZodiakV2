@@ -10,7 +10,7 @@ import { cn } from '../lib/utils';
  * planétaires (sans schéma astro identifiable), qui devient une signature
  * visuelle propre à l'utilisateur. Imprimable, partageable, mémorable.
  *
- * Inspiration : Refik Anadol, Rosa Menkman, generative art aurora.
+ * Inspiration : mandala génératif sobre (or sur charbon, pas néon).
  *
  * Pas de Three.js — Canvas 2D pur, ~3kB de logique, beau partout.
  *
@@ -43,10 +43,10 @@ interface NatalArtProps {
 }
 
 const PALETTES = [
-  ['#8E55FF', '#E84A93', '#F5B638', '#C9A6FF', '#FAF7F2'],
-  ['#7B3FE4', '#FF77B0', '#FFC56B', '#A8E6CF', '#E9D8FD'],
-  ['#5B9CFF', '#A78BFA', '#F472B6', '#F59E0B', '#FAF7F2'],
-  ['#A78BFA', '#FB7185', '#FDE68A', '#67E8F9', '#FAF7F2'],
+  ['#aa8558', '#c9619b', '#ead183', '#e8dcc8', '#f4ecdb'],
+  ['#8f6f47', '#dfba62', '#fbf3dd', '#5a472e', '#1a1714'],
+  ['#c9ae8c', '#aa8558', '#e48bb7', '#d4bc88', '#f4ecdb'],
+  ['#5a472e', '#aa8558', '#f4e4b0', '#a89e90', '#080706'],
 ];
 
 function extractLongs(chart: NatalArtChart): number[] {

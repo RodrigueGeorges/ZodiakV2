@@ -22,6 +22,8 @@ import LoadingScreen from './components/LoadingScreen';
 import { identify, trackPageView } from './lib/analytics';
 import './index.css';
 
+const StarParticleCursor = lazy(() => import('./components/effects/StarParticleCursor'));
+
 const Guidance = lazy(() => import('./pages/Guidance'));
 const Natal = lazy(() => import('./pages/Natal'));
 const Profile = lazy(() => import('./pages/Profile'));
@@ -156,8 +158,13 @@ function App() {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <StarParticleCursor showCursor />
+      </Suspense>
       {user && <TopNavBar />}
-      <AnimatedRoutes />
+      <div className="relative z-[20] isolate min-h-[100dvh]">
+        <AnimatedRoutes />
+      </div>
       {user && <BottomNavBar />}
       {user && <PWAInstallPrompt />}
     </>

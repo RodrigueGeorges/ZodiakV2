@@ -9,8 +9,10 @@ interface StarFieldProps {
   nebula?: boolean;
   /** Bande très diffuse type Voie lactée (landing premium). */
   milkyWay?: boolean;
-  /** Constellations abstraites (traits discrets entre repères fictifs). */
+  /** Constellations stylisées (12 motifs type zodiaque, traits discrets). */
   constellations?: boolean;
+  /** Silhouette de montagnes au premier plan bas. */
+  mountains?: boolean;
   /** Étoiles filantes sporadiques (~1 / 6–10 s hors reduced-motion). */
   shootingStars?: boolean;
   className?: string;
@@ -24,35 +26,33 @@ interface Star {
   baseAlpha: number;
   twinkleFreq: number;
   twinklePhase: number;
-  hue: 'white' | 'gold' | 'lavender';
+  hue: 'white' | 'gold' | 'frost';
 }
 
 const LAYER_PARALLAX = [0.04, 0.12, 0.24] as const;
 
-/** Polylines en coordonnées normalisées (0–1) — motifs épurés façon carte ancienne. */
-const CONSTELLATIONS: readonly (readonly [number, number])[][] = [
+/**
+ * 12 constellations « signes » : polylines en coords normalisées (0–1).
+ * Dessin abstrait (pas carte astronomique) — évite surcharge visuelle tout en donnant la lecture « zodiac ».
+ */
+const ZODIAC_CONSTELLATIONS: readonly (readonly [number, number])[][] = [
   [
-    [0.08, 0.12],
-    [0.095, 0.17],
-    [0.132, 0.22],
-    [0.172, 0.28],
-    [0.21, 0.34],
+    [0.05, 0.09],
+    [0.082, 0.14],
+    [0.12, 0.11],
+    [0.1, 0.06],
   ],
-  [
-    [0.74, 0.38],
-    [0.8, 0.37],
-    [0.852, 0.355],
-    [0.9, 0.37],
-    [0.94, 0.395],
-  ],
-  [
-    [0.42, 0.58],
-    [0.458, 0.64],
-    [0.5, 0.68],
-    [0.55, 0.71],
-    [0.6, 0.705],
-    [0.65, 0.68],
-  ],
+  [[0.88, 0.06], [0.93, 0.11], [0.9, 0.17], [0.85, 0.14]],
+  [[0.55, 0.04], [0.6, 0.09], [0.58, 0.14], [0.52, 0.12]],
+  [[0.2, 0.28], [0.26, 0.32], [0.31, 0.27], [0.25, 0.22]],
+  [[0.72, 0.22], [0.78, 0.26], [0.84, 0.22], [0.8, 0.17]],
+  [[0.4, 0.2], [0.45, 0.24], [0.5, 0.2], [0.46, 0.15]],
+  [[0.1, 0.42], [0.14, 0.48], [0.09, 0.52], [0.06, 0.46]],
+  [[0.9, 0.42], [0.95, 0.48], [0.93, 0.55], [0.86, 0.5]],
+  [[0.5, 0.32], [0.54, 0.38], [0.52, 0.44], [0.47, 0.4]],
+  [[0.3, 0.58], [0.38, 0.62], [0.45, 0.58], [0.4, 0.52]],
+  [[0.6, 0.58], [0.67, 0.64], [0.73, 0.6], [0.68, 0.54]],
+  [[0.18, 0.72], [0.26, 0.78], [0.34, 0.74], [0.27, 0.68]],
 ];
 
 interface ShootingStarState {
@@ -67,12 +67,8 @@ interface ShootingStarState {
 /**
  * StarField — champ d'étoiles vivant, canvas 2D.
  *
- * Inspiration : CHANI app, Stellarium Web, Sky Tonight. Pas un simple SVG
- * statique : chaque étoile a sa propre fréquence de scintillement, sa
- * magnitude, sa teinte (blanc / or / lavande). 3 couches de parallaxe.
- *
- * Performance : ~250 étoiles, ~60 fps, throttled en arrière-plan. Options
- * `milkyWay`, `constellations`, `shootingStars` pour la landing premium.
+ * Inspiration : ciel atlas + constellations « signes » (stylisation Zodiak).
+ * Options `milkyWay`, `mountains`, `constellations` — rendu volontairement sobre (carte d’art).
  */
 export default function StarField({
   density = 1,
@@ -80,6 +76,7 @@ export default function StarField({
   nebula = true,
   milkyWay = false,
   constellations = false,
+  mountains = false,
   shootingStars = false,
   className,
 }: StarFieldProps) {
@@ -126,7 +123,7 @@ export default function StarField({
         // Teintes : 75% blanc crème, 18% or pâle, 7% lavande
         const tintR = Math.random();
         const hue: Star['hue'] =
-          tintR < 0.75 ? 'white' : tintR < 0.93 ? 'gold' : 'lavender';
+          tintR < 0.88 ? 'white' : tintR < 0.97 ? 'gold' : 'frost';
         stars.push({
           x: Math.random(),
           y: Math.random() * 2, // 0-2 pour couvrir le scroll
@@ -160,8 +157,8 @@ export default function StarField({
       switch (s.hue) {
         case 'gold':
           return `rgba(200, 190, 155, ${alpha})`;
-        case 'lavender':
-          return `rgba(175, 185, 205, ${alpha})`;
+        case 'frost':
+          return `rgba(198, 208, 225, ${alpha})`;
         default:
           return `rgba(244, 236, 219, ${alpha})`;
       }
@@ -183,10 +180,11 @@ export default function StarField({
       ctx.fill();
 
       // Halo subtil pour les étoiles brillantes (layer 2)
+      // Halo discret — réduit pour éviter effet « néon » sur fond chargé
       if (s.layer === 2 && alpha > 0.55) {
         const haloGrad = ctx.createRadialGradient(
           px, wrappedY, 0,
-          px, wrappedY, s.radius * 5,
+          px, wrappedY, s.radius * 3.2,
         );
         haloGrad.addColorStop(0, colorFor(s, alpha * 0.4));
         haloGrad.addColorStop(1, colorFor(s, 0));
@@ -197,26 +195,27 @@ export default function StarField({
       }
     };
 
-    /** Dessine la nébuleuse de fond (signal froid + hint or, sans magenta). */
+    /** Voute nocturne — très basse courbe, pas de saturé « démo UI ». */
     const drawNebula = () => {
       if (!nebula) return;
       const { w, h } = sizeRef.current;
 
       const g1 = ctx.createRadialGradient(
-        w * 0.22, h * 0.18, 0,
-        w * 0.22, h * 0.18, Math.max(w, h) * 0.72,
+        w * 0.5, -h * 0.06, 0,
+        w * 0.5, h * 0.32, Math.max(w, h) * 0.88,
       );
-      g1.addColorStop(0, 'rgba(127, 160, 144, 0.065)');
-      g1.addColorStop(1, 'rgba(127, 160, 144, 0)');
+      g1.addColorStop(0, 'rgba(32, 36, 44, 0.09)');
+      g1.addColorStop(0.5, 'rgba(18, 18, 22, 0.04)');
+      g1.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = g1;
       ctx.fillRect(0, 0, w, h);
 
       const g2 = ctx.createRadialGradient(
-        w * 0.82, h * 0.88, 0,
-        w * 0.82, h * 0.88, Math.max(w, h) * 0.55,
+        w * 0.72, h * 0.98, 0,
+        w * 0.72, h * 0.98, Math.max(w, h) * 0.55,
       );
-      g2.addColorStop(0, 'rgba(212, 166, 86, 0.028)');
-      g2.addColorStop(1, 'rgba(212, 166, 86, 0)');
+      g2.addColorStop(0, 'rgba(90, 71, 46, 0.045)');
+      g2.addColorStop(1, 'rgba(90, 71, 46, 0)');
       ctx.fillStyle = g2;
       ctx.fillRect(0, 0, w, h);
     };
@@ -225,34 +224,34 @@ export default function StarField({
       if (!milkyWay) return;
       const { w, h } = sizeRef.current;
       ctx.save();
-      ctx.translate(w * 0.52, h * 0.45);
-      ctx.rotate(-0.38 * Math.PI);
-      const gx = ctx.createRadialGradient(0, 0, 0, 0, 0, Math.max(w, h) * 0.95);
-      gx.addColorStop(0, 'rgba(238, 234, 255, 0.14)');
-      gx.addColorStop(0.35, 'rgba(200, 195, 230, 0.06)');
-      gx.addColorStop(0.7, 'rgba(60, 50, 90, 0.02)');
-      gx.addColorStop(1, 'rgba(10, 8, 20, 0)');
+      ctx.translate(w * 0.48, h * 0.38);
+      ctx.rotate(-0.42 * Math.PI);
+      const gx = ctx.createRadialGradient(0, 0, 0, 0, 0, Math.max(w, h) * 0.92);
+      gx.addColorStop(0, 'rgba(226, 228, 236, 0.045)');
+      gx.addColorStop(0.35, 'rgba(110, 118, 140, 0.028)');
+      gx.addColorStop(0.65, 'rgba(48, 52, 64, 0.014)');
+      gx.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = gx;
-      ctx.globalAlpha = 0.85;
+      ctx.globalAlpha = 0.52;
       const rw = Math.max(w, h) * 1.85;
-      const rh = Math.max(w, h) * 0.22;
+      const rh = Math.max(w, h) * 0.17;
       ctx.beginPath();
       ctx.ellipse(0, 0, rw, rh, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     };
 
-    /** Traits entre étoiles “imaginaires”, derrière les points lumineux. */
+    /** Filets constellation : cheveux d’ange, pas de blend « arcade ». */
     const drawConstellationLines = (scrollOffset: number) => {
       if (!constellations) return;
       const { w, h } = sizeRef.current;
-      ctx.strokeStyle = 'rgba(212, 166, 86, 0.12)';
-      ctx.lineWidth = Math.max(0.45, (dprRef.current || 1) * 0.35);
+      ctx.strokeStyle = 'rgba(210, 204, 192, 0.038)';
+      ctx.lineWidth = Math.max(0.35, (dprRef.current || 1) * 0.28);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.globalCompositeOperation = 'screen';
+      ctx.globalCompositeOperation = 'source-over';
 
-      for (const poly of CONSTELLATIONS) {
+      for (const poly of ZODIAC_CONSTELLATIONS) {
         ctx.beginPath();
         for (let i = 0; i < poly.length; i++) {
           const [nx, ny] = poly[i]!;
@@ -264,8 +263,73 @@ export default function StarField({
         }
         ctx.stroke();
       }
+    };
 
-      ctx.globalCompositeOperation = 'source-over';
+    /** Nœuds = points de carte (fixes, très discrets). */
+    const drawConstellationAnchors = (scrollOffset: number) => {
+      if (!constellations) return;
+      const { w, h } = sizeRef.current;
+
+      for (const poly of ZODIAC_CONSTELLATIONS) {
+        for (const [nx, ny] of poly) {
+          const px = nx * w;
+          const py = ((ny * h * 1.5) - scrollOffset * 0.06) % (h * 1.5);
+          const wy = py < 0 ? py + h * 1.5 : py;
+          if (wy < -15 || wy > h + 15) continue;
+
+          const g = ctx.createRadialGradient(px, wy, 0, px, wy, 5);
+          g.addColorStop(0, 'rgba(235, 230, 218, 0.22)');
+          g.addColorStop(0.45, 'rgba(170, 133, 88, 0.08)');
+          g.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(px, wy, 5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = 'rgba(228, 222, 210, 0.42)';
+          ctx.beginPath();
+          ctx.arc(px, wy, 0.85, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    };
+
+    /** Silhouette montagne — masque bas d’image façon panorama. */
+    const drawMountains = () => {
+      if (!mountains) return;
+      const { w, h } = sizeRef.current;
+      const skyline: readonly [number, number][] = [
+        [0, 0.035],
+        [0.08, 0.085],
+        [0.14, 0.052],
+        [0.22, 0.078],
+        [0.32, 0.048],
+        [0.42, 0.072],
+        [0.52, 0.042],
+        [0.62, 0.075],
+        [0.72, 0.055],
+        [0.81, 0.082],
+        [0.9, 0.058],
+        [0.97, 0.078],
+        [1, 0.042],
+      ];
+
+      ctx.beginPath();
+      ctx.moveTo(0, h + 4);
+      ctx.lineTo(0, h * (1 - skyline[0]![1]));
+      for (let i = 1; i < skyline.length; i++) {
+        const [xf, hf] = skyline[i]!;
+        ctx.lineTo(xf * w, h * (1 - hf));
+      }
+      ctx.lineTo(w, h + 4);
+      ctx.closePath();
+
+      const mg = ctx.createLinearGradient(0, h * 0.78, 0, h);
+      mg.addColorStop(0, 'rgba(2, 2, 3, 0.97)');
+      mg.addColorStop(0.5, 'rgba(3, 3, 2, 0.985)');
+      mg.addColorStop(1, '#000000');
+      ctx.fillStyle = mg;
+      ctx.fill();
     };
 
     /** Mise à jour & dessin des traînées fugaces. */
@@ -282,7 +346,7 @@ export default function StarField({
       const list = meteorsRef.current;
 
       if (nextMeteorAtRef.current === 0) {
-        nextMeteorAtRef.current = timestamp + 2500 + Math.random() * 4000;
+        nextMeteorAtRef.current = timestamp + 9000 + Math.random() * 11000;
       }
 
       if (
@@ -303,12 +367,12 @@ export default function StarField({
         list.push({
           x,
           y,
-          len: 80 + Math.random() * 90,
-          spd: 12 + Math.random() * 10,
+          len: 64 + Math.random() * 72,
+          spd: 9 + Math.random() * 7,
           life: 1,
         });
         nextMeteorAtRef.current =
-          timestamp + 6000 + Math.random() * 7000;
+          timestamp + 15000 + Math.random() * 18000;
       }
 
       for (let i = list.length - 1; i >= 0; i--) {
@@ -330,12 +394,12 @@ export default function StarField({
 
         const g = ctx.createLinearGradient(tailX, tailY, headX, headY);
         const a = Math.max(0, m.life);
-        g.addColorStop(0, `rgba(244,236,219,0)`);
-        g.addColorStop(0.55, `rgba(244,228,205,${0.12 * a})`);
-        g.addColorStop(1, `rgba(212,166,86,${0.55 * a})`);
+        g.addColorStop(0, 'rgba(236,228,212,0)');
+        g.addColorStop(0.6, `rgba(218,206,182,${0.06 * a})`);
+        g.addColorStop(1, `rgba(170,133,88,${0.26 * a})`);
 
         ctx.strokeStyle = g;
-        ctx.lineWidth = 1.35;
+        ctx.lineWidth = 0.85;
         ctx.lineCap = 'round';
         ctx.beginPath();
         ctx.moveTo(tailX, tailY);
@@ -359,7 +423,7 @@ export default function StarField({
       lastTime = now;
 
       // Clear avec encre profonde (au lieu de transparent : évite le scintillement)
-      ctx.fillStyle = '#07090D';
+      ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, w, h);
 
       // Nébuleuse de fond
@@ -368,6 +432,7 @@ export default function StarField({
 
       const scrollForLines = parallax ? scrollRef.current : 0;
       drawConstellationLines(scrollForLines);
+      drawConstellationAnchors(scrollForLines);
 
       // Étoiles avec twinkle
       const stars = starsRef.current;
@@ -378,12 +443,14 @@ export default function StarField({
         const t = reduced
           ? s.baseAlpha
           : s.baseAlpha *
-            (0.55 + 0.45 * Math.sin(now * s.twinkleFreq + s.twinklePhase));
+            (0.68 + 0.32 * Math.sin(now * s.twinkleFreq + s.twinklePhase));
         const offset = scroll * LAYER_PARALLAX[s.layer];
         drawStar(s, t, offset);
       }
 
       tickShootingStars(now, reduced);
+
+      drawMountains();
 
       rafRef.current = requestAnimationFrame(loop);
     };
@@ -410,6 +477,7 @@ export default function StarField({
     nebula,
     milkyWay,
     constellations,
+    mountains,
     shootingStars,
   ]);
 

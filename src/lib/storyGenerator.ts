@@ -6,7 +6,7 @@
  *   - 'natal'      : signature complète + glyphes
  *   - 'synastry'   : score + verdict + 2 prénoms
  *
- * Tout est natif (pas de dépendance), branding aurora cohérent.
+ * Tout est natif (pas de dépendance), branding vide noir + accents or.
  */
 
 export interface StoryGuidanceProps {
@@ -46,24 +46,22 @@ function hex(rgb: [number, number, number], alpha = 1) {
 }
 
 function bg(ctx: CanvasRenderingContext2D) {
-  // Base night-950
-  ctx.fillStyle = '#0B0B1A';
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, W, H);
 
-  // Halos aurora
+  // Halos or / bronze très diffus
   const halo = (x: number, y: number, r: number, color: string) => {
     const g = ctx.createRadialGradient(x, y, 0, x, y, r);
     g.addColorStop(0, color);
-    g.addColorStop(1, 'rgba(11,11,26,0)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, W, H);
   };
-  halo(W * 0.2, H * 0.18, 800, hex([142, 85, 255], 0.45));
-  halo(W * 0.85, H * 0.4, 700, hex([232, 74, 147], 0.35));
-  halo(W * 0.5, H * 0.92, 900, hex([245, 182, 56], 0.18));
+  halo(W * 0.22, H * 0.2, 820, hex([170, 133, 88], 0.32));
+  halo(W * 0.82, H * 0.42, 720, hex([90, 71, 46], 0.28));
+  halo(W * 0.5, H * 0.9, 900, hex([223, 186, 98], 0.16));
 
-  // Bruit léger / vignette pour ne pas avoir un fond plat
-  ctx.fillStyle = 'rgba(11,11,26,0.35)';
+  ctx.fillStyle = 'rgba(0,0,0,0.38)';
   ctx.fillRect(0, H * 0.7, W, H * 0.3);
 }
 
@@ -272,7 +270,7 @@ export function renderNatal(canvas: HTMLCanvasElement, props: StoryNatalProps) {
       x: W / 2,
       y,
       size: 110,
-      color: '#C9A6FF',
+      color: '#aa8558',
       family: 'cinzel',
     });
     drawText(ctx, it.label.toUpperCase(), {

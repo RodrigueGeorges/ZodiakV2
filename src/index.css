@@ -1,13 +1,6 @@
 /*
- * Zodiak — index.css v4 ("Oracle machine")
- * --------------------------------------------------
- * Refonte mai 2026 :
- *   - Polices via Fontsource (bundle Vite) — plus d'import Google Fonts ici
- *   - Suppression du text-gradient-aurora (couleur unie ivoire désormais)
- *   - Adoucissement de toutes les classes anciennes (.btn-aurora, .card-aurora)
- *   - Nouvelle classe .editorial-rule (filet décoratif or)
- *   - Scrollbar quasi-invisible
- *   - Texture grain en surcouche (option .grain-overlay)
+ * Zodiak — index.css (bundle Vite · Fontsource)
+ * Modèle DA : fond #000, or #aa8558, utilitaires légers (grain / vignette optionnels).
  */
 
 @tailwind base;
@@ -19,10 +12,10 @@
  * ────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  --color-bg:     #07090D;  /* Vide froid (aligné night-950 v4) */
-  --color-fg:     #F4ECDB;  /* Papier crème */
-  --color-accent: #D4A656;  /* Or — éditorial, CTA */
-  --color-signal: #7FA090;  /* Chrome futuriste : focus, données */
+  --color-bg:     #000000;  /* Vide pur — DA « StarParticleCursor » (Framer template) */
+  --color-fg:     #f5efe3;  /* Ivoire très légèrement chaud */
+  --color-accent: #aa8558;  /* Or du template (couleur des traînées étoiles) */
+  --color-signal: rgba(170, 133, 88, 0.55); /* repères UI — même famille que l’or principal */
   --color-mute:   #A8987A;  /* Taupe */
 
   /* Jetons motion & focus (alignés tailwind `ease-ritual`, `duration-ritual-*`) */
@@ -30,7 +23,7 @@
   --zodiak-duration-sm: 200ms;
   --zodiak-duration-md: 450ms;
   --zodiak-duration-lg: 700ms;
-  --zodiak-focus-ring: 1px solid rgba(127, 160, 144, 0.75);
+  --zodiak-focus-ring: 1px solid rgba(170, 133, 88, 0.75);
   --zodiak-focus-offset: 2px;
 }
 
@@ -49,8 +42,8 @@ body {
 
 /* Sélection texte */
 ::selection {
-  background: rgba(127, 160, 144, 0.22);
-  color: #F4ECDB;
+  background: rgba(170, 133, 88, 0.28);
+  color: #f5efe3;
 }
 
 a {
@@ -64,8 +57,8 @@ a {
   summary:focus-visible {
     outline: none;
     box-shadow:
-      0 0 0 var(--zodiak-focus-offset) #07090D,
-      0 0 0 calc(var(--zodiak-focus-offset) + 1px) rgba(127, 160, 144, 0.7);
+      0 0 0 var(--zodiak-focus-offset) #000000,
+      0 0 0 calc(var(--zodiak-focus-offset) + 1px) rgba(170, 133, 88, 0.65);
     border-radius: 2px;
   }
 }
@@ -104,7 +97,7 @@ a {
     @apply relative z-10 container mx-auto px-4 md:px-8 py-6 md:py-10;
   }
 
-  /* Anciennes classes — gardées en rétrocompat mais épurées */
+  /* Helpers pages (titres centrés, noms de classes hérités `.card-aurora`, etc.) */
   .page-title {
     @apply font-serif text-display text-ivory-50 text-center;
     letter-spacing: -0.02em;
@@ -151,9 +144,9 @@ a {
     letter-spacing: 0.32em;
   }
 
-  /* Étiquettes « protocole » : données, canaux, métadonnées (DA v4) */
+  /* Métadonnées / labels protocole */
   .protocol-caption {
-    @apply font-mono text-[11px] uppercase tracking-[0.22em] text-signal-400/90;
+    @apply font-mono text-[11px] uppercase tracking-[0.22em] text-[#aa8558]/85;
   }
 
   /* Grain + vignette discrète pour immersion sans saturer l’œil */
@@ -163,8 +156,8 @@ a {
     inset: 0;
     z-index: 0;
     background:
-      radial-gradient(ellipse 120% 90% at 50% 45%, transparent 40%, rgba(7, 9, 13, 0.55) 100%),
-      radial-gradient(circle at 50% 0%, rgba(127, 160, 144, 0.04), transparent 55%);
+      radial-gradient(ellipse 125% 100% at 50% 50%, transparent 42%, rgba(0, 0, 0, 0.75) 100%),
+      radial-gradient(circle at 50% 0%, rgba(170, 133, 88, 0.05), transparent 52%);
     mix-blend-mode: normal;
   }
   .da-grain {
@@ -195,7 +188,7 @@ a {
     width: 6px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(127, 160, 144, 0.28);
+    background: rgba(170, 133, 88, 0.35);
     border-radius: 999px;
   }
   .scrollbar-thin::-webkit-scrollbar-track {
@@ -207,22 +200,18 @@ a {
  * Utilitaires non triviaux
  * ────────────────────────────────────────────────────────────────────────── */
 
-/*
- * text-gradient-aurora : ANCIENNE classe gardée en rétrocompat.
- * Elle ne fait PLUS de gradient (qui faisait année 2010s).
- * Désormais : couleur or alchimique unie. Élégant, sobre.
- */
+/* Titre accent : or unie (sans gradient arc-en-ciel). */
 .text-gradient-aurora {
   background: none;
   -webkit-background-clip: initial;
   background-clip: initial;
-  color: #D4A656;
-  -webkit-text-fill-color: #D4A656;
+  color: #aa8558;
+  -webkit-text-fill-color: #aa8558;
 }
 
 /* Variante : gradient or → ivoire (pour les hero qui veulent un peu d'éclat) */
 .text-gradient-gold {
-  background: linear-gradient(180deg, #F4ECDB 0%, #D4A656 100%);
+  background: linear-gradient(180deg, #f4ecdb 0%, #aa8558 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -239,7 +228,7 @@ a {
   padding-top: 0.12rem;
   font-weight: 500;
   font-style: italic;
-  color: #D4A656;
+  color: #aa8558;
   font-feature-settings: 'kern', 'liga', 'salt';
   font-variation-settings: 'opsz' 144, 'SOFT' 100;
 }
@@ -281,11 +270,11 @@ a {
   background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(127, 160, 144, 0.3);
+  background: rgba(170, 133, 88, 0.38);
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(127, 160, 144, 0.5);
+  background: rgba(170, 133, 88, 0.58);
 }
 
 @media print {

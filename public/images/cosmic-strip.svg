@@ -1,20 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 380" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
     <linearGradient id="zodiakdust" x1="0%" y1="45%" x2="100%" y2="55%">
-      <stop offset="0%" stop-color="#0A0814"/>
-      <stop offset="28%" stop-color="#14102a" stop-opacity="0.95"/>
-      <stop offset="50%" stop-color="#2a2540" stop-opacity="0.5"/>
-      <stop offset="72%" stop-color="#14102a" stop-opacity="0.95"/>
-      <stop offset="100%" stop-color="#0A0814"/>
+      <stop offset="0%" stop-color="#000000"/>
+      <stop offset="28%" stop-color="#0f0d0c" stop-opacity="0.98"/>
+      <stop offset="50%" stop-color="#1a1714" stop-opacity="0.45"/>
+      <stop offset="72%" stop-color="#0f0d0c" stop-opacity="0.98"/>
+      <stop offset="100%" stop-color="#000000"/>
     </linearGradient>
     <radialGradient id="zodiakglow" cx="52%" cy="48%" r="58%">
-      <stop offset="0%" stop-color="#D4A656" stop-opacity="0.12"/>
-      <stop offset="45%" stop-color="#9b6b9e" stop-opacity="0.06"/>
-      <stop offset="100%" stop-color="#0A0814" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#aa8558" stop-opacity="0.1"/>
+      <stop offset="45%" stop-color="#5a472e" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
     <radialGradient id="zodiakveil" cx="30%" cy="40%" r="35%">
-      <stop offset="0%" stop-color="#F4ECDB" stop-opacity="0.04"/>
-      <stop offset="100%" stop-color="#0A0814" stop-opacity="0"/>
+      <stop offset="0%" stop-color="#f4ecdb" stop-opacity="0.035"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
     </radialGradient>
   </defs>
   <rect width="1600" height="380" fill="url(#zodiakdust)"/>

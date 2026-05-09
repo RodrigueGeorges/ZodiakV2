@@ -3,7 +3,7 @@ import { motion, HTMLMotionProps } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
 /**
- * Card v4 — primitive surface DA « Oracle machine » (bordures signal).
+ * Card — surface noire + filet « signal » (bronze / or discret).
  *
  * - `variant="surface"` (default) : fond night-900/40, bordure hairline or
  * - `variant="elevated"` : surface plus marquée (mantras, hero blocks)

@@ -1,13 +1,7 @@
 /**
- * Zodiak Design Tokens v4 — "Oracle machine" (minimal · immersif · ésotérique · brutal)
- * =====================================================================================
- *
- * Mai 2026 :
- *   - Fonds très froids (#07090D) — moins violet « startup », plus cabine/console.
- *   - Accent or (aurora) réservé au éditorial & CTA fort ; accent « signal »
- *     (vert-de-gris désaturé) pour chrome UI, focus, métadonnées monospace.
- *   - Typo : Inter + Fraunces + JetBrains Mono Variable (protocol / data).
- *   - Magenta : rituels forts uniquement (inchangé).
+ * Zodiak — design tokens (mai 2026)
+ * Modèle actuel : vide noir (#000), accents or patiné (#aa8558) + bronze « signal »,
+ * typographie Inter / Fraunces / JetBrains Mono. Magenta réservé aux rituels ponctuels.
  */
 import forms from '@tailwindcss/forms';
 
@@ -22,25 +16,25 @@ export default {
       colors: {
         // ─────── Encres nocturnes (fond, surfaces) — froid, quasi brut ───────
         night: {
-          50:  '#E9EBEF',
-          100: '#CED2DB',
-          200: '#9AA3B0',
-          300: '#5E6675',
-          500: '#353B4A',
-          600: '#262B36',
-          700: '#1A1E28',
-          800: '#12161E',
-          900: '#0C1018',
-          950: '#07090D',
+          50:  '#F2EDE6',
+          100: '#D9D1C5',
+          200: '#A89E90',
+          300: '#6B655C',
+          500: '#3D3832',
+          600: '#2A2520',
+          700: '#1A1714',
+          800: '#0f0d0c',
+          900: '#080706',
+          950: '#000000',
         },
 
-        // ─────── Signal (chrome futuriste froid : focus, labels, bordures actives)
+        // Chrome UI / filets — aligné or patiné (template StarParticleCursor)
         signal: {
-          200: '#B8CEC2',
-          300: '#9BB8AA',
-          400: '#7FA090',
-          500: '#5F8474',
-          600: '#4A6B5C',
+          200: '#e8dcc8',
+          300: '#c9ae8c',
+          400: '#aa8558',
+          500: '#8f6f47',
+          600: '#5a472e',
         },
 
         // ─────── Papier crème (texte, surfaces claires) ───────
@@ -63,9 +57,9 @@ export default {
           100: '#F4E4B0',
           200: '#EAD183',
           300: '#DFBA62',
-          400: '#D4A656',  // accent principal
-          500: '#C8943C',
-          600: '#A87A2D',
+          400: '#aa8558',
+          500: '#8f6f47',
+          600: '#6d4a33',
           700: '#825D22',
           800: '#5A4017',
           900: '#3A290F',
@@ -85,17 +79,17 @@ export default {
         amber: {
           200: '#F0DBB1',
           300: '#E5C285',
-          400: '#D4A656',  // = aurora.400 (alignement chromatique)
+          400: '#aa8558',
           500: '#B8862F',
         },
 
         // ─────── Aliases rétrocompat ───────
-        primary:   '#D4A656',  // = aurora.400 (or)
-        secondary: '#C9619B',  // = magenta.500
-        accent:    '#D4A656',  // = aurora.400
+        primary:   '#aa8558',
+        secondary: '#C9619B',  // magenta.500
+        accent:    '#aa8558',
         cosmic: {
-          800: '#12161E',
-          900: '#0C1018',
+          800: '#0f0d0c',
+          900: '#080706',
         },
       },
 

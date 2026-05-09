@@ -23,11 +23,12 @@ import { moonPhaseAt } from '../lib/moonPhase';
 import { cn } from '../lib/utils';
 
 /**
- * Home — landing v5 (DA « Oracle machine »).
+ * Home — landing (vide noir, accents or `#aa8558`, curseur particules au niveau App).
  *
  * - Fond froid, chrome `signal`, accents or sur l’éditorial.
  * - Protocole monospace (eyebrows, méta) + serif pour le sens.
- * - Grain + vignette statiques, étoiles dé-saturées dans StarField.
+ * - Ciel atlas discret (Voie lactée + constellations + relief) — sans effets « arcade ».
+ * - Curseur particules au niveau App ; densité d’étoiles modérée ici pour coexister.
  */
 export default function Home() {
   const { isLoading, user } = useAuth();
@@ -52,8 +53,14 @@ export default function Home() {
 
   return (
     <div className="relative bg-night-950 text-ivory-50 overflow-x-hidden">
-      {/* Fond commun (étoiles, vignette, grain) */}
-      <AppBackdrop density={0.32} />
+      <AppBackdrop
+        density={0.15}
+        nebula
+        milkyWay
+        constellations
+        mountains
+        parallax
+      />
 
       <div className="relative z-[1] isolate">
       {/* Header */}
@@ -584,7 +591,7 @@ function PriceCard({
       className={cn(
         'relative h-full flex flex-col rounded-sm bg-night-950 border border-signal-600/18',
         'hover:bg-night-900/50 transition-colors duration-200 ease-brutal p-8 md:p-10',
-        highlighted && 'bg-night-900/30 border-signal-400/35 shadow-[inset_0_1px_0_rgba(212,166,86,0.12)]',
+        highlighted && 'bg-night-900/30 border-signal-400/35 shadow-[inset_0_1px_0_rgba(170,133,88,0.12)]',
       )}
     >
       {highlighted && (

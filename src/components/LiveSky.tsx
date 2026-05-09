@@ -12,12 +12,11 @@ interface LiveSkyProps {
 }
 
 /**
- * LiveSky — Composant signature de la landing page.
+ * LiveSky — scène astronomique SVG de la landing.
  *
- * Remplace le mockup d'écran smartphone "cheap" par une vraie scène
- * astronomique en SVG : la Lune réelle (illumination calculée, terminator
- * exact, cratères en gravure stylisée), une couronne ornementale type
- * planche d'astronomie 19ᵉ, et une légende manuscrite Fraunces.
+ * Remplace une maquette statique par une lune rendue avec phase réelle :
+ * terminator exact, cratères en gravure stylisée, couronne ornementale type
+ * planche d’astronomie 19ᵉ, et légende manuscrite Fraunces.
  *
  * Direction artistique :
  *   - Sphère lunaire en SVG : surface texturée + cratères ellipsoïdes,
@@ -188,13 +187,13 @@ function MoonSvg({ phase, ornate }: MoonSvgProps) {
         <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%"  stopColor="rgba(244,236,219,0.0)" />
           <stop offset="60%" stopColor="rgba(244,236,219,0.0)" />
-          <stop offset="100%" stopColor="rgba(212,166,86,0.4)" />
+          <stop offset="100%" stopColor="rgba(170,133,88,0.38)" />
         </radialGradient>
 
         {/* Gradient pour la zone sombre (côté terre noir) */}
         <radialGradient id="moonShadow" cx="50%" cy="50%" r="55%">
-          <stop offset="0%" stopColor="#1A1428" />
-          <stop offset="100%" stopColor="#0A0814" />
+          <stop offset="0%" stopColor="#141210" />
+          <stop offset="100%" stopColor="#050505" />
         </radialGradient>
 
         {/* Mask de la phase :

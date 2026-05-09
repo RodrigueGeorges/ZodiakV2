@@ -1,7 +1,7 @@
 import AppBackdrop from '../AppBackdrop';
 
 /**
- * AuroraBackground — alias rétrocompat : délègue à AppBackdrop (DA v4).
+ * AuroraBackground — délègue à AppBackdrop (champ d’étoiles / options grain).
  */
 interface AuroraBackgroundProps {
   variant?: 'default' | 'dim';

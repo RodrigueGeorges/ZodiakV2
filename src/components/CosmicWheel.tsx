@@ -28,7 +28,7 @@ interface CosmicWheelProps {
 }
 
 /**
- * CosmicWheel — roue natale animée, signature visuelle de Zodiak.
+ * CosmicWheel — roue natale animée (or / bronze sur vide).
  *
  * Composition (4 anneaux) :
  *  1. Anneau extérieur : 12 secteurs zodiacaux avec glyphes custom
@@ -56,13 +56,13 @@ export default function CosmicWheel({
   // Positions planétaires "esthétiques" (pas un vrai thème natal — on choisit
   // des angles qui forment de jolis aspects).
   const planets: PlanetMark[] = [
-    { symbol: '☉', angle: 25, color: '#F5B638', label: 'Soleil', size: 18 },
-    { symbol: '☽', angle: 130, color: '#E0CFFF', label: 'Lune' },
-    { symbol: '☿', angle: 65, color: '#9DD9FF', label: 'Mercure', size: 14 },
-    { symbol: '♀', angle: 195, color: '#F8A9D1', label: 'Vénus', size: 14 },
-    { symbol: '♂', angle: 250, color: '#F87171', label: 'Mars', size: 14 },
-    { symbol: '♃', angle: 305, color: '#C9A6FF', label: 'Jupiter', size: 16 },
-    { symbol: '♄', angle: 340, color: '#A78BFA', label: 'Saturne' },
+    { symbol: '☉', angle: 25, color: '#EAD183', label: 'Soleil', size: 18 },
+    { symbol: '☽', angle: 130, color: '#e8dcc8', label: 'Lune' },
+    { symbol: '☿', angle: 65, color: '#c9ae8c', label: 'Mercure', size: 14 },
+    { symbol: '♀', angle: 195, color: '#e48bb7', label: 'Vénus', size: 14 },
+    { symbol: '♂', angle: 250, color: '#c45c5c', label: 'Mars', size: 14 },
+    { symbol: '♃', angle: 305, color: '#dfba62', label: 'Jupiter', size: 16 },
+    { symbol: '♄', angle: 340, color: '#8f6f47', label: 'Saturne' },
   ];
 
   // Aspects choisis pour l'esthétique (trines = harmonie, square = tension)
@@ -88,10 +88,10 @@ export default function CosmicWheel({
 
   return (
     <div className={cn('relative w-full aspect-square', className)}>
-      {/* Halo aurora derrière la roue */}
+      {/* Halo discret derrière la roue */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(142,85,255,0.35),rgba(232,74,147,0.18)_45%,transparent_70%)] blur-2xl"
+        className="absolute inset-0 rounded-full bg-[radial-gradient(circle_at_50%_50%,rgba(170,133,88,0.22),rgba(90,71,46,0.12)_45%,transparent_72%)] blur-2xl"
       />
 
       {/* Étoiles décoratives subtiles */}
@@ -106,18 +106,18 @@ export default function CosmicWheel({
         <defs>
           {/* Gradient pour le bord extérieur */}
           <linearGradient id="rim-gradient" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#C9A6FF" stopOpacity="0.85" />
-            <stop offset="50%" stopColor="#E84A93" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#F5B638" stopOpacity="0.7" />
+            <stop offset="0%" stopColor="#fbf3dd" stopOpacity="0.75" />
+            <stop offset="50%" stopColor="#aa8558" stopOpacity="0.65" />
+            <stop offset="100%" stopColor="#5a472e" stopOpacity="0.55" />
           </linearGradient>
           <linearGradient id="house-gradient" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#8E55FF" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#E84A93" stopOpacity="0.4" />
+            <stop offset="0%" stopColor="#aa8558" stopOpacity="0.35" />
+            <stop offset="100%" stopColor="#c9ae8c" stopOpacity="0.3" />
           </linearGradient>
           <radialGradient id="planet-glow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
-            <stop offset="60%" stopColor="rgba(201,166,255,0.2)" />
-            <stop offset="100%" stopColor="rgba(201,166,255,0)" />
+            <stop offset="0%" stopColor="rgba(255,255,255,0.65)" />
+            <stop offset="60%" stopColor="rgba(170,133,88,0.18)" />
+            <stop offset="100%" stopColor="rgba(170,133,88,0)" />
           </radialGradient>
         </defs>
 

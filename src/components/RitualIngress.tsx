@@ -8,8 +8,7 @@ interface RitualIngressProps {
 }
 
 /**
- * Panneau « transmission » : preview lisible sans mockup téléphone.
- * DA v4 — bord franc, monospace pour métadonnées (protocole / canal).
+ * Panneau « transmission » : métadonnées monospace, bord sobre.
  */
 export default function RitualIngress({ className }: RitualIngressProps) {
   const phase = useMemo(() => moonPhaseAt(new Date()), []);
