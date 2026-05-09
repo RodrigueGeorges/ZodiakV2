@@ -103,14 +103,18 @@ a {
     letter-spacing: -0.03em;
   }
   .page-subtitle {
-    @apply font-sans text-body-lg text-ivory-400/90 text-center mt-3 mb-6 font-light;
+    @apply font-sans text-body-lg text-center mt-3 mb-6 font-light;
+    color: rgba(161, 161, 170, 0.9);
   }
 
   .card-aurora {
-    @apply rounded-sm border border-white/10 bg-white/[0.04] backdrop-blur-md transition-colors duration-200 ease-brutal;
+    @apply rounded-sm backdrop-blur-md transition-colors duration-200 ease-brutal border;
+    border-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.04);
   }
   .card-aurora:hover {
-    @apply border-white/18 bg-white/[0.06];
+    border-color: rgba(255, 255, 255, 0.18);
+    background-color: rgba(255, 255, 255, 0.06);
   }
 
   .btn-aurora {
@@ -120,22 +124,36 @@ a {
   }
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-sm transition-colors duration-200 ease-brutal;
-    @apply border border-white/15 text-ivory-100 hover:border-white/35 hover:text-ivory-50;
+    @apply border text-ivory-100 hover:text-ivory-50;
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+  .btn-ghost:hover {
+    border-color: rgba(255, 255, 255, 0.35);
   }
 
   .input-cosmic {
-    @apply appearance-none w-full rounded-sm bg-white/[0.04] border border-white/12 px-4 py-3 text-ivory-50 placeholder-ivory-500/70;
-    @apply focus:outline-none focus:border-aurora-400/50 focus:ring-0 transition-colors duration-200 ease-brutal;
+    @apply appearance-none w-full rounded-sm px-4 py-3 text-ivory-50;
+    @apply focus:outline-none focus:ring-0 transition-colors duration-200 ease-brutal;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .input-cosmic::placeholder {
+    color: rgba(113, 113, 122, 0.7);
+  }
+  .input-cosmic:focus {
+    border-color: rgba(56, 189, 248, 0.5);
   }
 
   /* ─────── Nouveautés éditoriales ─────── */
 
   /* Filet décoratif horizontal (signature éditoriale) */
   .editorial-rule {
-    @apply relative inline-block w-12 h-px bg-white/35;
+    @apply relative inline-block w-12 h-px;
+    background-color: rgba(255, 255, 255, 0.35);
   }
   .editorial-rule-long {
-    @apply relative inline-block w-24 h-px bg-white/22;
+    @apply relative inline-block w-24 h-px;
+    background-color: rgba(255, 255, 255, 0.22);
   }
 
   /* Protocole : mono capitales (esprit editorial apps astro modernes) */
