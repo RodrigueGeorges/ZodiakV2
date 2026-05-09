@@ -39,7 +39,7 @@ export default function Home() {
 
   if ((isLoading && user === null) || shouldRedirect) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-night-950">
+      <div className="min-h-screen flex items-center justify-center bg-transparent">
         <CosmicLoader />
       </div>
     );

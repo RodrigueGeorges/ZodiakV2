@@ -3,9 +3,11 @@ import { useEffect, useRef } from 'react';
 interface StarFieldProps {
   /** Densité globale (1 = standard ~250 étoiles, 0.5 = léger, 1.5 = dense). */
   density?: number;
+  /** Teinte globale (mode « Effet couleur » : halo froid prononcé sur le résultat). */
+  chromaBoost?: boolean;
   /** Active la parallaxe au scroll. */
   parallax?: boolean;
-  /** Active une nébuleuse dorée diffuse en fond. */
+  /** Active une brume diffuse froide après le fond. */
   nebula?: boolean;
   /** Bande très diffuse type Voie lactée (landing premium). */
   milkyWay?: boolean;
@@ -78,6 +80,7 @@ export default function StarField({
   constellations = false,
   mountains = false,
   shootingStars = false,
+  chromaBoost = false,
   className,
 }: StarFieldProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -123,7 +126,7 @@ export default function StarField({
         // Teintes : 75% blanc crème, 18% or pâle, 7% lavande
         const tintR = Math.random();
         const hue: Star['hue'] =
-          tintR < 0.88 ? 'white' : tintR < 0.97 ? 'gold' : 'frost';
+          tintR < 0.72 ? 'white' : tintR < 0.9 ? 'frost' : 'gold';
         stars.push({
           x: Math.random(),
           y: Math.random() * 2, // 0-2 pour couvrir le scroll
@@ -158,7 +161,7 @@ export default function StarField({
         case 'gold':
           return `rgba(200, 190, 155, ${alpha})`;
         case 'frost':
-          return `rgba(198, 208, 225, ${alpha})`;
+          return `rgba(186, 210, 245, ${alpha})`;
         default:
           return `rgba(244, 236, 219, ${alpha})`;
       }
@@ -195,27 +198,26 @@ export default function StarField({
       }
     };
 
-    /** Voute nocturne — très basse courbe, pas de saturé « démo UI ». */
+  /** Halo bleu léger après le fond (option `nebula`). */
     const drawNebula = () => {
       if (!nebula) return;
       const { w, h } = sizeRef.current;
 
       const g1 = ctx.createRadialGradient(
-        w * 0.5, -h * 0.06, 0,
-        w * 0.5, h * 0.32, Math.max(w, h) * 0.88,
+        w * 0.12, -h * 0.02, 0,
+        w * 0.12, h * 0.42, Math.max(w, h) * 0.72,
       );
-      g1.addColorStop(0, 'rgba(32, 36, 44, 0.09)');
-      g1.addColorStop(0.5, 'rgba(18, 18, 22, 0.04)');
+      g1.addColorStop(0, 'rgba(40, 90, 160, 0.07)');
       g1.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = g1;
       ctx.fillRect(0, 0, w, h);
 
       const g2 = ctx.createRadialGradient(
-        w * 0.72, h * 0.98, 0,
-        w * 0.72, h * 0.98, Math.max(w, h) * 0.55,
+        w * 0.88, h * 0.92, 0,
+        w * 0.88, h * 0.92, Math.max(w, h) * 0.52,
       );
-      g2.addColorStop(0, 'rgba(90, 71, 46, 0.045)');
-      g2.addColorStop(1, 'rgba(90, 71, 46, 0)');
+      g2.addColorStop(0, 'rgba(30, 55, 100, 0.08)');
+      g2.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = g2;
       ctx.fillRect(0, 0, w, h);
     };
@@ -224,29 +226,32 @@ export default function StarField({
       if (!milkyWay) return;
       const { w, h } = sizeRef.current;
       ctx.save();
-      ctx.translate(w * 0.48, h * 0.38);
-      ctx.rotate(-0.42 * Math.PI);
-      const gx = ctx.createRadialGradient(0, 0, 0, 0, 0, Math.max(w, h) * 0.92);
-      gx.addColorStop(0, 'rgba(226, 228, 236, 0.045)');
-      gx.addColorStop(0.35, 'rgba(110, 118, 140, 0.028)');
-      gx.addColorStop(0.65, 'rgba(48, 52, 64, 0.014)');
+      ctx.translate(w * 0.28, h * 0.78);
+      ctx.rotate(-0.36 * Math.PI);
+      const gx = ctx.createRadialGradient(0, 0, 0, 0, 0, Math.max(w, h) * 1.05);
+      gx.addColorStop(0, 'rgba(118, 198, 255, 0.26)');
+      gx.addColorStop(0.22, 'rgba(86, 150, 220, 0.16)');
+      gx.addColorStop(0.45, 'rgba(44, 88, 150, 0.09)');
+      gx.addColorStop(0.7, 'rgba(22, 40, 72, 0.04)');
       gx.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = gx;
-      ctx.globalAlpha = 0.62;
-      const rw = Math.max(w, h) * 1.85;
-      const rh = Math.max(w, h) * 0.17;
+      ctx.globalAlpha = chromaBoost ? 0.88 : 0.72;
+      const rw = Math.max(w, h) * 2.1;
+      const rh = Math.max(w, h) * 0.2;
       ctx.beginPath();
       ctx.ellipse(0, 0, rw, rh, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     };
 
-    /** Filets constellation : cheveux d’ange, pas de blend « arcade ». */
+    /** Filets constellation : bleu très pâle, lisibles sur ciel atlas. */
     const drawConstellationLines = (scrollOffset: number) => {
       if (!constellations) return;
       const { w, h } = sizeRef.current;
-      ctx.strokeStyle = 'rgba(212, 206, 194, 0.056)';
-      ctx.lineWidth = Math.max(0.35, (dprRef.current || 1) * 0.28);
+      ctx.strokeStyle = chromaBoost
+        ? 'rgba(172, 210, 255, 0.14)'
+        : 'rgba(150, 200, 255, 0.095)';
+      ctx.lineWidth = Math.max(0.45, (dprRef.current || 1) * 0.36);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.globalCompositeOperation = 'source-over';
@@ -278,15 +283,15 @@ export default function StarField({
           if (wy < -15 || wy > h + 15) continue;
 
           const g = ctx.createRadialGradient(px, wy, 0, px, wy, 5);
-          g.addColorStop(0, 'rgba(235, 230, 218, 0.22)');
-          g.addColorStop(0.45, 'rgba(170, 133, 88, 0.08)');
+          g.addColorStop(0, 'rgba(200, 230, 255, 0.32)');
+          g.addColorStop(0.45, 'rgba(120, 180, 235, 0.12)');
           g.addColorStop(1, 'rgba(0,0,0,0)');
           ctx.fillStyle = g;
           ctx.beginPath();
           ctx.arc(px, wy, 5, 0, Math.PI * 2);
           ctx.fill();
 
-          ctx.fillStyle = 'rgba(228, 222, 210, 0.42)';
+          ctx.fillStyle = 'rgba(220, 235, 255, 0.55)';
           ctx.beginPath();
           ctx.arc(px, wy, 0.85, 0, Math.PI * 2);
           ctx.fill();
@@ -294,39 +299,80 @@ export default function StarField({
       }
     };
 
-    /** Silhouette montagne — masque bas d’image façon panorama. */
+    /** Silhouettes montagne superposées (profondeur, comme références « atlas »). */
     const drawMountains = () => {
       if (!mountains) return;
       const { w, h } = sizeRef.current;
-      const skyline: readonly [number, number][] = [
-        [0, 0.035],
-        [0.08, 0.085],
-        [0.14, 0.052],
-        [0.22, 0.078],
-        [0.32, 0.048],
-        [0.42, 0.072],
-        [0.52, 0.042],
-        [0.62, 0.075],
-        [0.72, 0.055],
-        [0.81, 0.082],
-        [0.9, 0.058],
-        [0.97, 0.078],
-        [1, 0.042],
+
+      const trace = (pts: readonly [number, number][]) => {
+        ctx.beginPath();
+        ctx.moveTo(0, h + 4);
+        ctx.lineTo(0, h * (1 - pts[0]![1]));
+        for (let i = 1; i < pts.length; i++) {
+          const [xf, ht] = pts[i]!;
+          ctx.lineTo(xf * w, h * (1 - ht));
+        }
+        ctx.lineTo(w, h + 4);
+      };
+
+      const back: readonly [number, number][] = [
+        [0, 0.02],
+        [0.1, 0.055],
+        [0.2, 0.032],
+        [0.34, 0.05],
+        [0.48, 0.028],
+        [0.62, 0.046],
+        [0.76, 0.034],
+        [0.88, 0.05],
+        [1, 0.032],
       ];
+      trace(back);
+      const backGrad = ctx.createLinearGradient(0, h * 0.82, 0, h);
+      backGrad.addColorStop(0, 'rgba(22, 40, 68, 0.55)');
+      backGrad.addColorStop(1, 'rgba(8, 14, 28, 0.75)');
+      ctx.fillStyle = backGrad;
+      ctx.fill();
 
-      ctx.beginPath();
-      ctx.moveTo(0, h + 4);
-      ctx.lineTo(0, h * (1 - skyline[0]![1]));
-      for (let i = 1; i < skyline.length; i++) {
-        const [xf, hf] = skyline[i]!;
-        ctx.lineTo(xf * w, h * (1 - hf));
-      }
-      ctx.lineTo(w, h + 4);
-      ctx.closePath();
+      const mid: readonly [number, number][] = [
+        [0, 0.032],
+        [0.06, 0.078],
+        [0.15, 0.048],
+        [0.25, 0.072],
+        [0.36, 0.042],
+        [0.46, 0.068],
+        [0.55, 0.038],
+        [0.64, 0.07],
+        [0.74, 0.05],
+        [0.82, 0.078],
+        [0.92, 0.055],
+        [1, 0.045],
+      ];
+      trace(mid);
+      const midGrad = ctx.createLinearGradient(0, h * 0.86, 0, h);
+      midGrad.addColorStop(0, 'rgba(6, 10, 20, 0.88)');
+      midGrad.addColorStop(1, 'rgba(2, 3, 6, 0.94)');
+      ctx.fillStyle = midGrad;
+      ctx.fill();
 
-      const mg = ctx.createLinearGradient(0, h * 0.78, 0, h);
-      mg.addColorStop(0, 'rgba(2, 2, 3, 0.97)');
-      mg.addColorStop(0.5, 'rgba(3, 3, 2, 0.985)');
+      const front: readonly [number, number][] = [
+        [0, 0.036],
+        [0.08, 0.09],
+        [0.14, 0.055],
+        [0.22, 0.082],
+        [0.32, 0.049],
+        [0.42, 0.075],
+        [0.52, 0.045],
+        [0.62, 0.078],
+        [0.72, 0.058],
+        [0.81, 0.086],
+        [0.9, 0.061],
+        [0.97, 0.082],
+        [1, 0.048],
+      ];
+      trace(front);
+      const mg = ctx.createLinearGradient(0, h * 0.74, 0, h);
+      mg.addColorStop(0, 'rgba(0, 2, 6, 0.97)');
+      mg.addColorStop(0.55, 'rgba(0, 0, 0, 0.99)');
       mg.addColorStop(1, '#000000');
       ctx.fillStyle = mg;
       ctx.fill();
@@ -422,11 +468,15 @@ export default function StarField({
       }
       lastTime = now;
 
-      // Clear avec encre profonde (au lieu de transparent : évite le scintillement)
-      ctx.fillStyle = '#000000';
+      // Fond dégradé nuit → bleu horizon ( références « atlas » immersions )
+      const sky = ctx.createLinearGradient(0, 0, 0, h);
+      sky.addColorStop(0, '#010102');
+      sky.addColorStop(0.32, '#040810');
+      sky.addColorStop(0.65, '#081728');
+      sky.addColorStop(1, chromaBoost ? '#122a52' : '#0e223f');
+      ctx.fillStyle = sky;
       ctx.fillRect(0, 0, w, h);
 
-      // Nébuleuse de fond
       drawNebula();
       drawMilkyWay();
 
@@ -451,6 +501,25 @@ export default function StarField({
       tickShootingStars(now, reduced);
 
       drawMountains();
+
+      if (chromaBoost) {
+        ctx.save();
+        const wash = ctx.createRadialGradient(
+          w * 0.5,
+          h * 0.45,
+          0,
+          w * 0.5,
+          h * 0.45,
+          Math.max(w, h) * 0.72,
+        );
+        wash.addColorStop(0, 'rgba(40, 120, 200, 0.12)');
+        wash.addColorStop(0.5, 'rgba(20, 60, 110, 0.06)');
+        wash.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = wash;
+        ctx.globalCompositeOperation = 'screen';
+        ctx.fillRect(0, 0, w, h);
+        ctx.restore();
+      }
 
       rafRef.current = requestAnimationFrame(loop);
     };
@@ -479,6 +548,7 @@ export default function StarField({
     constellations,
     mountains,
     shootingStars,
+    chromaBoost,
   ]);
 
   return (

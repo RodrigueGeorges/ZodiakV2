@@ -9,7 +9,7 @@ interface LoadingScreenProps {
 
 function LoadingScreen({ message = 'Chargement...', error }: LoadingScreenProps) {
   return (
-    <div className="relative min-h-screen w-full bg-night-950 overflow-hidden flex items-center justify-center">
+    <div className="relative min-h-screen w-full bg-transparent overflow-hidden flex items-center justify-center">
       <AppBackdrop vignette />
       <div className="relative z-[1] isolate text-center">
         <CosmicLoader size="md" />

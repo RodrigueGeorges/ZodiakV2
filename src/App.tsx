@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Home from './pages/Home';
 import Register from './pages/Register';
@@ -20,6 +20,13 @@ import ChatAstro from './pages/ChatAstro';
 import ReferralLanding from './pages/ReferralLanding';
 import LoadingScreen from './components/LoadingScreen';
 import StarField from './components/StarField';
+import CelestialModeDock from './components/CelestialModeDock';
+import {
+  readCelestialMode,
+  writeCelestialMode,
+  type CelestialMode,
+} from './lib/celestialMode';
+import { cn } from './lib/utils';
 import { identify, trackPageView } from './lib/analytics';
 import './index.css';
 
@@ -149,11 +156,22 @@ function AnimatedRoutes() {
 
 function App() {
   const { user } = useAuth();
+  const [celestialMode, setCelestialMode] = useState<CelestialMode>(() =>
+    readCelestialMode(),
+  );
 
   // Identify user for analytics quand connecté
   useEffect(() => {
     if (user?.id) identify(user.id, { email: user.email });
   }, [user?.id, user?.email]);
+
+  useEffect(() => {
+    writeCelestialMode(celestialMode);
+  }, [celestialMode]);
+
+  const showCursorSky = celestialMode !== 'stars';
+  const particleColor =
+    celestialMode === 'color' ? '#8ec8ff' : '#c9b896';
 
   return (
     <>
@@ -161,22 +179,41 @@ function App() {
        * Ciel unique (viewport) : hors motion.div routes — sinon translate Framer casse fixed.
        */}
       <div
-        className="pointer-events-none fixed inset-0 z-[2]"
+        className={cn(
+          'pointer-events-none fixed inset-0 z-[2] transition-opacity duration-1000 ease-out',
+          celestialMode === 'cursor' && 'opacity-[0.54]',
+          celestialMode === 'color' && 'opacity-95',
+        )}
         aria-hidden
       >
         <StarField
-          density={0.14}
+          density={celestialMode === 'stars' ? 1.08 : 0.88}
           nebula
           milkyWay
           constellations
           mountains
+          chromaBoost={celestialMode === 'color'}
           parallax
         />
       </div>
 
-      <Suspense fallback={null}>
-        <StarParticleCursor showCursor />
-      </Suspense>
+      {celestialMode === 'color' && (
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 z-[3] bg-gradient-to-tr from-[#0a1a38]/65 via-transparent to-[#061428]/55 mix-blend-screen"
+        />
+      )}
+
+      {showCursorSky && (
+        <Suspense fallback={null}>
+          <StarParticleCursor showCursor starColor={particleColor} />
+        </Suspense>
+      )}
+      <CelestialModeDock
+        mode={celestialMode}
+        onChange={setCelestialMode}
+        lift={Boolean(user)}
+      />
       {user && <TopNavBar />}
       <div className="relative z-[20] isolate min-h-[100dvh]">
         <AnimatedRoutes />

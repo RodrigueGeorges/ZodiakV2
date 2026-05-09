@@ -172,7 +172,6 @@ export default function Guidance() {
           />
         ) : undefined
       }
-      dim
     >
       <div className="space-y-8 md:space-y-10">
         {/* Easter egg : révolution solaire le jour de l'anniversaire */}

@@ -207,7 +207,11 @@ export default function GuidanceDisplay({
       {/* Sections piliers (3 ou 4 selon backend) — grille hairline éditoriale */}
       <div className={gridClass}>
         {sections.map(({ key, label, eyebrow, icon: Icon, text, score, why }) => (
-          <motion.div key={key} variants={item} className="bg-night-950">
+          <motion.div
+            key={key}
+            variants={item}
+            className="bg-night-900/35 backdrop-blur-[6px]"
+          >
             <PillarCard
               eyebrow={eyebrow}
               label={label}
@@ -312,7 +316,7 @@ function PillarCard({
   const [open, setOpen] = useState(false);
 
   return (
-    <article className="h-full relative group bg-night-950 hover:bg-night-900/60 transition-colors duration-500 p-7 md:p-9 flex flex-col gap-5">
+    <article className="h-full relative group bg-night-900/45 backdrop-blur-md border border-signal-600/12 hover:bg-night-900/58 transition-colors duration-500 p-7 md:p-9 flex flex-col gap-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="eyebrow-ritual text-ivory-400/70">{eyebrow}</p>
