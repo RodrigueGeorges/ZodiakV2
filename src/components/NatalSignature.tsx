@@ -73,22 +73,22 @@ function NatalSignature({
       label: 'Soleil',
       sign: sunSign,
       icon: Sun,
-      eyebrow: 'IDENTITÉ',
-      tone: 'text-amber-300',
+      eyebrow: 'Identité',
+      tone: 'text-aurora-400',
     },
     {
       label: 'Lune',
       sign: moonSign,
       icon: Moon,
-      eyebrow: 'INTÉRIEUR',
-      tone: 'text-aurora-200',
+      eyebrow: 'Intérieur',
+      tone: 'text-ivory-100',
     },
     {
       label: 'Ascendant',
       sign: ascendantSign,
       icon: Compass,
-      eyebrow: 'POSTURE',
-      tone: 'text-magenta-400',
+      eyebrow: 'Posture',
+      tone: 'text-aurora-400',
     },
   ];
 
@@ -99,31 +99,31 @@ function NatalSignature({
         <div
           className={`${
             t.visible ? 'animate-enter' : 'animate-leave'
-          } max-w-sm w-full bg-night-900/95 backdrop-blur-md border border-aurora-500/30 rounded-2xl px-5 py-4 shadow-card ring-1 ring-ivory-50/[0.04]`}
+          } max-w-sm w-full bg-night-900/95 backdrop-blur-md border border-aurora-400/30 rounded-md px-6 py-5`}
         >
-          <p className="text-micro uppercase tracking-[0.2em] text-aurora-300 mb-1">
-            {label}
+          <p className="eyebrow-ritual text-aurora-400/80 mb-2">{label}</p>
+          <p className="text-h2 font-serif text-ivory-50 mb-2 leading-tight">
+            {ZODIAC_GLYPH[sign] || '✦'}{' '}
+            <span className="italic-editorial text-aurora-400">{sign}</span>
           </p>
-          <p className="text-h3 font-cinzel text-ivory-50 mb-1">
-            {ZODIAC_GLYPH[sign] || '✦'} {sign}
-          </p>
-          <p className="text-caption text-ivory-300">{desc}</p>
+          <p className="text-caption text-ivory-300/90 italic-editorial">{desc}</p>
         </div>
       ),
-      { duration: 3500, position: 'bottom-center' }
+      { duration: 3500, position: 'bottom-center' },
     );
   };
 
   return (
     <Card variant="elevated" className={className}>
-      <div className="px-6 py-6">
-        <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 text-center mb-1">
+      <div className="px-7 py-9 md:px-10 md:py-12">
+        <p className="eyebrow-ritual text-aurora-400/80 text-center mb-3">
           Ta signature astrale
         </p>
-        <h3 className="font-cinzel text-h2 text-gradient-aurora text-center mb-6">
-          Soleil · Lune · Ascendant
+        <h3 className="font-serif text-h1 text-ivory-50 text-center mb-9 leading-tight">
+          Soleil · Lune ·{' '}
+          <span className="italic-editorial text-aurora-400">Ascendant</span>
         </h3>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3 md:gap-4">
           {items.map(({ label, sign, icon: Icon, eyebrow, tone }, i) => (
             <motion.button
               key={label}
@@ -133,20 +133,18 @@ function NatalSignature({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.08 }}
               whileHover={{ y: -3 }}
-              className="group flex flex-col items-center gap-1.5 rounded-2xl bg-night-900/40 border border-night-700/60 p-4 text-center hover:border-aurora-500/40 hover:bg-night-900/70 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300"
+              className="group flex flex-col items-center gap-2 bg-night-900/40 border border-ivory-50/[0.08] p-5 text-center hover:border-aurora-400/40 transition-colors duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300"
               aria-label={`${label} en ${sign} — voir la description`}
             >
-              <p className="text-micro uppercase tracking-[0.18em] text-ivory-400">
-                {eyebrow}
-              </p>
+              <p className="eyebrow-ritual text-ivory-400/80">{eyebrow}</p>
               <Icon className={`w-4 h-4 ${tone}`} aria-hidden="true" />
-              <span className="text-2xl text-ivory-50 leading-none">
+              <span className="text-3xl text-ivory-50 leading-none my-1">
                 {ZODIAC_GLYPH[sign] || '✦'}
               </span>
-              <span className="text-caption text-ivory-200 font-cinzel">
+              <span className="text-caption text-ivory-200 font-serif">
                 {sign}
               </span>
-              <span className="text-micro text-ivory-400 mt-0.5">{label}</span>
+              <span className="eyebrow-ritual text-ivory-400/70 mt-1">{label}</span>
             </motion.button>
           ))}
         </div>

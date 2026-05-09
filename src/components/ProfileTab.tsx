@@ -95,8 +95,8 @@ export default function ProfileTab({
   return (
     <div className="space-y-8">
       {/* Bandeau confidentialité */}
-      <div className="flex items-center gap-3 rounded-2xl border border-aurora-500/20 bg-aurora-500/5 px-4 py-3 text-caption text-ivory-200">
-        <ShieldCheck className="w-4 h-4 text-aurora-300 shrink-0" aria-hidden="true" />
+      <div className="flex items-center gap-3 border border-aurora-400/15 px-5 py-4 text-caption text-ivory-200/90">
+        <ShieldCheck className="w-4 h-4 text-aurora-400 shrink-0" aria-hidden="true" />
         <span>
           Tes données de naissance sont privées. Aucun partage, aucune revente.
         </span>
@@ -106,27 +106,21 @@ export default function ProfileTab({
         {/* Colonne gauche — infos personnelles */}
         <div className="md:col-span-2">
           <Card variant="elevated" className="relative overflow-hidden">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/10 via-transparent to-magenta-500/5"
-            />
-            <div className="relative p-6">
+            <div className="relative p-7 md:p-9">
               {/* Header carte */}
-              <div className="flex items-start justify-between mb-6 gap-3">
-                <div className="flex items-center gap-4">
+              <div className="flex items-start justify-between mb-7 gap-3">
+                <div className="flex items-center gap-5">
                   <div className="relative">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-aurora-400 via-magenta-500 to-amber-400 flex items-center justify-center text-night-950 font-cinzel font-bold text-h3 shadow-glow-aurora">
+                    <div className="w-14 h-14 rounded-full bg-aurora-400 flex items-center justify-center text-night-950 font-serif font-semibold text-h3">
                       {getInitials(profile.name)}
                     </div>
                   </div>
                   <div>
-                    <p className="text-micro uppercase tracking-[0.18em] text-aurora-300">
-                      Profil
-                    </p>
-                    <h3 className="font-cinzel text-h3 text-ivory-50">
+                    <p className="eyebrow-ritual text-aurora-400/80">Profil</p>
+                    <h3 className="font-serif text-h2 text-ivory-50 leading-tight mt-1">
                       {profile.name || 'Voyageur·euse'}
                     </h3>
-                    <p className="text-caption text-ivory-400">
+                    <p className="text-caption text-ivory-400/80 italic-editorial mt-1">
                       Membre depuis{' '}
                       {profile.created_at
                         ? new Date(profile.created_at).toLocaleDateString(
@@ -242,13 +236,15 @@ export default function ProfileTab({
         <div className="space-y-6">
           {/* Abonnement */}
           <Card variant="surface">
-            <div className="p-6">
-              <div className="flex items-center gap-3 mb-3">
+            <div className="p-7">
+              <div className="flex items-center gap-3 mb-4">
                 <CreditCard
-                  className="w-5 h-5 text-aurora-300"
+                  className="w-5 h-5 text-aurora-400"
                   aria-hidden="true"
                 />
-                <h3 className="font-cinzel text-h3 text-ivory-50">Abonnement</h3>
+                <h3 className="font-serif text-h2 text-ivory-50 leading-tight">
+                  Abonnement
+                </h3>
               </div>
               <p className="text-caption text-ivory-300 mb-4">
                 {daysUntilTrialEnd > 0
@@ -270,14 +266,14 @@ export default function ProfileTab({
           {/* Notifications navigateur */}
           {push.supported && (
             <Card variant="surface">
-              <div className="p-6">
-                <div className="flex items-center gap-3 mb-3">
+              <div className="p-7">
+                <div className="flex items-center gap-3 mb-4">
                   {push.subscribed ? (
-                    <Bell className="w-5 h-5 text-aurora-300" aria-hidden="true" />
+                    <Bell className="w-5 h-5 text-aurora-400" aria-hidden="true" />
                   ) : (
                     <BellOff className="w-5 h-5 text-ivory-400" aria-hidden="true" />
                   )}
-                  <h3 className="font-cinzel text-h3 text-ivory-50">
+                  <h3 className="font-serif text-h2 text-ivory-50 leading-tight">
                     Notifications
                   </h3>
                 </div>
@@ -329,16 +325,16 @@ export default function ProfileTab({
 
           {/* Plan premium summary */}
           {isPremium && (
-            <Card variant="surface" className="relative overflow-hidden">
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-gradient-to-br from-amber-500/10 to-magenta-500/10"
-              />
-              <div className="relative p-6 text-center">
-                <p className="text-micro uppercase tracking-[0.22em] text-amber-300 mb-1">
-                  {plan === 'lifetime' ? 'À vie' : trialDaysLeft && trialDaysLeft > 0 ? 'Essai' : 'Premium'}
+            <Card variant="elevated">
+              <div className="p-7 text-center">
+                <p className="eyebrow-ritual text-aurora-400 mb-2">
+                  {plan === 'lifetime'
+                    ? 'À vie'
+                    : trialDaysLeft && trialDaysLeft > 0
+                      ? 'Essai'
+                      : 'Premium'}
                 </p>
-                <p className="font-cinzel text-h3 text-ivory-50">
+                <p className="font-serif italic-editorial text-h2 text-ivory-50 leading-tight">
                   Toutes les étoiles débloquées
                 </p>
               </div>
@@ -365,16 +361,16 @@ export default function ProfileTab({
           />
 
           {/* Logout */}
-          <Card variant="surface">
+          <Card variant="ghost">
             <div className="p-2">
               <motion.button
                 type="button"
                 onClick={onLogout}
                 whileTap={{ scale: 0.98 }}
-                className="w-full flex items-center justify-center gap-3 py-3 rounded-xl text-ivory-200 hover:text-magenta-400 hover:bg-magenta-500/5 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-magenta-400"
+                className="w-full flex items-center justify-center gap-3 py-4 text-ivory-200/80 hover:text-magenta-400 transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-magenta-400/40"
               >
                 <LogOut className="w-4 h-4" aria-hidden="true" />
-                <span className="text-caption font-medium">Se déconnecter</span>
+                <span className="eyebrow-ritual">Se déconnecter</span>
               </motion.button>
             </div>
           </Card>
@@ -390,9 +386,9 @@ interface RowProps {
 }
 function Row({ label, value }: RowProps) {
   return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-night-700/60 pb-2.5">
-      <dt className="text-caption text-ivory-400">{label}</dt>
-      <dd className="text-body text-ivory-100 font-cinzel text-right">{value}</dd>
+    <div className="flex items-baseline justify-between gap-3 border-b border-ivory-50/[0.08] pb-3">
+      <dt className="eyebrow-ritual text-ivory-400/80">{label}</dt>
+      <dd className="text-body text-ivory-100 font-serif text-right">{value}</dd>
     </div>
   );
 }

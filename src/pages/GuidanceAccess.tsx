@@ -128,7 +128,7 @@ export default function GuidanceAccess() {
     >
       <GuidanceDisplay guidance={guidance} />
 
-      <p className="mt-12 text-center text-micro uppercase tracking-[0.22em] text-ivory-400">
+      <p className="mt-16 eyebrow-ritual text-ivory-400/80 text-center">
         ✦ Zodiak — Ton guide astral premium ✦
       </p>
     </PageLayout>

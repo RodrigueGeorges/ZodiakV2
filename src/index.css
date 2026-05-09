@@ -1,22 +1,16 @@
 /*
- * Zodiak — index.css v2 (Cosmic Editorial)
- * ----------------------------------------
- * Réduit drastiquement le CSS personnalisé. Tout ce qui peut s'exprimer en
- * Tailwind l'est. On ne garde ici que :
- *   - imports de polices (Cinzel + Inter)
- *   - directives Tailwind
- *   - variables CSS (fallback hors Tailwind)
- *   - une poignée d'utilitaires non triviaux (scrollbar, focus, safe-area)
- *   - 2 keyframes utilisés par Tailwind animation: aurora-drift et breath
- *
- * Anti-patterns éliminés :
- *   - `* { background: transparent !important }` qui cassait toute carte
- *   - duplications de @keyframes
- *   - .text-primary, .bg-cosmic-* redéclarés (Tailwind les gère via tailwind.config.js)
- *   - 200+ lignes de utilities mobile-* jamais utilisées
+ * Zodiak — index.css v3 ("Cosmic Editorial Ritual")
+ * --------------------------------------------------
+ * Refonte mai 2026 :
+ *   - Import Fraunces (serif sculpté moderne) en plus d'Inter et Cinzel
+ *   - Suppression du text-gradient-aurora (couleur unie ivoire désormais)
+ *   - Adoucissement de toutes les classes anciennes (.btn-aurora, .card-aurora)
+ *   - Nouvelle classe .editorial-rule (filet décoratif or)
+ *   - Scrollbar quasi-invisible
+ *   - Texture grain en surcouche (option .grain-overlay)
  */
 
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Cinzel:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -27,9 +21,10 @@
  * ────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  --color-bg: #0B0B1A;
-  --color-fg: #FAF7F2;
-  --color-accent: #8E55FF;
+  --color-bg:     #0A0814;  /* Encre profonde */
+  --color-fg:     #F4ECDB;  /* Papier crème */
+  --color-accent: #D4A656;  /* Or alchimique */
+  --color-mute:   #A8987A;  /* Brume taupe */
 }
 
 html,
@@ -41,6 +36,14 @@ body {
   color: var(--color-fg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern', 'liga', 'calt';
+}
+
+/* Sélection texte = or alchimique */
+::selection {
+  background: rgba(212, 166, 86, 0.25);
+  color: #F4ECDB;
 }
 
 a {
@@ -74,42 +77,73 @@ a {
   .page-content {
     @apply relative z-10 container mx-auto px-4 md:px-8 py-6 md:py-10;
   }
+
+  /* Anciennes classes — gardées en rétrocompat mais épurées */
   .page-title {
-    @apply font-cinzel text-display bg-gradient-text bg-clip-text text-transparent text-center;
+    @apply font-serif text-display text-ivory-50 text-center;
+    letter-spacing: -0.02em;
   }
   .page-subtitle {
-    @apply font-cinzel italic text-body-lg text-ivory-200 text-center mt-3 mb-6;
+    @apply font-serif italic text-body-lg text-ivory-200/80 text-center mt-3 mb-6;
   }
 
   .card-aurora {
-    @apply rounded-2xl border border-night-700/80 bg-night-900/70 backdrop-blur-sm shadow-card transition-shadow duration-300;
+    @apply rounded-editorial border border-ivory-50/[0.06] bg-night-900/40 backdrop-blur-sm transition-colors duration-500;
   }
   .card-aurora:hover {
-    @apply shadow-card-hover border-aurora-500/30;
+    @apply border-aurora-400/25;
   }
 
   .btn-aurora {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full font-medium tracking-wide;
-    @apply bg-aurora-500 text-ivory-50 hover:bg-aurora-400 transition-colors;
-    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950;
+    @apply inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-medium tracking-wide;
+    @apply bg-aurora-400 text-night-950 hover:bg-aurora-300 transition-colors;
+    @apply focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full;
-    @apply border border-ivory-200/15 text-ivory-100 hover:bg-ivory-200/5 transition-colors;
+    @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full;
+    @apply border border-ivory-50/15 text-ivory-100 hover:border-aurora-400/40 hover:text-aurora-300 transition-colors;
   }
 
   .input-cosmic {
-    @apply w-full rounded-xl bg-night-900/60 border border-night-700 px-4 py-2.5 text-ivory-100 placeholder-ivory-400/60;
-    @apply focus:outline-none focus:border-aurora-400 focus:ring-2 focus:ring-aurora-400/30 transition-all;
+    @apply w-full rounded-md bg-night-900/60 border border-ivory-50/[0.08] px-4 py-3 text-ivory-100 placeholder-ivory-400/60;
+    @apply focus:outline-none focus:border-aurora-400/50 focus:ring-0 transition-colors;
   }
 
-  /* Scrollbar fine pour les zones défilantes (chat, suggestions) */
+  /* ─────── Nouveautés éditoriales ─────── */
+
+  /* Filet décoratif horizontal (signature éditoriale) */
+  .editorial-rule {
+    @apply relative inline-block w-12 h-px bg-aurora-400/60;
+  }
+  .editorial-rule-long {
+    @apply relative inline-block w-24 h-px bg-aurora-400/40;
+  }
+
+  /* Eyebrow rituel : Cinzel small caps avec letter-spacing fort */
+  .eyebrow-ritual {
+    @apply font-cinzel text-micro uppercase text-aurora-400/90;
+    letter-spacing: 0.32em;
+  }
+
+  /* Texture grain en overlay */
+  .grain-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Scrollbar fine pour les zones défilantes */
   .scrollbar-thin::-webkit-scrollbar {
     height: 6px;
     width: 6px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(142, 85, 255, 0.3);
+    background: rgba(212, 166, 86, 0.2);
     border-radius: 999px;
   }
   .scrollbar-thin::-webkit-scrollbar-track {
@@ -121,27 +155,53 @@ a {
  * Utilitaires non triviaux
  * ────────────────────────────────────────────────────────────────────────── */
 
+/*
+ * text-gradient-aurora : ANCIENNE classe gardée en rétrocompat.
+ * Elle ne fait PLUS de gradient (qui faisait année 2010s).
+ * Désormais : couleur or alchimique unie. Élégant, sobre.
+ */
 .text-gradient-aurora {
-  background: linear-gradient(135deg, #FAF7F2 0%, #C9A6FF 60%, #F472B6 100%);
+  background: none;
+  -webkit-background-clip: initial;
+  background-clip: initial;
+  color: #D4A656;
+  -webkit-text-fill-color: #D4A656;
+}
+
+/* Variante : gradient or → ivoire (pour les hero qui veulent un peu d'éclat) */
+.text-gradient-gold {
+  background: linear-gradient(180deg, #F4ECDB 0%, #D4A656 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
-.safe-top { padding-top: env(safe-area-inset-top); }
+/* Italique éditorial (Fraunces optimisé pour l'italique) */
+.italic-editorial {
+  font-family: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-feature-settings: 'kern', 'liga', 'salt';
+  font-variation-settings: 'opsz' 144, 'SOFT' 100;
+}
+
+.safe-top    { padding-top:    env(safe-area-inset-top);    }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
+/* Scrollbar discrète globale (or au lieu de violet) */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
 ::-webkit-scrollbar-thumb {
-  background: rgba(142, 85, 255, 0.4);
+  background: rgba(212, 166, 86, 0.25);
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(142, 85, 255, 0.7);
+  background: rgba(212, 166, 86, 0.5);
 }
 
 @media print {

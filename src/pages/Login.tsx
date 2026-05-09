@@ -59,12 +59,12 @@ export default function Login() {
     >
       <OAuthButtons mode="login" className="mb-5" />
 
-      <div className="relative my-6 flex items-center gap-3">
-        <span className="flex-1 h-px bg-night-700" />
-        <span className="text-micro uppercase tracking-[0.22em] text-ivory-400">
+      <div className="relative my-8 flex items-center gap-4">
+        <span className="flex-1 h-px bg-ivory-50/[0.10]" />
+        <span className="eyebrow-ritual text-ivory-400/80 whitespace-nowrap">
           ou avec ton email
         </span>
-        <span className="flex-1 h-px bg-night-700" />
+        <span className="flex-1 h-px bg-ivory-50/[0.10]" />
       </div>
 
       <form onSubmit={handleLogin} className="space-y-5">

@@ -70,12 +70,12 @@ export default function Register() {
 
       <OAuthButtons mode="register" className="mb-5" />
 
-      <div className="relative my-6 flex items-center gap-3">
-        <span className="flex-1 h-px bg-night-700" />
-        <span className="text-micro uppercase tracking-[0.22em] text-ivory-400">
+      <div className="relative my-8 flex items-center gap-4">
+        <span className="flex-1 h-px bg-ivory-50/[0.10]" />
+        <span className="eyebrow-ritual text-ivory-400/80 whitespace-nowrap">
           ou avec ton email
         </span>
-        <span className="flex-1 h-px bg-night-700" />
+        <span className="flex-1 h-px bg-ivory-50/[0.10]" />
       </div>
 
       <form onSubmit={handleRegister} className="space-y-5">
@@ -191,8 +191,8 @@ export default function Register() {
           Créer mon compte
         </Button>
 
-        <div className="flex items-center gap-2 pt-2 text-micro text-ivory-400">
-          <ShieldCheck className="w-3.5 h-3.5 text-aurora-300" aria-hidden="true" />
+        <div className="flex items-center gap-2 pt-3 eyebrow-ritual text-ivory-400/70">
+          <ShieldCheck className="w-3.5 h-3.5 text-aurora-400" aria-hidden="true" />
           <span>7 jours offerts · sans carte bancaire · annulable en 1 clic</span>
         </div>
       </form>

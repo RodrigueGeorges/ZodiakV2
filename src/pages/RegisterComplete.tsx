@@ -248,7 +248,7 @@ export default function RegisterComplete() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             role="alert"
-            className="flex items-start gap-2 rounded-xl border border-magenta-500/30 bg-magenta-500/10 px-4 py-3"
+            className="flex items-start gap-2 rounded-md border border-magenta-500/30 bg-magenta-500/10 px-4 py-3"
           >
             <AlertCircle className="w-4 h-4 text-magenta-400 flex-shrink-0 mt-0.5" />
             <p className="text-caption text-magenta-200">{error}</p>

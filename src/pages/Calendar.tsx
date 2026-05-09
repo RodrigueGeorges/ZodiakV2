@@ -47,18 +47,14 @@ export default function CalendarPage() {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
       <Card variant="elevated" className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/12 via-transparent to-magenta-500/12"
-        />
-        <div className="relative p-6 md:p-8">
-          <div className="flex items-center gap-2 text-aurora-300 mb-3">
+        <div className="relative p-7 md:p-8">
+          <div className="flex items-center gap-2 mb-5 text-aurora-400/90">
             <Moon className="w-4 h-4" aria-hidden="true" />
-            <span className="text-micro uppercase tracking-[0.22em]">Lunaisons à venir</span>
+            <span className="eyebrow-ritual">Lunaisons à venir</span>
           </div>
-          <h2 className="font-cinzel text-h2 leading-tight mb-5">
-            <span className="text-ivory-50">Pose tes intentions </span>
-            <span className="text-gradient-aurora">au bon moment.</span>
+          <h2 className="font-serif text-h2 text-ivory-50 leading-[0.95] mb-5">
+            Pose tes intentions{' '}
+            <span className="italic-editorial text-aurora-400">au bon moment.</span>
           </h2>
           <ul className="grid sm:grid-cols-2 gap-3">
             {keyDates.map((k, i) => (
@@ -67,13 +63,13 @@ export default function CalendarPage() {
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.06 }}
-                className="flex items-center gap-3 p-3 rounded-2xl bg-night-900/60 ring-1 ring-night-700/70"
+                className="flex items-center gap-3 p-3 rounded-md bg-night-900/60 border border-ivory-50/[0.06]"
               >
                 <span className="text-3xl" aria-hidden="true">
                   {k.glyph}
                 </span>
                 <div className="min-w-0">
-                  <p className="font-cinzel text-body text-ivory-50">{k.label}</p>
+                  <p className="font-serif text-body text-ivory-50">{k.label}</p>
                   <p className="text-caption text-ivory-300 truncate">
                     {formatLong(k.date)}
                   </p>
@@ -93,14 +89,14 @@ export default function CalendarPage() {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       >
       <Card variant="surface">
-        <div className="p-6 md:p-8">
-          <div className="flex items-center gap-2 text-aurora-300 mb-3">
+        <div className="p-7 md:p-8">
+          <div className="flex items-center gap-2 mb-5 text-aurora-400/90">
             <CalendarDays className="w-4 h-4" aria-hidden="true" />
-            <span className="text-micro uppercase tracking-[0.22em]">Trente jours</span>
+            <span className="eyebrow-ritual">Trente jours</span>
           </div>
-          <h2 className="font-cinzel text-h2 leading-tight mb-5">
-            <span className="text-ivory-50">Ton mois </span>
-            <span className="text-gradient-aurora">cosmique.</span>
+          <h2 className="font-serif text-h2 text-ivory-50 leading-[0.95] mb-5">
+            Ton mois{' '}
+            <span className="italic-editorial text-aurora-400">cosmique.</span>
           </h2>
           <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-10 gap-2">
             {phases.map((p, i) => {
@@ -114,10 +110,10 @@ export default function CalendarPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.015 }}
                   className={cn(
-                    'relative aspect-square rounded-2xl flex flex-col items-center justify-center gap-1 ring-1 transition-colors',
-                    'bg-night-900/60 ring-night-700/60',
-                    isFull && 'ring-amber-300/50 bg-amber-500/10',
-                    isNew && 'ring-aurora-300/50 bg-aurora-500/10'
+                    'relative aspect-square rounded-md flex flex-col items-center justify-center gap-1 border transition-colors',
+                    'bg-night-900/60 border-ivory-50/[0.06]',
+                    isFull && 'border-amber-300/40 bg-amber-500/10',
+                    isNew && 'border-aurora-400/30 bg-aurora-500/10'
                   )}
                   style={{
                     boxShadow: `inset 0 -${Math.round(intensity * 30)}px 60px rgba(201,166,255,${

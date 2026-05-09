@@ -149,74 +149,70 @@ export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptPr
           role="dialog"
           aria-labelledby="pwa-install-title"
         >
-          <div className="relative rounded-3xl border border-aurora-500/30 bg-night-900/90 backdrop-blur-xl p-5 shadow-glow-aurora overflow-hidden">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/15 via-transparent to-magenta-500/15"
-            />
+          <div className="relative rounded-md border border-aurora-400/30 bg-night-900/90 backdrop-blur-xl p-6 overflow-hidden">
             <button
               type="button"
               onClick={dismiss}
               aria-label="Fermer"
-              className="absolute top-3 right-3 p-1.5 rounded-full text-ivory-400 hover:text-ivory-50 hover:bg-night-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300"
+              className="absolute top-3 right-3 p-1.5 rounded-full text-ivory-400 hover:text-ivory-50 focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300"
             >
               <X className="w-4 h-4" />
             </button>
 
             {iosFallback ? (
               <div className="relative">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-aurora-500/30 to-magenta-500/30 ring-1 ring-aurora-400/40 flex items-center justify-center">
-                    <Download className="w-5 h-5 text-aurora-200" aria-hidden="true" />
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-11 h-11 rounded-full border border-aurora-400/30 flex items-center justify-center">
+                    <Download className="w-5 h-5 text-aurora-400" aria-hidden="true" />
                   </div>
                   <div>
                     <p
                       id="pwa-install-title"
-                      className="font-cinzel text-body text-ivory-50"
+                      className="font-serif text-body-lg text-ivory-50 leading-tight"
                     >
                       Installe Zodiak sur iPhone
                     </p>
-                    <p className="text-caption text-ivory-300">
+                    <p className="text-caption text-ivory-300/80 italic-editorial mt-1">
                       Plus rapide, hors connexion, comme une vraie app.
                     </p>
                   </div>
                 </div>
-                <ol className="space-y-2 mt-3 text-caption text-ivory-200">
-                  <li className="flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-aurora-500/20 ring-1 ring-aurora-400/40 text-aurora-200">
+                <ol className="space-y-3 mt-4 text-caption text-ivory-200">
+                  <li className="flex items-center gap-3">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-aurora-400/40 text-aurora-400 font-serif">
                       1
                     </span>
                     <span>
                       Touche{' '}
-                      <Share className="inline w-3.5 h-3.5 text-aurora-200" aria-hidden="true" />{' '}
+                      <Share className="inline w-3.5 h-3.5 text-aurora-400" aria-hidden="true" />{' '}
                       <span className="font-medium">Partager</span>
                     </span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-aurora-500/20 ring-1 ring-aurora-400/40 text-aurora-200">
+                  <li className="flex items-center gap-3">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-aurora-400/40 text-aurora-400 font-serif">
                       2
                     </span>
                     <span>
                       Choisis{' '}
-                      <Plus className="inline w-3.5 h-3.5 text-aurora-200" aria-hidden="true" />{' '}
+                      <Plus className="inline w-3.5 h-3.5 text-aurora-400" aria-hidden="true" />{' '}
                       <span className="font-medium">Sur l'écran d'accueil</span>
                     </span>
                   </li>
                 </ol>
               </div>
             ) : (
-              <div className="relative flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-aurora-500/30 to-magenta-500/30 ring-1 ring-aurora-400/40 flex items-center justify-center">
-                  <Download className="w-5 h-5 text-aurora-200" aria-hidden="true" />
+              <div className="relative flex items-center gap-4">
+                <div className="w-11 h-11 rounded-full border border-aurora-400/30 flex items-center justify-center">
+                  <Download className="w-5 h-5 text-aurora-400" aria-hidden="true" />
                 </div>
                 <div className="flex-1">
                   <p
                     id="pwa-install-title"
-                    className="font-cinzel text-body text-ivory-50"
+                    className="font-serif text-body-lg text-ivory-50 leading-tight"
                   >
                     Installe Zodiak
                   </p>
-                  <p className="text-caption text-ivory-300">
+                  <p className="text-caption text-ivory-300/80 italic-editorial mt-1">
                     Sur ton écran d'accueil. Plus rapide, hors connexion.
                   </p>
                 </div>

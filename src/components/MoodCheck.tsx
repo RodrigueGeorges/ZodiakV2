@@ -9,66 +9,27 @@ interface MoodOption {
   emoji: string;
   label: string;
   helper: string;
-  tone: string;
 }
 
 const MOODS: MoodOption[] = [
-  {
-    key: 'radiant',
-    emoji: '☀️',
-    label: 'Radieux',
-    helper: 'Une énergie haute, prête à rayonner.',
-    tone: 'from-amber-500/30 to-magenta-500/20 ring-amber-300/40',
-  },
-  {
-    key: 'inspired',
-    emoji: '✨',
-    label: 'Inspiré',
-    helper: 'Des idées qui dansent.',
-    tone: 'from-aurora-500/30 to-magenta-500/25 ring-aurora-300/40',
-  },
-  {
-    key: 'calm',
-    emoji: '🌊',
-    label: 'Apaisé',
-    helper: 'Le souffle posé.',
-    tone: 'from-aurora-500/25 to-night-700/40 ring-aurora-200/30',
-  },
-  {
-    key: 'pensive',
-    emoji: '🌙',
-    label: 'Pensif',
-    helper: 'Le mental qui tourne.',
-    tone: 'from-night-700/60 to-aurora-500/20 ring-night-500/40',
-  },
-  {
-    key: 'tense',
-    emoji: '⚡',
-    label: 'Tendu',
-    helper: 'Quelque chose tire.',
-    tone: 'from-magenta-500/30 to-night-800/40 ring-magenta-300/40',
-  },
-  {
-    key: 'tired',
-    emoji: '🌫️',
-    label: 'Fatigué',
-    helper: 'Le réservoir est bas.',
-    tone: 'from-night-700/70 to-night-800/60 ring-night-600/40',
-  },
+  { key: 'radiant',  emoji: '☀️',  label: 'Radieux',  helper: 'Une énergie haute, prête à rayonner.' },
+  { key: 'inspired', emoji: '✨',  label: 'Inspiré',  helper: 'Des idées qui dansent.' },
+  { key: 'calm',     emoji: '🌊', label: 'Apaisé',   helper: 'Le souffle posé.' },
+  { key: 'pensive',  emoji: '🌙', label: 'Pensif',   helper: 'Le mental qui tourne.' },
+  { key: 'tense',    emoji: '⚡', label: 'Tendu',    helper: 'Quelque chose tire.' },
+  { key: 'tired',    emoji: '🌫️',  label: 'Fatigué',  helper: 'Le réservoir est bas.' },
 ];
 
 interface MoodCheckProps {
-  /** Mood déjà enregistré aujourd'hui — affichage compact "modifier mon ressenti". */
   current?: MoodKey | null;
   onSelect: (mood: MoodKey) => void | Promise<unknown>;
   className?: string;
-  /** Cache le titre (utile si déjà encadré dans un layout). */
   hideHeader?: boolean;
 }
 
 /**
- * Mood check en 2 secondes. Création du moment "investment" Nir Eyal :
- * l'utilisateur livre un signal → l'IA personnalise la guidance → il revient.
+ * MoodCheck v3 — épuré "Cosmic Editorial Ritual".
+ * Suppression des gradients tonalisés (rainbow). Hover or, sélection or.
  */
 export default function MoodCheck({
   current,
@@ -90,26 +51,22 @@ export default function MoodCheck({
 
   return (
     <Card variant="elevated" className={cn('relative overflow-hidden', className)}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/12 via-transparent to-magenta-500/12"
-      />
-      <div className="relative p-6 md:p-8">
+      <div className="relative p-7 md:p-10">
         {!hideHeader && (
-          <div className="mb-5 text-center">
-            <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-1">
+          <div className="mb-8 text-center">
+            <p className="eyebrow-ritual text-aurora-400/80 mb-4">
               Avant ta guidance
             </p>
-            <h2 className="font-cinzel text-h3 md:text-h2 text-ivory-50">
-              Comment tu te sens, là ?
+            <h2 className="font-serif text-h1 text-ivory-50 leading-tight">
+              Comment tu te sens, <span className="italic-editorial text-aurora-400">là ?</span>
             </h2>
-            <p className="text-caption text-ivory-300 mt-1">
+            <p className="text-caption text-ivory-300/80 italic-editorial mt-3">
               Le ciel t'écoutera mieux.
             </p>
           </div>
         )}
 
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2.5">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
           {MOODS.map((m) => {
             const active = current === m.key;
             const isSubmitting = submitting === m.key;
@@ -118,24 +75,24 @@ export default function MoodCheck({
                 key={m.key}
                 type="button"
                 onClick={() => handle(m.key)}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.97 }}
                 disabled={!!submitting}
                 aria-pressed={active}
                 aria-label={`${m.label} — ${m.helper}`}
                 className={cn(
-                  'relative rounded-2xl px-2 py-3 flex flex-col items-center gap-1 ring-1 transition-all',
-                  'bg-gradient-to-br',
-                  m.tone,
-                  active ? 'ring-2 ring-offset-2 ring-offset-night-900' : '',
+                  'relative px-3 py-4 flex flex-col items-center gap-2 border transition-colors duration-300',
+                  active
+                    ? 'border-aurora-400/60 bg-aurora-400/5'
+                    : 'border-ivory-50/[0.08] bg-night-900/40 hover:border-aurora-400/30',
                   isSubmitting && 'opacity-70',
-                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300'
+                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300',
                 )}
               >
                 <span className="text-2xl" aria-hidden="true">
                   {m.emoji}
                 </span>
-                <span className="font-cinzel text-caption text-ivory-50">
+                <span className="font-serif text-caption text-ivory-50">
                   {m.label}
                 </span>
               </motion.button>
@@ -147,9 +104,9 @@ export default function MoodCheck({
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="mt-4 text-center text-caption text-ivory-300"
+            className="mt-5 text-center text-caption text-ivory-300/80 italic-editorial"
           >
-            Ton ressenti est noté ✦ Tu peux changer si l'humeur évolue.
+            Ton ressenti est noté · tu peux changer si l'humeur évolue.
           </motion.p>
         )}
       </div>

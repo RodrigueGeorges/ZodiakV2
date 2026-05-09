@@ -22,17 +22,14 @@ export default function BadgesGrid({ earned, className }: BadgesGridProps) {
 
   return (
     <Card variant="elevated" className={cn('relative overflow-hidden', className)}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/10 via-transparent to-magenta-500/10"
-      />
-      <div className="relative p-6 md:p-8">
-        <div className="mb-5 text-center">
-          <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-1">
+      <div className="relative p-7 md:p-10">
+        <div className="mb-7 text-center">
+          <p className="eyebrow-ritual text-aurora-400/80 mb-3">
             Marqueurs cosmiques
           </p>
-          <h3 className="font-cinzel text-h3 text-ivory-50">
-            {earned.length} / {BADGES.length}
+          <h3 className="font-serif text-h1 text-ivory-50 leading-tight">
+            <span className="text-aurora-400">{earned.length}</span>
+            <span className="text-ivory-400/60"> / {BADGES.length}</span>
           </h3>
         </div>
 
@@ -60,10 +57,10 @@ function BadgeTile({ badge, got, index }: TileProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.03 }}
       className={cn(
-        'relative aspect-square rounded-2xl flex flex-col items-center justify-center gap-1 ring-1 backdrop-blur-md',
+        'relative aspect-square rounded-md flex flex-col items-center justify-center gap-2 border backdrop-blur-md',
         got
           ? `${tone.bg} ${tone.ring}`
-          : 'bg-night-900/60 ring-night-700/60 grayscale opacity-50'
+          : 'bg-night-900/40 border-ivory-50/[0.06] grayscale opacity-40',
       )}
       title={got ? `${badge.name} — ${badge.description}` : '— Marqueur à découvrir —'}
     >
@@ -75,8 +72,8 @@ function BadgeTile({ badge, got, index }: TileProps) {
       </span>
       <span
         className={cn(
-          'px-1 text-center text-micro leading-tight font-cinzel',
-          got ? 'text-ivory-50' : 'text-ivory-400'
+          'px-1 text-center text-micro leading-tight font-serif',
+          got ? 'text-ivory-50' : 'text-ivory-400/60',
         )}
       >
         {got ? badge.name : '—'}

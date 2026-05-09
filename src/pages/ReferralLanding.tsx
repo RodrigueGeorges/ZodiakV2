@@ -55,8 +55,8 @@ export default function ReferralLanding() {
         dim
       >
         <Card variant="surface">
-          <div className="p-6 md:p-8 flex flex-col items-center text-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-magenta-500/15 ring-1 ring-magenta-400/30 flex items-center justify-center text-magenta-300">
+          <div className="p-7 md:p-8 flex flex-col items-center text-center gap-5">
+            <div className="w-14 h-14 rounded-full bg-magenta-500/10 border border-magenta-400/30 flex items-center justify-center text-magenta-300">
               <AlertCircle className="w-6 h-6" />
             </div>
             <p className="text-body text-ivory-200 max-w-md">
@@ -92,22 +92,18 @@ export default function ReferralLanding() {
       showLogo
     >
       <Card variant="elevated" className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/12 via-transparent to-magenta-500/12"
-        />
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="relative p-7 md:p-9 text-center"
+          className="relative p-8 md:p-10 text-center"
         >
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-aurora-500/15 ring-1 ring-aurora-400/30 mb-5 text-aurora-200">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-aurora-500/10 border border-aurora-400/30 mb-5 text-aurora-200">
             <Gift className="w-6 h-6" aria-hidden="true" />
           </div>
-          <h2 className="font-cinzel text-h2 leading-tight mb-3">
-            <span className="text-ivory-50">14 jours</span>{' '}
-            <span className="text-gradient-aurora">offerts</span>
+          <h2 className="font-serif text-h2 text-ivory-50 leading-[0.95] mb-5">
+            14 jours{' '}
+            <span className="italic-editorial text-aurora-400">offerts</span>
           </h2>
           <p className="text-body text-ivory-200 max-w-md mx-auto mb-6">
             Grâce à l'invitation de ton ami, tu reçois{' '}
@@ -124,7 +120,7 @@ export default function ReferralLanding() {
           >
             Activer mon bonus
           </Button>
-          <p className="mt-4 text-micro uppercase tracking-[0.22em] text-ivory-400">
+          <p className="mt-5 eyebrow-ritual text-ivory-400/80">
             Sans carte bancaire · annulable en 1 clic
           </p>
         </motion.div>

@@ -21,7 +21,7 @@ export default function FAQ({ items, className }: FAQProps) {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
-    <ul className={cn('divide-y divide-night-700/60', className)}>
+    <ul className={cn('divide-y divide-ivory-50/[0.08]', className)}>
       {items.map((item, i) => {
         const open = openIdx === i;
         return (
@@ -30,14 +30,14 @@ export default function FAQ({ items, className }: FAQProps) {
               type="button"
               onClick={() => setOpenIdx(open ? null : i)}
               aria-expanded={open}
-              className="w-full flex items-start justify-between gap-4 py-5 md:py-6 text-left group"
+              className="w-full flex items-start justify-between gap-5 py-7 md:py-8 text-left group"
             >
               <span
                 className={cn(
-                  'font-cinzel text-body-lg md:text-h3 transition-colors',
+                  'font-serif text-h2 md:text-h1 transition-colors leading-tight',
                   open
-                    ? 'text-aurora-200'
-                    : 'text-ivory-100 group-hover:text-aurora-200',
+                    ? 'text-aurora-400 italic-editorial'
+                    : 'text-ivory-100 group-hover:text-aurora-300',
                 )}
               >
                 {item.q}
@@ -45,16 +45,16 @@ export default function FAQ({ items, className }: FAQProps) {
               <span
                 aria-hidden="true"
                 className={cn(
-                  'flex-shrink-0 mt-1 w-7 h-7 rounded-full ring-1 flex items-center justify-center transition-all duration-300',
+                  'flex-shrink-0 mt-2 w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-300',
                   open
-                    ? 'bg-aurora-500/20 ring-aurora-300/50 rotate-45'
-                    : 'ring-night-700 group-hover:ring-aurora-400/40',
+                    ? 'border-aurora-400/60 rotate-45'
+                    : 'border-ivory-50/[0.12] group-hover:border-aurora-400/40',
                 )}
               >
                 <Plus
                   className={cn(
                     'w-3.5 h-3.5',
-                    open ? 'text-aurora-200' : 'text-ivory-300',
+                    open ? 'text-aurora-400' : 'text-ivory-300',
                   )}
                 />
               </span>
@@ -65,10 +65,10 @@ export default function FAQ({ items, className }: FAQProps) {
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                   className="overflow-hidden"
                 >
-                  <div className="pb-6 pr-12 text-body text-ivory-200 leading-relaxed">
+                  <div className="pb-8 pr-14 text-body-lg text-ivory-200/90 leading-[1.7]">
                     {item.a}
                   </div>
                 </motion.div>

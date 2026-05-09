@@ -120,21 +120,17 @@ export function GuidanceContent({
     return (
       <div className={className}>
         <Card variant="elevated" className="relative overflow-hidden">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/15 via-transparent to-magenta-500/10"
-          />
-          <div className="relative px-6 md:px-12 py-12 md:py-16 text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-aurora-500/15 ring-1 ring-aurora-400/30 mb-6">
-              <Sparkles className="w-6 h-6 text-aurora-200" aria-hidden="true" />
+          <div className="relative px-7 md:px-16 py-16 md:py-20 text-center">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full border border-aurora-400/30 mb-8">
+              <Sparkles className="w-6 h-6 text-aurora-400" aria-hidden="true" />
             </div>
-            <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-3">
+            <p className="eyebrow-ritual text-aurora-400/80 mb-5">
               Ton ciel du jour
             </p>
-            <h2 className="font-cinzel text-h1 md:text-display text-gradient-aurora mb-4">
-              Prêt(e) à lire les étoiles ?
+            <h2 className="font-serif text-display text-ivory-50 leading-[0.95] mb-6">
+              Prêt(e) à lire <span className="italic-editorial text-aurora-400">les étoiles ?</span>
             </h2>
-            <p className="max-w-xl mx-auto text-body-lg text-ivory-200 mb-8">
+            <p className="max-w-xl mx-auto text-body-lg text-ivory-200/85 leading-[1.7] mb-10">
               Une lecture personnalisée — fondée sur ton thème natal et les
               transits du jour. Cœur, chantiers, vitalité, mantra : tout y
               passe.

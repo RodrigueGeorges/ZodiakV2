@@ -30,22 +30,18 @@ export default function SoundToggle({ className }: SoundToggleProps) {
 
   return (
     <Card variant="surface" className={cn('relative overflow-hidden', className)}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-aurora-500/8 via-transparent to-magenta-500/8"
-      />
       <button
         type="button"
         onClick={toggle}
         aria-pressed={enabled}
-        className="relative w-full flex items-center gap-4 p-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300 focus-visible:ring-inset"
+        className="relative w-full flex items-center gap-5 p-7 text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300 focus-visible:ring-inset"
       >
         <span
           className={cn(
-            'flex-shrink-0 w-11 h-11 rounded-2xl ring-1 flex items-center justify-center transition-colors',
+            'flex-shrink-0 w-11 h-11 rounded-full border flex items-center justify-center transition-colors',
             enabled
-              ? 'bg-aurora-500/25 ring-aurora-300/60 text-aurora-100'
-              : 'bg-night-900/60 ring-night-700/60 text-ivory-400',
+              ? 'border-aurora-400/40 text-aurora-400'
+              : 'border-ivory-50/[0.08] text-ivory-400',
           )}
         >
           {enabled ? (
@@ -55,15 +51,17 @@ export default function SoundToggle({ className }: SoundToggleProps) {
           )}
         </span>
         <div className="flex-1 min-w-0">
-          <p className="font-cinzel text-h3 text-ivory-50">Sons d'interaction</p>
-          <p className="text-caption text-ivory-300">
+          <p className="font-serif text-h2 text-ivory-50 leading-tight">
+            Sons d'interaction
+          </p>
+          <p className="text-caption text-ivory-300/80 italic-editorial mt-1">
             Whoosh discret au refresh, chime sur le streak. Volume très bas.
           </p>
         </div>
         <span
           className={cn(
             'relative inline-flex w-11 h-6 rounded-full transition-colors',
-            enabled ? 'bg-aurora-500' : 'bg-night-700',
+            enabled ? 'bg-aurora-400' : 'bg-ivory-50/[0.12]',
           )}
           aria-hidden="true"
         >
@@ -71,7 +69,7 @@ export default function SoundToggle({ className }: SoundToggleProps) {
             layout
             transition={{ type: 'spring', stiffness: 400, damping: 28 }}
             className={cn(
-              'absolute top-0.5 w-5 h-5 rounded-full bg-ivory-50 shadow',
+              'absolute top-0.5 w-5 h-5 rounded-full bg-ivory-50',
               enabled ? 'left-[22px]' : 'left-0.5',
             )}
           />

@@ -4,17 +4,28 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 /**
- * Button — primitive aurora.
+ * Button v3 — primitive éditoriale "Cosmic Editorial Ritual".
  *
- * Variants : `primary` (CTA), `secondary` (action douce), `ghost` (texte+border),
- * `danger` (rouge violet), `text` (uniquement texte).
+ * Variants :
+ *  - `primary` : fond or alchimique, texte encre profonde (CTA principal)
+ *  - `secondary` : ivoire transparent, bordure subtile
+ *  - `ghost` : juste une bordure or qui s'illumine au hover
+ *  - `danger` : magenta cosmique restreint (destructive only)
+ *  - `text` : lien typographique simple
+ *  - `ritual` : variante rituelle, fond ivoire papier sur encre (rare)
  *
- * Tailles : `sm`, `md` (default), `lg`.
- *
- * `loading` : remplace le contenu par un spinner aurora et désactive le clic.
- * `iconLeft`/`iconRight` : icônes lucide (passées comme nodes).
+ * Refonte :
+ *   - Plus de shadow-glow par défaut
+ *   - Le "primary" passe du violet au or (avec texte foncé pour contraste)
+ *   - Tracking adouci, transition plus lente (ease-out 500ms)
  */
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'text';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'ghost'
+  | 'danger'
+  | 'text'
+  | 'ritual';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps
@@ -30,20 +41,23 @@ export interface ButtonProps
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-aurora-500 text-ivory-50 hover:bg-aurora-400 active:bg-aurora-600 shadow-glow-aurora',
+    'bg-aurora-400 text-night-950 hover:bg-aurora-300 active:bg-aurora-500 font-semibold',
   secondary:
-    'bg-ivory-50/[0.06] text-ivory-50 hover:bg-ivory-50/[0.1] border border-ivory-50/10',
+    'bg-ivory-50/[0.04] text-ivory-50 hover:bg-ivory-50/[0.08] border border-ivory-50/[0.10]',
   ghost:
-    'bg-transparent text-ivory-100 hover:bg-ivory-50/[0.06] border border-ivory-50/15',
+    'bg-transparent text-ivory-100 border border-ivory-50/[0.18] hover:border-aurora-400/50 hover:text-aurora-300',
   danger:
-    'bg-magenta-500/15 text-magenta-400 hover:bg-magenta-500/25 border border-magenta-500/40',
-  text: 'bg-transparent text-aurora-300 hover:text-aurora-200 underline-offset-4 hover:underline',
+    'bg-transparent text-magenta-400 border border-magenta-500/30 hover:bg-magenta-500/10 hover:border-magenta-500/50',
+  text:
+    'bg-transparent text-aurora-400 hover:text-aurora-300 underline-offset-4 hover:underline',
+  ritual:
+    'bg-ivory-50 text-night-950 hover:bg-ivory-100 active:bg-ivory-200 font-semibold',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'h-9 px-4 text-caption gap-1.5',
-  md: 'h-11 px-6 text-body gap-2',
-  lg: 'h-12 px-8 text-body-lg gap-2.5',
+  sm: 'h-9  px-5 text-caption gap-1.5',
+  md: 'h-11 px-7 text-body    gap-2',
+  lg: 'h-13 px-9 text-body-lg gap-2.5',
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
@@ -60,7 +74,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     type = 'button',
     ...rest
   },
-  ref
+  ref,
 ) {
   return (
     <motion.button
@@ -68,15 +82,18 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      whileTap={{ scale: disabled || loading ? 1 : 0.97 }}
+      whileTap={{ scale: disabled || loading ? 1 : 0.98 }}
+      transition={{ duration: 0.15 }}
       className={cn(
-        'relative inline-flex items-center justify-center rounded-full font-medium tracking-wide transition-colors',
-        'focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
+        // Note : on n'utilise plus rounded-full systématiquement.
+        // Boutons éditoriaux = rounded-full pour les CTA, mais on garde la liberté.
+        'relative inline-flex items-center justify-center rounded-full font-medium tracking-wide transition-colors duration-300',
+        'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
+        'disabled:opacity-40 disabled:cursor-not-allowed',
         variantStyles[variant],
         sizeStyles[size],
         fullWidth && 'w-full',
-        className
+        className,
       )}
       {...rest}
     >

@@ -67,8 +67,8 @@ export default function LiveCounter({
       viewport={{ once: true, amount: 0.6 }}
       transition={{ duration: 0.6 }}
       className={cn(
-        'inline-flex items-center gap-2 rounded-full px-4 py-2',
-        'bg-night-900/60 backdrop-blur border border-night-700/80',
+        'inline-flex items-center gap-3 rounded-full px-5 py-2.5',
+        'bg-night-900/40 backdrop-blur border border-ivory-50/[0.08]',
         'text-caption text-ivory-200',
         className,
       )}
@@ -77,8 +77,8 @@ export default function LiveCounter({
         aria-hidden="true"
         className="relative flex w-2 h-2"
       >
-        <span className="absolute inset-0 rounded-full bg-emerald-400 opacity-80 animate-ping" />
-        <span className="relative inline-flex rounded-full bg-emerald-400 w-2 h-2" />
+        <span className="absolute inset-0 rounded-full bg-aurora-400 opacity-80 animate-ping" />
+        <span className="relative inline-flex rounded-full bg-aurora-400 w-2 h-2" />
       </span>
       <span>{prefix}</span>
       <AnimatedCounter

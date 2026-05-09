@@ -14,9 +14,9 @@ interface StreakFlameProps {
 }
 
 const sizeMap = {
-  sm: { wrap: 'h-9 px-3 gap-1.5', icon: 'w-3.5 h-3.5', count: 'text-caption' },
-  md: { wrap: 'h-11 px-4 gap-2', icon: 'w-4 h-4', count: 'text-body font-semibold' },
-  lg: { wrap: 'h-14 px-5 gap-2.5', icon: 'w-5 h-5', count: 'text-h3 font-cinzel' },
+  sm: { wrap: 'h-9 px-4 gap-2',   icon: 'w-3.5 h-3.5', count: 'text-caption' },
+  md: { wrap: 'h-11 px-5 gap-2.5', icon: 'w-4 h-4',     count: 'text-body font-semibold' },
+  lg: { wrap: 'h-14 px-6 gap-3',  icon: 'w-5 h-5',     count: 'text-h3 font-serif' },
 } as const;
 
 /**
@@ -40,34 +40,34 @@ export default function StreakFlame({
   const tone = useMemo(() => {
     if (willBreakSoon) {
       return {
-        bg: 'bg-night-800/80 border-night-700 text-ivory-300',
+        bg: 'bg-night-900/40 border-ivory-50/[0.08] text-ivory-300',
         flame: 'text-ivory-400',
         glow: '',
       };
     }
     if (count >= 30) {
       return {
-        bg: 'bg-gradient-to-r from-magenta-500/25 to-amber-500/25 border-amber-400/40 text-ivory-50',
-        flame: 'text-amber-300',
+        bg: 'bg-aurora-400/10 border-aurora-400/40 text-ivory-50',
+        flame: 'text-aurora-300',
         glow: 'shadow-glow-aurora',
       };
     }
     if (count >= 7) {
       return {
-        bg: 'bg-gradient-to-r from-aurora-500/25 to-magenta-500/25 border-magenta-400/40 text-ivory-50',
-        flame: 'text-magenta-300',
+        bg: 'bg-aurora-400/8 border-aurora-400/30 text-ivory-50',
+        flame: 'text-aurora-400',
         glow: '',
       };
     }
     if (count >= 1) {
       return {
-        bg: 'bg-aurora-500/15 border-aurora-400/35 text-ivory-100',
-        flame: 'text-aurora-200',
+        bg: 'bg-night-900/40 border-aurora-400/20 text-ivory-100',
+        flame: 'text-aurora-400',
         glow: '',
       };
     }
     return {
-      bg: 'bg-night-900/70 border-night-700/80 text-ivory-300',
+      bg: 'bg-night-900/40 border-ivory-50/[0.06] text-ivory-300',
       flame: 'text-ivory-400',
       glow: '',
     };
@@ -112,7 +112,7 @@ export default function StreakFlame({
       </motion.span>
       <span className={cn('tabular-nums', sizes.count)}>{count}</span>
       {showLabel && (
-        <span className="text-micro uppercase tracking-[0.18em] text-ivory-400 hidden sm:inline">
+        <span className="eyebrow-ritual text-ivory-400/80 hidden sm:inline">
           {willBreakSoon ? 'Reviens' : count <= 1 ? 'jour' : 'jours'}
         </span>
       )}

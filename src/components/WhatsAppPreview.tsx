@@ -33,9 +33,9 @@ export default function WhatsAppPreview({
       )}
       aria-hidden="true"
     >
-      {/* Halo */}
+      {/* Halo or alchimique très subtil */}
       <div
-        className="absolute -inset-6 rounded-[48px] bg-gradient-to-br from-aurora-500/30 via-magenta-500/20 to-amber-500/15 blur-2xl pointer-events-none"
+        className="absolute -inset-8 rounded-[48px] bg-aurora-400/15 blur-3xl pointer-events-none"
         aria-hidden="true"
       />
 
@@ -121,7 +121,7 @@ export default function WhatsAppPreview({
 function WhatsAppHeader() {
   return (
     <div className="bg-[#1f2c33] px-3 py-2.5 flex items-center gap-3 border-b border-white/5">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-aurora-500 to-magenta-500 flex items-center justify-center text-white">
+      <div className="w-8 h-8 rounded-full bg-aurora-400 flex items-center justify-center text-night-950">
         <Logo size="sm" />
       </div>
       <div className="flex-1 min-w-0">
@@ -140,7 +140,7 @@ function WhatsAppHeader() {
 function InstagramHeader() {
   return (
     <div className="bg-night-950/80 backdrop-blur px-3 py-2.5 flex items-center gap-3 border-b border-white/5">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-magenta-500 via-aurora-500 to-amber-500 p-[2px]">
+      <div className="w-8 h-8 rounded-full bg-aurora-400 p-[2px]">
         <div className="w-full h-full rounded-full bg-night-950 flex items-center justify-center">
           <Logo size="sm" />
         </div>

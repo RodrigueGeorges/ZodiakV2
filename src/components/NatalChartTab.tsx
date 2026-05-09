@@ -137,18 +137,24 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
     <div className="space-y-10">
       {/* Bloc carte du ciel + œuvre cosmique */}
       <Card variant="elevated" className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/10 via-transparent to-magenta-500/10"
-        />
-        <div className="relative p-6 md:p-10 flex flex-col items-center">
-          <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-2">
+        <div className="relative p-7 md:p-14 flex flex-col items-center">
+          <p className="eyebrow-ritual text-aurora-400/80 mb-3">
             {view === 'art' ? 'Œuvre cosmique' : 'Carte du ciel'}
           </p>
-          <h2 className="font-cinzel text-h2 md:text-display text-gradient-aurora mb-2 text-center">
-            {view === 'art' ? 'Ta signature visuelle' : 'Ton ciel à ta naissance'}
+          <h2 className="font-serif text-display text-ivory-50 mb-3 text-center leading-[0.95]">
+            {view === 'art' ? (
+              <>
+                Ta signature{' '}
+                <span className="italic-editorial text-aurora-400">visuelle</span>
+              </>
+            ) : (
+              <>
+                Ton ciel à ta{' '}
+                <span className="italic-editorial text-aurora-400">naissance</span>
+              </>
+            )}
           </h2>
-          <p className="text-caption text-ivory-300 text-center max-w-md mb-6">
+          <p className="text-body text-ivory-300/80 italic-editorial text-center max-w-md mb-8">
             {view === 'art'
               ? 'Une composition unique générée à partir de ton ciel — ne ressemble à aucune autre.'
               : 'La carte technique de ta naissance — survole les planètes.'}
@@ -157,16 +163,16 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
           {/* Toggle Art / Carte */}
           <div
             role="tablist"
-            className="flex items-center gap-1 p-1 mb-6 rounded-full bg-night-900/70 ring-1 ring-night-700/80"
+            className="flex items-center gap-1 p-1 mb-8 rounded-full bg-night-900/40 border border-ivory-50/[0.08]"
           >
             <button
               type="button"
               role="tab"
               aria-selected={view === 'art'}
               onClick={() => setView('art')}
-              className={`px-4 py-1.5 rounded-full text-caption font-cinzel transition-colors ${
+              className={`px-5 py-2 rounded-full text-caption font-serif transition-colors ${
                 view === 'art'
-                  ? 'bg-aurora-500/25 text-ivory-50 ring-1 ring-aurora-400/40'
+                  ? 'bg-aurora-400/15 text-ivory-50 border border-aurora-400/30'
                   : 'text-ivory-300 hover:text-ivory-50'
               }`}
             >
@@ -178,9 +184,9 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
               role="tab"
               aria-selected={view === 'wheel'}
               onClick={() => setView('wheel')}
-              className={`px-4 py-1.5 rounded-full text-caption font-cinzel transition-colors ${
+              className={`px-5 py-2 rounded-full text-caption font-serif transition-colors ${
                 view === 'wheel'
-                  ? 'bg-aurora-500/25 text-ivory-50 ring-1 ring-aurora-400/40'
+                  ? 'bg-aurora-400/15 text-ivory-50 border border-aurora-400/30'
                   : 'text-ivory-300 hover:text-ivory-50'
               }`}
             >
@@ -233,17 +239,17 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
         transition={{ duration: 0.6 }}
       >
         <Card variant="surface" className="relative">
-          <div className="p-6 md:p-10">
-            <div className="flex items-center gap-2 mb-3">
-              <Stars className="w-4 h-4 text-aurora-300" aria-hidden="true" />
-              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300">
+          <div className="p-7 md:p-14">
+            <div className="flex items-center gap-3 mb-5">
+              <Stars className="w-4 h-4 text-aurora-400" aria-hidden="true" />
+              <p className="eyebrow-ritual text-aurora-400/80">
                 Lecture rapide
               </p>
             </div>
             {loadingSummary ? (
               <SkeletonText lines={3} />
             ) : astroSummary ? (
-              <p className="text-body-lg leading-relaxed text-ivory-100 italic font-cinzel">
+              <p className="text-body-lg leading-[1.7] text-ivory-100 italic-editorial font-serif">
                 « {astroSummary.replace(/^([A-Z][a-z]+),/i, `Cher·e ${firstName},`)} »
               </p>
             ) : null}
@@ -258,10 +264,10 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
         transition={{ duration: 0.7 }}
       >
         <Card variant="surface">
-          <div className="p-6 md:p-10">
-            <div className="flex items-center gap-2 mb-4">
-              <BookOpen className="w-4 h-4 text-aurora-300" aria-hidden="true" />
-              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300">
+          <div className="p-7 md:p-14">
+            <div className="flex items-center gap-3 mb-6">
+              <BookOpen className="w-4 h-4 text-aurora-400" aria-hidden="true" />
+              <p className="eyebrow-ritual text-aurora-400/80">
                 Interprétation détaillée
               </p>
             </div>

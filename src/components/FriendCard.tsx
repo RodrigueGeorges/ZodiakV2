@@ -40,12 +40,8 @@ export default function FriendCard({ friend, onClick, onDelete, className }: Fri
       onClick={onClick}
       className={cn('relative overflow-hidden group', className)}
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/8 via-transparent to-magenta-500/8"
-      />
-      <div className="relative p-5 flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-aurora-500/35 to-magenta-500/35 ring-1 ring-aurora-400/40 flex items-center justify-center font-cinzel text-h3 text-ivory-50">
+      <div className="relative p-6 flex items-center gap-5">
+        <div className="w-14 h-14 rounded-full bg-aurora-400/15 border border-aurora-400/30 flex items-center justify-center font-serif text-h3 text-ivory-50">
           {friend.avatar_emoji ? (
             <span aria-hidden="true">{friend.avatar_emoji}</span>
           ) : (
@@ -53,19 +49,23 @@ export default function FriendCard({ friend, onClick, onDelete, className }: Fri
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <p className="font-cinzel text-body text-ivory-50 truncate">{friend.name}</p>
+          <div className="flex items-center gap-3 mb-1">
+            <p className="font-serif text-body-lg text-ivory-50 truncate leading-tight">
+              {friend.name}
+            </p>
             {friend.relationship && (
-              <span className="text-micro uppercase tracking-[0.18em] text-aurora-300">
+              <span className="eyebrow-ritual text-aurora-400/80">
                 {RELATIONSHIP_LABEL[friend.relationship] ?? friend.relationship}
               </span>
             )}
           </div>
-          <p className="text-caption text-ivory-300 truncate">{verdict}</p>
+          <p className="text-caption text-ivory-300/80 italic-editorial truncate">
+            {verdict}
+          </p>
           {score !== null && (
-            <div className="mt-2 flex items-center gap-2">
+            <div className="mt-3 flex items-center gap-3">
               <GuidanceMeter score={score} className="max-w-[160px]" />
-              <span className="font-cinzel text-caption text-ivory-100 tabular-nums">
+              <span className="font-serif text-caption text-aurora-400 tabular-nums">
                 {score}
               </span>
             </div>

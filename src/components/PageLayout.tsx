@@ -1,21 +1,25 @@
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import AuroraBackground from './ui/AuroraBackground';
+import StarField from './StarField';
 import SectionHeader from './ui/SectionHeader';
 import Logo from './Logo';
 import { cn } from '../lib/utils';
 
 /**
- * PageLayout v2 — squelette éditorial unique pour toutes les pages
- * post-login. Compose : AuroraBackground, header (logo + titre éditorial),
- * contenu animé. Réserve l'espace bottom-nav sur mobile.
+ * PageLayout v3 — squelette éditorial "Cosmic Editorial Ritual".
+ *
+ * Refonte (mai 2026) :
+ *   - Remplacement d'AuroraBackground (gradient halos) par StarField
+ *     (canvas vivant, étoiles scintillantes, parallaxe).
+ *   - Spacing radicalement augmenté (top 12-20, mb-16-24).
+ *   - Suppression du gradient automatique sur le titre (titlePlain = true par défaut).
  *
  *   - `title` / `subtitle` : header éditorial (centré).
- *   - `eyebrow` : caps au-dessus du titre (ex : "PROFIL", "GUIDANCE").
- *   - `headerSlot` : remplace complètement le header par du custom (ex :
- *     bandeau spécial Guidance avec date du jour).
+ *   - `eyebrow` : Cinzel small caps en or.
+ *   - `headerSlot` : remplace complètement le header.
  *   - `maxWidth` : largeur max du conteneur.
- *   - `dim` : assombrit les halos pour les pages denses.
+ *   - `dim` : réduit la densité d'étoiles pour les pages denses.
+ *   - `nebula` : active la nébuleuse de fond (true par défaut).
  */
 interface PageLayoutProps {
   title?: ReactNode;
@@ -37,24 +41,25 @@ interface PageLayoutProps {
     | '7xl';
   className?: string;
   contentClassName?: string;
-  /** Réduit l'opacité des halos pour densités élevées de contenu. */
+  /** Réduit la densité du champ d'étoiles. */
   dim?: boolean;
-  /** Désactive le padding-bottom mobile (utile pour pleines hauteurs : chat). */
+  /** Désactive la nébuleuse (utile pour pages très denses). */
+  noNebula?: boolean;
+  /** Désactive le padding-bottom mobile. */
   fullHeight?: boolean;
   /**
-   * Si vrai, le titre est rendu en ivoire au lieu du gradient aurora.
-   * Permet de mettre en valeur certains mots avec un span gradient
-   * (effet "Home" : ivoire + gradient sur la même ligne).
+   * Si true (défaut), le titre est ivoire pur. Si false, le composant
+   * SectionHeader respecte les spans internes pour mixer ivoire + or.
    */
   titlePlain?: boolean;
 }
 
 const maxWidthClasses: Record<NonNullable<PageLayoutProps['maxWidth']>, string> =
   {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
-    xl: 'max-w-xl',
+    sm:  'max-w-sm',
+    md:  'max-w-md',
+    lg:  'max-w-lg',
+    xl:  'max-w-xl',
     '2xl': 'max-w-2xl',
     '3xl': 'max-w-3xl',
     '4xl': 'max-w-4xl',
@@ -74,30 +79,37 @@ export default function PageLayout({
   className,
   contentClassName,
   dim = false,
+  noNebula = false,
   fullHeight = false,
-  titlePlain = false,
+  titlePlain = true,
 }: PageLayoutProps) {
   return (
-    <div className={cn('page-container safe-top', className)}>
-      <AuroraBackground variant={dim ? 'dim' : 'default'} />
+    <div
+      className={cn(
+        'relative min-h-screen bg-night-950 safe-top overflow-hidden',
+        className,
+      )}
+    >
+      {/* Champ d'étoiles vivant (canvas, parallaxe scroll) */}
+      <StarField density={dim ? 0.6 : 1} nebula={!noNebula} />
 
       <div
         className={cn(
-          'relative z-10 mx-auto px-4 md:px-8 pt-6 md:pt-12',
-          fullHeight ? 'pb-6' : 'pb-28 md:pb-16',
+          'relative z-10 mx-auto px-5 md:px-10 pt-10 md:pt-20',
+          fullHeight ? 'pb-6' : 'pb-32 md:pb-24',
           maxWidthClasses[maxWidth],
-          contentClassName
+          contentClassName,
         )}
       >
-        {/* Header */}
+        {/* Header éditorial */}
         {title ? (
-          <div className="mb-10 md:mb-14 relative">
+          <div className="mb-16 md:mb-24 relative">
             {showLogo && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.92 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                className="flex justify-center mb-6"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                className="flex justify-center mb-10"
               >
                 <Logo size="md" />
               </motion.div>
@@ -110,22 +122,19 @@ export default function PageLayout({
               size="md"
               titlePlain={titlePlain}
             />
-            {/* Slot complémentaire (ex: streak flame, bouton retour, compteur) */}
             {headerSlot && (
-              <div className="mt-5 flex justify-center">
-                {headerSlot}
-              </div>
+              <div className="mt-8 flex justify-center">{headerSlot}</div>
             )}
           </div>
         ) : headerSlot ? (
-          <div className="mb-10 md:mb-14">{headerSlot}</div>
+          <div className="mb-12 md:mb-16">{headerSlot}</div>
         ) : null}
 
         {/* Contenu animé */}
         <motion.main
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
         >
           {children}
         </motion.main>

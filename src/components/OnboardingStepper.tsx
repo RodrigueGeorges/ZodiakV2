@@ -38,12 +38,12 @@ export default function OnboardingStepper({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.08, duration: 0.3 }}
             className={cn(
-              'h-1.5 rounded-full transition-all duration-500',
+              'h-px rounded-full transition-all duration-500',
               isActive
-                ? 'w-8 bg-gradient-to-r from-aurora-400 to-magenta-400'
+                ? 'w-12 bg-aurora-400'
                 : isCompleted
-                ? 'w-4 bg-aurora-400'
-                : 'w-4 bg-ivory-50/15',
+                  ? 'w-6 bg-aurora-400/60'
+                  : 'w-6 bg-ivory-50/[0.10]',
             )}
           />
         );

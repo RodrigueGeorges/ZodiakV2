@@ -14,46 +14,17 @@ interface MoodHeatmapProps {
   className?: string;
 }
 
+// Palette unifiée or alchimique : intensité variable, magenta réservé aux moods tendus.
 const MOOD_META: Record<
   MoodKey,
   { emoji: string; label: string; bg: string; ring: string }
 > = {
-  radiant: {
-    emoji: '☀️',
-    label: 'Radieux',
-    bg: 'bg-amber-500/35',
-    ring: 'ring-amber-300/60',
-  },
-  inspired: {
-    emoji: '✨',
-    label: 'Inspiré',
-    bg: 'bg-aurora-500/40',
-    ring: 'ring-aurora-300/60',
-  },
-  calm: {
-    emoji: '🌊',
-    label: 'Apaisé',
-    bg: 'bg-aurora-400/25',
-    ring: 'ring-aurora-200/40',
-  },
-  pensive: {
-    emoji: '🌙',
-    label: 'Pensif',
-    bg: 'bg-night-600/60',
-    ring: 'ring-night-500/40',
-  },
-  tense: {
-    emoji: '⚡',
-    label: 'Tendu',
-    bg: 'bg-magenta-500/35',
-    ring: 'ring-magenta-300/60',
-  },
-  tired: {
-    emoji: '🌫️',
-    label: 'Fatigué',
-    bg: 'bg-night-700/70',
-    ring: 'ring-night-600/40',
-  },
+  radiant:  { emoji: '☀️', label: 'Radieux',  bg: 'bg-aurora-400/40', ring: 'ring-aurora-400/60' },
+  inspired: { emoji: '✨', label: 'Inspiré',  bg: 'bg-aurora-400/30', ring: 'ring-aurora-400/50' },
+  calm:     { emoji: '🌊', label: 'Apaisé',  bg: 'bg-aurora-400/15', ring: 'ring-aurora-400/30' },
+  pensive:  { emoji: '🌙', label: 'Pensif',  bg: 'bg-ivory-50/[0.08]', ring: 'ring-ivory-50/[0.15]' },
+  tense:    { emoji: '⚡', label: 'Tendu',   bg: 'bg-magenta-500/25', ring: 'ring-magenta-400/50' },
+  tired:    { emoji: '🌫️', label: 'Fatigué', bg: 'bg-night-700/70',  ring: 'ring-ivory-50/[0.10]' },
 };
 
 /**
@@ -110,25 +81,20 @@ export default function MoodHeatmap({
 
   return (
     <Card variant="surface" className={cn('relative overflow-hidden', className)}>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/8 via-transparent to-magenta-500/8"
-      />
-      <div className="relative p-6 md:p-8">
+      <div className="relative p-7 md:p-10">
         {withHeader && (
-          <div className="mb-5">
-            <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-1">
+          <div className="mb-7">
+            <p className="eyebrow-ritual text-aurora-400/80 mb-3">
               {days} derniers jours
             </p>
-            <h3 className="font-cinzel text-h2 leading-tight">
-              <span className="text-ivory-50">Tes vagues </span>
-              <span className="text-gradient-aurora">intérieures.</span>
+            <h3 className="font-serif text-h1 text-ivory-50 leading-tight">
+              Tes vagues <span className="italic-editorial text-aurora-400">intérieures.</span>
             </h3>
-            <p className="mt-2 text-caption text-ivory-300">
+            <p className="mt-3 text-caption text-ivory-300/80 italic-editorial">
               Une carte sensible de tes humeurs.{' '}
               {dominant
                 ? `Tu as surtout été ${MOOD_META[dominant.mood].label.toLowerCase()} (${dominant.n}j).`
-                : 'Encore aucun mood logé — commence dès demain matin.'}
+                : 'Encore aucun mood loggé — commence dès demain matin.'}
             </p>
           </div>
         )}
@@ -145,10 +111,10 @@ export default function MoodHeatmap({
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: Math.min(i * 0.012, 0.6), duration: 0.25 }}
                 className={cn(
-                  'relative aspect-square rounded-lg flex items-center justify-center text-[11px] tabular-nums ring-1 transition-colors',
+                  'relative aspect-square rounded-sm flex items-center justify-center text-[11px] tabular-nums ring-1 transition-colors',
                   meta
                     ? `${meta.bg} ${meta.ring} text-ivory-50`
-                    : 'bg-night-900/50 ring-night-700/50 text-ivory-500',
+                    : 'bg-night-900/40 ring-ivory-50/[0.06] text-ivory-500',
                 )}
                 title={
                   meta
@@ -189,7 +155,7 @@ export default function MoodHeatmap({
               );
             })}
           </div>
-          <span className="text-micro uppercase tracking-[0.18em] text-ivory-400">
+          <span className="eyebrow-ritual text-ivory-400/80">
             Couverture · {coverage}%
           </span>
         </div>

@@ -116,10 +116,10 @@ export default function Subscribe() {
                 variant={plan.highlighted ? 'elevated' : 'surface'}
                 className={cn(
                   'relative h-full flex flex-col overflow-hidden transition-all duration-300 cursor-pointer',
-                  'focus-within:ring-2 focus-within:ring-aurora-400 focus-within:ring-offset-2 focus-within:ring-offset-night-950',
+                  'focus-within:border-aurora-400 focus-within:ring-1 focus-within:ring-aurora-400/30',
                   selected === plan.id
-                    ? 'ring-2 ring-aurora-400 shadow-glow-aurora'
-                    : 'ring-1 ring-night-700/60 hover:ring-aurora-400/50',
+                    ? 'border-aurora-400/60 shadow-glow-aurora'
+                    : 'border-ivory-50/[0.06] hover:border-aurora-400/30',
                 )}
                 onClick={() => setSelected(plan.id)}
                 role="radio"
@@ -132,26 +132,20 @@ export default function Subscribe() {
                   }
                 }}
               >
-                {plan.highlighted && (
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/15 via-transparent to-magenta-500/12"
-                  />
-                )}
                 <div className="relative p-7 md:p-8 flex flex-col h-full">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-micro uppercase tracking-[0.22em] text-aurora-300">
+                  <div className="flex items-center justify-between mb-5">
+                    <span className="eyebrow-ritual">
                       {plan.eyebrow}
                     </span>
                     {plan.badge && (
-                      <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-aurora-500/20 ring-1 ring-aurora-300/40 text-aurora-100 font-medium">
+                      <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-aurora-500/15 border border-aurora-400/30 text-aurora-100 font-medium">
                         {plan.badge}
                       </span>
                     )}
                   </div>
 
                   <div className="flex items-baseline gap-2 mb-1">
-                    <span className="font-cinzel text-display-xl text-ivory-50 leading-none">
+                    <span className="font-serif text-display-xl text-ivory-50 leading-none">
                       {plan.price}
                     </span>
                     <span className="text-caption text-ivory-300">
@@ -213,7 +207,7 @@ export default function Subscribe() {
               ? 'Devenir fondateur'
               : `Commencer mon essai · ${PLANS.find((p) => p.id === selected)?.price}`}
           </Button>
-          <p className="text-micro uppercase tracking-[0.22em] text-ivory-400 text-center">
+          <p className="eyebrow-ritual text-ivory-400/80 text-center">
             7 jours offerts · sans carte bancaire · annulable en 1 clic
           </p>
         </div>
@@ -226,7 +220,7 @@ export default function Subscribe() {
           ].map((g) => (
             <div
               key={g}
-              className="rounded-2xl border border-night-700/60 bg-night-900/50 backdrop-blur-md px-4 py-3 flex items-center gap-3 text-caption text-ivory-200"
+              className="rounded-md border border-ivory-50/[0.06] bg-night-900/50 backdrop-blur-md px-4 py-3 flex items-center gap-3 text-caption text-ivory-200"
             >
               <Check
                 className="w-4 h-4 text-aurora-300 shrink-0"

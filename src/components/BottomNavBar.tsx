@@ -31,7 +31,7 @@ function BottomNavBar() {
         className="absolute -top-12 inset-x-0 h-12 bg-gradient-to-t from-night-950 via-night-950/70 to-transparent pointer-events-none"
       />
       <div className="px-3 pb-3 pt-2">
-        <div className="flex items-center justify-around gap-1 rounded-3xl bg-night-900/85 backdrop-blur-md border border-night-700/80 shadow-card px-1.5 py-1.5">
+        <div className="flex items-center justify-around gap-1 rounded-full bg-night-900/85 backdrop-blur-md border border-ivory-50/[0.08] px-2 py-2">
           {NAV.map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.path;
@@ -45,9 +45,9 @@ function BottomNavBar() {
                 aria-label={item.label}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'relative flex flex-col items-center justify-center gap-1 flex-1 rounded-2xl py-2 px-1 min-h-[48px] transition-colors',
-                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300',
-                  active ? 'text-ivory-50' : 'text-ivory-400'
+                  'relative flex flex-col items-center justify-center gap-1 flex-1 rounded-full py-2 px-1 min-h-[48px] transition-colors',
+                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300',
+                  active ? 'text-ivory-50' : 'text-ivory-400',
                 )}
               >
                 {active && (
@@ -58,14 +58,14 @@ function BottomNavBar() {
                       stiffness: 380,
                       damping: 32,
                     }}
-                    className="absolute inset-0 rounded-2xl bg-gradient-to-br from-aurora-500/25 via-aurora-500/10 to-magenta-500/20 ring-1 ring-aurora-400/30"
+                    className="absolute inset-0 rounded-full bg-aurora-400/15 border border-aurora-400/30"
                     aria-hidden="true"
                   />
                 )}
                 <Icon
                   className={cn(
                     'relative w-5 h-5 transition-transform',
-                    active && 'text-aurora-200 scale-105'
+                    active && 'text-aurora-400 scale-105',
                   )}
                   aria-hidden="true"
                 />

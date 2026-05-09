@@ -290,13 +290,8 @@ export default function ChatAstro() {
     >
       <Card variant="elevated" className="relative overflow-hidden flex flex-col">
         <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/10 via-transparent to-magenta-500/8"
-        />
-
-        <div
           ref={chatRef}
-          className="relative flex-1 overflow-y-auto p-6 space-y-4 max-h-[58vh] min-h-[360px]"
+          className="relative flex-1 overflow-y-auto p-7 space-y-4 max-h-[58vh] min-h-[360px]"
         >
           {messages.map((msg, i) => (
             <motion.div
@@ -315,14 +310,14 @@ export default function ChatAstro() {
             >
               <div
                 className={cn(
-                  'max-w-[85%] rounded-2xl px-4 py-3 text-body whitespace-pre-line shadow-sm',
+                  'max-w-[85%] rounded-md px-4 py-3 text-body whitespace-pre-line',
                   msg.from === 'user'
-                    ? 'bg-aurora-500 text-ivory-50 rounded-br-md'
-                    : 'bg-night-800/80 text-ivory-100 border border-night-700/80 rounded-bl-md'
+                    ? 'bg-aurora-500 text-night-950'
+                    : 'bg-night-800/80 text-ivory-100 border border-ivory-50/[0.06]'
                 )}
               >
                 {msg.from === 'bot' && (
-                  <span className="inline-flex items-center gap-1.5 text-micro uppercase tracking-[0.18em] text-aurora-300 mb-1">
+                  <span className="inline-flex items-center gap-1.5 eyebrow-ritual mb-1">
                     <Sparkles className="w-3 h-3" aria-hidden="true" />
                     Guide
                   </span>
@@ -337,8 +332,8 @@ export default function ChatAstro() {
 
           {typingText && (
             <div className="flex justify-start">
-              <div className="max-w-[85%] rounded-2xl px-4 py-3 bg-night-800/80 text-ivory-100 border border-night-700/80 rounded-bl-md">
-                <span className="inline-flex items-center gap-1.5 text-micro uppercase tracking-[0.18em] text-aurora-300 mb-1">
+              <div className="max-w-[85%] rounded-md px-4 py-3 bg-night-800/80 text-ivory-100 border border-ivory-50/[0.06]">
+                <span className="inline-flex items-center gap-1.5 eyebrow-ritual mb-1">
                   <Sparkles className="w-3 h-3" aria-hidden="true" />
                   Guide
                 </span>
@@ -351,7 +346,7 @@ export default function ChatAstro() {
 
           {loading && !typingText && (
             <div className="flex justify-start">
-              <div className="rounded-2xl px-4 py-3 bg-night-800/80 text-ivory-300 border border-night-700/80 italic">
+              <div className="rounded-md px-4 py-3 bg-night-800/80 text-ivory-300 border border-ivory-50/[0.06] italic">
                 Le guide consulte les étoiles…
               </div>
             </div>
@@ -359,7 +354,7 @@ export default function ChatAstro() {
         </div>
 
         {/* Suggestions contextuelles */}
-        <div className="relative px-6 pt-2 pb-3 border-t border-night-700/60">
+        <div className="relative px-7 pt-2 pb-3 border-t border-ivory-50/[0.06]">
           <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
             {allSuggestions.map((s, i) => (
               <button
@@ -393,7 +388,7 @@ export default function ChatAstro() {
             e.preventDefault();
             send();
           }}
-          className="relative flex items-center gap-2 p-4 border-t border-night-700/60 bg-night-900/40"
+          className="relative flex items-center gap-2 p-4 border-t border-ivory-50/[0.06] bg-night-900/40"
         >
           <div className="relative flex-1">
             <MessageCircle

@@ -94,13 +94,19 @@ export default function ProfilePage() {
   return (
     <PageLayout
       eyebrow="Profil"
-      title={`Bienvenue, ${firstName}`}
+      title={
+        <>
+          Bienvenue,{' '}
+          <span className="italic-editorial text-aurora-400">{firstName}</span>
+        </>
+      }
+      titlePlain={false}
       subtitle="Tes informations, ton canal de guidance et ton abonnement."
       maxWidth="5xl"
       showLogo={false}
       dim
     >
-      <div className="space-y-8">
+      <div className="space-y-12 md:space-y-16">
         <ProfileTab profile={profile} onLogout={handleLogout} />
 
         {/* Parrainage : viralité K-factor */}

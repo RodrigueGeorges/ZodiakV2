@@ -125,34 +125,29 @@ export default function ReferralCard({
       className={className}
     >
       <Card variant="elevated" className="relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/14 via-transparent to-magenta-500/12"
-        />
-        <div className="relative p-6 md:p-8">
-          <div className="flex items-start gap-4 mb-5">
-            <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-aurora-500/20 ring-1 ring-aurora-400/40 flex items-center justify-center text-aurora-200">
+        <div className="relative p-7 md:p-10">
+          <div className="flex items-start gap-5 mb-7">
+            <div className="flex-shrink-0 w-12 h-12 rounded-full border border-aurora-400/30 flex items-center justify-center text-aurora-400">
               <Gift className="w-5 h-5" aria-hidden="true" />
             </div>
             <div className="flex-1">
-              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-1">
+              <p className="eyebrow-ritual text-aurora-400/80 mb-2">
                 Parrainage · gagnant-gagnant
               </p>
-              <h3 className="font-cinzel text-h2 leading-tight">
-                <span className="text-ivory-50">Invite, </span>
-                <span className="text-gradient-aurora">gagnez ensemble.</span>
+              <h3 className="font-serif text-h1 text-ivory-50 leading-tight">
+                Invite, <span className="italic-editorial text-aurora-400">gagnez ensemble.</span>
               </h3>
-              <p className="mt-2 text-caption text-ivory-300 max-w-md">
+              <p className="mt-3 text-caption text-ivory-300/80 max-w-md italic-editorial">
                 À chaque ami qui s'inscrit avec ton lien, vous recevez{' '}
-                <span className="text-aurora-200 font-medium">14 jours premium</span>{' '}
+                <span className="text-aurora-300 font-medium">14 jours premium</span>{' '}
                 chacun.
               </p>
             </div>
           </div>
 
           {/* Code + bouton copier */}
-          <div className="flex flex-col sm:flex-row gap-2 mb-5">
-            <div className="flex-1 flex items-center justify-between gap-3 px-4 h-12 rounded-2xl bg-night-900/60 ring-1 ring-night-700/60 font-mono text-body text-ivory-50">
+          <div className="flex flex-col sm:flex-row gap-2 mb-7">
+            <div className="flex-1 flex items-center justify-between gap-3 px-4 h-12 border border-ivory-50/[0.08] font-mono text-caption text-ivory-50 bg-night-900/40">
               <span className="truncate">{url}</span>
             </div>
             <Button
@@ -211,16 +206,16 @@ interface StatProps {
 }
 function Stat({ icon, label, value, accent }: StatProps) {
   return (
-    <div className="rounded-2xl bg-night-900/50 ring-1 ring-night-700/50 px-3 py-3 text-center">
-      <div className="flex items-center justify-center gap-1.5 text-aurora-300 mb-1">
+    <div className="border border-ivory-50/[0.06] px-3 py-4 text-center">
+      <div className="flex items-center justify-center gap-1.5 text-aurora-400 mb-2">
         {icon}
-        <span className="text-micro uppercase tracking-[0.18em]">{label}</span>
+        <span className="eyebrow-ritual text-ivory-400/80">{label}</span>
       </div>
       <p
         className={
           accent
-            ? 'font-cinzel text-h2 text-gradient-aurora tabular-nums'
-            : 'font-cinzel text-h2 text-ivory-50 tabular-nums'
+            ? 'font-serif text-h1 text-aurora-400 tabular-nums leading-none'
+            : 'font-serif text-h1 text-ivory-50 tabular-nums leading-none'
         }
       >
         {value}

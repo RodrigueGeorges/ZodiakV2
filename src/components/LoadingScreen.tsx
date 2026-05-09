@@ -15,7 +15,7 @@ function LoadingScreen({ message = 'Chargement...', error }: LoadingScreenProps)
         <CosmicLoader size="md" />
         {!error && (
           <p
-            className="mt-6 text-caption text-ivory-200 font-cinzel tracking-wide"
+            className="mt-8 eyebrow-ritual text-ivory-300/80"
             aria-live="polite"
           >
             {message}
@@ -23,7 +23,7 @@ function LoadingScreen({ message = 'Chargement...', error }: LoadingScreenProps)
         )}
         {error && (
           <p
-            className="mt-6 text-caption text-magenta-400 font-cinzel tracking-wide"
+            className="mt-8 eyebrow-ritual text-magenta-400"
             aria-live="polite"
           >
             {error}

@@ -24,10 +24,10 @@ function TopNavBar() {
 
   return (
     <header className="hidden md:block sticky top-0 z-40">
-      <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-night-950/85 via-night-950/65 to-transparent backdrop-blur-md" />
+      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-night-950/95 via-night-950/70 to-transparent backdrop-blur-md" />
       <nav
         aria-label="Navigation principale"
-        className="relative mx-auto max-w-7xl flex items-center justify-between px-6 lg:px-10 py-4"
+        className="relative mx-auto max-w-7xl flex items-center justify-between px-6 lg:px-12 py-5"
       >
         <Link
           to="/guidance"
@@ -35,13 +35,13 @@ function TopNavBar() {
           aria-label="Accueil Zodiak"
         >
           <Logo size="sm" />
-          <span className="font-cinzel text-h3 text-ivory-50 tracking-wide group-hover:text-aurora-300 transition-colors">
+          <span className="font-serif text-h3 text-ivory-50 tracking-tight group-hover:text-aurora-300 transition-colors">
             Zodiak
           </span>
         </Link>
 
         <div
-          className="flex items-center gap-1 p-1.5 rounded-full bg-night-900/70 border border-night-700/80 backdrop-blur-md shadow-card"
+          className="flex items-center gap-1 p-1.5 rounded-full bg-night-900/60 border border-ivory-50/[0.08] backdrop-blur-md"
           role="tablist"
         >
           {NAV.map((item) => {
@@ -58,11 +58,9 @@ function TopNavBar() {
                   navigate(item.path);
                 }}
                 className={cn(
-                  'relative flex items-center gap-2 px-3.5 py-2 rounded-full font-cinzel text-caption transition-colors',
-                  'focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300',
-                  active
-                    ? 'text-ivory-50'
-                    : 'text-ivory-300 hover:text-ivory-50'
+                  'relative flex items-center gap-2 px-4 py-2 rounded-full font-serif text-caption transition-colors',
+                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300',
+                  active ? 'text-ivory-50' : 'text-ivory-300 hover:text-ivory-50',
                 )}
               >
                 {active && (
@@ -73,14 +71,14 @@ function TopNavBar() {
                       stiffness: 380,
                       damping: 32,
                     }}
-                    className="absolute inset-0 rounded-full bg-gradient-to-br from-aurora-500/30 via-aurora-500/15 to-magenta-500/20 ring-1 ring-aurora-400/30"
+                    className="absolute inset-0 rounded-full bg-aurora-400/15 border border-aurora-400/30"
                     aria-hidden="true"
                   />
                 )}
                 <Icon
                   className={cn(
                     'relative w-4 h-4',
-                    active ? 'text-aurora-200' : ''
+                    active ? 'text-aurora-400' : '',
                   )}
                   aria-hidden="true"
                 />

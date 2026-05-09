@@ -9,9 +9,8 @@ interface BirthdayBannerProps {
 }
 
 /**
- * Bannière "révolution solaire" affichée le jour de l'anniversaire.
- * Le ciel rejoue exactement la position solaire de la naissance →
- * c'est un moment astrologique majeur, on le célèbre dans l'app.
+ * BirthdayBanner v3 — révolution solaire éditoriale.
+ * Plus de blob halos amber/magenta. Juste un accent or, du texte sculpté.
  */
 export default function BirthdayBanner({
   firstName,
@@ -20,50 +19,38 @@ export default function BirthdayBanner({
 }: BirthdayBannerProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: -16, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ type: 'spring', stiffness: 220, damping: 26 }}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       <Card variant="elevated" className="relative overflow-hidden">
-        {/* Fond doré + aurora pour un sentiment "fête solaire" */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-amber-500/22 via-magenta-500/15 to-aurora-500/22"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -top-24 -left-24 w-72 h-72 rounded-full bg-amber-400/30 blur-3xl"
-        />
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-magenta-500/30 blur-3xl"
-        />
-
-        <div className="relative px-6 md:px-10 py-8 md:py-10">
-          <div className="flex items-center gap-2 mb-3">
+        <div className="relative px-7 md:px-14 py-10 md:py-14">
+          <div className="flex items-center gap-3 mb-5">
             <Sun
-              className="w-4 h-4 text-amber-300 animate-pulse"
+              className="w-4 h-4 text-aurora-400 animate-pulse"
               aria-hidden="true"
             />
-            <span className="text-micro uppercase tracking-[0.32em] text-amber-200">
+            <span className="eyebrow-ritual text-aurora-400">
               Révolution solaire
             </span>
           </div>
 
-          <h2 className="font-cinzel text-h1 md:text-display leading-tight">
+          <h2 className="font-serif text-h1 md:text-display leading-[1.0]">
             <span className="text-ivory-50">{firstName}, </span>
-            <span className="text-gradient-aurora">aujourd'hui le ciel rejoue ta naissance.</span>
+            <span className="italic-editorial text-aurora-400">
+              aujourd'hui le ciel rejoue ta naissance.
+            </span>
           </h2>
 
-          <p className="mt-4 text-body md:text-body-lg text-ivory-200 leading-relaxed max-w-2xl">
+          <p className="mt-7 text-body-lg text-ivory-200/90 leading-[1.7] max-w-2xl">
             Le Soleil revient exactement à la position qu'il occupait le jour
             où tu es né·e — un seuil, une bascule, une promesse.
             {age != null && age > 0 && (
               <>
                 {' '}
                 Bienvenue dans ta{' '}
-                <span className="text-amber-200 font-medium">
+                <span className="text-aurora-300 font-medium italic-editorial">
                   {age}
                   <sup>{age === 1 ? 'ère' : 'ème'}</sup> année
                 </span>{' '}
@@ -73,9 +60,9 @@ export default function BirthdayBanner({
             La guidance du jour est habillée pour l'occasion.
           </p>
 
-          <div className="mt-5 inline-flex items-center gap-2 text-caption text-amber-200">
+          <div className="mt-7 inline-flex items-center gap-2 eyebrow-ritual text-aurora-400">
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
-            <span>Joyeux retour solaire ✦</span>
+            <span>Joyeux retour solaire</span>
           </div>
         </div>
       </Card>

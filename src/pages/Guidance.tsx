@@ -149,11 +149,13 @@ export default function Guidance() {
   return (
     <PageLayout
       eyebrow={`${today} · ${moonToday.glyph} ${moonToday.label.toLowerCase()}`}
-      titlePlain
+      titlePlain={false}
       title={
         <>
           <span className="block text-ivory-50">Bonjour {firstName},</span>
-          <span className="block text-gradient-aurora">voici ta guidance.</span>
+          <span className="block italic-editorial text-aurora-400">
+            voici ta guidance.
+          </span>
         </>
       }
       subtitle="Une lecture du ciel au prisme de ton thème natal."
@@ -183,20 +185,16 @@ export default function Guidance() {
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
           >
-            <Card variant="surface" className="relative overflow-hidden">
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-gradient-to-r from-aurora-500/10 via-transparent to-magenta-500/10"
-              />
-              <div className="relative px-5 py-3 flex items-center gap-3">
+            <Card variant="ghost">
+              <div className="px-6 py-4 flex items-center gap-4">
                 <Telescope
-                  className="w-4 h-4 text-aurora-300 flex-shrink-0"
+                  className="w-4 h-4 text-aurora-400 flex-shrink-0"
                   aria-hidden="true"
                 />
-                <p className="text-caption text-ivory-200 leading-snug flex-1">
-                  <span className="text-aurora-200 font-medium">
+                <p className="text-caption text-ivory-200/90 leading-snug flex-1">
+                  <span className="text-aurora-300 font-medium italic-editorial">
                     {upcomingMoment.title}
                   </span>{' '}
                   · {upcomingMoment.body}
@@ -206,31 +204,27 @@ export default function Guidance() {
           </motion.div>
         )}
 
-        {/* Push nudge */}
+        {/* Push nudge — éditorial épuré */}
         {showPushNudge && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ type: 'spring', stiffness: 240, damping: 24 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <Card variant="surface" className="relative overflow-hidden">
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/12 to-magenta-500/8"
-              />
-              <div className="relative p-4 md:p-5 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-aurora-500/20 ring-1 ring-aurora-400/40 flex items-center justify-center">
-                  <Bell className="w-4 h-4 text-aurora-200" aria-hidden="true" />
+            <Card variant="surface">
+              <div className="p-5 md:p-7 flex items-center gap-5">
+                <div className="w-11 h-11 rounded-full border border-aurora-400/30 flex items-center justify-center flex-shrink-0">
+                  <Bell className="w-4 h-4 text-aurora-400" aria-hidden="true" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-body text-ivory-50 font-cinzel">
-                    Un signal silencieux quand le ciel parle ?
+                  <p className="font-serif text-body-lg text-ivory-50">
+                    Un signal silencieux <span className="italic-editorial text-aurora-400">quand le ciel parle ?</span>
                   </p>
-                  <p className="text-caption text-ivory-300">
+                  <p className="text-caption text-ivory-300/80 mt-1">
                     Notifications subtiles, jamais intrusives.
                   </p>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
                   <Button variant="primary" size="sm" onClick={acceptPush}>
                     Activer
                   </Button>

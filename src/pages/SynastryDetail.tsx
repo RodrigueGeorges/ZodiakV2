@@ -124,12 +124,8 @@ export default function SynastryDetail() {
             transition={{ duration: 0.6 }}
           >
             <Card variant="elevated" className="relative overflow-hidden">
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/15 via-magenta-500/15 to-amber-500/10"
-              />
-              <div className="relative p-8 md:p-12 flex flex-col items-center text-center">
-                <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-3">
+              <div className="relative p-10 md:p-16 flex flex-col items-center text-center">
+                <p className="eyebrow-ritual mb-5">
                   Indice d'alchimie
                 </p>
                 <motion.div
@@ -141,7 +137,7 @@ export default function SynastryDetail() {
                     damping: 18,
                     delay: 0.2,
                   }}
-                  className="font-cinzel text-[88px] md:text-[120px] leading-none text-gradient-aurora tabular-nums"
+                  className="font-serif text-[88px] md:text-[120px] leading-[0.95] text-aurora-400 tabular-nums"
                   aria-label={`Score ${score} sur 100`}
                 >
                   <AnimatedCounter
@@ -151,7 +147,7 @@ export default function SynastryDetail() {
                     damping={20}
                   />
                 </motion.div>
-                <p className="mt-2 font-cinzel text-h3 text-ivory-50">{verdict}</p>
+                <p className="mt-2 font-serif text-h3 italic-editorial text-ivory-50">{verdict}</p>
                 <div className="mt-5 w-full max-w-md">
                   <GuidanceMeter score={score} showLegend />
                 </div>
@@ -211,7 +207,7 @@ export default function SynastryDetail() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="text-center text-micro uppercase tracking-[0.22em] text-ivory-400"
+          className="eyebrow-ritual text-ivory-400/80 text-center"
         >
           ✦ Une lecture symbolique, pas un verdict ✦
         </motion.p>
@@ -237,12 +233,12 @@ function Section({ icon, eyebrow, title, tone, aspects, who1, who2 }: SectionPro
       transition={{ duration: 0.5 }}
     >
       <Card variant="surface">
-        <div className="p-6 md:p-8">
-          <div className="flex items-center gap-2 text-aurora-300 mb-2">
+        <div className="p-7 md:p-8">
+          <div className="flex items-center gap-2 mb-5 text-aurora-400/90">
             {icon}
-            <span className="text-micro uppercase tracking-[0.22em]">{eyebrow}</span>
+            <span className="eyebrow-ritual">{eyebrow}</span>
           </div>
-          <h3 className="font-cinzel text-h3 text-ivory-50 mb-4">{title}</h3>
+          <h3 className="font-serif text-h3 text-ivory-50 mb-5">{title}</h3>
           <ul className="space-y-2.5">
             {aspects.map((a, i) => (
               <li

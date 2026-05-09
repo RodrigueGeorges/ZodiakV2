@@ -145,7 +145,7 @@ export function Admin() {
         maxWidth="6xl"
         showLogo={false}
         headerSlot={
-          <span className="inline-flex items-center gap-2 rounded-full bg-aurora-500/15 ring-1 ring-aurora-400/30 px-3 py-1 text-micro uppercase tracking-[0.22em] text-aurora-200">
+          <span className="inline-flex items-center gap-2 rounded-full bg-aurora-500/10 border border-aurora-400/30 px-3 py-1 eyebrow-ritual">
             <Shield className="w-3.5 h-3.5" aria-hidden="true" />
             Mode admin
           </span>
@@ -195,10 +195,10 @@ export function Admin() {
                       aria-selected={isActive}
                       onClick={() => setFilter(key)}
                       className={cn(
-                        'px-3.5 h-9 rounded-full text-caption transition-colors',
+                        'px-3.5 h-9 rounded-full text-caption transition-colors border',
                         isActive
-                          ? 'bg-aurora-500/20 ring-1 ring-aurora-300/50 text-aurora-100'
-                          : 'bg-night-900/50 ring-1 ring-night-700/60 text-ivory-300 hover:text-ivory-50 hover:ring-aurora-400/40',
+                          ? 'bg-aurora-500/15 border-aurora-400/40 text-aurora-100'
+                          : 'bg-night-900/50 border-ivory-50/[0.06] text-ivory-300 hover:text-ivory-50 hover:border-aurora-400/30',
                       )}
                     >
                       {label}
@@ -230,7 +230,7 @@ export function Admin() {
                           <div>
                             <div className="flex items-center gap-2 mb-1.5">
                               <UserIcon className="w-4 h-4 text-aurora-300" aria-hidden="true" />
-                              <span className="font-cinzel text-h3 text-ivory-50">
+                              <span className="font-serif text-h3 text-ivory-50">
                                 {profile.name || '—'}
                               </span>
                             </div>
@@ -322,7 +322,7 @@ export function Admin() {
             )}
           </div>
 
-          <p className="text-center text-micro uppercase tracking-[0.22em] text-ivory-400">
+          <p className="eyebrow-ritual text-ivory-400/80 text-center">
             Total · {filteredProfiles.length} utilisateur
             {filteredProfiles.length > 1 ? 's' : ''}
           </p>

@@ -118,23 +118,23 @@ export const BADGES: BadgeDef[] = [
 export const badgeToneClasses: Record<BadgeDef['tone'], { bg: string; ring: string; text: string }> =
   {
     aurora: {
-      bg: 'bg-gradient-to-br from-aurora-500/30 to-aurora-700/20',
-      ring: 'ring-aurora-400/40',
-      text: 'text-aurora-200',
+      bg: 'bg-aurora-400/15',
+      ring: 'border-aurora-400/40',
+      text: 'text-aurora-300',
     },
     magenta: {
-      bg: 'bg-gradient-to-br from-magenta-500/30 to-aurora-500/20',
-      ring: 'ring-magenta-400/40',
-      text: 'text-magenta-200',
+      bg: 'bg-magenta-500/12',
+      ring: 'border-magenta-400/40',
+      text: 'text-magenta-400',
     },
     amber: {
-      bg: 'bg-gradient-to-br from-amber-500/35 to-magenta-500/20',
-      ring: 'ring-amber-300/50',
-      text: 'text-amber-200',
+      bg: 'bg-aurora-400/20',
+      ring: 'border-aurora-400/50',
+      text: 'text-aurora-300',
     },
     silver: {
-      bg: 'bg-gradient-to-br from-night-700/60 to-aurora-500/20',
-      ring: 'ring-night-500/50',
+      bg: 'bg-ivory-50/[0.05]',
+      ring: 'border-ivory-50/[0.15]',
       text: 'text-ivory-200',
     },
   };

@@ -34,10 +34,6 @@ interface ParsedSection {
   why?: string;
 }
 
-/**
- * Tente d'extraire { text, score, why } d'un champ potentiellement encodé en JSON.
- * Tolérant : accepte chaîne, objet, JSON dans une chaîne, ou texte brut.
- */
 function parseSection(input: any): ParsedSection {
   if (!input) return { text: '', score: 0 };
   if (typeof input === 'object' && input !== null) {
@@ -107,48 +103,28 @@ interface SectionMeta {
   label: string;
   eyebrow: string;
   icon: typeof Heart;
-  accent: string;
-  aura: string;
   /** Si true, n'apparaît que si le backend renvoie le champ. */
   optional?: boolean;
 }
 
 const SECTION_META: SectionMeta[] = [
-  {
-    key: 'love',
-    label: 'Amour',
-    eyebrow: 'CŒUR',
-    icon: Heart,
-    accent: 'text-magenta-400',
-    aura: 'from-magenta-500/15 via-aurora-500/5 to-transparent',
-  },
-  {
-    key: 'work',
-    label: 'Travail',
-    eyebrow: 'CHANTIERS',
-    icon: Briefcase,
-    accent: 'text-aurora-300',
-    aura: 'from-aurora-500/15 via-aurora-400/5 to-transparent',
-  },
-  {
-    key: 'energy',
-    label: 'Énergie',
-    eyebrow: 'VITALITÉ',
-    icon: Flame,
-    accent: 'text-amber-300',
-    aura: 'from-amber-400/15 via-magenta-500/5 to-transparent',
-  },
-  {
-    key: 'money',
-    label: 'Argent',
-    eyebrow: 'FINANCES',
-    icon: Coins,
-    accent: 'text-emerald-300',
-    aura: 'from-emerald-500/15 via-aurora-500/5 to-transparent',
-    optional: true,
-  },
+  { key: 'love',   label: 'Amour',    eyebrow: 'Cœur',      icon: Heart },
+  { key: 'work',   label: 'Travail',  eyebrow: 'Chantiers', icon: Briefcase },
+  { key: 'energy', label: 'Énergie',  eyebrow: 'Vitalité',  icon: Flame },
+  { key: 'money',  label: 'Argent',   eyebrow: 'Finances',  icon: Coins, optional: true },
 ];
 
+/**
+ * GuidanceDisplay v3 — refonte "Cosmic Editorial Ritual" (mai 2026).
+ *
+ * Refonte :
+ *   - Hero résumé : Card élevée minimaliste, titre Fraunces XXL en italique or
+ *   - Piliers : cards uniformes avec eyebrow Cinzel + icône or discrète
+ *   - Suppression des gradients tonalisés (love/work/energy/money en arc-en-ciel)
+ *   - Mantra : pleine page éditoriale, pas de blob halos colorés
+ *   - Boussole : grille épurée, pas de fond emerald/magenta
+ *   - Pied de page : signature manuscrite simple
+ */
 export default function GuidanceDisplay({
   guidance,
   className = '',
@@ -182,8 +158,8 @@ export default function GuidanceDisplay({
 
   const gridClass =
     sections.length === 4
-      ? 'grid gap-5 md:gap-6 md:grid-cols-2 lg:grid-cols-4'
-      : 'grid gap-5 md:gap-6 md:grid-cols-3';
+      ? 'grid gap-px bg-ivory-50/[0.06] md:grid-cols-2 lg:grid-cols-4'
+      : 'grid gap-px bg-ivory-50/[0.06] md:grid-cols-3';
 
   const dos = parseList((guidance as any).dos);
   const donts = parseList((guidance as any).donts);
@@ -202,7 +178,7 @@ export default function GuidanceDisplay({
 
   return (
     <motion.div
-      className={`space-y-8 md:space-y-10 ${className}`}
+      className={`space-y-12 md:space-y-16 ${className}`}
       initial="hidden"
       animate="visible"
       variants={{
@@ -210,19 +186,17 @@ export default function GuidanceDisplay({
         visible: { transition: { staggerChildren: 0.12 } },
       }}
     >
-      {/* Hero / résumé */}
+      {/* Hero / résumé éditorial */}
       {withSummary && guidance.summary && (
         <motion.div variants={item}>
-          <Card variant="elevated" glow className="relative">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/10 via-transparent to-magenta-500/10"
-            />
-            <div className="relative px-6 md:px-10 py-8 md:py-10 text-center">
-              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-3">
-                {today} · Lecture du ciel
+          <Card variant="elevated" className="relative">
+            <div className="relative px-7 md:px-14 py-12 md:py-16 text-center">
+              <p className="eyebrow-ritual flex items-center justify-center gap-3 mb-7">
+                <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
+                <span>{today} · Lecture du ciel</span>
+                <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
               </p>
-              <h2 className="font-cinzel text-h2 md:text-display text-gradient-aurora leading-tight">
+              <h2 className="font-serif italic-editorial text-h1 md:text-display text-ivory-50 leading-[1.1]">
                 {guidance.summary}
               </h2>
             </div>
@@ -230,16 +204,14 @@ export default function GuidanceDisplay({
         </motion.div>
       )}
 
-      {/* Sections détaillées (3 ou 4 piliers selon ce que renvoie le backend) */}
+      {/* Sections piliers (3 ou 4 selon backend) — grille hairline éditoriale */}
       <div className={gridClass}>
-        {sections.map(({ key, label, eyebrow, icon: Icon, accent, aura, text, score, why }) => (
-          <motion.div key={key} variants={item}>
+        {sections.map(({ key, label, eyebrow, icon: Icon, text, score, why }) => (
+          <motion.div key={key} variants={item} className="bg-night-950">
             <PillarCard
               eyebrow={eyebrow}
               label={label}
               icon={Icon}
-              accent={accent}
-              aura={aura}
               text={text}
               score={score}
               why={why}
@@ -248,19 +220,17 @@ export default function GuidanceDisplay({
         ))}
       </div>
 
-      {/* Dos & Don'ts — bloc actionnable, signature Co-Star */}
+      {/* Boussole du jour : Dos & Don'ts */}
       {hasDosDonts && (
         <motion.div variants={item}>
           <Card variant="surface" className="relative overflow-hidden">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-gradient-to-r from-emerald-500/8 via-transparent to-magenta-500/8"
-            />
-            <div className="relative p-6 md:p-8">
-              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-5 text-center">
-                Boussole du jour
+            <div className="relative p-7 md:p-12">
+              <p className="eyebrow-ritual flex items-center justify-center gap-3 mb-9">
+                <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
+                <span>Boussole du jour</span>
+                <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
               </p>
-              <div className="grid gap-6 md:gap-8 md:grid-cols-2">
+              <div className="grid gap-10 md:gap-14 md:grid-cols-2">
                 <DosDontsColumn tone="dos" title="À cultiver" items={dos} />
                 <DosDontsColumn tone="donts" title="À éviter" items={donts} />
               </div>
@@ -269,32 +239,21 @@ export default function GuidanceDisplay({
         </motion.div>
       )}
 
-      {/* Mantra du jour */}
+      {/* Mantra du jour — pleine page éditoriale */}
       {mantraText && (
         <motion.div variants={item}>
           <Card variant="elevated" className="relative overflow-hidden">
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -top-20 -left-20 w-60 h-60 rounded-full bg-aurora-500/20 blur-3xl"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -bottom-20 -right-20 w-60 h-60 rounded-full bg-magenta-500/15 blur-3xl"
-            />
-            <div className="relative px-6 md:px-12 py-10 text-center">
+            <div className="relative px-7 md:px-16 py-14 md:py-20 text-center">
               <Quote
-                className="w-7 h-7 text-aurora-300 mx-auto mb-4 opacity-80"
+                className="w-6 h-6 text-aurora-400/70 mx-auto mb-6"
                 aria-hidden="true"
               />
-              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-4">
-                Mantra du jour
-              </p>
-              <blockquote className="font-cinzel italic text-h2 md:text-display text-ivory-50 leading-snug">
+              <p className="eyebrow-ritual mb-8">Mantra du jour</p>
+              <blockquote className="font-serif italic-editorial text-h1 md:text-display text-ivory-50 leading-[1.15]">
                 « {mantraText} »
               </blockquote>
 
-              {/* Actions audio + story */}
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
                 <SpeakButton
                   text={mantraText}
                   variant="pill"
@@ -308,9 +267,10 @@ export default function GuidanceDisplay({
                     type: 'guidance',
                     firstName: firstName ?? '',
                     date: today,
-                    summary: typeof guidance.summary === 'string'
-                      ? guidance.summary
-                      : '',
+                    summary:
+                      typeof guidance.summary === 'string'
+                        ? guidance.summary
+                        : '',
                     mantra: mantraText,
                   }}
                 />
@@ -320,13 +280,15 @@ export default function GuidanceDisplay({
         </motion.div>
       )}
 
-      {/* Pied de page sobre */}
-      <motion.p
+      {/* Pied de page éditorial */}
+      <motion.div
         variants={item}
-        className="text-center text-micro uppercase tracking-[0.22em] text-ivory-400"
+        className="text-center eyebrow-ritual text-ivory-400/70 flex items-center justify-center gap-3"
       >
-        ✦ Que les étoiles te guident ✦
-      </motion.p>
+        <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/40" />
+        <span>Que les étoiles te guident</span>
+        <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/40" />
+      </motion.div>
     </motion.div>
   );
 }
@@ -335,8 +297,6 @@ interface PillarCardProps {
   eyebrow: string;
   label: string;
   icon: typeof Heart;
-  accent: string;
-  aura: string;
   text: string;
   score: number;
   why?: string;
@@ -345,8 +305,6 @@ function PillarCard({
   eyebrow,
   label,
   icon: Icon,
-  accent,
-  aura,
   text,
   score,
   why,
@@ -354,73 +312,63 @@ function PillarCard({
   const [open, setOpen] = useState(false);
 
   return (
-    <Card variant="surface" className="h-full relative group">
-      <div
-        aria-hidden="true"
-        className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${aura} opacity-70 group-hover:opacity-100 transition-opacity`}
-      />
-      <div className="relative p-6 flex flex-col h-full gap-4">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-micro uppercase tracking-[0.18em] text-ivory-400">
-              {eyebrow}
-            </p>
-            <h3
-              className={`mt-1 font-cinzel text-h3 ${accent} flex items-center gap-2`}
-            >
-              <Icon className="w-5 h-5" aria-hidden="true" />
-              {label}
-            </h3>
-          </div>
-          <GuidanceScoreBadge score={score} />
+    <article className="h-full relative group bg-night-950 hover:bg-night-900/60 transition-colors duration-500 p-7 md:p-9 flex flex-col gap-5">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="eyebrow-ritual text-ivory-400/70">{eyebrow}</p>
+          <h3 className="mt-2 font-serif text-h2 text-ivory-50 flex items-center gap-3 leading-tight">
+            <Icon className="w-5 h-5 text-aurora-400" aria-hidden="true" />
+            {label}
+          </h3>
         </div>
-
-        <p className="text-body text-ivory-200 leading-relaxed flex-1">
-          {text || `Pas de message ${label.toLowerCase()} aujourd'hui.`}
-        </p>
-
-        <GuidanceMeter score={score} />
-
-        {/* "Pourquoi ça t'est dit" — révélé sur clic */}
-        {why && (
-          <div className="border-t border-night-700/50 pt-3 -mb-1">
-            <button
-              type="button"
-              onClick={() => setOpen((o) => !o)}
-              className="w-full flex items-center justify-between gap-2 text-caption text-aurora-200 hover:text-aurora-100 transition-colors"
-              aria-expanded={open}
-            >
-              <span className="inline-flex items-center gap-1.5">
-                <Telescope className="w-3.5 h-3.5" aria-hidden="true" />
-                Pourquoi ça t'est dit
-              </span>
-              <ChevronDown
-                className={cn(
-                  'w-3.5 h-3.5 transition-transform',
-                  open && 'rotate-180',
-                )}
-                aria-hidden="true"
-              />
-            </button>
-            <AnimatePresence initial={false}>
-              {open && (
-                <motion.p
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                  className="overflow-hidden"
-                >
-                  <span className="block mt-2 text-caption text-ivory-300 italic leading-relaxed">
-                    {why}
-                  </span>
-                </motion.p>
-              )}
-            </AnimatePresence>
-          </div>
-        )}
+        <GuidanceScoreBadge score={score} />
       </div>
-    </Card>
+
+      <p className="text-body text-ivory-200/85 leading-[1.7] flex-1">
+        {text || `Pas de message ${label.toLowerCase()} aujourd'hui.`}
+      </p>
+
+      <GuidanceMeter score={score} />
+
+      {/* "Pourquoi ça t'est dit" — révélé sur clic */}
+      {why && (
+        <div className="border-t border-ivory-50/[0.06] pt-4 -mb-1">
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            className="w-full flex items-center justify-between gap-2 text-caption text-aurora-400 hover:text-aurora-300 transition-colors"
+            aria-expanded={open}
+          >
+            <span className="inline-flex items-center gap-2">
+              <Telescope className="w-3.5 h-3.5" aria-hidden="true" />
+              Pourquoi ça t'est dit
+            </span>
+            <ChevronDown
+              className={cn(
+                'w-3.5 h-3.5 transition-transform',
+                open && 'rotate-180',
+              )}
+              aria-hidden="true"
+            />
+          </button>
+          <AnimatePresence initial={false}>
+            {open && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="overflow-hidden"
+              >
+                <p className="block mt-3 text-caption text-ivory-300/80 italic-editorial leading-relaxed">
+                  {why}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
+    </article>
   );
 }
 
@@ -434,30 +382,27 @@ function DosDontsColumn({ tone, title, items }: DosDontsColumnProps) {
   const isDos = tone === 'dos';
   return (
     <div>
-      <h4
-        className={cn(
-          'flex items-center gap-2 font-cinzel text-h3 mb-3',
-          isDos ? 'text-emerald-300' : 'text-magenta-300',
-        )}
-      >
+      <h4 className="flex items-center gap-3 font-serif text-h2 text-ivory-50 mb-5 leading-tight">
         {isDos ? (
-          <CheckCircle2 className="w-5 h-5" aria-hidden="true" />
+          <CheckCircle2 className="w-5 h-5 text-aurora-400" aria-hidden="true" />
         ) : (
-          <XCircle className="w-5 h-5" aria-hidden="true" />
+          <XCircle className="w-5 h-5 text-magenta-400" aria-hidden="true" />
         )}
-        {title}
+        <span className={isDos ? 'text-ivory-50' : 'text-ivory-50'}>
+          {title}
+        </span>
       </h4>
-      <ul className="space-y-2.5">
+      <ul className="space-y-3">
         {items.slice(0, 3).map((it, i) => (
           <li
             key={`${tone}-${i}`}
-            className="flex items-start gap-2.5 text-body text-ivory-200 leading-relaxed"
+            className="flex items-start gap-3 text-body text-ivory-200/90 leading-[1.7]"
           >
             <span
               aria-hidden="true"
               className={cn(
-                'flex-shrink-0 mt-2 w-1.5 h-1.5 rounded-full',
-                isDos ? 'bg-emerald-400' : 'bg-magenta-400',
+                'flex-shrink-0 mt-2.5 block h-px w-4',
+                isDos ? 'bg-aurora-400/60' : 'bg-magenta-400/60',
               )}
             />
             <span>{it}</span>

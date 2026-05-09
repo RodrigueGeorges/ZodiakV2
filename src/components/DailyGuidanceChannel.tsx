@@ -136,23 +136,19 @@ export default function DailyGuidanceChannel({
 
   return (
     <Card variant="elevated" className="relative overflow-hidden">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/10 via-transparent to-magenta-500/10"
-      />
-      <div className="relative p-6 space-y-5">
-        <div className="flex items-center gap-3">
+      <div className="relative p-7 space-y-6">
+        <div className="flex items-center gap-4">
           <div
             aria-hidden="true"
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-aurora-500/15 ring-1 ring-aurora-400/30 text-aurora-200"
+            className="flex items-center justify-center w-10 h-10 rounded-full border border-aurora-400/30 text-aurora-400"
           >
             <Sparkles className="w-5 h-5" />
           </div>
           <div>
-            <p className="text-micro uppercase tracking-[0.22em] text-aurora-300">
-              Quotidien
-            </p>
-            <h3 className="font-cinzel text-h3 text-ivory-50">Ma guidance du matin</h3>
+            <p className="eyebrow-ritual text-aurora-400/80">Quotidien</p>
+            <h3 className="font-serif text-h2 text-ivory-50 leading-tight mt-1">
+              Ma guidance du matin
+            </h3>
           </div>
         </div>
 
