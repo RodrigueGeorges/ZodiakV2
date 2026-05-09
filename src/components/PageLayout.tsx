@@ -41,6 +41,12 @@ interface PageLayoutProps {
   dim?: boolean;
   /** Désactive le padding-bottom mobile (utile pour pleines hauteurs : chat). */
   fullHeight?: boolean;
+  /**
+   * Si vrai, le titre est rendu en ivoire au lieu du gradient aurora.
+   * Permet de mettre en valeur certains mots avec un span gradient
+   * (effet "Home" : ivoire + gradient sur la même ligne).
+   */
+  titlePlain?: boolean;
 }
 
 const maxWidthClasses: Record<NonNullable<PageLayoutProps['maxWidth']>, string> =
@@ -69,6 +75,7 @@ export default function PageLayout({
   contentClassName,
   dim = false,
   fullHeight = false,
+  titlePlain = false,
 }: PageLayoutProps) {
   return (
     <div className={cn('page-container safe-top', className)}>
@@ -101,6 +108,7 @@ export default function PageLayout({
               subtitle={subtitle}
               align="center"
               size="md"
+              titlePlain={titlePlain}
             />
             {/* Slot complémentaire (ex: streak flame, bouton retour, compteur) */}
             {headerSlot && (

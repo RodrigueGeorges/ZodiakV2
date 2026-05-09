@@ -7,6 +7,7 @@ import { GuidanceContent } from '../components/GuidanceContent';
 import StreakFlame from '../components/StreakFlame';
 import MoodCheck from '../components/MoodCheck';
 import BadgesGrid from '../components/BadgesGrid';
+import BirthdayBanner from '../components/BirthdayBanner';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { useAuth } from '../lib/hooks/useAuth';
@@ -19,7 +20,10 @@ import { useChatMemory } from '../lib/hooks/useChatMemory';
 import { moonPhaseAt } from '../lib/moonPhase';
 import { vibrate } from '../lib/haptics';
 import { track } from '../lib/analytics';
-import { Bell, BellOff, X } from 'lucide-react';
+import { birthdayInfo } from '../lib/birthday';
+import { playSound } from '../lib/sounds';
+import { nextSmartPushMoment } from '../lib/smartPush';
+import { Bell, BellOff, X, Telescope } from 'lucide-react';
 
 /**
  * Page Guidance v3 :
@@ -67,6 +71,7 @@ export default function Guidance() {
   useEffect(() => {
     if (justIncremented && streak && streak.current_count > 1) {
       vibrate('streak');
+      playSound('chime');
       track('streak_incremented', { count: streak.current_count });
     }
   }, [justIncremented, streak]);
@@ -109,11 +114,13 @@ export default function Guidance() {
   }, [isLoading, isAuthenticated, navigate]);
 
   const moonToday = useMemo(() => moonPhaseAt(new Date()), []);
+  const upcomingMoment = useMemo(() => nextSmartPushMoment(36), []);
 
   if (isLoading) return <LoadingScreen message="Connexion au ciel…" />;
   if (!profile) return <LoadingScreen message="Chargement de ton profil…" />;
 
   const firstName = profile.name?.split(' ')[0] || 'voyageur';
+  const birthday = birthdayInfo(profile.birth_date, profile.timezone);
   const today = new Date().toLocaleDateString('fr-FR', {
     weekday: 'long',
     day: 'numeric',
@@ -142,10 +149,11 @@ export default function Guidance() {
   return (
     <PageLayout
       eyebrow={`${today} · ${moonToday.glyph} ${moonToday.label.toLowerCase()}`}
+      titlePlain
       title={
         <>
-          Bonjour <span className="text-ivory-50">{firstName}</span>,
-          <br /> voici ta guidance.
+          <span className="block text-ivory-50">Bonjour {firstName},</span>
+          <span className="block text-gradient-aurora">voici ta guidance.</span>
         </>
       }
       subtitle="Une lecture du ciel au prisme de ton thème natal."
@@ -165,6 +173,39 @@ export default function Guidance() {
       dim
     >
       <div className="space-y-8 md:space-y-10">
+        {/* Easter egg : révolution solaire le jour de l'anniversaire */}
+        {birthday.isToday && (
+          <BirthdayBanner firstName={firstName} age={birthday.age} />
+        )}
+
+        {/* Smart push : teaser du prochain moment astral notable */}
+        {upcomingMoment && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <Card variant="surface" className="relative overflow-hidden">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-gradient-to-r from-aurora-500/10 via-transparent to-magenta-500/10"
+              />
+              <div className="relative px-5 py-3 flex items-center gap-3">
+                <Telescope
+                  className="w-4 h-4 text-aurora-300 flex-shrink-0"
+                  aria-hidden="true"
+                />
+                <p className="text-caption text-ivory-200 leading-snug flex-1">
+                  <span className="text-aurora-200 font-medium">
+                    {upcomingMoment.title}
+                  </span>{' '}
+                  · {upcomingMoment.body}
+                </p>
+              </div>
+            </Card>
+          </motion.div>
+        )}
+
         {/* Push nudge */}
         {showPushNudge && (
           <motion.div
@@ -223,7 +264,7 @@ export default function Guidance() {
         )}
 
         {/* Guidance */}
-        <GuidanceContent />
+        <GuidanceContent firstName={firstName} />
 
         {/* Badges (collapsible) */}
         <div className="text-center">

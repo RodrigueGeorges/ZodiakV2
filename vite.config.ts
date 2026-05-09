@@ -30,9 +30,15 @@ export default defineConfig({
     // (Uncaught SyntaxError: Export 'AstrologyService' is not defined).
     // esbuild est plus rapide ET plus stable sur les modules ES modernes.
     minify: 'esbuild',
-    sourcemap: true,
+    // Pas de sourcemaps en production : -30% de poids déployé.
+    // (Activable ponctuellement via `VITE_SOURCEMAP=true` au moment du build.)
+    sourcemap: process.env.VITE_SOURCEMAP === 'true',
     outDir: 'dist',
     assetsDir: 'assets',
+    cssCodeSplit: true,
+    // Asset inlining : tout ce qui est < 4 KB est en base64 dans le JS
+    // (économise des requêtes HTTP sur les petits SVG / icônes).
+    assetsInlineLimit: 4096,
     rollupOptions: {
       output: {
         // Pas de `manualChunks` : Vite/Rollup font un chunk splitting
@@ -45,6 +51,9 @@ export default defineConfig({
         assetFileNames: 'assets/[name].[hash][extname]',
       },
     },
+    // Augmente le seuil de warning : on a quelques chunks lourds
+    // (framer-motion, supabase) qui sont attendus.
+    chunkSizeWarningLimit: 800,
   },
   esbuild: {
     // Strip console.* et debugger en production (équivalent terser drop_console).

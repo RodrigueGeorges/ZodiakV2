@@ -1,0 +1,134 @@
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Sparkles, Gift, ArrowRight, AlertCircle } from 'lucide-react';
+import PageLayout from '../components/PageLayout';
+import { Button } from '../components/ui/Button';
+import { Card } from '../components/ui/Card';
+import LoadingScreen from '../components/LoadingScreen';
+import { rememberReferralCode } from '../lib/referral';
+import { track } from '../lib/analytics';
+
+/**
+ * /r/:code — landing du parrainage.
+ *
+ * Vérifie le code, le mémorise en localStorage, puis propose à
+ * l'utilisateur de s'inscrire (et bénéficier du bonus).
+ */
+export default function ReferralLanding() {
+  const { code } = useParams<{ code: string }>();
+  const navigate = useNavigate();
+  const [status, setStatus] = useState<'loading' | 'valid' | 'invalid'>(
+    'loading',
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!code) {
+        setStatus('invalid');
+        return;
+      }
+      const ok = await rememberReferralCode(code);
+      if (cancelled) return;
+      setStatus(ok ? 'valid' : 'invalid');
+      if (ok) track('referral_landing_valid', { code });
+      else track('referral_landing_invalid', { code });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [code]);
+
+  if (status === 'loading') {
+    return <LoadingScreen message="Vérification de l'invitation…" />;
+  }
+
+  if (status === 'invalid') {
+    return (
+      <PageLayout
+        eyebrow="Invitation"
+        title="Lien d'invitation invalide"
+        subtitle="Tu peux rejoindre Zodiak directement, ton expérience reste personnalisée."
+        maxWidth="lg"
+        showLogo
+        dim
+      >
+        <Card variant="surface">
+          <div className="p-6 md:p-8 flex flex-col items-center text-center gap-4">
+            <div className="w-14 h-14 rounded-full bg-magenta-500/15 ring-1 ring-magenta-400/30 flex items-center justify-center text-magenta-300">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <p className="text-body text-ivory-200 max-w-md">
+              Le code d'invitation n'a pas été reconnu. Pas grave, tu peux
+              t'inscrire normalement et bénéficier de 7 jours offerts.
+            </p>
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => navigate('/register')}
+              iconRight={<ArrowRight className="w-4 h-4" />}
+            >
+              Créer mon compte
+            </Button>
+          </div>
+        </Card>
+      </PageLayout>
+    );
+  }
+
+  return (
+    <PageLayout
+      eyebrow="Tu as été invité·e"
+      titlePlain
+      title={
+        <>
+          <span className="block text-ivory-50">Bienvenue dans</span>
+          <span className="block text-gradient-aurora">Zodiak.</span>
+        </>
+      }
+      subtitle="Une lecture du ciel personnalisée chaque matin sur WhatsApp ou Instagram."
+      maxWidth="lg"
+      showLogo
+    >
+      <Card variant="elevated" className="relative overflow-hidden">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/12 via-transparent to-magenta-500/12"
+        />
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative p-7 md:p-9 text-center"
+        >
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-aurora-500/15 ring-1 ring-aurora-400/30 mb-5 text-aurora-200">
+            <Gift className="w-6 h-6" aria-hidden="true" />
+          </div>
+          <h2 className="font-cinzel text-h2 leading-tight mb-3">
+            <span className="text-ivory-50">14 jours</span>{' '}
+            <span className="text-gradient-aurora">offerts</span>
+          </h2>
+          <p className="text-body text-ivory-200 max-w-md mx-auto mb-6">
+            Grâce à l'invitation de ton ami, tu reçois{' '}
+            <span className="text-aurora-200 font-medium">2 semaines de premium</span>{' '}
+            au lieu de 7 jours — et il en gagne autant de son côté.
+          </p>
+
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={() => navigate('/register')}
+            iconLeft={<Sparkles className="w-4 h-4" />}
+            iconRight={<ArrowRight className="w-4 h-4" />}
+          >
+            Activer mon bonus
+          </Button>
+          <p className="mt-4 text-micro uppercase tracking-[0.22em] text-ivory-400">
+            Sans carte bancaire · annulable en 1 clic
+          </p>
+        </motion.div>
+      </Card>
+    </PageLayout>
+  );
+}

@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { AlertTriangle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import GuidanceDisplay from '../components/GuidanceDisplay';
 import LoadingScreen from '../components/LoadingScreen';
-import AuroraBackground from '../components/ui/AuroraBackground';
 import EmptyState from '../components/ui/EmptyState';
-import SectionHeader from '../components/ui/SectionHeader';
-import Logo from '../components/Logo';
+import PageLayout from '../components/PageLayout';
+import { Card } from '../components/ui/Card';
 
 export default function GuidanceAccess() {
   const [searchParams] = useSearchParams();
@@ -89,61 +87,50 @@ export default function GuidanceAccess() {
 
   if (error) {
     return (
-      <div className="page-container relative">
-        <AuroraBackground variant="dim" />
-        <div className="relative z-10 mx-auto max-w-lg px-4 py-20 md:py-32">
-          <Logo size="md" className="mx-auto" />
-          <div className="mt-10">
-            <EmptyState
-              icon={<AlertTriangle className="w-7 h-7" />}
-              title="Lien invalide"
-              description={error}
-            />
-          </div>
-        </div>
-      </div>
+      <PageLayout
+        eyebrow="Lien partagé"
+        title="Lien invalide"
+        subtitle="Ce lien n'est plus accessible — il a peut-être expiré."
+        maxWidth="lg"
+        showLogo
+        dim
+      >
+        <Card variant="surface">
+          <EmptyState
+            icon={<AlertTriangle className="w-7 h-7" />}
+            title="Impossible d'ouvrir la guidance"
+            description={error}
+          />
+        </Card>
+      </PageLayout>
     );
   }
 
   if (!guidance) return null;
 
   return (
-    <div className="page-container relative">
-      <AuroraBackground />
-      <div className="relative z-10 mx-auto max-w-5xl px-4 md:px-8 pt-10 md:pt-16 pb-24">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="flex flex-col items-center mb-10"
-        >
-          <Logo size="md" />
-        </motion.div>
+    <PageLayout
+      eyebrow="Guidance partagée · valable 24 h"
+      titlePlain
+      title={
+        userName ? (
+          <>
+            <span className="block text-ivory-50">Le ciel</span>
+            <span className="block text-gradient-aurora">pour {userName}.</span>
+          </>
+        ) : (
+          <span className="text-gradient-aurora">Une lecture du ciel</span>
+        )
+      }
+      subtitle="Lien sécurisé · partagé pour cette journée uniquement."
+      maxWidth="5xl"
+      showLogo
+    >
+      <GuidanceDisplay guidance={guidance} />
 
-        <SectionHeader
-          eyebrow="Guidance partagée"
-          title={
-            userName
-              ? `Le ciel pour ${userName}`
-              : 'Une lecture du ciel'
-          }
-          subtitle="Lien sécurisé · Valable 24h"
-          align="center"
-          size="md"
-          className="mb-12"
-        />
-
-        <GuidanceDisplay guidance={guidance} />
-
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-12 text-center text-micro uppercase tracking-[0.22em] text-ivory-400"
-        >
-          ✦ Zodiak — Ton guide astral premium ✦
-        </motion.p>
-      </div>
-    </div>
+      <p className="mt-12 text-center text-micro uppercase tracking-[0.22em] text-ivory-400">
+        ✦ Zodiak — Ton guide astral premium ✦
+      </p>
+    </PageLayout>
   );
 }

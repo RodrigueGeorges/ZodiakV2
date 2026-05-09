@@ -12,9 +12,14 @@ import ShareButton from './ShareButton';
 
 interface GuidanceContentProps {
   className?: string;
+  /** Prénom de l'utilisateur — passé au GuidanceDisplay pour la story image. */
+  firstName?: string;
 }
 
-export function GuidanceContent({ className = '' }: GuidanceContentProps) {
+export function GuidanceContent({
+  className = '',
+  firstName,
+}: GuidanceContentProps) {
   const { guidance, loading, error, generateGuidance, refreshGuidance } =
     useGuidance();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -42,6 +47,9 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
       await retry(async () => {
         await refreshGuidance();
       });
+      // Petit son cosmique au refresh (ne joue que si l'utilisateur a opté in)
+      const { playSound } = await import('../lib/sounds');
+      playSound('whoosh');
     } catch (err) {
       console.error('Erreur actualisation:', err);
     }
@@ -159,7 +167,7 @@ export function GuidanceContent({ className = '' }: GuidanceContentProps) {
 
   return (
     <div className={className}>
-      <GuidanceDisplay guidance={guidance} />
+      <GuidanceDisplay guidance={guidance} firstName={firstName} />
 
       <motion.div
         initial={{ opacity: 0, y: 14 }}

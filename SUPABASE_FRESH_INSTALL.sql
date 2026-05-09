@@ -76,6 +76,11 @@ CREATE TABLE profiles (
   plan_renews_at           timestamptz,
   stripe_customer_id       text,
 
+  -- Système de parrainage : code unique partageable + uuid du parrain
+  referral_code            text UNIQUE,
+  referred_by              uuid REFERENCES profiles(id) ON DELETE SET NULL,
+  referral_credit_days     int NOT NULL DEFAULT 0,
+
   avatar_url               text,
 
   created_at               timestamptz DEFAULT now(),
@@ -87,6 +92,8 @@ CREATE INDEX profiles_guidance_dispatch_idx
   WHERE daily_guidance_enabled = true;
 CREATE INDEX profiles_whatsapp_wa_id_idx ON profiles (whatsapp_wa_id);
 CREATE INDEX profiles_instagram_igsid_idx ON profiles (instagram_igsid);
+CREATE INDEX profiles_referral_code_idx   ON profiles (referral_code);
+CREATE INDEX profiles_referred_by_idx     ON profiles (referred_by);
 
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
@@ -108,6 +115,11 @@ CREATE POLICY "profiles_service_all" ON profiles
 -- =========================================================================
 
 -- 4.1 daily_guidance : guidance générée pour un user / date
+--   Structure :
+--     - 3 piliers obligatoires : love, work, energy (texte ou JSON {text, score})
+--     - 1 pilier optionnel    : money (finances) — null pour les guidances historiques
+--     - 1 mantra optionnel    : phrase courte personnalisée (préfixée du prénom)
+--     - dos / donts           : 3 actions à privilégier / éviter (jsonb array)
 CREATE TABLE daily_guidance (
   id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id     uuid NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
@@ -116,6 +128,10 @@ CREATE TABLE daily_guidance (
   love        text NOT NULL,
   work        text NOT NULL,
   energy      text NOT NULL,
+  money       text,
+  mantra      text,
+  dos         jsonb DEFAULT '[]'::jsonb,
+  donts       jsonb DEFAULT '[]'::jsonb,
   created_at  timestamptz DEFAULT now(),
   UNIQUE (user_id, date)
 );

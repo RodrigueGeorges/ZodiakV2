@@ -1,63 +1,63 @@
 import { Handler } from '@netlify/functions';
 import { createClient } from '@supabase/supabase-js';
+import { computeNatalChart, computeDailyTransitsLocal } from './_astroEngine.js';
+
+/**
+ * Endpoint de calcul astrologique — 100% local via `astronomy-engine`.
+ *
+ * ⚠️ Anciennement basé sur Prokerala (API payante, latence réseau). Migré
+ * en mai 2026 vers un calcul local : 0 € de runtime, ~5 ms de latence,
+ * précision arc-minute. Voir `_astroEngine.ts` pour les détails.
+ *
+ * Body attendu :
+ *   {
+ *     type: 'natal_chart' | 'transits',
+ *     birthDate: 'YYYY-MM-DD',
+ *     birthTime: 'HH:MM' (optionnel pour transits, requis pour natal_chart),
+ *     birthPlace: 'lat,lng'  // ex: '48.8566,2.3522'
+ *   }
+ *
+ * Retour :
+ *   - natal_chart : { planets: [...], houses: [...], ascendant: {...} }
+ *   - transits    : { planets: [...] }
+ *
+ * Le format de réponse reste compatible avec ce que `src/lib/astrology.ts`
+ * attend (transformNatalChart côté client), pour ne casser aucune intégration.
+ */
 
 interface AstrologyRequest {
   type: 'natal_chart' | 'transits';
   birthDate: string;
-  birthTime: string;
-  birthPlace: string;
+  birthTime?: string;
+  birthPlace?: string;
+  date?: string;
 }
 
-interface Planet {
-  name: string;
-  longitude: number;
-  house: number;
-  sign: string;
-  retrograde: boolean;
+const SIGN_EN_FROM_FR: Record<string, string> = {
+  Bélier: 'Aries',
+  Taureau: 'Taurus',
+  Gémeaux: 'Gemini',
+  Cancer: 'Cancer',
+  Lion: 'Leo',
+  Vierge: 'Virgo',
+  Balance: 'Libra',
+  Scorpion: 'Scorpio',
+  Sagittaire: 'Sagittarius',
+  Capricorne: 'Capricorn',
+  Verseau: 'Aquarius',
+  Poissons: 'Pisces',
+};
+
+function parseLatLng(input: string): { latitude: number; longitude: number } | null {
+  const parts = input.split(',').map((s) => s.trim());
+  if (parts.length !== 2) return null;
+  const [lat, lng] = parts.map((s) => parseFloat(s));
+  if (isNaN(lat) || isNaN(lng)) return null;
+  if (Math.abs(lat) > 90 || Math.abs(lng) > 180) return null;
+  return { latitude: lat, longitude: lng };
 }
 
-interface House {
-  number: number;
-  sign: string;
-  degree: number;
-}
-
-interface Ascendant {
-  sign: string;
-  degree: number;
-}
-
-interface NatalChart {
-  planets: Planet[];
-  houses: House[];
-  ascendant: Ascendant;
-}
-
-// Cache simple côté serveur (en mémoire)
-const serverCache = new Map<string, { data: NatalChart; timestamp: number }>();
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 heures
-
-function getFromCache(key: string): NatalChart | null {
-  const cached = serverCache.get(key);
-  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    // console.log('✅ Cache hit for key:', key);
-    return cached.data;
-  }
-  if (cached) {
-    serverCache.delete(key); // Expiré
-  }
-  return null;
-}
-
-function setInCache(key: string, data: NatalChart): void {
-  serverCache.set(key, {
-    data,
-    timestamp: Date.now()
-  });
-  // console.log('💾 Cached data for key:', key);
-}
-
-export const handler: Handler = async (event, _context): Promise<any> => {
+export const handler: Handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
@@ -69,121 +69,167 @@ export const handler: Handler = async (event, _context): Promise<any> => {
     return { statusCode: 200, headers, body: '' };
   }
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
+    return {
+      statusCode: 405,
+      headers,
+      body: JSON.stringify({ error: 'Method not allowed' }),
+    };
   }
 
   try {
     const request: AstrologyRequest = JSON.parse(event.body || '{}');
-    console.log('Astrology API request params:', request);
-    if (!request.birthDate || !request.birthTime || !request.birthPlace) {
-      console.error('Missing required fields:', request);
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Missing required fields', details: request }) };
+
+    // ── Branche transits (cron daily, page guidance) ────────────────
+    if (request.type === 'transits') {
+      const dateIso = request.date ?? request.birthDate ?? new Date().toISOString().split('T')[0];
+      const transits = computeDailyTransitsLocal(dateIso);
+      // Format compatible avec l'ancien shape Prokerala : { planets: [...] }
+      const planetsArray = Object.entries(transits).map(([name, p]) => ({
+        name: capitalize(name),
+        sign: p.sign,
+        sign_en: SIGN_EN_FROM_FR[p.sign] ?? p.sign,
+        degree: Math.round(p.degree * 100) / 100,
+        longitude: Math.round(p.longitude * 100) / 100,
+        retrograde: p.retrograde,
+        is_retrograde: String(p.retrograde),
+        house: 0,
+      }));
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          date: dateIso,
+          planets: planetsArray,
+        }),
+      };
     }
 
-    // --- SUPABASE ---
+    // ── Branche natal_chart ────────────────────────────────────────
+    if (!request.birthDate || !request.birthTime || !request.birthPlace) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          error: 'Missing required fields',
+          details: 'birthDate, birthTime et birthPlace sont requis',
+        }),
+      };
+    }
+    const coords = parseLatLng(request.birthPlace);
+    if (!coords) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          error: 'Invalid birthPlace format',
+          details: 'Attendu : "latitude,longitude" — ex: "48.8566,2.3522"',
+        }),
+      };
+    }
+
+    // Cache Supabase : si on retrouve un profil avec le même triplet
+    // naissance, on lui renvoie son thème déjà calculé (gain de ~20 ms +
+    // évite de recalculer à chaque rerun en cas de retry).
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (!supabaseUrl || !supabaseServiceKey) {
-      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Supabase config missing' }) };
+    if (supabaseUrl && supabaseServiceKey) {
+      try {
+        const supabase = createClient(supabaseUrl, supabaseServiceKey);
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('id, natal_chart')
+          .eq('birth_date', request.birthDate)
+          .eq('birth_time', request.birthTime)
+          .eq('birth_place', request.birthPlace)
+          .limit(1);
+        if (profiles && profiles.length > 0 && profiles[0].natal_chart) {
+          return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify(profiles[0].natal_chart),
+          };
+        }
+      } catch (cacheErr) {
+        // On log mais on continue — cache miss n'est pas fatal
+        console.warn('Cache lookup failed:', cacheErr);
+      }
     }
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Vérifier si le thème natal existe déjà (on suppose un profil unique par triplet naissance)
-    const { data: profiles, error: supaErr } = await supabase
-      .from('profiles')
-      .select('id, natal_chart')
-      .eq('birth_date', request.birthDate)
-      .eq('birth_time', request.birthTime)
-      .eq('birth_place', request.birthPlace)
-      .limit(1);
-    if (supaErr) {
-      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Supabase error', details: supaErr.message }) };
-    }
-    if (profiles && profiles.length > 0 && profiles[0].natal_chart) {
-      return { statusCode: 200, headers, body: JSON.stringify(profiles[0].natal_chart) };
-    }
+    // Calcul du thème natal (local)
+    const isoBirth = `${request.birthDate}T${request.birthTime}:00Z`;
+    const chart = computeNatalChart(isoBirth, coords.latitude, coords.longitude);
 
-    // --- PROKERALA ---
-    const baseUrl = process.env.PROKERALA_BASE_URL;
-    const clientId = process.env.PROKERALA_CLIENT_ID;
-    const clientSecret = process.env.PROKERALA_CLIENT_SECRET;
-    if (!baseUrl || !clientId || !clientSecret) {
-      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Missing Prokerala configuration' }) };
-    }
-    // Authentification
-    const authUrl = 'https://api.prokerala.com/token';
-    const tokenRes = await fetch(authUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ client_id: clientId, client_secret: clientSecret, grant_type: 'client_credentials' }),
-    });
-    if (!tokenRes.ok) {
-      const errorText = await tokenRes.text();
-      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Failed to get access token', details: errorText }) };
-    }
-    const tokenData = await tokenRes.json();
-    const accessToken = tokenData.access_token;
-    if (!accessToken) {
-      return { statusCode: 500, headers, body: JSON.stringify({ error: 'No access token received', details: tokenData }) };
-    }
-    // Appel API Prokerala (POST JSON)
-    const [latitude, longitude] = request.birthPlace.split(',').map(s => s.trim());
-    if (!latitude || !longitude || isNaN(parseFloat(latitude)) || isNaN(parseFloat(longitude))) {
-      console.error('Invalid birthPlace format:', request.birthPlace);
-      return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid birthPlace format', details: request.birthPlace }) };
-    }
-    const datetime = `${request.birthDate}T${request.birthTime}Z`;
-    
-    // Choisir l'endpoint selon le type de requête
-    const endpoint = request.type === 'transits' ? '/v2/astrology/transits' : '/v2/astrology/natal-chart';
-    const requestBody = request.type === 'transits' ? {
-      datetime,
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
-      house_system: 'placidus',
-      chart_type: 'western',
-    } : {
-      datetime,
-      latitude: parseFloat(latitude),
-      longitude: parseFloat(longitude),
-      house_system: 'placidus',
-      chart_type: 'western',
-    };
-    
-    const prokeralaRes = await fetch(`${baseUrl}${endpoint}`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
+    // Format de retour compatible avec `transformNatalChart` côté client.
+    // Le client attend : { planets: [{name, longitude, house, sign, is_retrograde}],
+    //                     houses: [{house_number, sign, degree}],
+    //                     ascendant: {sign, degree} }
+    const response = {
+      planets: [
+        formatPlanet('Soleil', chart.sun),
+        formatPlanet('Lune', chart.moon),
+        formatPlanet('Mercure', chart.mercury),
+        formatPlanet('Vénus', chart.venus),
+        formatPlanet('Mars', chart.mars),
+        formatPlanet('Jupiter', chart.jupiter),
+        formatPlanet('Saturne', chart.saturn),
+      ],
+      houses: chart.houses.map((h, i) => ({
+        house_number: i + 1,
+        sign: h.sign,
+        degree: Math.round(h.degree * 100) / 100,
+      })),
+      ascendant: {
+        sign: chart.ascendant.sign,
+        degree: Math.round(chart.ascendant.degree * 100) / 100,
       },
-      body: JSON.stringify(requestBody)
-    });
-    if (!prokeralaRes.ok) {
-      const errorText = await prokeralaRes.text();
-      console.error('Prokerala API error:', errorText);
-      return { statusCode: 500, headers, body: JSON.stringify({ error: 'Astrology API error', details: errorText }) };
-    }
-    const natalChart = await prokeralaRes.json();
-    // Stocker dans Supabase (on met à jour le premier profil trouvé ou on en crée un si besoin)
-    let profileId = profiles && profiles.length > 0 ? profiles[0].id : undefined;
-    if (profileId) {
-      await supabase.from('profiles').update({ natal_chart: natalChart, updated_at: new Date().toISOString() }).eq('id', profileId);
-    } else {
-      await supabase.from('profiles').insert({
-        birth_date: request.birthDate,
-        birth_time: request.birthTime,
-        birth_place: request.birthPlace,
-        natal_chart: natalChart,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
-    }
-    return { statusCode: 200, headers, body: JSON.stringify(natalChart) };
+      midheaven: {
+        sign: chart.midheaven.sign,
+        degree: Math.round(chart.midheaven.degree * 100) / 100,
+      },
+      // Aussi l'ancien format pour compatibilité
+      sun: chart.sun,
+      moon: chart.moon,
+      mercury: chart.mercury,
+      venus: chart.venus,
+      mars: chart.mars,
+      jupiter: chart.jupiter,
+      saturn: chart.saturn,
+    };
+
+    return {
+      statusCode: 200,
+      headers,
+      body: JSON.stringify(response),
+    };
   } catch (error) {
-    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }) };
+    console.error('Astrology endpoint error:', error);
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      }),
+    };
   }
 };
 
-async function _calculateNatalChart(data: { birthDate: string; birthTime: string; birthPlace: string }): Promise<NatalChart> {
-  throw new Error('Not implemented');
+function formatPlanet(
+  nameFr: string,
+  p: { sign: string; degree: number; longitude: number; retrograde: boolean; house?: number },
+) {
+  return {
+    name: nameFr,
+    sign: p.sign,
+    sign_en: SIGN_EN_FROM_FR[p.sign] ?? p.sign,
+    degree: Math.round(p.degree * 100) / 100,
+    longitude: Math.round(p.longitude * 100) / 100,
+    house: p.house ?? 0,
+    retrograde: p.retrograde,
+    is_retrograde: String(p.retrograde),
+  };
+}
+
+function capitalize(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
 }

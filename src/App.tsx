@@ -6,6 +6,8 @@ import Register from './pages/Register';
 import RegisterComplete from './pages/RegisterComplete';
 import Subscribe from './pages/Subscribe';
 import Login from './pages/Login';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import Admin from './pages/Admin';
 import BottomNavBar from './components/BottomNavBar';
 import TopNavBar from './components/TopNavBar';
@@ -15,6 +17,7 @@ import PrivateRoute from './components/PrivateRoute';
 import GuidanceAccess from './pages/GuidanceAccess';
 import GuidanceShortRedirect from './pages/GuidanceShortRedirect';
 import ChatAstro from './pages/ChatAstro';
+import ReferralLanding from './pages/ReferralLanding';
 import LoadingScreen from './components/LoadingScreen';
 import { identify, trackPageView } from './lib/analytics';
 import './index.css';
@@ -63,6 +66,8 @@ function AnimatedRoutes() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/register/complete" element={<RegisterComplete />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/subscribe" element={<Subscribe />} />
           <Route path="/zodiak-admin-astro" element={<Admin />} />
 
@@ -70,6 +75,9 @@ function AnimatedRoutes() {
           <Route path="/g/:short" element={<GuidanceShortRedirect />} />
           <Route path="/guidance/access" element={<GuidanceAccess />} />
           <Route path="/guide-astral" element={<ChatAstro />} />
+
+          {/* Parrainage */}
+          <Route path="/r/:code" element={<ReferralLanding />} />
 
           {/* Routes protégées (lazy) */}
           <Route

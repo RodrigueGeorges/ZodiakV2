@@ -11,9 +11,21 @@ class OpenAIService {
 
   private static readonly DEFAULT_GUIDANCE = {
     summary: "Les aspects planétaires du jour vous invitent à l'action réfléchie. Restez à l'écoute de votre intuition tout en avançant avec détermination vers vos objectifs.",
-    love: "Vénus forme des aspects harmonieux qui favorisent les échanges authentiques. C'est le moment d'exprimer vos sentiments avec sincérité et d'ouvrir votre coeur à de nouvelles connexions.",
-    work: "Mercure soutient vos projets professionnels. Votre clarté d'esprit est un atout majeur aujourd'hui. Profitez de cette énergie pour communiquer vos idées et prendre des initiatives constructives.",
-    energy: "L'alignement des planètes vous apporte une belle vitalité. C'est une excellente journée pour démarrer de nouvelles activités physiques ou pour vous consacrer à des projets qui vous passionnent et rechargent vos batteries."
+    love: { text: "Vénus forme des aspects harmonieux qui favorisent les échanges authentiques. C'est le moment d'exprimer tes sentiments avec sincérité.", score: 75, why: "Vénus en aspect harmonique avec ton ascendant amplifie l'écoute et la douceur dans tes liens." },
+    work: { text: "Mercure soutient tes projets professionnels. Ta clarté d'esprit est un atout majeur aujourd'hui. Profite de cette énergie pour communiquer tes idées.", score: 75, why: "Mercure transite ta maison X et favorise les conversations stratégiques." },
+    energy: { text: "L'alignement des planètes t'apporte une belle vitalité. C'est une excellente journée pour démarrer de nouvelles activités physiques.", score: 75, why: "Le Soleil forme un trigone à Mars dans ta carte, ce qui réveille ton élan vital." },
+    money: { text: "Jupiter t'invite à la lucidité financière. Prends le temps d'observer ce qui mérite ton investissement et ce qui peut attendre.", score: 70, why: "Jupiter transite ta maison II — celle qui parle de ressources et de sécurité matérielle." },
+    dos: [
+      "Prendre cinq minutes au calme avant de commencer la journée",
+      "Dire un oui ou un non clair à une demande qui flotte depuis longtemps",
+      "Honorer ton corps : un verre d'eau, une vraie pause, un mouvement",
+    ],
+    donts: [
+      "Te disperser entre dix petites urgences qui n'en sont pas",
+      "Trancher une décision importante sous le coup de l'émotion",
+      "Sacrifier ton sommeil pour finir ce qui peut attendre demain",
+    ],
+    mantra: "Aujourd'hui, j'avance à mon rythme — et c'est exactement le bon."
   };
 
   private static async callOpenAI(prompt: string): Promise<string> {
@@ -42,19 +54,30 @@ class OpenAIService {
     }
   }
 
-  static async generateGuidance(natalChart: NatalChart, transits: Record<string, unknown>, userId?: string): Promise<ApiResponse<typeof this.DEFAULT_GUIDANCE>> {
+  static async generateGuidance(
+    natalChart: NatalChart,
+    transits: Record<string, unknown>,
+    userId?: string,
+    firstName?: string,
+  ): Promise<ApiResponse<typeof this.DEFAULT_GUIDANCE>> {
     try {
-      // const cacheKey = `guidance_${JSON.stringify(natalChart)}_${JSON.stringify(transits)}`; // supprimé car non utilisé
-      // Utiliser le cache centralisé
+      // Cache différencié par prénom : on ne veut pas servir un mantra
+      // adressé à "Camille" à un autre utilisateur.
       const guidance = await ApiCache.getCachedApiResponse(
         'openai-guidance',
-        { natalChart, transits, userId },
+        { natalChart, transits, userId, firstName },
         async () => {
-          const prompt = this.buildPrompt(natalChart, transits);
+          const prompt = this.buildPrompt(natalChart, transits, firstName);
           const response = await this.callOpenAI(prompt);
-          
+
           try {
-            return JSON.parse(response);
+            const parsed = JSON.parse(response);
+            // Backward-compat : on garantit la présence des nouveaux champs
+            // pour ne jamais casser le rendu côté UI.
+            return {
+              ...this.DEFAULT_GUIDANCE,
+              ...parsed,
+            };
           } catch (error) {
             console.error('Error parsing OpenAI response:', error);
             return this.DEFAULT_GUIDANCE;
@@ -70,29 +93,60 @@ class OpenAIService {
     }
   }
 
-  private static buildPrompt(natalChart: NatalChart, transits: Record<string, unknown>): string {
-    return `
-      Analyse les positions planétaires suivantes et génère une guidance quotidienne au format JSON.
-      - summary: un résumé général de 2-3 phrases de l'énergie du jour.
-      - love: un paragraphe de 3-4 phrases sur les opportunités et défis dans la vie amoureuse.
-      - work: un paragraphe de 3-4 phrases sur les dynamiques professionnelles et financières.
-      - energy: un paragraphe de 3-4 phrases sur la vitalité, le bien-être et les activités conseillées.
-      
-      IMPORTANT: Dans chaque champ, mets les mots-clés les plus importants entre astérisques. Par exemple: "Aujourd'hui, la *communication* sera essentielle. Faites preuve de *prudence*."
-      Le ton doit être encourageant, clair et personnalisé pour la personne recevant la guidance.
+  private static buildPrompt(
+    natalChart: NatalChart,
+    transits: Record<string, unknown>,
+    firstName?: string,
+  ): string {
+    const safeName = (firstName || '').trim();
+    const addressBlock = safeName
+      ? `La personne s'appelle ${safeName}. Tu DOIS commencer le mantra par son prénom suivi d'une virgule. Exemple : "${safeName}, aujourd'hui ose la douceur."`
+      : `Tu n'as pas le prénom de la personne : commence le mantra par "Aujourd'hui," ou par un verbe d'action.`;
 
-      Thème natal:
+    return `
+      Tu es un astrologue contemporain, lucide et chaleureux. Analyse les positions
+      planétaires suivantes et génère une guidance quotidienne au format JSON STRICT.
+
+      Champs attendus :
+      - summary : 1 à 2 phrases, formulation forte, qui résume l'énergie dominante du jour.
+      - love / work / energy / money : OBJET avec 3 clefs :
+          * "text"  : 2-3 phrases (le contenu principal du pilier).
+          * "score" : entier 0-100 reflétant l'intensité positive du domaine ce jour.
+          * "why"   : 1 phrase courte (≤ 25 mots) qui dit POURQUOI tu dis ça,
+                      en nommant explicitement un transit ou une planète présente
+                      dans les données ci-dessous (ex : "Vénus en trigone avec
+                      ton ascendant en Balance"). C'est crucial pour la pédagogie.
+        N'utilise PAS de prédiction médicale ni de conseil d'investissement spéculatif.
+      - dos : tableau de 3 actions courtes et concrètes à PRIVILÉGIER aujourd'hui (≤ 12 mots chacune).
+      - donts : tableau de 3 actions courtes à ÉVITER aujourd'hui (≤ 12 mots chacune).
+      - mantra : 1 phrase courte (≤ 18 mots), poétique mais actionnable, comme une affirmation à se répéter.
+
+      ${addressBlock}
+
+      Style :
+      - Ton chaleureux, contemporain, jamais ésotérique cliché.
+      - Tutoie la personne ("tu" et non "vous").
+      - Mets les 1-2 mots-clés les plus importants de chaque paragraphe entre astérisques. Exemple : "la *communication* est ton alliée".
+      - Évite les généralités : ancre toujours dans un transit ou une planète présente dans les données ci-dessous.
+      - Le champ "why" doit toujours citer une donnée astronomique réelle issue des transits/natal fournis.
+      - Pas de Markdown, pas de listes à puces dans les champs "text" (love, work, energy, money, summary).
+
+      Thème natal :
       ${JSON.stringify(natalChart, null, 2)}
 
-      Transits du jour:
+      Transits du jour :
       ${JSON.stringify(transits, null, 2)}
 
-      Format de réponse attendu (uniquement du JSON valide):
+      Format de réponse attendu (UNIQUEMENT du JSON valide, pas de texte autour) :
       {
-        "summary": "résumé général...",
-        "love": "conseils amour...",
-        "work": "conseils travail...",
-        "energy": "conseils énergie..."
+        "summary": "...",
+        "love":   { "text": "...", "score": 78, "why": "..." },
+        "work":   { "text": "...", "score": 82, "why": "..." },
+        "energy": { "text": "...", "score": 65, "why": "..." },
+        "money":  { "text": "...", "score": 70, "why": "..." },
+        "dos": ["...", "...", "..."],
+        "donts": ["...", "...", "..."],
+        "mantra": "..."
       }
     `;
   }

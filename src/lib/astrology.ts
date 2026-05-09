@@ -51,11 +51,33 @@ export interface NatalChart {
   };
 }
 
+/**
+ * Format moderne d'un pilier : objet structuré avec texte, score 0-100 et
+ * une phrase "why" qui explique le transit déclencheur (pédagogie type Co-Star).
+ *
+ * Pour rester rétro-compat, on accepte aussi des chaînes simples côté
+ * lecture (parseSection() côté UI gère les deux formats).
+ */
+export interface GuidancePillar {
+  text: string;
+  score: number;
+  /** Pourquoi ce message ? Cite un transit / planète. */
+  why?: string;
+}
+
 export interface GuidanceResponse {
   summary: string;
-  love: string;
-  work: string;
-  energy: string;
+  love: string | GuidancePillar;
+  work: string | GuidancePillar;
+  energy: string | GuidancePillar;
+  /** 4ème pilier (optionnel) — finances / argent. */
+  money?: string | GuidancePillar;
+  /** 3 actions courtes à privilégier ce jour. */
+  dos?: string[];
+  /** 3 actions courtes à éviter ce jour. */
+  donts?: string[];
+  /** Phrase courte personnalisée (préfixée du prénom de l'utilisateur). */
+  mantra?: string;
 }
 
 // ─── Cache + rate-limit (état interne du module) ────────────────────────
@@ -252,7 +274,8 @@ export async function generateDailyGuidance(
   userId: string,
   natalChart: NatalChart,
   date: string,
-  birthPlace?: string
+  birthPlace?: string,
+  firstName?: string,
 ): Promise<GuidanceResponse> {
   try {
     const cacheKey = `guidance_${userId}_${date}`;
@@ -267,7 +290,12 @@ export async function generateDailyGuidance(
     }
 
     const transits = await calculateDailyTransits(date, birthPlace);
-    const guidance = await OpenAIService.generateGuidance(natalChart, transits);
+    const guidance = await OpenAIService.generateGuidance(
+      natalChart,
+      transits,
+      userId,
+      firstName,
+    );
     const result = (guidance.data || guidance) as GuidanceResponse;
     setInCache(cacheKey, result);
     return result;

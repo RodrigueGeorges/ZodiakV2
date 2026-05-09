@@ -58,6 +58,10 @@ export interface Database {
           plan: Plan
           plan_renews_at: string | null
           stripe_customer_id: string | null
+          // Parrainage
+          referral_code: string | null
+          referred_by: string | null
+          referral_credit_days: number
           created_at: string
           updated_at: string
         }
@@ -73,6 +77,14 @@ export interface Database {
           love: Json
           work: Json
           energy: Json
+          /** 4ème pilier optionnel — finances. Null pour les guidances historiques. */
+          money: Json | null
+          /** Phrase courte personnalisée préfixée du prénom. */
+          mantra: string | null
+          /** Boussole du jour : 3 actions à privilégier. */
+          dos: Json | null
+          /** Boussole du jour : 3 actions à éviter. */
+          donts: Json | null
           created_at: string
         }
         Insert: Partial<DailyGuidance>

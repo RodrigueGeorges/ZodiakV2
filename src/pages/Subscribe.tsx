@@ -1,122 +1,223 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Sparkles,
-  MessageCircle,
-  Compass,
-  BookOpen,
-  Check,
   ArrowLeft,
+  Check,
+  ArrowRight,
 } from 'lucide-react';
 import PageLayout from '../components/PageLayout';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { cn } from '../lib/utils';
 
-const FEATURES = [
+type PlanId = 'monthly' | 'yearly' | 'lifetime';
+
+interface PlanDef {
+  id: PlanId;
+  eyebrow: string;
+  price: string;
+  priceSuffix: string;
+  perMonth?: string;
+  badge?: string;
+  hint?: string;
+  highlighted?: boolean;
+  ctaLabel: string;
+  features: string[];
+}
+
+const PLANS: PlanDef[] = [
   {
-    icon: Sparkles,
-    label: 'Guidance quotidienne premium',
-    description:
-      'Une lecture personnalisée chaque matin, sur ton canal préféré.',
+    id: 'monthly',
+    eyebrow: 'Mensuel',
+    price: '8,99 €',
+    priceSuffix: '/ mois',
+    hint: 'Idéal pour essayer',
+    ctaLabel: 'Commencer mon essai',
+    features: [
+      'Guidance quotidienne illimitée',
+      'Chat astral IA (mémoire long-terme)',
+      'Synastries illimitées',
+      'Calendrier lunaire 30 jours',
+      'Œuvre cosmique partageable',
+    ],
   },
   {
-    icon: MessageCircle,
-    label: 'Livraison WhatsApp & Instagram',
-    description: 'Là où tu es déjà — pas une app de plus à ouvrir.',
+    id: 'yearly',
+    eyebrow: 'Annuel',
+    price: '69 €',
+    priceSuffix: '/ an',
+    perMonth: '≈ 5,75 € / mois',
+    badge: 'Recommandé · −36 %',
+    highlighted: true,
+    hint: 'Tu économises 38 € sur l’année',
+    ctaLabel: 'Choisir l’annuel',
+    features: [
+      'Tout du plan mensuel',
+      '2 mois offerts',
+      'Stories HD imprimables',
+      'Accès anticipé aux nouveautés',
+      'Support prioritaire',
+    ],
   },
   {
-    icon: Compass,
-    label: 'Thème natal détaillé',
-    description: 'Carte du ciel, planètes, maisons, ascendant, mantra.',
-  },
-  {
-    icon: BookOpen,
-    label: 'Guide astral conversationnel',
-    description: 'Pose des questions, reçois des réponses adaptées à toi.',
+    id: 'lifetime',
+    eyebrow: 'À vie',
+    price: '129 €',
+    priceSuffix: 'une fois',
+    badge: 'Édition limitée',
+    hint: 'Offre fondateur · 100 places',
+    ctaLabel: 'Devenir fondateur',
+    features: [
+      'Tout, pour toujours',
+      'Aucun renouvellement',
+      'Place fondateur · profil orné',
+      'Vote sur la roadmap',
+      'Accès aux betas privées',
+    ],
   },
 ];
 
 export default function Subscribe() {
   const navigate = useNavigate();
+  const [selected, setSelected] = useState<PlanId>('yearly');
+
+  const handleStart = () => {
+    // TODO: brancher Stripe Checkout en passant `selected`
+    navigate('/profile', { state: { selectedPlan: selected } });
+  };
 
   return (
     <PageLayout
       eyebrow="Abonnement"
-      title="Le ciel à portée de main"
-      subtitle="Un essai gratuit d'un mois. Sans engagement, sans piège."
-      maxWidth="4xl"
+      title="Choisis ce qui te ressemble"
+      subtitle="7 jours offerts sur tous les plans, sans carte bancaire pour commencer."
+      maxWidth="6xl"
       showLogo={false}
     >
-      <div className="space-y-8">
-        <Card variant="elevated" className="relative overflow-hidden">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/12 via-transparent to-magenta-500/12"
-          />
-          <div className="relative grid md:grid-cols-2 gap-0">
-            {/* Bloc tarif */}
-            <div className="p-8 md:p-10 md:border-r border-night-700/60">
-              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-3">
-                Premium
-              </p>
-              <h2 className="font-cinzel text-display text-gradient-aurora mb-4">
-                Zodiak ✦
-              </h2>
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="font-cinzel text-display text-ivory-50">
-                  4,99 €
-                </span>
-                <span className="text-caption text-ivory-300">/ mois</span>
-              </div>
-              <p className="text-caption text-ivory-300 mb-6">
-                7 jours offerts — annule à tout moment, en 1 clic.
-              </p>
-              <Button
-                variant="primary"
-                size="lg"
-                fullWidth
-                onClick={() => navigate('/profile')}
-                iconLeft={<Sparkles className="w-4 h-4" />}
+      <div className="space-y-10">
+        <div
+          className="grid md:grid-cols-3 gap-5 md:gap-6 items-stretch"
+          role="radiogroup"
+          aria-label="Choix du plan d'abonnement"
+        >
+          {PLANS.map((plan, i) => (
+            <motion.div
+              key={plan.id}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.6, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ y: -4 }}
+              className="h-full"
+            >
+              <Card
+                variant={plan.highlighted ? 'elevated' : 'surface'}
+                className={cn(
+                  'relative h-full flex flex-col overflow-hidden transition-all duration-300 cursor-pointer',
+                  'focus-within:ring-2 focus-within:ring-aurora-400 focus-within:ring-offset-2 focus-within:ring-offset-night-950',
+                  selected === plan.id
+                    ? 'ring-2 ring-aurora-400 shadow-glow-aurora'
+                    : 'ring-1 ring-night-700/60 hover:ring-aurora-400/50',
+                )}
+                onClick={() => setSelected(plan.id)}
+                role="radio"
+                tabIndex={0}
+                aria-checked={selected === plan.id}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setSelected(plan.id);
+                  }
+                }}
               >
-                Commencer mon essai gratuit
-              </Button>
-              <p className="mt-4 text-micro uppercase tracking-[0.18em] text-ivory-400 text-center">
-                Carte bancaire requise · Sans engagement
-              </p>
-            </div>
-
-            {/* Bloc features */}
-            <div className="p-8 md:p-10 space-y-4">
-              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-2">
-                Ce que tu débloques
-              </p>
-              {FEATURES.map(({ icon: Icon, label, description }, i) => (
-                <motion.div
-                  key={label}
-                  initial={{ opacity: 0, x: 12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 + i * 0.08, duration: 0.5 }}
-                  className="flex gap-3"
-                >
+                {plan.highlighted && (
                   <div
                     aria-hidden="true"
-                    className="flex-shrink-0 mt-0.5 w-8 h-8 rounded-full bg-aurora-500/15 ring-1 ring-aurora-400/30 flex items-center justify-center text-aurora-200"
-                  >
-                    <Icon className="w-4 h-4" />
+                    className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/15 via-transparent to-magenta-500/12"
+                  />
+                )}
+                <div className="relative p-7 md:p-8 flex flex-col h-full">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-micro uppercase tracking-[0.22em] text-aurora-300">
+                      {plan.eyebrow}
+                    </span>
+                    {plan.badge && (
+                      <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-aurora-500/20 ring-1 ring-aurora-300/40 text-aurora-100 font-medium">
+                        {plan.badge}
+                      </span>
+                    )}
                   </div>
-                  <div>
-                    <p className="text-body font-cinzel text-ivory-50">
-                      {label}
-                    </p>
-                    <p className="text-caption text-ivory-300">{description}</p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </Card>
 
-        {/* Garanties */}
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="font-cinzel text-display-xl text-ivory-50 leading-none">
+                      {plan.price}
+                    </span>
+                    <span className="text-caption text-ivory-300">
+                      {plan.priceSuffix}
+                    </span>
+                  </div>
+                  {plan.perMonth && (
+                    <p className="text-caption text-aurora-200 mb-1">
+                      {plan.perMonth}
+                    </p>
+                  )}
+                  {plan.hint && (
+                    <p className="text-caption text-ivory-300 mb-5">
+                      {plan.hint}
+                    </p>
+                  )}
+
+                  <ul className="space-y-2.5 text-body text-ivory-200 mb-6">
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex items-start gap-2">
+                        <Sparkles className="w-3.5 h-3.5 text-aurora-300 mt-1 flex-shrink-0" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Button
+                    variant={selected === plan.id ? 'primary' : 'ghost'}
+                    fullWidth
+                    size="md"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelected(plan.id);
+                    }}
+                    iconLeft={
+                      selected === plan.id ? (
+                        <Check className="w-4 h-4" />
+                      ) : undefined
+                    }
+                    className="mt-auto"
+                  >
+                    {selected === plan.id ? 'Sélectionné' : 'Choisir'}
+                  </Button>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="flex flex-col items-center gap-4">
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={handleStart}
+            iconLeft={<Sparkles className="w-4 h-4" />}
+            iconRight={<ArrowRight className="w-4 h-4" />}
+          >
+            {selected === 'lifetime'
+              ? 'Devenir fondateur'
+              : `Commencer mon essai · ${PLANS.find((p) => p.id === selected)?.price}`}
+          </Button>
+          <p className="text-micro uppercase tracking-[0.22em] text-ivory-400 text-center">
+            7 jours offerts · sans carte bancaire · annulable en 1 clic
+          </p>
+        </div>
+
         <div className="grid md:grid-cols-3 gap-4">
           {[
             'Annulation en 1 clic',
@@ -127,7 +228,10 @@ export default function Subscribe() {
               key={g}
               className="rounded-2xl border border-night-700/60 bg-night-900/50 backdrop-blur-md px-4 py-3 flex items-center gap-3 text-caption text-ivory-200"
             >
-              <Check className="w-4 h-4 text-aurora-300 shrink-0" aria-hidden="true" />
+              <Check
+                className="w-4 h-4 text-aurora-300 shrink-0"
+                aria-hidden="true"
+              />
               {g}
             </div>
           ))}
@@ -135,7 +239,7 @@ export default function Subscribe() {
 
         <div className="text-center">
           <Button
-            variant="text"
+            variant="ghost"
             size="sm"
             onClick={() => navigate('/profile')}
             iconLeft={<ArrowLeft className="w-3.5 h-3.5" />}

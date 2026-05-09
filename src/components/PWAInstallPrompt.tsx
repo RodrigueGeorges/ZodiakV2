@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, X } from 'lucide-react';
+import { Download, X, Share, Plus } from 'lucide-react';
 import { Button } from './ui/Button';
 import { track } from '../lib/analytics';
 import { cn } from '../lib/utils';
@@ -20,6 +20,22 @@ function isStandalone(): boolean {
     // iOS Safari
     (window.navigator as { standalone?: boolean }).standalone === true
   );
+}
+
+function isIos(): boolean {
+  if (typeof window === 'undefined') return false;
+  const ua = window.navigator.userAgent;
+  // iPhone / iPad / iPod (et iPad récent qui se déclare en MacIntel + touch)
+  const iphoneish = /iPad|iPhone|iPod/.test(ua);
+  const iPadOnDesktop =
+    ua.includes('Macintosh') && 'ontouchend' in document.documentElement;
+  return iphoneish || iPadOnDesktop;
+}
+
+function isSafari(): boolean {
+  if (typeof window === 'undefined') return false;
+  const ua = window.navigator.userAgent;
+  return /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|Chrome|Chromium/.test(ua);
 }
 
 function shouldSuppressByMemory(): boolean {
@@ -47,6 +63,7 @@ interface PWAInstallPromptProps {
 export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptProps) {
   const [evt, setEvt] = useState<BeforeInstallPromptEvent | null>(null);
   const [visible, setVisible] = useState(false);
+  const [iosFallback, setIosFallback] = useState(false);
 
   useEffect(() => {
     if (isStandalone() || shouldSuppressByMemory()) return;
@@ -62,7 +79,22 @@ export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptPr
     };
 
     window.addEventListener('beforeinstallprompt', onPrompt);
-    return () => window.removeEventListener('beforeinstallprompt', onPrompt);
+
+    // iOS Safari ne déclenche jamais `beforeinstallprompt`. On affiche
+    // un overlay didactique custom, retardé pour ne pas casser l'arrivée.
+    let iosTimeout: number | undefined;
+    if (isIos() && isSafari()) {
+      iosTimeout = window.setTimeout(() => {
+        setIosFallback(true);
+        setVisible(true);
+        track('pwa_install_prompted', { variant: 'ios_safari' });
+      }, delayMs);
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', onPrompt);
+      if (iosTimeout !== undefined) window.clearTimeout(iosTimeout);
+    };
   }, [delayMs]);
 
   useEffect(() => {
@@ -103,7 +135,7 @@ export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptPr
 
   return (
     <AnimatePresence>
-      {visible && evt && (
+      {visible && (evt || iosFallback) && (
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -130,25 +162,69 @@ export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptPr
             >
               <X className="w-4 h-4" />
             </button>
-            <div className="relative flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-aurora-500/30 to-magenta-500/30 ring-1 ring-aurora-400/40 flex items-center justify-center">
-                <Download className="w-5 h-5 text-aurora-200" aria-hidden="true" />
+
+            {iosFallback ? (
+              <div className="relative">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-aurora-500/30 to-magenta-500/30 ring-1 ring-aurora-400/40 flex items-center justify-center">
+                    <Download className="w-5 h-5 text-aurora-200" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <p
+                      id="pwa-install-title"
+                      className="font-cinzel text-body text-ivory-50"
+                    >
+                      Installe Zodiak sur iPhone
+                    </p>
+                    <p className="text-caption text-ivory-300">
+                      Plus rapide, hors connexion, comme une vraie app.
+                    </p>
+                  </div>
+                </div>
+                <ol className="space-y-2 mt-3 text-caption text-ivory-200">
+                  <li className="flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-aurora-500/20 ring-1 ring-aurora-400/40 text-aurora-200">
+                      1
+                    </span>
+                    <span>
+                      Touche{' '}
+                      <Share className="inline w-3.5 h-3.5 text-aurora-200" aria-hidden="true" />{' '}
+                      <span className="font-medium">Partager</span>
+                    </span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-aurora-500/20 ring-1 ring-aurora-400/40 text-aurora-200">
+                      2
+                    </span>
+                    <span>
+                      Choisis{' '}
+                      <Plus className="inline w-3.5 h-3.5 text-aurora-200" aria-hidden="true" />{' '}
+                      <span className="font-medium">Sur l'écran d'accueil</span>
+                    </span>
+                  </li>
+                </ol>
               </div>
-              <div className="flex-1">
-                <p
-                  id="pwa-install-title"
-                  className="font-cinzel text-body text-ivory-50"
-                >
-                  Installe Zodiak
-                </p>
-                <p className="text-caption text-ivory-300">
-                  Sur ton écran d'accueil. Plus rapide, hors connexion.
-                </p>
+            ) : (
+              <div className="relative flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-aurora-500/30 to-magenta-500/30 ring-1 ring-aurora-400/40 flex items-center justify-center">
+                  <Download className="w-5 h-5 text-aurora-200" aria-hidden="true" />
+                </div>
+                <div className="flex-1">
+                  <p
+                    id="pwa-install-title"
+                    className="font-cinzel text-body text-ivory-50"
+                  >
+                    Installe Zodiak
+                  </p>
+                  <p className="text-caption text-ivory-300">
+                    Sur ton écran d'accueil. Plus rapide, hors connexion.
+                  </p>
+                </div>
+                <Button variant="primary" size="sm" onClick={install}>
+                  Installer
+                </Button>
               </div>
-              <Button variant="primary" size="sm" onClick={install}>
-                Installer
-              </Button>
-            </div>
+            )}
           </div>
         </motion.div>
       )}

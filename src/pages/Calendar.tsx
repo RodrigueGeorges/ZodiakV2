@@ -40,6 +40,12 @@ export default function CalendarPage() {
   const content = (
     <div className="space-y-8">
       {/* Dates clés */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      >
       <Card variant="elevated" className="relative overflow-hidden">
         <div
           aria-hidden="true"
@@ -50,8 +56,9 @@ export default function CalendarPage() {
             <Moon className="w-4 h-4" aria-hidden="true" />
             <span className="text-micro uppercase tracking-[0.22em]">Lunaisons à venir</span>
           </div>
-          <h2 className="font-cinzel text-h3 text-ivory-50 mb-5">
-            Pose tes intentions au bon moment
+          <h2 className="font-cinzel text-h2 leading-tight mb-5">
+            <span className="text-ivory-50">Pose tes intentions </span>
+            <span className="text-gradient-aurora">au bon moment.</span>
           </h2>
           <ul className="grid sm:grid-cols-2 gap-3">
             {keyDates.map((k, i) => (
@@ -76,15 +83,25 @@ export default function CalendarPage() {
           </ul>
         </div>
       </Card>
+      </motion.div>
 
       {/* Grille 30 jours */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      >
       <Card variant="surface">
         <div className="p-6 md:p-8">
           <div className="flex items-center gap-2 text-aurora-300 mb-3">
             <CalendarDays className="w-4 h-4" aria-hidden="true" />
             <span className="text-micro uppercase tracking-[0.22em]">Trente jours</span>
           </div>
-          <h2 className="font-cinzel text-h3 text-ivory-50 mb-5">Ton mois cosmique</h2>
+          <h2 className="font-cinzel text-h2 leading-tight mb-5">
+            <span className="text-ivory-50">Ton mois </span>
+            <span className="text-gradient-aurora">cosmique.</span>
+          </h2>
           <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-10 gap-2">
             {phases.map((p, i) => {
               const intensity = p.illumination;
@@ -126,6 +143,7 @@ export default function CalendarPage() {
           </p>
         </div>
       </Card>
+      </motion.div>
     </div>
   );
 

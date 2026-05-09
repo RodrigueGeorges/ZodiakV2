@@ -21,6 +21,12 @@ interface SectionHeaderProps {
   size?: 'lg' | 'md' | 'sm';
   className?: string;
   children?: ReactNode;
+  /**
+   * Désactive le gradient automatique sur le titre. Utile quand on veut
+   * styler manuellement les sous-spans (mélange ivoire + gradient
+   * comme sur la Home).
+   */
+  titlePlain?: boolean;
 }
 
 const sizeStyles = {
@@ -37,6 +43,7 @@ export default function SectionHeader({
   size = 'md',
   className,
   children,
+  titlePlain = false,
 }: SectionHeaderProps) {
   return (
     <motion.header
@@ -68,7 +75,8 @@ export default function SectionHeader({
 
       <h1
         className={cn(
-          'font-cinzel text-gradient-aurora',
+          'font-cinzel leading-tight',
+          titlePlain ? 'text-ivory-50' : 'text-gradient-aurora',
           sizeStyles[size]
         )}
       >

@@ -5,6 +5,7 @@ import { Eye, EyeOff, AlertCircle, Mail } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import AuthLayout from '../components/AuthLayout';
 import { Button } from '../components/ui/Button';
+import OAuthButtons from '../components/OAuthButtons';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -27,7 +28,7 @@ export default function Login() {
         setError(
           error.message === 'Invalid login credentials'
             ? 'Email ou mot de passe incorrect.'
-            : error.message
+            : error.message,
         );
       } else {
         navigate('/guidance');
@@ -56,12 +57,23 @@ export default function Login() {
         </>
       }
     >
+      <OAuthButtons mode="login" className="mb-5" />
+
+      <div className="relative my-6 flex items-center gap-3">
+        <span className="flex-1 h-px bg-night-700" />
+        <span className="text-micro uppercase tracking-[0.22em] text-ivory-400">
+          ou avec ton email
+        </span>
+        <span className="flex-1 h-px bg-night-700" />
+      </div>
+
       <form onSubmit={handleLogin} className="space-y-5">
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-start gap-2 rounded-xl border border-magenta-500/30 bg-magenta-500/8 px-4 py-3"
+            role="alert"
+            className="flex items-start gap-2 rounded-xl border border-magenta-500/30 bg-magenta-500/10 px-4 py-3"
           >
             <AlertCircle className="w-4 h-4 text-magenta-400 flex-shrink-0 mt-0.5" />
             <p className="text-caption text-magenta-200">{error}</p>
@@ -94,12 +106,20 @@ export default function Login() {
         </div>
 
         <div>
-          <label
-            htmlFor="password"
-            className="block text-caption text-ivory-300 mb-2"
-          >
-            Mot de passe
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label
+              htmlFor="password"
+              className="text-caption text-ivory-300"
+            >
+              Mot de passe
+            </label>
+            <Link
+              to="/forgot-password"
+              className="text-micro text-aurora-300 hover:text-aurora-200 underline-offset-4 hover:underline"
+            >
+              Oublié ?
+            </Link>
+          </div>
           <div className="relative">
             <input
               id="password"

@@ -6,12 +6,86 @@ import { DateTime } from 'luxon';
 import { toast } from 'react-hot-toast';
 import type { DailyGuidance, NatalChart } from '../types/supabase';
 
+interface PillarData {
+  text: string;
+  score: number;
+  /** Pourquoi ce message — cite un transit. */
+  why?: string;
+}
+
 interface GuidanceData {
   summary: string;
-  love: { text: string; score: number };
-  work: { text: string; score: number };
-  energy: { text: string; score: number };
+  love: PillarData;
+  work: PillarData;
+  energy: PillarData;
+  /** 4ème pilier (optionnel) — finances / argent. */
+  money?: PillarData;
+  /** Boussole du jour : actions à privilégier / éviter. */
+  dos?: string[];
+  donts?: string[];
+  /** Phrase courte personnalisée préfixée du prénom. */
   mantra?: string;
+}
+
+function toScoredSection(
+  raw: unknown,
+  defaultScore = 75,
+): PillarData | undefined {
+  if (raw == null) return undefined;
+  if (typeof raw === 'string') {
+    const trimmed = raw.trim();
+    if (!trimmed) return undefined;
+    return { text: trimmed, score: defaultScore };
+  }
+  if (typeof raw === 'object') {
+    const obj = raw as { text?: unknown; score?: unknown; why?: unknown };
+    return {
+      text: typeof obj.text === 'string' ? obj.text : '',
+      score: typeof obj.score === 'number' ? obj.score : defaultScore,
+      why:
+        typeof obj.why === 'string' && obj.why.trim() ? obj.why : undefined,
+    };
+  }
+  return undefined;
+}
+
+function toStringList(raw: unknown): string[] | undefined {
+  if (raw == null) return undefined;
+  if (Array.isArray(raw)) {
+    const cleaned = raw
+      .map((it) => (typeof it === 'string' ? it.trim() : String(it ?? '').trim()))
+      .filter(Boolean);
+    return cleaned.length > 0 ? cleaned : undefined;
+  }
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return toStringList(parsed);
+    } catch {
+      /* ignore */
+    }
+    const split = raw
+      .split(/\r?\n|·|•/)
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return split.length > 0 ? split : undefined;
+  }
+  return undefined;
+}
+
+function mapStoredToGuidance(stored: any): GuidanceData {
+  return {
+    summary: stored.summary,
+    love: toScoredSection(stored.love) ?? { text: '', score: 0 },
+    work: toScoredSection(stored.work) ?? { text: '', score: 0 },
+    energy: toScoredSection(stored.energy) ?? { text: '', score: 0 },
+    money: toScoredSection(stored.money),
+    dos: toStringList(stored.dos),
+    donts: toStringList(stored.donts),
+    mantra: typeof stored.mantra === 'string' && stored.mantra.trim()
+      ? stored.mantra
+      : undefined,
+  };
 }
 
 interface UseGuidanceReturn {
@@ -38,26 +112,10 @@ export function useGuidance(): UseGuidanceReturn {
     if (!user?.id) return null;
 
     try {
-      // console.log('🔍 Recherche de guidance existante dans Supabase...');
       const storedGuidance = await StorageService.getDailyGuidance(user.id, today);
-      
       if (storedGuidance) {
-        // console.log('✅ Guidance trouvée dans Supabase');
-        return {
-          summary: storedGuidance.summary,
-          love: typeof storedGuidance.love === 'string' 
-            ? { text: storedGuidance.love, score: 75 } 
-            : storedGuidance.love as { text: string; score: number },
-          work: typeof storedGuidance.work === 'string' 
-            ? { text: storedGuidance.work, score: 75 } 
-            : storedGuidance.work as { text: string; score: number },
-          energy: typeof storedGuidance.energy === 'string' 
-            ? { text: storedGuidance.energy, score: 75 } 
-            : storedGuidance.energy as { text: string; score: number }
-        };
+        return mapStoredToGuidance(storedGuidance);
       }
-      
-      // console.log('⚠️ Aucune guidance trouvée dans Supabase');
       return null;
     } catch (error) {
       console.error('Erreur lors du chargement de la guidance:', error);
@@ -75,45 +133,33 @@ export function useGuidance(): UseGuidanceReturn {
     setError(null);
 
     try {
-      // Vérifier si une guidance existe déjà pour aujourd'hui
       const existingGuidance = await StorageService.getDailyGuidance(user.id, today);
       if (existingGuidance) {
-        setGuidance({
-          summary: existingGuidance.summary,
-          love: typeof existingGuidance.love === 'string' 
-            ? { text: existingGuidance.love, score: 75 } 
-            : existingGuidance.love as { text: string; score: number },
-          work: typeof existingGuidance.work === 'string' 
-            ? { text: existingGuidance.work, score: 75 } 
-            : existingGuidance.work as { text: string; score: number },
-          energy: typeof existingGuidance.energy === 'string' 
-            ? { text: existingGuidance.energy, score: 75 } 
-            : existingGuidance.energy as { text: string; score: number }
-        });
+        setGuidance(mapStoredToGuidance(existingGuidance));
         setLoading(false);
         toast('Une guidance existe déjà pour aujourd\'hui.');
         return;
       }
 
-      // console.log('🚀 Génération d\'une nouvelle guidance...');
       if (!profile.natal_chart || typeof profile.natal_chart === 'string') {
         throw new Error('Thème natal non disponible. Veuillez compléter votre profil.');
       }
-      
-      // Utiliser AstrologyService.generateDailyGuidance qui gère les transits et la génération
+
+      const firstName = profile.name?.split(' ')[0]?.trim() || undefined;
+
       const guidanceData = await AstrologyService.generateDailyGuidance(
         user.id,
         profile.natal_chart as NatalChart,
         today,
-        profile.birth_place
+        profile.birth_place,
+        firstName,
       );
-      
-      // Vérification stricte des champs requis
+
       if (!guidanceData || !guidanceData.summary || !guidanceData.love || !guidanceData.work || !guidanceData.energy) {
         throw new Error('La génération de la guidance a échoué (données incomplètes ou erreur API). Veuillez réessayer plus tard.');
       }
-      
-      const { summary, love, work, energy } = guidanceData;
+
+      const { summary, love, work, energy, money, dos, donts, mantra } = guidanceData;
       if (
         typeof summary !== 'string' || summary.trim() === '' ||
         typeof love !== 'string' || love.trim() === '' ||
@@ -122,7 +168,7 @@ export function useGuidance(): UseGuidanceReturn {
       ) {
         throw new Error('La génération de la guidance a échoué (texte vide). Veuillez réessayer plus tard.');
       }
-      
+
       const guidanceToSave: DailyGuidance = {
         id: crypto.randomUUID(),
         user_id: user.id,
@@ -131,11 +177,15 @@ export function useGuidance(): UseGuidanceReturn {
         love,
         work,
         energy,
-        created_at: new Date().toISOString()
+        money: money ?? null,
+        mantra: mantra ?? null,
+        dos: dos ?? null,
+        donts: donts ?? null,
+        created_at: new Date().toISOString(),
       };
       const saved = await StorageService.saveDailyGuidance(guidanceToSave);
       if (saved) {
-        setGuidance(guidanceData);
+        setGuidance(mapStoredToGuidance(guidanceToSave));
         toast.success('Guidance générée avec succès !');
       } else {
         throw new Error('Erreur lors de la sauvegarde de la guidance');

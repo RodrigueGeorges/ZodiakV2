@@ -5,6 +5,10 @@ import LoadingScreen from '../components/LoadingScreen';
 import PageLayout from '../components/PageLayout';
 import ProfileTab from '../components/ProfileTab';
 import EmptyState from '../components/EmptyState';
+import ReferralCard from '../components/ReferralCard';
+import MoodHeatmap from '../components/MoodHeatmap';
+import SoundToggle from '../components/SoundToggle';
+import { useMood } from '../lib/hooks/useMood';
 import type { Profile } from '../lib/types/supabase';
 
 export default function ProfilePage() {
@@ -12,6 +16,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { history: moodHistory } = useMood();
 
   useEffect(() => {
     let cancelled = false;
@@ -95,7 +100,24 @@ export default function ProfilePage() {
       showLogo={false}
       dim
     >
-      <ProfileTab profile={profile} onLogout={handleLogout} />
+      <div className="space-y-8">
+        <ProfileTab profile={profile} onLogout={handleLogout} />
+
+        {/* Parrainage : viralité K-factor */}
+        <ReferralCard
+          userId={user.id}
+          referralCode={
+            (profile as Profile & { referral_code?: string | null })
+              .referral_code
+          }
+        />
+
+        {/* Heatmap des humeurs sur 30 jours */}
+        <MoodHeatmap history={moodHistory} />
+
+        {/* Préférences sonores */}
+        <SoundToggle />
+      </div>
     </PageLayout>
   );
 }
