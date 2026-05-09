@@ -3,9 +3,7 @@ import { motion } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
 /**
- * SectionHeader v3 — en-tête éditorial "Cosmic Editorial Ritual".
- *
- *   eyebrow → Cinzel small caps en or, encadré de filets décoratifs
+ * SectionHeader v4 — même langage que la landing (mono signal pour eyebrow).
  *   title   → Fraunces sculpté, ÉNORME, couleur ivoire crème
  *   subtitle → Fraunces italique en taupe doux
  *
@@ -48,7 +46,7 @@ export default function SectionHeader({
     <motion.header
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
       className={cn(
         align === 'center' ? 'text-center mx-auto max-w-3xl' : 'text-left',
         'space-y-5',
@@ -58,21 +56,15 @@ export default function SectionHeader({
       {eyebrow && (
         <p
           className={cn(
-            'eyebrow-ritual',
+            'protocol-caption text-signal-400/85',
             align === 'center'
-              ? 'flex items-center justify-center gap-3'
-              : 'inline-flex items-center gap-3',
+              ? 'flex items-center justify-center gap-4'
+              : 'inline-flex items-center gap-4',
           )}
         >
-          <span
-            aria-hidden="true"
-            className="block h-px w-8 bg-aurora-400/40"
-          />
+          <span aria-hidden="true" className="block h-px w-10 bg-signal-500/40" />
           <span>{eyebrow}</span>
-          <span
-            aria-hidden="true"
-            className="block h-px w-8 bg-aurora-400/40"
-          />
+          <span aria-hidden="true" className="block h-px w-10 bg-signal-500/40" />
         </p>
       )}
 

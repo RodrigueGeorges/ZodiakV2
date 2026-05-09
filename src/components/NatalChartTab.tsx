@@ -163,7 +163,7 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
           {/* Toggle Art / Carte */}
           <div
             role="tablist"
-            className="flex items-center gap-1 p-1 mb-8 rounded-full bg-night-900/40 border border-ivory-50/[0.08]"
+            className="flex items-center gap-1 p-1 mb-8 rounded-md bg-night-900/45 border border-signal-600/20"
           >
             <button
               type="button"

@@ -24,7 +24,7 @@ function TopNavBar() {
 
   return (
     <header className="hidden md:block sticky top-0 z-40">
-      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-night-950/95 via-night-950/70 to-transparent backdrop-blur-md" />
+      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-night-950/95 via-night-950/75 to-transparent backdrop-blur-md border-b border-signal-600/10" />
       <nav
         aria-label="Navigation principale"
         className="relative mx-auto max-w-7xl flex items-center justify-between px-6 lg:px-12 py-5"
@@ -35,13 +35,13 @@ function TopNavBar() {
           aria-label="Accueil Zodiak"
         >
           <Logo size="sm" />
-          <span className="font-serif text-h3 text-ivory-50 tracking-tight group-hover:text-aurora-300 transition-colors">
+          <span className="font-serif text-h3 text-ivory-50 tracking-tight group-hover:text-signal-300 transition-colors duration-200 ease-brutal">
             Zodiak
           </span>
         </Link>
 
         <div
-          className="flex items-center gap-1 p-1.5 rounded-full bg-night-900/60 border border-ivory-50/[0.08] backdrop-blur-md"
+          className="flex items-center gap-1 p-1.5 rounded-md bg-night-900/55 border border-signal-600/20 backdrop-blur-md"
           role="tablist"
         >
           {NAV.map((item) => {
@@ -58,8 +58,8 @@ function TopNavBar() {
                   navigate(item.path);
                 }}
                 className={cn(
-                  'relative flex items-center gap-2 px-4 py-2 rounded-full font-serif text-caption transition-colors',
-                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300',
+                  'relative flex items-center gap-2 px-4 py-2 rounded-md font-serif text-caption transition-colors duration-200 ease-brutal',
+                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-signal-400',
                   active ? 'text-ivory-50' : 'text-ivory-300 hover:text-ivory-50',
                 )}
               >
@@ -71,7 +71,7 @@ function TopNavBar() {
                       stiffness: 380,
                       damping: 32,
                     }}
-                    className="absolute inset-0 rounded-full bg-aurora-400/15 border border-aurora-400/30"
+                    className="absolute inset-0 rounded-md bg-signal-400/10 border border-signal-400/30"
                     aria-hidden="true"
                   />
                 )}

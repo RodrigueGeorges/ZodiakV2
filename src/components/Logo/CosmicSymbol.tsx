@@ -1,22 +1,14 @@
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 /**
- * Logo glyph v3 — Cosmic Editorial cinematic.
- *
- * Symbole minimaliste qui se "compose" au load (Linear / Stripe-like) :
- *   1. Cercle aurora ouvert qui se trace
- *   2. Axes cardinaux qui apparaissent
- *   3. Cœur lumineux qui pulse en respiration cosmique 5s
- *
- * SVG pur, ~2kB. Pas de Lottie pour rester ultra léger.
- * Respect `prefers-reduced-motion` : version statique.
+ * Glyphe Logo v4 — « Oracle instrument » : arc d’orbite incomplet + repères cardinaux
+ * + foyer doré minimal. Palette alignée DA : void / signal / or alchimique.
+ * Jamais de néon magenta sur le marqueur — réserve magenta aux rituels in-app uniquement.
  */
 interface CosmicSymbolProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
-  /** Si false, version totalement statique. */
   animated?: boolean;
-  /** Si true, animation "compose on load" depuis 0 (utilisé sur la landing). */
   composeOnLoad?: boolean;
 }
 
@@ -26,6 +18,8 @@ const sizeMap = {
   lg: 96,
 };
 
+const circleLen = 2 * Math.PI * 24;
+
 export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
   size = 'md',
   className = '',
@@ -33,9 +27,8 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
   composeOnLoad = false,
 }) => {
   const px = sizeMap[size];
-
-  // Le cercle ouvert : on contrôle stroke-dashoffset pour le tracer.
-  const circleLen = 2 * Math.PI * 22; // ~138px
+  const prefersReducedMotion = useReducedMotion();
+  const runMotion = Boolean(animated && !prefersReducedMotion);
 
   return (
     <motion.svg
@@ -48,161 +41,164 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
       aria-label="Logo Zodiak"
       initial={composeOnLoad ? { opacity: 0 } : { opacity: 1 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
     >
       <defs>
-        <linearGradient id="zk-aurora" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FAF7F2" />
-          <stop offset="40%" stopColor="#C9A6FF" />
-          <stop offset="100%" stopColor="#F472B6" />
+        <linearGradient id="zk-mark-gold" x1="14" y1="14" x2="50" y2="52" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#F4ECDB" stopOpacity={0.95} />
+          <stop offset="100%" stopColor="#D4A656" />
         </linearGradient>
-        <radialGradient id="zk-core" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#FAF7F2" stopOpacity="1" />
-          <stop offset="60%" stopColor="#AB7AFF" stopOpacity="0.95" />
-          <stop offset="100%" stopColor="#6F33F0" stopOpacity="0.6" />
+        <radialGradient id="zk-mark-core" cx="50%" cy="45%" r="55%">
+          <stop offset="0%" stopColor="#FBF3DD" stopOpacity={1} />
+          <stop offset="55%" stopColor="#DFBA62" />
+          <stop offset="100%" stopColor="#7FA090" stopOpacity={0.45} />
         </radialGradient>
-        <filter id="zk-glow" x="-50%" y="-50%" width="200%" height="200%">
-          <feGaussianBlur stdDeviation="1.2" />
-        </filter>
       </defs>
 
-      {/* Halo doux */}
-      <motion.circle
-        cx="32"
-        cy="32"
-        r="28"
-        fill="url(#zk-aurora)"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.08 }}
-        transition={{ duration: 1.4, delay: composeOnLoad ? 1.0 : 0 }}
-      />
+      {/* Foyer diffus très bas (profondeur, pas glow cheap) */}
+      <circle cx="32" cy="32" r="29" fill="rgba(127,160,144,0.04)" />
 
-      {/* Cercle ouvert principal — traceur progressif */}
-      <motion.g
-        animate={
-          animated
-            ? { rotate: 360 }
-            : undefined
-        }
-        transition={{
-          duration: 36,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
-        style={{ transformOrigin: '32px 32px' }}
-      >
-        <motion.circle
-          cx="32"
-          cy="32"
-          r="22"
-          fill="none"
-          stroke="url(#zk-aurora)"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeDasharray={`${circleLen * 0.7} ${circleLen * 0.3}`}
-          initial={
-            composeOnLoad
-              ? { strokeDashoffset: circleLen, opacity: 0 }
-              : { strokeDashoffset: 0, opacity: 1 }
-          }
-          animate={{ strokeDashoffset: 0, opacity: 1 }}
+      {/* Orbite : arc incomplet */}
+      {runMotion ? (
+        <motion.g
+          style={{ transformOrigin: '32px 32px' }}
+          animate={{ rotate: 360 }}
           transition={{
-            duration: 1.4,
-            delay: composeOnLoad ? 0.1 : 0,
-            ease: [0.22, 1, 0.36, 1],
+            duration: 200,
+            repeat: Infinity,
+            ease: 'linear',
           }}
-        />
-      </motion.g>
+        >
+          <motion.circle
+            cx="32"
+            cy="32"
+            r="24"
+            fill="none"
+            stroke="url(#zk-mark-gold)"
+            strokeWidth="1.35"
+            strokeLinecap="round"
+            strokeDasharray={`${circleLen * 0.62} ${circleLen}`}
+            initial={
+              composeOnLoad ? { strokeDashoffset: circleLen, opacity: 0 } : { strokeDashoffset: 0, opacity: 1 }
+            }
+            animate={{ strokeDashoffset: 0, opacity: 1 }}
+            transition={{
+              duration: 1.15,
+              delay: composeOnLoad ? 0.08 : 0,
+              ease: [0.16, 1, 0.3, 1],
+            }}
+          />
+        </motion.g>
+      ) : (
+        <g>
+          <circle
+            cx="32"
+            cy="32"
+            r="24"
+            fill="none"
+            stroke="url(#zk-mark-gold)"
+            strokeWidth="1.35"
+            strokeLinecap="round"
+            strokeDasharray={`${circleLen * 0.62} ${circleLen}`}
+          />
+        </g>
+      )}
 
-      {/* Cercle intérieur */}
-      <motion.circle
+      {/* Anneau de précision stationnaire */}
+      <circle
         cx="32"
         cy="32"
-        r="14"
+        r="16.5"
         fill="none"
-        stroke="#C9A6FF"
-        strokeOpacity="0.45"
-        strokeWidth="0.75"
-        initial={composeOnLoad ? { opacity: 0, scale: 0.5 } : { opacity: 0.45 }}
-        animate={{ opacity: 0.45, scale: 1 }}
-        transition={{
-          duration: 0.7,
-          delay: composeOnLoad ? 0.7 : 0,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-        style={{ transformOrigin: '32px 32px' }}
+        stroke="#7FA090"
+        strokeOpacity={0.22}
+        strokeWidth="0.5"
       />
 
-      {/* 4 axes courts */}
+      {/* Cardinals — traits d’instrument */}
       {[
-        [32, 4, 32, 8],
-        [32, 56, 32, 60],
-        [4, 32, 8, 32],
-        [56, 32, 60, 32],
+        [32, 10, 32, 13],
+        [32, 51, 32, 54],
+        [10, 32, 13, 32],
+        [51, 32, 54, 32],
       ].map(([x1, y1, x2, y2], i) => (
         <motion.line
-          key={i}
+          key={`c-${String(i)}`}
           x1={x1}
           y1={y1}
           x2={x2}
           y2={y2}
-          stroke="#C9A6FF"
-          strokeWidth="1.25"
-          strokeOpacity="0.7"
+          stroke="#7FA090"
+          strokeOpacity={0.55}
+          strokeWidth="1.1"
           strokeLinecap="round"
-          initial={composeOnLoad ? { opacity: 0 } : { opacity: 0.7 }}
-          animate={{ opacity: 0.7 }}
+          initial={composeOnLoad ? { opacity: 0 } : { opacity: 1 }}
+          animate={{ opacity: 1 }}
           transition={{
-            duration: 0.4,
-            delay: composeOnLoad ? 1.0 + i * 0.05 : 0,
+            duration: 0.35,
+            delay: composeOnLoad ? 0.55 + i * 0.04 : 0,
+            ease: [0.16, 1, 0.3, 1],
           }}
         />
       ))}
 
-      {/* Cœur central qui respire */}
+      {/* Foyer : point + halon 1px */}
       <motion.circle
         cx="32"
         cy="32"
-        r="4.5"
-        fill="url(#zk-core)"
-        filter="url(#zk-glow)"
-        initial={composeOnLoad ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
+        r="5.5"
+        fill="none"
+        stroke="url(#zk-mark-core)"
+        strokeOpacity={0.35}
+        strokeWidth="0.6"
+        initial={composeOnLoad ? { scale: 0.85, opacity: 0 } : { opacity: 0.35 }}
         animate={
-          animated
-            ? {
-                scale: [1, 1.18, 1],
-                opacity: 1,
-              }
-            : { scale: 1, opacity: 1 }
+          runMotion
+            ? { scale: [1, 1.06, 1], opacity: [0.28, 0.4, 0.28] }
+            : { scale: 1, opacity: 0.35 }
         }
-        transition={{
-          duration: animated ? 5 : 0.6,
-          delay: composeOnLoad ? 1.3 : 0,
-          repeat: animated ? Infinity : 0,
-          ease: 'easeInOut',
-        }}
-        style={{ transformOrigin: '32px 32px' }}
+        transition={
+          runMotion
+            ? {
+                duration: 5.5,
+                repeat: Infinity,
+                ease: 'easeInOut',
+                delay: composeOnLoad ? 0.95 : 0,
+              }
+            : { duration: 0.5, delay: composeOnLoad ? 0.95 : 0 }
+        }
       />
-      <circle cx="32" cy="32" r="1.4" fill="#FAF7F2" />
-
-      {/* Étoile décorative */}
       <motion.circle
-        cx="48"
-        cy="14"
-        r="1"
-        fill="#FAF7F2"
+        cx="32"
+        cy="32"
+        r="2.15"
+        fill="url(#zk-mark-core)"
+        initial={composeOnLoad ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{
+          duration: 0.55,
+          delay: composeOnLoad ? 0.85 : 0,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+      />
+      <circle cx="32" cy="32" r="0.95" fill="#F4ECDB" fillOpacity={0.95} />
+
+      {/* Repère résiduel (étoile de mesure — discret, signal) */}
+      <motion.circle
+        cx="50"
+        cy="15"
+        r="0.9"
+        fill="#9BB8AA"
+        fillOpacity={0.85}
         initial={composeOnLoad ? { opacity: 0 } : { opacity: 0.85 }}
         animate={
-          animated
-            ? { opacity: [0.4, 1, 0.4] }
-            : { opacity: 0.85 }
+          runMotion ? { opacity: [0.45, 1, 0.45] } : { opacity: 0.85 }
         }
-        transition={{
-          duration: 3.4,
-          repeat: animated ? Infinity : 0,
-          ease: 'easeInOut',
-          delay: 0.5,
-        }}
+        transition={
+          runMotion
+            ? { duration: 4.2, repeat: Infinity, ease: 'easeInOut', delay: 0.2 }
+            : { duration: 0.35 }
+        }
       />
     </motion.svg>
   );

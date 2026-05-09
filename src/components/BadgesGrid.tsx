@@ -60,7 +60,7 @@ function BadgeTile({ badge, got, index }: TileProps) {
         'relative aspect-square rounded-md flex flex-col items-center justify-center gap-2 border backdrop-blur-md',
         got
           ? `${tone.bg} ${tone.ring}`
-          : 'bg-night-900/40 border-ivory-50/[0.06] grayscale opacity-40',
+          : 'bg-night-900/40 border-signal-600/18 grayscale opacity-40',
       )}
       title={got ? `${badge.name} — ${badge.description}` : '— Marqueur à découvrir —'}
     >

@@ -386,7 +386,7 @@ interface RowProps {
 }
 function Row({ label, value }: RowProps) {
   return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-ivory-50/[0.08] pb-3">
+    <div className="flex items-baseline justify-between gap-3 border-b border-signal-600/15 pb-3">
       <dt className="eyebrow-ritual text-ivory-400/80">{label}</dt>
       <dd className="text-body text-ivory-100 font-serif text-right">{value}</dd>
     </div>

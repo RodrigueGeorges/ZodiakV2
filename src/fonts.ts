@@ -6,6 +6,7 @@
  * Fraunces : axes chargés avec les bundles `wght` (+ italiques variables).
  */
 import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/jetbrains-mono/wght.css';
 import '@fontsource-variable/fraunces/wght.css';
 import '@fontsource-variable/fraunces/wght-italic.css';
 import '@fontsource/cinzel/400.css';

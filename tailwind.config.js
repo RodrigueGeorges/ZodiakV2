@@ -1,17 +1,13 @@
 /**
- * Zodiak Design Tokens v3 — "Cosmic Editorial Ritual"
- * ====================================================
+ * Zodiak Design Tokens v4 — "Oracle machine" (minimal · immersif · ésotérique · brutal)
+ * =====================================================================================
  *
- * Direction artistique (mai 2026) :
- *   - Encre profonde violacée (#0A0814) avec champ d'étoiles vivant
- *   - UN SEUL accent dominant : or alchimique (#D4A656)
- *   - Magenta cosmique réservé aux moments rituels (mantra, anniversaire)
- *   - Typographie sculptée : Fraunces Variable (Fontsource) + Inter Variable
- *   - Cinzel relégué aux eyebrows / small caps de signature (fichiers dédiés)
- *   - Plugin @tailwindcss/forms : normalisation des champs natifs
- *
- * Note technique : noms de couleurs (aurora/magenta/amber/night/ivory) en
- * rétrocompat ; aurora-* = or alchimique.
+ * Mai 2026 :
+ *   - Fonds très froids (#07090D) — moins violet « startup », plus cabine/console.
+ *   - Accent or (aurora) réservé au éditorial & CTA fort ; accent « signal »
+ *     (vert-de-gris désaturé) pour chrome UI, focus, métadonnées monospace.
+ *   - Typo : Inter + Fraunces + JetBrains Mono Variable (protocol / data).
+ *   - Magenta : rituels forts uniquement (inchangé).
  */
 import forms from '@tailwindcss/forms';
 
@@ -24,19 +20,27 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ─────── Encres nocturnes (fond, surfaces) ───────
-        // Violet quasi-noir, avec une touche cosmique. JAMAIS pur noir.
+        // ─────── Encres nocturnes (fond, surfaces) — froid, quasi brut ───────
         night: {
-          50:  '#E5E2EC',
-          100: '#C9C3D5',
-          200: '#9991AE',
-          300: '#5C5577',
-          500: '#2A2540',
-          600: '#1F1B33',
-          700: '#171328',
-          800: '#11101F',
-          900: '#0E0B1A',
-          950: '#0A0814',
+          50:  '#E9EBEF',
+          100: '#CED2DB',
+          200: '#9AA3B0',
+          300: '#5E6675',
+          500: '#353B4A',
+          600: '#262B36',
+          700: '#1A1E28',
+          800: '#12161E',
+          900: '#0C1018',
+          950: '#07090D',
+        },
+
+        // ─────── Signal (chrome futuriste froid : focus, labels, bordures actives)
+        signal: {
+          200: '#B8CEC2',
+          300: '#9BB8AA',
+          400: '#7FA090',
+          500: '#5F8474',
+          600: '#4A6B5C',
         },
 
         // ─────── Papier crème (texte, surfaces claires) ───────
@@ -90,8 +94,8 @@ export default {
         secondary: '#C9619B',  // = magenta.500
         accent:    '#D4A656',  // = aurora.400
         cosmic: {
-          800: '#11101F',
-          900: '#0E0B1A',
+          800: '#12161E',
+          900: '#0C1018',
         },
       },
 
@@ -100,6 +104,12 @@ export default {
         // Sans = Inter Variable
         sans: ['Inter Variable', 'Inter', 'system-ui', 'sans-serif'],
         inter: ['Inter Variable', 'Inter', 'sans-serif'],
+        mono: [
+          'JetBrains Mono Variable',
+          'JetBrains Mono',
+          'ui-monospace',
+          'monospace',
+        ],
         serif: ['Fraunces Variable', 'Fraunces', 'Cormorant Garamond', 'Georgia', 'serif'],
         display: ['Fraunces Variable', 'Fraunces', 'Cormorant Garamond', 'Georgia', 'serif'],
         cinzel: ['Cinzel', 'Fraunces Variable', 'Georgia', 'serif'],
@@ -122,6 +132,8 @@ export default {
       transitionTimingFunction: {
         /** Rituel éditorial (proche expo-out premium) — Framer Motion aligné */
         ritual: 'cubic-bezier(0.22, 1, 0.36, 1)',
+        /** UI directe, peu de « bounce » */
+        brutal: 'cubic-bezier(0.16, 1, 0.3, 1)',
       },
       transitionDuration: {
         /** Durées conseillées animations UI */
@@ -164,11 +176,11 @@ export default {
       backgroundImage: {
         // Halos très très subtils — invisibles à l'œil mais présents en couche.
         // Plus de "aurora" multicolore néon. Juste de l'or qui respire.
-        'cosmic':       'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212,166,86,0.08), transparent 70%), radial-gradient(ellipse 60% 50% at 50% 100%, rgba(201,97,155,0.04), transparent 60%)',
-        'cosmic-dim':   'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212,166,86,0.04), transparent 70%)',
+        'cosmic':       'radial-gradient(ellipse 85% 55% at 18% 8%, rgba(127,160,144,0.07), transparent 72%), radial-gradient(ellipse 70% 45% at 88% 92%, rgba(212,166,86,0.045), transparent 65%)',
+        'cosmic-dim':   'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(127,160,144,0.04), transparent 70%)',
         // Rétrocompat (anciens noms qui sont encore utilisés ailleurs)
-        'aurora':       'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212,166,86,0.08), transparent 70%)',
-        'aurora-soft':  'linear-gradient(135deg, rgba(212,166,86,0.05), rgba(201,97,155,0.03))',
+        'aurora':       'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(212,166,86,0.06), transparent 70%)',
+        'aurora-soft':  'linear-gradient(135deg, rgba(127,160,144,0.06), rgba(212,166,86,0.03))',
         'gradient-text': 'none',
         // Texture grain papier (overlay subtil sur les surfaces)
         'grain': "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.4'/%3E%3C/svg%3E\")",

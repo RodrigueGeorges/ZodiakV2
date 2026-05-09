@@ -1,5 +1,5 @@
 /*
- * Zodiak — index.css v3 ("Cosmic Editorial Ritual")
+ * Zodiak — index.css v4 ("Oracle machine")
  * --------------------------------------------------
  * Refonte mai 2026 :
  *   - Polices via Fontsource (bundle Vite) — plus d'import Google Fonts ici
@@ -19,17 +19,18 @@
  * ────────────────────────────────────────────────────────────────────────── */
 
 :root {
-  --color-bg:     #0A0814;  /* Encre profonde */
+  --color-bg:     #07090D;  /* Vide froid (aligné night-950 v4) */
   --color-fg:     #F4ECDB;  /* Papier crème */
-  --color-accent: #D4A656;  /* Or alchimique */
-  --color-mute:   #A8987A;  /* Brume taupe */
+  --color-accent: #D4A656;  /* Or — éditorial, CTA */
+  --color-signal: #7FA090;  /* Chrome futuriste : focus, données */
+  --color-mute:   #A8987A;  /* Taupe */
 
   /* Jetons motion & focus (alignés tailwind `ease-ritual`, `duration-ritual-*`) */
   --zodiak-ease-ritual: cubic-bezier(0.22, 1, 0.36, 1);
   --zodiak-duration-sm: 200ms;
   --zodiak-duration-md: 450ms;
   --zodiak-duration-lg: 700ms;
-  --zodiak-focus-ring: 1px solid rgba(212, 166, 86, 0.65);
+  --zodiak-focus-ring: 1px solid rgba(127, 160, 144, 0.75);
   --zodiak-focus-offset: 2px;
 }
 
@@ -46,9 +47,9 @@ body {
   font-feature-settings: 'kern', 'liga', 'calt';
 }
 
-/* Sélection texte = or alchimique */
+/* Sélection texte */
 ::selection {
-  background: rgba(212, 166, 86, 0.25);
+  background: rgba(127, 160, 144, 0.22);
   color: #F4ECDB;
 }
 
@@ -63,8 +64,8 @@ a {
   summary:focus-visible {
     outline: none;
     box-shadow:
-      0 0 0 var(--zodiak-focus-offset) #0A0814,
-      0 0 0 calc(var(--zodiak-focus-offset) + 1px) rgba(212, 166, 86, 0.55);
+      0 0 0 var(--zodiak-focus-offset) #07090D,
+      0 0 0 calc(var(--zodiak-focus-offset) + 1px) rgba(127, 160, 144, 0.7);
     border-radius: 2px;
   }
 }
@@ -113,25 +114,25 @@ a {
   }
 
   .card-aurora {
-    @apply rounded-editorial border border-ivory-50/[0.06] bg-night-900/40 backdrop-blur-sm transition-colors duration-500;
+    @apply rounded-sm border border-signal-600/18 bg-night-900/40 backdrop-blur-sm transition-colors duration-200 ease-brutal;
   }
   .card-aurora:hover {
-    @apply border-aurora-400/25;
+    @apply border-signal-400/35;
   }
 
   .btn-aurora {
-    @apply inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full font-medium tracking-wide;
-    @apply bg-aurora-400 text-night-950 hover:bg-aurora-300 transition-colors;
-    @apply focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950;
+    @apply inline-flex items-center justify-center gap-2 px-7 py-3 rounded-sm font-medium tracking-wide;
+    @apply bg-aurora-400 text-night-950 hover:bg-aurora-300 transition-colors duration-200 ease-brutal;
+    @apply focus:outline-none focus-visible:ring-1 focus-visible:ring-signal-300 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full;
-    @apply border border-ivory-50/15 text-ivory-100 hover:border-aurora-400/40 hover:text-aurora-300 transition-colors;
+    @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-sm transition-colors duration-200 ease-brutal;
+    @apply border border-ivory-50/15 text-ivory-100 hover:border-signal-400/45 hover:text-signal-300;
   }
 
   .input-cosmic {
-    @apply appearance-none w-full rounded-md bg-night-900/60 border border-ivory-50/[0.08] px-4 py-3 text-ivory-100 placeholder-ivory-400/60;
-    @apply focus:outline-none focus:border-aurora-400/50 focus:ring-0 transition-colors;
+    @apply appearance-none w-full rounded-sm bg-night-900/60 border border-signal-600/20 px-4 py-3 text-ivory-100 placeholder-ivory-400/60;
+    @apply focus:outline-none focus:border-signal-400/55 focus:ring-0 transition-colors duration-200 ease-brutal;
   }
 
   /* ─────── Nouveautés éditoriales ─────── */
@@ -148,6 +149,32 @@ a {
   .eyebrow-ritual {
     @apply font-cinzel text-micro uppercase text-aurora-400/90;
     letter-spacing: 0.32em;
+  }
+
+  /* Étiquettes « protocole » : données, canaux, métadonnées (DA v4) */
+  .protocol-caption {
+    @apply font-mono text-[11px] uppercase tracking-[0.22em] text-signal-400/90;
+  }
+
+  /* Grain + vignette discrète pour immersion sans saturer l’œil */
+  .da-vignette {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 120% 90% at 50% 45%, transparent 40%, rgba(7, 9, 13, 0.55) 100%),
+      radial-gradient(circle at 50% 0%, rgba(127, 160, 144, 0.04), transparent 55%);
+    mix-blend-mode: normal;
+  }
+  .da-grain {
+    pointer-events: none;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.045;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
   }
 
   /* Texture grain en overlay */
@@ -168,7 +195,7 @@ a {
     width: 6px;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(212, 166, 86, 0.2);
+    background: rgba(127, 160, 144, 0.28);
     border-radius: 999px;
   }
   .scrollbar-thin::-webkit-scrollbar-track {
@@ -254,11 +281,11 @@ a {
   background: var(--color-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(212, 166, 86, 0.25);
+  background: rgba(127, 160, 144, 0.3);
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(212, 166, 86, 0.5);
+  background: rgba(127, 160, 144, 0.5);
 }
 
 @media print {

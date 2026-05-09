@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import StarField from './StarField';
+import AppBackdrop from './AppBackdrop';
 import Logo from './Logo';
 
 interface AuthLayoutProps {
@@ -32,17 +32,17 @@ export default function AuthLayout({
 }: AuthLayoutProps) {
   return (
     <div className="relative min-h-screen bg-night-950 safe-top safe-bottom overflow-hidden">
-      <StarField density={0.8} nebula />
+      <AppBackdrop density={0.36} />
 
-      <div className="relative z-10 flex min-h-screen flex-col">
-        <header className="px-6 md:px-12 py-8">
+      <div className="relative z-[1] isolate flex min-h-screen flex-col">
+        <header className="px-6 md:px-12 py-8 border-b border-signal-600/15 md:border-b-0">
           <Link
             to="/"
             className="inline-flex items-center gap-3 group"
             aria-label="Retour à l'accueil"
           >
             <Logo size="sm" />
-            <span className="font-serif text-h3 text-ivory-50 tracking-wide group-hover:text-aurora-300 transition-colors">
+            <span className="font-serif text-h3 text-ivory-50 tracking-tight group-hover:text-signal-300 transition-colors duration-200 ease-brutal">
               Zodiak
             </span>
           </Link>
@@ -52,22 +52,14 @@ export default function AuthLayout({
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
             className="w-full max-w-md"
           >
             {/* Header éditorial */}
             <div className="text-center mb-12">
               {eyebrow && (
-                <p className="eyebrow-ritual flex items-center justify-center gap-3 mb-5">
-                  <span
-                    aria-hidden="true"
-                    className="block h-px w-8 bg-aurora-400/40"
-                  />
-                  <span>{eyebrow}</span>
-                  <span
-                    aria-hidden="true"
-                    className="block h-px w-8 bg-aurora-400/40"
-                  />
+                <p className="protocol-caption text-signal-400/85 mb-6 max-w-xs mx-auto">
+                  {eyebrow}
                 </p>
               )}
               <h1 className="font-serif text-display text-ivory-50 leading-[0.95] mb-4">

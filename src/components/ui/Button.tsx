@@ -19,9 +19,9 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export const buttonVariants = cva(
   [
-    'relative inline-flex items-center justify-center rounded-full font-medium tracking-wide',
-    'transition-colors duration-300 ease-ritual',
-    'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
+    'relative inline-flex items-center justify-center rounded-sm font-medium tracking-wide',
+    'transition-colors duration-200 ease-brutal',
+    'focus:outline-none focus-visible:ring-1 focus-visible:ring-signal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
     'disabled:opacity-40 disabled:cursor-not-allowed',
   ],
   {
@@ -32,7 +32,7 @@ export const buttonVariants = cva(
         secondary:
           'bg-ivory-50/[0.04] text-ivory-50 hover:bg-ivory-50/[0.08] border border-ivory-50/[0.10]',
         ghost:
-          'bg-transparent text-ivory-100 border border-ivory-50/[0.18] hover:border-aurora-400/50 hover:text-aurora-300',
+          'bg-transparent text-ivory-100 border border-ivory-50/[0.18] hover:border-signal-400/50 hover:text-signal-300',
         danger:
           'bg-transparent text-magenta-400 border border-magenta-500/30 hover:bg-magenta-500/10 hover:border-magenta-500/50',
         text:

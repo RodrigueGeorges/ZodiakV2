@@ -68,14 +68,14 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <div className="page-container relative">
         <AuroraBackground variant="dim" />
-        <div className="relative z-10 mx-auto max-w-lg px-4 py-16">
+        <div className="relative z-[1] isolate mx-auto max-w-lg px-4 py-16">
           <div className="flex justify-center mb-8">
             <Logo size="md" />
           </div>
           <Card variant="elevated" className="relative overflow-hidden">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-magenta-500/10 to-aurora-500/10"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-signal-600/08 to-night-950/90"
             />
             <div className="relative p-8 text-center space-y-6">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-magenta-500/15 ring-1 ring-magenta-500/30 text-magenta-400">

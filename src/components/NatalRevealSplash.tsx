@@ -67,7 +67,7 @@ export default function NatalRevealSplash({
   return (
     <div className="fixed inset-0 z-[70] bg-night-950">
       <AuroraBackground />
-      <div className="relative z-10 h-full flex flex-col items-center justify-center px-6 text-center">
+        <div className="relative z-[1] isolate h-full flex flex-col items-center justify-center px-6 text-center">
         {/* Phase 1 : intro */}
         <AnimatePresence mode="wait">
           {phase === 1 && (

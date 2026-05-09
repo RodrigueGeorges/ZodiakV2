@@ -28,10 +28,10 @@ function BottomNavBar() {
       {/* Voile de transition pour faire fondre la nav dans la page */}
       <div
         aria-hidden="true"
-        className="absolute -top-12 inset-x-0 h-12 bg-gradient-to-t from-night-950 via-night-950/70 to-transparent pointer-events-none"
+        className="absolute -top-12 inset-x-0 h-12 bg-gradient-to-t from-night-950 via-night-950/80 to-transparent pointer-events-none"
       />
       <div className="px-3 pb-3 pt-2">
-        <div className="flex items-center justify-around gap-1 rounded-full bg-night-900/85 backdrop-blur-md border border-ivory-50/[0.08] px-2 py-2">
+        <div className="flex items-center justify-around gap-1 rounded-xl bg-night-900/88 backdrop-blur-md border border-signal-600/22 px-2 py-2 shadow-[0_-1px_0_rgba(127,160,144,0.08)]">
           {NAV.map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.path;
@@ -45,8 +45,8 @@ function BottomNavBar() {
                 aria-label={item.label}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'relative flex flex-col items-center justify-center gap-1 flex-1 rounded-full py-2 px-1 min-h-[48px] transition-colors',
-                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300',
+                  'relative flex flex-col items-center justify-center gap-1 flex-1 rounded-lg py-2 px-1 min-h-[48px] transition-colors duration-200 ease-brutal',
+                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-signal-400',
                   active ? 'text-ivory-50' : 'text-ivory-400',
                 )}
               >
@@ -58,7 +58,7 @@ function BottomNavBar() {
                       stiffness: 380,
                       damping: 32,
                     }}
-                    className="absolute inset-0 rounded-full bg-aurora-400/15 border border-aurora-400/30"
+                    className="absolute inset-0 rounded-lg bg-signal-400/10 border border-signal-400/28"
                     aria-hidden="true"
                   />
                 )}
@@ -69,7 +69,7 @@ function BottomNavBar() {
                   )}
                   aria-hidden="true"
                 />
-                <span className="relative text-[11px] font-medium leading-none">
+                <span className="relative text-[11px] font-medium leading-none font-mono tracking-tight">
                   {item.label}
                 </span>
               </button>

@@ -1,7 +1,46 @@
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="256" cy="256" r="256" fill="#0B1120"/>
-  <circle cx="256" cy="256" r="236" stroke="#F5CBA7" stroke-width="4"/>
-  <circle cx="256" cy="256" r="172" stroke="#D4A373" stroke-width="4"/>
-  <circle cx="256" cy="256" r="86" fill="#F5CBA7"/>
-  <path d="M256 86L290.926 227.074L432 256L290.926 284.926L256 426L221.074 284.926L80 256L221.074 227.074L256 86Z" fill="#F5CBA7"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <rect width="512" height="512" rx="112" fill="#07090D"/>
+  <circle cx="256" cy="256" r="232" stroke="#12161E" stroke-width="3"/>
+  <circle
+    cx="256"
+    cy="256"
+    r="132"
+    fill="none"
+    stroke="#7FA090"
+    stroke-opacity="0.24"
+    stroke-width="2.5"
+  />
+  <circle
+    cx="256"
+    cy="256"
+    r="168"
+    fill="none"
+    stroke="url(#zkic)"
+    stroke-width="14"
+    stroke-linecap="round"
+    stroke-dasharray="650 907"
+    transform="rotate(-42 256 256)"
+  />
+  <line x1="256" y1="64" x2="256" y2="104" stroke="#7FA090" stroke-width="11" stroke-linecap="round" stroke-opacity="0.55"/>
+  <line x1="256" y1="408" x2="256" y2="448" stroke="#7FA090" stroke-width="11" stroke-linecap="round" stroke-opacity="0.55"/>
+  <line x1="64" y1="256" x2="104" y2="256" stroke="#7FA090" stroke-width="11" stroke-linecap="round" stroke-opacity="0.55"/>
+  <line x1="448" y1="256" x2="408" y2="256" stroke="#7FA090" stroke-width="11" stroke-linecap="round" stroke-opacity="0.55"/>
+  <circle cx="256" cy="256" r="48" fill="none" stroke="url(#zkic2)" stroke-width="5" stroke-opacity="0.32"/>
+  <circle cx="256" cy="256" r="26" fill="url(#zkic3)"/>
+  <circle cx="256" cy="256" r="9" fill="#F4ECDB"/>
+  <defs>
+    <linearGradient id="zkic" x1="88" y1="88" x2="424" y2="424" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F4ECDB"/>
+      <stop offset="1" stop-color="#D4A656"/>
+    </linearGradient>
+    <linearGradient id="zkic2" x1="208" y1="208" x2="304" y2="304" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#DFBA62" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#7FA090" stop-opacity="0.3"/>
+    </linearGradient>
+    <radialGradient id="zkic3" cx="45%" cy="38%" r="65%">
+      <stop stop-color="#FBF3DD"/>
+      <stop offset="0.65" stop-color="#D4A656"/>
+      <stop offset="1" stop-color="#7FA090" stop-opacity="0.45"/>
+    </radialGradient>
+  </defs>
 </svg>

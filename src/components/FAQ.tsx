@@ -21,7 +21,7 @@ export default function FAQ({ items, className }: FAQProps) {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
-    <ul className={cn('divide-y divide-ivory-50/[0.08]', className)}>
+    <ul className={cn('divide-y divide-signal-600/12', className)}>
       {items.map((item, i) => {
         const open = openIdx === i;
         return (
@@ -45,10 +45,10 @@ export default function FAQ({ items, className }: FAQProps) {
               <span
                 aria-hidden="true"
                 className={cn(
-                  'flex-shrink-0 mt-2 w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-300',
+                  'flex-shrink-0 mt-2 w-8 h-8 rounded-md border flex items-center justify-center transition-all duration-200 ease-brutal',
                   open
                     ? 'border-aurora-400/60 rotate-45'
-                    : 'border-ivory-50/[0.12] group-hover:border-aurora-400/40',
+                    : 'border-signal-600/20 group-hover:border-signal-400/45',
                 )}
               >
                 <Plus

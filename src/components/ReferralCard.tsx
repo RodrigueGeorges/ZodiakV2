@@ -147,7 +147,7 @@ export default function ReferralCard({
 
           {/* Code + bouton copier */}
           <div className="flex flex-col sm:flex-row gap-2 mb-7">
-            <div className="flex-1 flex items-center justify-between gap-3 px-4 h-12 border border-ivory-50/[0.08] font-mono text-caption text-ivory-50 bg-night-900/40">
+            <div className="flex-1 flex items-center justify-between gap-3 px-4 h-12 border border-signal-600/20 font-mono text-caption text-ivory-50 bg-night-900/40 rounded-sm">
               <span className="truncate">{url}</span>
             </div>
             <Button
@@ -206,7 +206,7 @@ interface StatProps {
 }
 function Stat({ icon, label, value, accent }: StatProps) {
   return (
-    <div className="border border-ivory-50/[0.06] px-3 py-4 text-center">
+    <div className="border border-signal-600/15 px-3 py-4 text-center rounded-sm">
       <div className="flex items-center justify-center gap-1.5 text-aurora-400 mb-2">
         {icon}
         <span className="eyebrow-ritual text-ivory-400/80">{label}</span>

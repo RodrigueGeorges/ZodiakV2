@@ -74,7 +74,7 @@ export default function AdminProtection({ children }: AdminProtectionProps) {
     return (
       <div className="page-container relative">
         <AuroraBackground variant="dim" />
-        <div className="relative z-10 mx-auto max-w-lg px-4 py-16">
+        <div className="relative z-[1] isolate mx-auto max-w-lg px-4 py-16">
           <div className="flex justify-center mb-8">
             <Logo size="md" />
           </div>

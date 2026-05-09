@@ -119,7 +119,7 @@ export default function Subscribe() {
                   'focus-within:border-aurora-400 focus-within:ring-1 focus-within:ring-aurora-400/30',
                   selected === plan.id
                     ? 'border-aurora-400/60 shadow-glow-aurora'
-                    : 'border-ivory-50/[0.06] hover:border-aurora-400/30',
+                    : 'border-signal-600/18 hover:border-signal-400/40',
                 )}
                 onClick={() => setSelected(plan.id)}
                 role="radio"
@@ -220,7 +220,7 @@ export default function Subscribe() {
           ].map((g) => (
             <div
               key={g}
-              className="rounded-md border border-ivory-50/[0.06] bg-night-900/50 backdrop-blur-md px-4 py-3 flex items-center gap-3 text-caption text-ivory-200"
+              className="rounded-md border border-signal-600/18 bg-night-900/50 backdrop-blur-md px-4 py-3 flex items-center gap-3 text-caption text-ivory-200"
             >
               <Check
                 className="w-4 h-4 text-aurora-300 shrink-0"

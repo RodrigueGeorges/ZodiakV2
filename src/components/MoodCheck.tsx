@@ -84,7 +84,7 @@ export default function MoodCheck({
                   'relative px-3 py-4 flex flex-col items-center gap-2 border transition-colors duration-300',
                   active
                     ? 'border-aurora-400/60 bg-aurora-400/5'
-                    : 'border-ivory-50/[0.08] bg-night-900/40 hover:border-aurora-400/30',
+                    : 'border-signal-600/20 bg-night-900/40 hover:border-signal-400/35',
                   isSubmitting && 'opacity-70',
                   'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300',
                 )}

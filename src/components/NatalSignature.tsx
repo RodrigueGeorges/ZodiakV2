@@ -116,7 +116,7 @@ function NatalSignature({
   return (
     <Card variant="elevated" className={className}>
       <div className="px-7 py-9 md:px-10 md:py-12">
-        <p className="eyebrow-ritual text-aurora-400/80 text-center mb-3">
+        <p className="protocol-caption text-signal-400/85 text-center mb-4">
           Ta signature astrale
         </p>
         <h3 className="font-serif text-h1 text-ivory-50 text-center mb-9 leading-tight">
@@ -133,7 +133,7 @@ function NatalSignature({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.08 }}
               whileHover={{ y: -3 }}
-              className="group flex flex-col items-center gap-2 bg-night-900/40 border border-ivory-50/[0.08] p-5 text-center hover:border-aurora-400/40 transition-colors duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300"
+              className="group flex flex-col items-center gap-2 bg-night-900/40 border border-signal-600/18 p-5 text-center rounded-sm hover:border-signal-400/40 transition-colors duration-200 ease-brutal focus:outline-none focus-visible:ring-1 focus-visible:ring-signal-400"
               aria-label={`${label} en ${sign} — voir la description`}
             >
               <p className="eyebrow-ritual text-ivory-400/80">{eyebrow}</p>

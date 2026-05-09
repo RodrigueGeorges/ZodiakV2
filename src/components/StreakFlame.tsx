@@ -40,7 +40,7 @@ export default function StreakFlame({
   const tone = useMemo(() => {
     if (willBreakSoon) {
       return {
-        bg: 'bg-night-900/40 border-ivory-50/[0.08] text-ivory-300',
+        bg: 'bg-night-900/40 border-signal-600/22 text-ivory-300',
         flame: 'text-ivory-400',
         glow: '',
       };
@@ -67,7 +67,7 @@ export default function StreakFlame({
       };
     }
     return {
-      bg: 'bg-night-900/40 border-ivory-50/[0.06] text-ivory-300',
+      bg: 'bg-night-900/40 border-signal-600/18 text-ivory-300',
       flame: 'text-ivory-400',
       glow: '',
     };
@@ -79,7 +79,7 @@ export default function StreakFlame({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        'inline-flex items-center rounded-full border backdrop-blur-md',
+        'inline-flex items-center rounded-md border backdrop-blur-md transition-colors duration-200 ease-brutal',
         tone.bg,
         tone.glow,
         sizes.wrap,

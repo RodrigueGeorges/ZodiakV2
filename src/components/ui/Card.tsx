@@ -3,7 +3,7 @@ import { motion, HTMLMotionProps } from 'framer-motion';
 import { cn } from '../../lib/utils';
 
 /**
- * Card v3 — primitive surface "Cosmic Editorial Ritual".
+ * Card v4 — primitive surface DA « Oracle machine » (bordures signal).
  *
  * - `variant="surface"` (default) : fond night-900/40, bordure hairline or
  * - `variant="elevated"` : surface plus marquée (mantras, hero blocks)
@@ -24,11 +24,11 @@ export interface CardProps extends Omit<HTMLMotionProps<'div'>, 'ref'> {
 
 const variantStyles: Record<NonNullable<CardProps['variant']>, string> = {
   surface:
-    'bg-night-900/40 border border-ivory-50/[0.06] backdrop-blur-sm',
+    'bg-night-900/42 border border-signal-600/18 backdrop-blur-sm',
   elevated:
-    'bg-night-900/60 border border-aurora-400/20 backdrop-blur-md shadow-editorial shadow-[inset_0_1px_0_rgba(212,166,86,0.07),inset_0_-1px_0_rgba(0,0,0,0.35)]',
+    'bg-night-900/55 border border-signal-500/28 backdrop-blur-md shadow-editorial shadow-[inset_0_1px_0_rgba(127,160,144,0.08),inset_0_-1px_0_rgba(7,9,13,0.45)]',
   ghost:
-    'bg-transparent border border-ivory-50/[0.08]',
+    'bg-transparent border border-signal-600/15',
 };
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
@@ -39,10 +39,10 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
     <motion.div
       ref={ref}
       className={cn(
-        'relative rounded-editorial overflow-hidden transition-colors duration-500',
+        'relative rounded-sm overflow-hidden transition-colors duration-200 ease-brutal',
         variantStyles[variant],
         interactive &&
-          'cursor-pointer hover:border-aurora-400/30 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
+          'cursor-pointer hover:border-signal-400/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-signal-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
         glow && 'shadow-glow-aurora',
         className,
       )}
@@ -74,7 +74,7 @@ export function CardBody({ className, children, ...rest }: CardSubProps) {
 export function CardFooter({ className, children, ...rest }: CardSubProps) {
   return (
     <div
-      className={cn('px-7 py-4 border-t border-ivory-50/[0.06]', className)}
+      className={cn('px-7 py-4 border-t border-signal-600/15', className)}
       {...rest}
     >
       {children}

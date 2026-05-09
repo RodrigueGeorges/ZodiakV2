@@ -1,21 +1,17 @@
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import StarField from './StarField';
+import AppBackdrop from './AppBackdrop';
 import SectionHeader from './ui/SectionHeader';
 import Logo from './Logo';
 import { cn } from '../lib/utils';
 
 /**
- * PageLayout v3 — squelette éditorial "Cosmic Editorial Ritual".
- *
- * Refonte (mai 2026) :
- *   - Remplacement d'AuroraBackground (gradient halos) par StarField
- *     (canvas vivant, étoiles scintillantes, parallaxe).
+ * PageLayout v4 — cohérent avec la landing (AppBackdrop : étoiles + grain + vignette).
  *   - Spacing radicalement augmenté (top 12-20, mb-16-24).
  *   - Suppression du gradient automatique sur le titre (titlePlain = true par défaut).
  *
  *   - `title` / `subtitle` : header éditorial (centré).
- *   - `eyebrow` : Cinzel small caps en or.
+ *   - `eyebrow` : protocol-caption (mono signal), via SectionHeader.
  *   - `headerSlot` : remplace complètement le header.
  *   - `maxWidth` : largeur max du conteneur.
  *   - `dim` : réduit la densité d'étoiles pour les pages denses.
@@ -91,11 +87,15 @@ export default function PageLayout({
       )}
     >
       {/* Champ d'étoiles vivant (canvas, parallaxe scroll) */}
-      <StarField density={dim ? 0.6 : 1} nebula={!noNebula} />
+      <AppBackdrop
+        dim={dim}
+        nebula={!noNebula}
+        parallax
+      />
 
       <div
         className={cn(
-          'relative z-10 mx-auto px-5 md:px-10 pt-10 md:pt-20',
+          'relative z-[1] isolate mx-auto px-5 md:px-10 pt-10 md:pt-20',
           fullHeight ? 'pb-6' : 'pb-32 md:pb-24',
           maxWidthClasses[maxWidth],
           contentClassName,
@@ -134,7 +134,7 @@ export default function PageLayout({
         <motion.main
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 0.65, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
         >
           {children}
         </motion.main>

@@ -332,7 +332,7 @@ function PillarCard({
 
       {/* "Pourquoi ça t'est dit" — révélé sur clic */}
       {why && (
-        <div className="border-t border-ivory-50/[0.06] pt-4 -mb-1">
+        <div className="border-t border-signal-600/15 pt-4 -mb-1">
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}

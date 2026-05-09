@@ -159,9 +159,9 @@ export default function StarField({
     const colorFor = (s: Star, alpha: number) => {
       switch (s.hue) {
         case 'gold':
-          return `rgba(244, 220, 165, ${alpha})`;
+          return `rgba(200, 190, 155, ${alpha})`;
         case 'lavender':
-          return `rgba(220, 200, 240, ${alpha})`;
+          return `rgba(175, 185, 205, ${alpha})`;
         default:
           return `rgba(244, 236, 219, ${alpha})`;
       }
@@ -197,28 +197,26 @@ export default function StarField({
       }
     };
 
-    /** Dessine la nébuleuse de fond (or + magenta très diffus). */
+    /** Dessine la nébuleuse de fond (signal froid + hint or, sans magenta). */
     const drawNebula = () => {
       if (!nebula) return;
       const { w, h } = sizeRef.current;
 
-      // Halo or en haut-gauche
       const g1 = ctx.createRadialGradient(
-        w * 0.25, h * 0.2, 0,
-        w * 0.25, h * 0.2, Math.max(w, h) * 0.7,
+        w * 0.22, h * 0.18, 0,
+        w * 0.22, h * 0.18, Math.max(w, h) * 0.72,
       );
-      g1.addColorStop(0, 'rgba(212, 166, 86, 0.06)');
-      g1.addColorStop(1, 'rgba(212, 166, 86, 0)');
+      g1.addColorStop(0, 'rgba(127, 160, 144, 0.065)');
+      g1.addColorStop(1, 'rgba(127, 160, 144, 0)');
       ctx.fillStyle = g1;
       ctx.fillRect(0, 0, w, h);
 
-      // Halo magenta cosmique en bas-droite (très subtil)
       const g2 = ctx.createRadialGradient(
-        w * 0.85, h * 0.85, 0,
-        w * 0.85, h * 0.85, Math.max(w, h) * 0.6,
+        w * 0.82, h * 0.88, 0,
+        w * 0.82, h * 0.88, Math.max(w, h) * 0.55,
       );
-      g2.addColorStop(0, 'rgba(201, 97, 155, 0.04)');
-      g2.addColorStop(1, 'rgba(201, 97, 155, 0)');
+      g2.addColorStop(0, 'rgba(212, 166, 86, 0.028)');
+      g2.addColorStop(1, 'rgba(212, 166, 86, 0)');
       ctx.fillStyle = g2;
       ctx.fillRect(0, 0, w, h);
     };
@@ -361,7 +359,7 @@ export default function StarField({
       lastTime = now;
 
       // Clear avec encre profonde (au lieu de transparent : évite le scintillement)
-      ctx.fillStyle = '#0A0814';
+      ctx.fillStyle = '#07090D';
       ctx.fillRect(0, 0, w, h);
 
       // Nébuleuse de fond
