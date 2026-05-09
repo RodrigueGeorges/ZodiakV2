@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import './fonts';
 import App from './App.tsx';
 import { AuthProvider } from './lib/hooks/useAuth';
 import { initializeApiSystems } from './lib/api/init';

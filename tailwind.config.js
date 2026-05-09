@@ -6,19 +6,14 @@
  *   - Encre profonde violacée (#0A0814) avec champ d'étoiles vivant
  *   - UN SEUL accent dominant : or alchimique (#D4A656)
  *   - Magenta cosmique réservé aux moments rituels (mantra, anniversaire)
- *   - Typographie sculptée : Fraunces (serif éditorial moderne) + Inter
- *   - Cinzel relégué aux eyebrows / small caps de signature
- *   - Spacing généreux, hiérarchie typo radicale
- *   - Animations contemplatives (ease-out 600-800ms)
- *   - SUPPRESSION : gradients multi-couleurs, halos cumulés, glow violents
+ *   - Typographie sculptée : Fraunces Variable (Fontsource) + Inter Variable
+ *   - Cinzel relégué aux eyebrows / small caps de signature (fichiers dédiés)
+ *   - Plugin @tailwindcss/forms : normalisation des champs natifs
  *
- * Note technique :
- *   On garde les NOMS de tokens (aurora/magenta/amber/night/ivory) pour
- *   que l'ancien code se rénove automatiquement via remap des HEX.
- *   `aurora-*` qui était violet devient désormais or alchimique.
- *   `magenta-*` reste pourpre mais à utiliser avec parcimonie.
- *   `amber-*` devient ocre désertique chaud.
+ * Note technique : noms de couleurs (aurora/magenta/amber/night/ivory) en
+ * rétrocompat ; aurora-* = or alchimique.
  */
+import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -101,17 +96,13 @@ export default {
       },
 
       fontFamily: {
-        // Display = Fraunces (serif sculpté moderne, vraie identité 2026)
-        // Sans = Inter (neutre, lisible, classique)
-        // Cinzel reste pour les SIGNATURES rituelles (eyebrows small caps)
-        sans:    ['Inter', 'system-ui', 'sans-serif'],
-        inter:   ['Inter', 'sans-serif'],
-        serif:   ['Fraunces', 'Cormorant Garamond', 'Georgia', 'serif'],
-        display: ['Fraunces', 'Cormorant Garamond', 'Georgia', 'serif'],
-        // Cinzel : conservé en rétrocompat (toutes les pages utilisent
-        // font-cinzel actuellement). Désormais c'est juste "Fraunces alternatif"
-        // pour ne pas tout casser. Mais idéalement à migrer vers font-serif.
-        cinzel:  ['Fraunces', 'Cinzel', 'serif'],
+        // Display = Fraunces Variable — auto-hébergé (@fontsource-variable/fraunces)
+        // Sans = Inter Variable
+        sans: ['Inter Variable', 'Inter', 'system-ui', 'sans-serif'],
+        inter: ['Inter Variable', 'Inter', 'sans-serif'],
+        serif: ['Fraunces Variable', 'Fraunces', 'Cormorant Garamond', 'Georgia', 'serif'],
+        display: ['Fraunces Variable', 'Fraunces', 'Cormorant Garamond', 'Georgia', 'serif'],
+        cinzel: ['Cinzel', 'Fraunces Variable', 'Georgia', 'serif'],
       },
 
       fontSize: {
@@ -128,12 +119,22 @@ export default {
         'micro':      ['0.75rem',                       { lineHeight: '1.4',  letterSpacing: '0.16em' }],
       },
 
+      transitionTimingFunction: {
+        /** Rituel éditorial (proche expo-out premium) — Framer Motion aligné */
+        ritual: 'cubic-bezier(0.22, 1, 0.36, 1)',
+      },
+      transitionDuration: {
+        /** Durées conseillées animations UI */
+        'ritual': '560ms',
+        'ritual-slow': '900ms',
+      },
+
       animation: {
         // Animations contemplatives, pas de fioritures.
-        'fade-in':     'fade-in 0.8s ease-out',
-        'fade-in-up':  'fade-in-up 0.8s ease-out',
+        'fade-in':     'fade-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both',
+        'fade-in-up':  'fade-in-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both',
         'twinkle':     'twinkle 3s ease-in-out infinite',
-        'breath':      'breath 8s ease-in-out infinite',
+        'breath':      'breath 8s cubic-bezier(0.22, 1, 0.36, 1) infinite',
         'shimmer':     'shimmer 2.4s linear infinite',
       },
 
@@ -222,5 +223,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [forms],
 };

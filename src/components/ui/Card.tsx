@@ -26,7 +26,7 @@ const variantStyles: Record<NonNullable<CardProps['variant']>, string> = {
   surface:
     'bg-night-900/40 border border-ivory-50/[0.06] backdrop-blur-sm',
   elevated:
-    'bg-night-900/60 border border-aurora-400/20 backdrop-blur-md shadow-editorial',
+    'bg-night-900/60 border border-aurora-400/20 backdrop-blur-md shadow-editorial shadow-[inset_0_1px_0_rgba(212,166,86,0.07),inset_0_-1px_0_rgba(0,0,0,0.35)]',
   ghost:
     'bg-transparent border border-ivory-50/[0.08]',
 };

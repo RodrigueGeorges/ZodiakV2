@@ -2,15 +2,13 @@
  * Zodiak — index.css v3 ("Cosmic Editorial Ritual")
  * --------------------------------------------------
  * Refonte mai 2026 :
- *   - Import Fraunces (serif sculpté moderne) en plus d'Inter et Cinzel
+ *   - Polices via Fontsource (bundle Vite) — plus d'import Google Fonts ici
  *   - Suppression du text-gradient-aurora (couleur unie ivoire désormais)
  *   - Adoucissement de toutes les classes anciennes (.btn-aurora, .card-aurora)
  *   - Nouvelle classe .editorial-rule (filet décoratif or)
  *   - Scrollbar quasi-invisible
  *   - Texture grain en surcouche (option .grain-overlay)
  */
-
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Cinzel:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -25,13 +23,21 @@
   --color-fg:     #F4ECDB;  /* Papier crème */
   --color-accent: #D4A656;  /* Or alchimique */
   --color-mute:   #A8987A;  /* Brume taupe */
+
+  /* Jetons motion & focus (alignés tailwind `ease-ritual`, `duration-ritual-*`) */
+  --zodiak-ease-ritual: cubic-bezier(0.22, 1, 0.36, 1);
+  --zodiak-duration-sm: 200ms;
+  --zodiak-duration-md: 450ms;
+  --zodiak-duration-lg: 700ms;
+  --zodiak-focus-ring: 1px solid rgba(212, 166, 86, 0.65);
+  --zodiak-focus-offset: 2px;
 }
 
 html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter Variable', 'Inter', system-ui, sans-serif;
   background: var(--color-bg);
   color: var(--color-fg);
   -webkit-font-smoothing: antialiased;
@@ -49,6 +55,18 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Focus visible sur liens & résumés ; boutons / champs = styles composants */
+@layer base {
+  a:focus-visible,
+  summary:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 var(--zodiak-focus-offset) #0A0814,
+      0 0 0 calc(var(--zodiak-focus-offset) + 1px) rgba(212, 166, 86, 0.55);
+    border-radius: 2px;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -177,9 +195,41 @@ a {
   -webkit-text-fill-color: transparent;
 }
 
+/* Lettrine éditoriale (Fraunces or) */
+.drop-cap-edit::first-letter {
+  float: left;
+  font-family: 'Fraunces Variable', 'Fraunces', Georgia, serif;
+  font-size: 3.25rem;
+  line-height: 0.82;
+  padding-right: 0.45rem;
+  padding-top: 0.12rem;
+  font-weight: 500;
+  font-style: italic;
+  color: #D4A656;
+  font-feature-settings: 'kern', 'liga', 'salt';
+  font-variation-settings: 'opsz' 144, 'SOFT' 100;
+}
+
+@media (max-width: 640px) {
+  .drop-cap-edit::first-letter {
+    font-size: 2.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drop-cap-edit::first-letter {
+    float: none;
+    font-size: inherit;
+    padding: 0;
+    font-weight: inherit;
+    font-style: inherit;
+    color: inherit;
+  }
+}
+
 /* Italique éditorial (Fraunces optimisé pour l'italique) */
 .italic-editorial {
-  font-family: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces Variable', 'Fraunces', 'Cormorant Garamond', Georgia, serif;
   font-style: italic;
   font-feature-settings: 'kern', 'liga', 'salt';
   font-variation-settings: 'opsz' 144, 'SOFT' 100;

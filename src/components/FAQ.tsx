@@ -68,7 +68,7 @@ export default function FAQ({ items, className }: FAQProps) {
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                   className="overflow-hidden"
                 >
-                  <div className="pb-8 pr-14 text-body-lg text-ivory-200/90 leading-[1.7]">
+                  <div className="pb-8 pr-14 text-body-lg text-ivory-200/90 leading-[1.7] drop-cap-edit">
                     {item.a}
                   </div>
                 </motion.div>

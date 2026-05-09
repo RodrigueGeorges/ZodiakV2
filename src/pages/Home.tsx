@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import {
@@ -17,8 +17,10 @@ import {
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import StarField from '../components/StarField';
-import WhatsAppPreview from '../components/WhatsAppPreview';
+import LiveSky from '../components/LiveSky';
 import ZodiacStrip from '../components/ZodiacStrip';
+import SectionDivider from '../components/SectionDivider';
+import { RevealLine } from '../components/RevealHeading';
 import CosmicWheel from '../components/CosmicWheel';
 import LiveCounter from '../components/LiveCounter';
 import FAQ from '../components/FAQ';
@@ -42,7 +44,7 @@ import { cn } from '../lib/utils';
  *   - Cards éditoriales : juste un fin trait or, du noir profond, du papier crème
  *
  * Structure :
- *  1. Hero asymétrique (titre énorme à gauche / WhatsApp preview à droite)
+ *  1. Hero asymétrique (titre masqué à gauche / LiveSky lunaire à droite)
  *  2. Trust strip (4 indicateurs en filet)
  *  3. Bandeau zodiac (marquee infini, glyphes)
  *  4. Le ciel ce soir (instantané live phase lunaire)
@@ -80,7 +82,13 @@ export default function Home() {
   return (
     <div className="relative bg-night-950 text-ivory-50 overflow-x-hidden">
       {/* Champ d'étoiles vivant — couvre toute la page */}
-      <StarField density={1} nebula />
+      <StarField
+        density={1}
+        nebula
+        milkyWay
+        constellations
+        shootingStars
+      />
 
       {/* Header transparent ultra-léger */}
       <header className="absolute z-30 top-0 inset-x-0 px-6 md:px-12 py-6 md:py-7 flex items-center justify-between">
@@ -129,42 +137,44 @@ export default function Home() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 0.2 }}
+              className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/55 mb-3 md:mb-4 text-center lg:text-left"
+            >
+              I
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.9, delay: 0.2 }}
               className="eyebrow-ritual flex items-center gap-3 justify-center lg:justify-start mb-7 md:mb-9"
             >
               <span
                 aria-hidden="true"
                 className="block h-px w-10 bg-aurora-400/50"
               />
-              <span>Personnalisé sur ton thème natal</span>
+              <span>Lecture sur ta carte du ciel</span>
             </motion.p>
 
             <h1 className="font-serif leading-[0.92] tracking-[-0.025em] text-[clamp(3rem,8vw,7rem)]">
-              <motion.span
-                initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 1.0, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="block text-ivory-50"
+              <RevealLine delay={0.28} className="text-ivory-50">
+                Le ciel t&apos;écrit.
+              </RevealLine>
+              <RevealLine
+                delay={0.52}
+                className="italic-editorial text-aurora-400 mt-1 md:mt-2"
               >
-                Ton ciel,
-              </motion.span>
-              <motion.span
-                initial={{ opacity: 0, y: 24, filter: 'blur(8px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 1.0, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
-                className="block italic-editorial text-aurora-400"
-              >
-                chaque matin.
-              </motion.span>
+                À ton rythme.
+              </RevealLine>
             </h1>
 
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.9, delay: 1.0 }}
-              className="mt-9 md:mt-11 text-body-lg text-ivory-200/90 max-w-xl mx-auto lg:mx-0 leading-[1.7]"
+              className="drop-cap-edit mt-9 md:mt-11 text-body-lg text-ivory-200/90 max-w-xl mx-auto lg:mx-0 leading-[1.7]"
             >
-              Une lecture précise du ciel basée sur ton thème natal, livrée
-              chaque matin sur{' '}
+              Chaque matin, une guidance calibrée sur ton thème natal — les
+              transits du jour croisés à ton ascendant, ta Lune, tes maisons.
+              Reçue sur{' '}
               <span className="inline-flex items-center gap-1.5 text-ivory-50 font-medium">
                 <MessageSquare className="w-4 h-4 text-aurora-400" />
                 WhatsApp
@@ -174,7 +184,8 @@ export default function Home() {
                 <Instagram className="w-4 h-4 text-aurora-400" />
                 Instagram
               </span>
-              {' '}— à l'heure que tu choisis.
+              , à l&apos;heure qui te convient. Précise, personnelle, jamais
+              générique.
             </motion.p>
 
             <motion.div
@@ -208,11 +219,13 @@ export default function Home() {
             </motion.div>
           </div>
 
-          {/* Colonne droite : preview WhatsApp */}
-          <div className="order-1 lg:order-2 flex justify-center">
-            <WhatsAppPreview />
+          {/* Colonne droite : Lune & légende live (remplace le mockup téléphone) */}
+          <div className="order-1 lg:order-2 flex justify-center items-center">
+            <LiveSky className="max-w-[min(100%,380px)] lg:max-w-[440px]" />
           </div>
         </motion.div>
+
+        <SectionDivider className="relative z-10 max-w-3xl mx-auto opacity-90" />
 
         {/* Indicateur scroll discret */}
         <motion.div
@@ -253,14 +266,39 @@ export default function Home() {
         </div>
       </section>
 
+      <SectionDivider className="max-w-3xl mx-auto opacity-70" />
+
       {/* ─── BANDEAU ZODIAC ─────────────────────────────────────── */}
       <section className="relative py-16 md:py-20 px-0 border-b border-ivory-50/[0.06]">
         <p className="eyebrow-ritual text-center mb-8">Pour les douze signes</p>
-        <ZodiacStrip variant="marquee" duration={50} />
+        <ZodiacStrip variant="marquee" duration={68} />
+      </section>
+
+      {/* Illustration cosmique (domaine public) — frise très discrète */}
+      <section
+        aria-label="Illustration cosmique"
+        className="relative border-b border-ivory-50/[0.06] overflow-hidden"
+      >
+        <div className="relative h-32 md:h-44 w-full">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Andromeda_Galaxy_%28with_h-alpha%29.jpg/1280px-Andromeda_Galaxy_%28with_h-alpha%29.jpg"
+            alt="Galaxie d’Andromède (image grand public, domaine public)"
+            width={1200}
+            height={400}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.2] mix-blend-screen"
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-b from-night-950 via-night-950/75 to-night-950"
+          />
+        </div>
       </section>
 
       {/* ─── CHAPITRE 2 : LE CIEL CE SOIR ───────────────────────── */}
       <Chapter
+        roman="II"
         eyebrow="Le ciel · en direct"
         title={
           <>
@@ -293,6 +331,9 @@ export default function Home() {
       <section className="relative py-24 md:py-40 px-6 border-t border-ivory-50/[0.06]">
         <div className="relative max-w-6xl mx-auto">
           <div className="text-center mb-16 md:mb-24">
+            <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-3">
+              III
+            </p>
             <p className="eyebrow-ritual flex items-center justify-center gap-3 mb-6">
               <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
               <span>Trois rituels</span>
@@ -341,6 +382,9 @@ export default function Home() {
             transition={{ duration: 0.9 }}
             className="order-2 md:order-1"
           >
+            <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-3 md:mb-4">
+              IV
+            </p>
             <p className="eyebrow-ritual flex items-center gap-3 mb-5">
               <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
               <span>Ton thème natal · vivant</span>
@@ -350,7 +394,7 @@ export default function Home() {
               <br />
               <span className="italic-editorial text-aurora-400">en mouvement.</span>
             </h2>
-            <p className="text-body-lg text-ivory-200/90 leading-[1.7] mb-8">
+            <p className="drop-cap-edit text-body-lg text-ivory-200/90 leading-[1.7] mb-8">
               On calcule ton thème natal au degré près à partir de ta date,
               ton heure et ton lieu de naissance. Tu vois tes douze signes,
               tes maisons, tes sept planètes — et les aspects qu'elles forment
@@ -389,6 +433,9 @@ export default function Home() {
       >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 md:mb-20">
+            <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-4">
+              V
+            </p>
             <div className="mb-7 flex justify-center">
               <LiveCounter />
             </div>
@@ -470,6 +517,9 @@ export default function Home() {
       <section className="relative py-24 md:py-32 px-6 border-t border-ivory-50/[0.06]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14 md:mb-16">
+            <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-3">
+              VI
+            </p>
             <p className="eyebrow-ritual flex items-center justify-center gap-3 mb-6">
               <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
               <span>FAQ</span>
@@ -569,6 +619,9 @@ export default function Home() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-3xl mx-auto"
         >
+          <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-3">
+            VII
+          </p>
           <p className="eyebrow-ritual flex items-center justify-center gap-3 mb-7">
             <span aria-hidden="true" className="block h-px w-12 bg-aurora-400/50" />
             <span>Le ciel t'écoute</span>
@@ -608,11 +661,12 @@ export default function Home() {
 /* ──────────────────────────────────────────────────────────────────── */
 
 interface ChapterProps {
+  roman: string;
   eyebrow: string;
-  title: React.ReactNode;
-  body: React.ReactNode;
+  title: ReactNode;
+  body: ReactNode;
 }
-function Chapter({ eyebrow, title, body }: ChapterProps) {
+function Chapter({ roman, eyebrow, title, body }: ChapterProps) {
   return (
     <section className="relative py-24 md:py-40 px-6 border-t border-ivory-50/[0.06]">
       <motion.div
@@ -622,6 +676,9 @@ function Chapter({ eyebrow, title, body }: ChapterProps) {
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
         className="relative max-w-3xl mx-auto text-center"
       >
+        <p className="font-cinzel text-[10px] md:text-[11px] tracking-[0.52em] text-aurora-400/45 mb-3 md:mb-4">
+          {roman}
+        </p>
         <p className="eyebrow-ritual flex items-center justify-center gap-3 mb-6">
           <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
           <span>{eyebrow}</span>
@@ -630,14 +687,14 @@ function Chapter({ eyebrow, title, body }: ChapterProps) {
         <h2 className="font-serif text-display text-ivory-50 leading-[0.95] mb-8">
           {title}
         </h2>
-        <p className="text-body-lg text-ivory-200/90 leading-[1.7]">{body}</p>
+        <p className="drop-cap-edit text-body-lg text-ivory-200/90 leading-[1.7]">{body}</p>
       </motion.div>
     </section>
   );
 }
 
 interface RitualCardProps {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   kicker: string;
   text: string;
@@ -649,7 +706,7 @@ function RitualCard({ icon, title, kicker, text }: RitualCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.8 }}
-      className="relative bg-night-950 hover:bg-night-900/60 transition-colors duration-500 group p-8 md:p-12 flex flex-col"
+      className="relative bg-night-950 hover:bg-night-900/60 transition-colors duration-500 group p-8 md:p-12 flex flex-col shadow-[inset_0_1px_0_rgba(244,236,219,0.04)]"
     >
       <span className="eyebrow-ritual text-ivory-400/70 mb-3">{kicker}</span>
       <h3 className="font-serif text-h1 text-ivory-50 mb-5 leading-tight">
@@ -666,7 +723,7 @@ function RitualCard({ icon, title, kicker, text }: RitualCardProps) {
   );
 }
 
-function FeatureLi({ children }: { children: React.ReactNode }) {
+function FeatureLi({ children }: { children: ReactNode }) {
   return (
     <li className="flex items-start gap-3">
       <span
@@ -771,7 +828,7 @@ function PriceCard({
 }
 
 interface TrustBadgeProps {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   text: string;
 }

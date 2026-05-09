@@ -5,6 +5,7 @@ import ZodiacGlyph, {
   ZodiacSign,
 } from './ZodiacGlyph';
 import { cn } from '../lib/utils';
+import { sunSignAt } from '../lib/currentSky';
 
 interface ZodiacStripProps {
   className?: string;
@@ -14,6 +15,9 @@ interface ZodiacStripProps {
   variant?: 'marquee' | 'static';
   /** Durée d'un cycle marquee (s). */
   duration?: number;
+  /** Si true, met automatiquement en évidence le signe solaire du jour
+   *  et affiche son degré actuel sous le glyphe. */
+  live?: boolean;
 }
 
 /**
@@ -33,8 +37,11 @@ export default function ZodiacStrip({
   highlight,
   variant = 'marquee',
   duration = 60,
+  live = false,
 }: ZodiacStripProps) {
   const reduced = useReducedMotion();
+  const liveSun = live ? sunSignAt(new Date()) : null;
+  const activeSign: ZodiacSign | undefined = highlight ?? liveSun?.sign;
 
   if (variant === 'static') {
     return (
@@ -49,7 +56,7 @@ export default function ZodiacStrip({
           <GlyphItem
             key={sign}
             sign={sign}
-            isHighlight={highlight === sign}
+            isHighlight={activeSign === sign}
             delay={i * 0.04}
           />
         ))}
@@ -86,23 +93,42 @@ export default function ZodiacStrip({
               }
         }
       >
-        {sequence.map((sign, i) => (
-          <li
-            key={`${sign}-${i}`}
-            className={cn(
-              'flex items-center gap-3 flex-shrink-0 transition-all duration-300',
-              highlight === sign
-                ? 'text-aurora-200 opacity-100'
-                : 'text-ivory-200/55 hover:text-aurora-200 hover:opacity-100',
-            )}
-            title={SIGN_NAMES[sign]}
-          >
-            <ZodiacGlyph sign={sign} size={36} />
-            <span className="font-cinzel text-caption uppercase tracking-[0.22em] text-ivory-300/70">
-              {SIGN_NAMES[sign]}
-            </span>
-          </li>
-        ))}
+        {sequence.map((sign, i) => {
+          const isActive = activeSign === sign;
+          return (
+            <li
+              key={`${sign}-${i}`}
+              className={cn(
+                'flex items-center gap-3 flex-shrink-0 transition-all duration-500 relative',
+                isActive
+                  ? 'text-aurora-300 opacity-100'
+                  : 'text-ivory-200/45 hover:text-aurora-200 hover:opacity-100',
+              )}
+              title={SIGN_NAMES[sign]}
+            >
+              {isActive && live && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -inset-2.5 rounded-full bg-aurora-400/[0.08] blur-lg pointer-events-none"
+                />
+              )}
+              <ZodiacGlyph sign={sign} size={36} />
+              <span
+                className={cn(
+                  'font-cinzel text-caption uppercase tracking-[0.22em]',
+                  isActive ? 'text-aurora-300' : 'text-ivory-300/70',
+                )}
+              >
+                {SIGN_NAMES[sign]}
+              </span>
+              {isActive && live && liveSun && (
+                <span className="text-[10px] tracking-[0.18em] uppercase text-aurora-400/80 ml-1">
+                  · le Soleil
+                </span>
+              )}
+            </li>
+          );
+        })}
       </motion.ul>
     </div>
   );

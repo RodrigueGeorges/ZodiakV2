@@ -35,30 +35,7 @@
 
     <title>✧ Zodiak ✧ Votre guide astral personnel</title>
 
-    <!-- Preconnect to external domains -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!--
-      Fonts (v3 — Cosmic Editorial Ritual) :
-        - Fraunces (serif sculpté moderne) : display + body éditorial
-        - Cinzel : signatures rituelles uniquement (eyebrows small caps)
-        - Inter : corps de texte courant (UI, formulaires)
-      Le CSS additionnel @import est dans index.css ; on précharge ici
-      seulement les versions Latin pour ne pas bloquer le rendu initial.
-    -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400;9..144,500;9..144,600;9..144,700&family=Cinzel:wght@500;600&family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-      media="print"
-      onload="this.media='all'"
-    />
-    <noscript>
-      <link
-        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400;9..144,500;9..144,600;9..144,700&family=Cinzel:wght@500;600&family=Inter:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-      />
-    </noscript>
+    <!-- Polices bundlées via Fontsource (voir src/fonts.ts), pas de Google Fonts -->
 
     <!-- Critical CSS (avoid FOUC) -->
     <style>
@@ -66,7 +43,7 @@
         background: #0A0814;
         color: #F4ECDB;
         margin: 0;
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
       }
       #root {
         min-height: 100vh;

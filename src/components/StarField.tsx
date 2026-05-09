@@ -7,6 +7,12 @@ interface StarFieldProps {
   parallax?: boolean;
   /** Active une nébuleuse dorée diffuse en fond. */
   nebula?: boolean;
+  /** Bande très diffuse type Voie lactée (landing premium). */
+  milkyWay?: boolean;
+  /** Constellations abstraites (traits discrets entre repères fictifs). */
+  constellations?: boolean;
+  /** Étoiles filantes sporadiques (~1 / 6–10 s hors reduced-motion). */
+  shootingStars?: boolean;
   className?: string;
 }
 
@@ -23,6 +29,41 @@ interface Star {
 
 const LAYER_PARALLAX = [0.04, 0.12, 0.24] as const;
 
+/** Polylines en coordonnées normalisées (0–1) — motifs épurés façon carte ancienne. */
+const CONSTELLATIONS: readonly (readonly [number, number])[][] = [
+  [
+    [0.08, 0.12],
+    [0.095, 0.17],
+    [0.132, 0.22],
+    [0.172, 0.28],
+    [0.21, 0.34],
+  ],
+  [
+    [0.74, 0.38],
+    [0.8, 0.37],
+    [0.852, 0.355],
+    [0.9, 0.37],
+    [0.94, 0.395],
+  ],
+  [
+    [0.42, 0.58],
+    [0.458, 0.64],
+    [0.5, 0.68],
+    [0.55, 0.71],
+    [0.6, 0.705],
+    [0.65, 0.68],
+  ],
+];
+
+interface ShootingStarState {
+  x: number;
+  y: number;
+  len: number;
+  spd: number;
+  /** 1 = nouveau, décroit vers 0 */
+  life: number;
+}
+
 /**
  * StarField — champ d'étoiles vivant, canvas 2D.
  *
@@ -30,13 +71,16 @@ const LAYER_PARALLAX = [0.04, 0.12, 0.24] as const;
  * statique : chaque étoile a sa propre fréquence de scintillement, sa
  * magnitude, sa teinte (blanc / or / lavande). 3 couches de parallaxe.
  *
- * Performance : ~250 étoiles, ~60 fps, throttled à 30 fps si onglet
- * en arrière-plan. Utilise `requestAnimationFrame` + `prefers-reduced-motion`.
+ * Performance : ~250 étoiles, ~60 fps, throttled en arrière-plan. Options
+ * `milkyWay`, `constellations`, `shootingStars` pour la landing premium.
  */
 export default function StarField({
   density = 1,
   parallax = true,
   nebula = true,
+  milkyWay = false,
+  constellations = false,
+  shootingStars = false,
   className,
 }: StarFieldProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -45,6 +89,8 @@ export default function StarField({
   const dprRef = useRef<number>(1);
   const sizeRef = useRef<{ w: number; h: number }>({ w: 0, h: 0 });
   const scrollRef = useRef<number>(0);
+  const meteorsRef = useRef<ShootingStarState[]>([]);
+  const nextMeteorAtRef = useRef<number>(0);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -177,6 +223,129 @@ export default function StarField({
       ctx.fillRect(0, 0, w, h);
     };
 
+    const drawMilkyWay = () => {
+      if (!milkyWay) return;
+      const { w, h } = sizeRef.current;
+      ctx.save();
+      ctx.translate(w * 0.52, h * 0.45);
+      ctx.rotate(-0.38 * Math.PI);
+      const gx = ctx.createRadialGradient(0, 0, 0, 0, 0, Math.max(w, h) * 0.95);
+      gx.addColorStop(0, 'rgba(238, 234, 255, 0.14)');
+      gx.addColorStop(0.35, 'rgba(200, 195, 230, 0.06)');
+      gx.addColorStop(0.7, 'rgba(60, 50, 90, 0.02)');
+      gx.addColorStop(1, 'rgba(10, 8, 20, 0)');
+      ctx.fillStyle = gx;
+      ctx.globalAlpha = 0.85;
+      const rw = Math.max(w, h) * 1.85;
+      const rh = Math.max(w, h) * 0.22;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, rw, rh, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    };
+
+    /** Traits entre étoiles “imaginaires”, derrière les points lumineux. */
+    const drawConstellationLines = (scrollOffset: number) => {
+      if (!constellations) return;
+      const { w, h } = sizeRef.current;
+      ctx.strokeStyle = 'rgba(212, 166, 86, 0.12)';
+      ctx.lineWidth = Math.max(0.45, (dprRef.current || 1) * 0.35);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.globalCompositeOperation = 'screen';
+
+      for (const poly of CONSTELLATIONS) {
+        ctx.beginPath();
+        for (let i = 0; i < poly.length; i++) {
+          const [nx, ny] = poly[i]!;
+          const px = nx * w;
+          const py = ((ny * h * 1.5) - scrollOffset * 0.06) % (h * 1.5);
+          const wy = py < 0 ? py + h * 1.5 : py;
+          if (i === 0) ctx.moveTo(px, wy);
+          else ctx.lineTo(px, wy);
+        }
+        ctx.stroke();
+      }
+
+      ctx.globalCompositeOperation = 'source-over';
+    };
+
+    /** Mise à jour & dessin des traînées fugaces. */
+    const tickShootingStars = (
+      timestamp: number,
+      reducedStars: boolean,
+    ) => {
+      if (!shootingStars || reducedStars) {
+        meteorsRef.current = [];
+        if (!shootingStars) nextMeteorAtRef.current = 0;
+        return;
+      }
+      const { w, h } = sizeRef.current;
+      const list = meteorsRef.current;
+
+      if (nextMeteorAtRef.current === 0) {
+        nextMeteorAtRef.current = timestamp + 2500 + Math.random() * 4000;
+      }
+
+      if (
+        list.length === 0 &&
+        timestamp >= nextMeteorAtRef.current &&
+        !document.hidden
+      ) {
+        const edge = Math.random();
+        let x = 0;
+        let y = 0;
+        if (edge < 0.5) {
+          x = w * (0.55 + Math.random() * 0.45);
+          y = -20;
+        } else {
+          x = w + 20;
+          y = h * (0.1 + Math.random() * 0.35);
+        }
+        list.push({
+          x,
+          y,
+          len: 80 + Math.random() * 90,
+          spd: 12 + Math.random() * 10,
+          life: 1,
+        });
+        nextMeteorAtRef.current =
+          timestamp + 6000 + Math.random() * 7000;
+      }
+
+      for (let i = list.length - 1; i >= 0; i--) {
+        const m = list[i]!;
+        m.x -= m.spd * 0.75;
+        m.y += m.spd * 0.45;
+        m.life -= 0.022;
+
+        if (m.life <= 0 || m.x < -100 || m.y > h + 100) {
+          list.splice(i, 1);
+          continue;
+        }
+
+        const headX = m.x;
+        const headY = m.y;
+        const ang = Math.atan2(m.spd * 0.45, -m.spd * 0.75);
+        const tailX = headX + Math.cos(ang + Math.PI) * m.len * m.life;
+        const tailY = headY + Math.sin(ang + Math.PI) * m.len * m.life;
+
+        const g = ctx.createLinearGradient(tailX, tailY, headX, headY);
+        const a = Math.max(0, m.life);
+        g.addColorStop(0, `rgba(244,236,219,0)`);
+        g.addColorStop(0.55, `rgba(244,228,205,${0.12 * a})`);
+        g.addColorStop(1, `rgba(212,166,86,${0.55 * a})`);
+
+        ctx.strokeStyle = g;
+        ctx.lineWidth = 1.35;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(headX, headY);
+        ctx.stroke();
+      }
+    };
+
     /** Boucle de rendu. */
     let lastTime = 0;
     const loop = (now: number) => {
@@ -197,6 +366,10 @@ export default function StarField({
 
       // Nébuleuse de fond
       drawNebula();
+      drawMilkyWay();
+
+      const scrollForLines = parallax ? scrollRef.current : 0;
+      drawConstellationLines(scrollForLines);
 
       // Étoiles avec twinkle
       const stars = starsRef.current;
@@ -211,6 +384,8 @@ export default function StarField({
         const offset = scroll * LAYER_PARALLAX[s.layer];
         drawStar(s, t, offset);
       }
+
+      tickShootingStars(now, reduced);
 
       rafRef.current = requestAnimationFrame(loop);
     };
@@ -231,7 +406,14 @@ export default function StarField({
       window.removeEventListener('resize', resize);
       window.removeEventListener('scroll', onScroll);
     };
-  }, [density, parallax, nebula]);
+  }, [
+    density,
+    parallax,
+    nebula,
+    milkyWay,
+    constellations,
+    shootingStars,
+  ]);
 
   return (
     <canvas
