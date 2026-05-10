@@ -95,7 +95,7 @@ function evaluate(password: string): StrengthResult {
     4: {
       label: 'Excellent',
       color: 'bg-emerald-400',
-      hint: 'Imparable. ✦',
+      hint: 'Imparable.',
     },
   };
 

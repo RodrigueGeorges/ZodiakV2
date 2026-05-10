@@ -77,7 +77,7 @@ export default function WhatsAppPreview({
 
           <BubbleIn delay={0.7}>
             <span className="block font-semibold text-aurora-300 mb-1.5 text-[11px] uppercase tracking-wider">
-              ☀ Bonjour Léa
+              Bonjour, Léa
             </span>
             <span className="block text-[13.5px] leading-relaxed">
               Le Soleil dans ton 10ᵉ maison te pousse à te montrer
@@ -98,7 +98,7 @@ export default function WhatsAppPreview({
           <Timestamp delivered>8:00</Timestamp>
 
           <BubbleOut delay={1.5}>
-            J'ai un entretien cet aprèm 😶
+            J'ai un entretien cet après-midi — un peu sous pression.
           </BubbleOut>
           <Timestamp self>8:14</Timestamp>
 

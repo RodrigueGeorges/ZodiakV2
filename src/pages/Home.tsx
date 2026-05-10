@@ -463,7 +463,7 @@ export default function Home() {
                 spotlight
                 index={1}
                 icon={<Sun className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-200" />}
-                title="🌅 La guidance du matin"
+                title="La guidance du matin"
                 text="Ton horoscope personnalisé, chaque jour, en 30 secondes de lecture."
                 bullets={[
                   'Basé sur ton thème natal et les transits du jour',
@@ -475,7 +475,7 @@ export default function Home() {
                 spotlight
                 index={2}
                 icon={<MessageCircle className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-200" />}
-                title="💬 Le chat avec ton guide astral"
+                title="Le dialogue avec ton guide astral"
                 text="Une question précise ? Une réflexion ? Tu poses, il répond."
                 bullets={[
                   'Réponses contextualisées sur ta carte du ciel',
@@ -788,9 +788,9 @@ function PriceOfferCard() {
 
       <div className="rounded-xl border border-aurora-400/35 bg-aurora-500/[0.12] px-5 py-6 text-center mb-10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
         <p className="text-body-lg text-ivory-50 font-light leading-snug">
-          <span className="not-italic" aria-hidden="true">
-            🎁
-          </span>{' '}
+          <span className="not-italic text-aurora-200/85 font-mono text-[11px] tracking-[0.28em] uppercase block mb-3">
+            Offre bienvenue
+          </span>
           <strong className="font-semibold text-aurora-100">7 jours offerts. Sans carte bancaire.</strong>
         </p>
         <p className="mt-3 text-caption text-ivory-300/95 leading-relaxed">

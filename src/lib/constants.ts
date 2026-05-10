@@ -3,14 +3,14 @@ export const APP_DESCRIPTION = 'Votre guide astral personnel';
 
 export const SMS_SETTINGS = {
   SENDER_NAME: 'Zodiak',
-  VERIFICATION_MESSAGE: (code: string) => 
-    `🌟 Votre code de vérification ${APP_NAME} est : ${code}\n\nNe le partagez avec personne.`,
+  VERIFICATION_MESSAGE: (code: string) =>
+    `Votre code de vérification ${APP_NAME} : ${code}\n\nNe le partagez avec personne.`,
   WELCOME_MESSAGE: (name: string) =>
-    `✨ Bienvenue sur ${APP_NAME}, ${name} !\n\nVotre voyage céleste commence maintenant. Découvrez votre guidance quotidienne et laissez les astres vous guider. 🌟`,
+    `Bienvenue sur ${APP_NAME}, ${name}.\n\nVotre guidance quotidienne et votre thème natal vous attendent — ouvrez votre espace personnel pour commencer.`,
   GUIDANCE_MESSAGE: (name: string, summary: string) =>
-    `🌟 Bonjour ${name},\n\nVotre guidance du jour :\n${summary}\n\nConsultez votre guidance complète sur ${APP_NAME} ✨`,
+    `Bonjour ${name},\n\nVotre lecture du jour :\n${summary}\n\n— ${APP_NAME}`,
   TRIAL_ENDING_MESSAGE: (name: string, daysLeft: number) =>
-    `🌙 ${name}, votre période d'essai ${APP_NAME} se termine dans ${daysLeft} jours.\n\nNe perdez pas votre connexion aux astres ! Prolongez votre guidance maintenant ✨`
+    `${name}, votre période d'essai ${APP_NAME} se termine dans ${daysLeft} jours.\n\nPour conserver votre guidance personnalisée, prolongez depuis votre compte.`,
 };
 
 export const AUTH_SETTINGS = {

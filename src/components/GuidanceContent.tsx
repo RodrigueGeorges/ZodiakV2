@@ -151,11 +151,11 @@ export function GuidanceContent({
   }
 
   // ─────────── Guidance affichée ───────────
-  const shareText = `${guidance.summary}\n\n💜 Cœur : ${
+  const shareText = `${guidance.summary}\n\nCœur : ${
     typeof guidance.love === 'object' ? guidance.love.text : guidance.love
-  }\n✨ Chantiers : ${
+  }\nChantiers : ${
     typeof guidance.work === 'object' ? guidance.work.text : guidance.work
-  }\n🔥 Vitalité : ${
+  }\nVitalité : ${
     typeof guidance.energy === 'object'
       ? guidance.energy.text
       : guidance.energy

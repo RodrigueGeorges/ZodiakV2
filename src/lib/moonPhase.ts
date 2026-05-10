@@ -41,14 +41,14 @@ function frac(x: number): number {
 }
 
 const KIND_BY_AGE: Array<{ kind: MoonPhaseKind; glyph: string; label: string }> = [
-  { kind: 'new', glyph: '🌑', label: 'Nouvelle lune' },
-  { kind: 'waxing_crescent', glyph: '🌒', label: 'Croissant' },
-  { kind: 'first_quarter', glyph: '🌓', label: 'Premier quartier' },
-  { kind: 'waxing_gibbous', glyph: '🌔', label: 'Gibbeuse croissante' },
-  { kind: 'full', glyph: '🌕', label: 'Pleine lune' },
-  { kind: 'waning_gibbous', glyph: '🌖', label: 'Gibbeuse décroissante' },
-  { kind: 'last_quarter', glyph: '🌗', label: 'Dernier quartier' },
-  { kind: 'waning_crescent', glyph: '🌘', label: 'Dernier croissant' },
+  { kind: 'new', glyph: '●', label: 'Nouvelle lune' },
+  { kind: 'waxing_crescent', glyph: '◔', label: 'Croissant' },
+  { kind: 'first_quarter', glyph: '◐', label: 'Premier quartier' },
+  { kind: 'waxing_gibbous', glyph: '◕', label: 'Gibbeuse croissante' },
+  { kind: 'full', glyph: '○', label: 'Pleine lune' },
+  { kind: 'waning_gibbous', glyph: '◓', label: 'Gibbeuse décroissante' },
+  { kind: 'last_quarter', glyph: '◑', label: 'Dernier quartier' },
+  { kind: 'waning_crescent', glyph: '◒', label: 'Dernier croissant' },
 ];
 
 function ageToPhase(age: number): { kind: MoonPhaseKind; glyph: string; label: string } {

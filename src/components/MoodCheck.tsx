@@ -12,12 +12,12 @@ interface MoodOption {
 }
 
 const MOODS: MoodOption[] = [
-  { key: 'radiant',  emoji: '☀️',  label: 'Radieux',  helper: 'Une énergie haute, prête à rayonner.' },
-  { key: 'inspired', emoji: '✨',  label: 'Inspiré',  helper: 'Des idées qui dansent.' },
-  { key: 'calm',     emoji: '🌊', label: 'Apaisé',   helper: 'Le souffle posé.' },
-  { key: 'pensive',  emoji: '🌙', label: 'Pensif',   helper: 'Le mental qui tourne.' },
-  { key: 'tense',    emoji: '⚡', label: 'Tendu',    helper: 'Quelque chose tire.' },
-  { key: 'tired',    emoji: '🌫️',  label: 'Fatigué',  helper: 'Le réservoir est bas.' },
+  { key: 'radiant',  emoji: '☉',  label: 'Radieux',  helper: 'Une énergie haute, prête à rayonner.' },
+  { key: 'inspired', emoji: '✶',  label: 'Inspiré',  helper: 'Des idées qui dansent.' },
+  { key: 'calm',     emoji: '◇', label: 'Apaisé',   helper: 'Le souffle posé.' },
+  { key: 'pensive',  emoji: '☽', label: 'Pensif',   helper: 'Le mental qui tourne.' },
+  { key: 'tense',    emoji: '⌁', label: 'Tendu',    helper: 'Quelque chose tire.' },
+  { key: 'tired',    emoji: '○',  label: 'Fatigué',  helper: 'Le réservoir est bas.' },
 ];
 
 interface MoodCheckProps {
@@ -89,7 +89,10 @@ export default function MoodCheck({
                   'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300',
                 )}
               >
-                <span className="text-2xl" aria-hidden="true">
+                <span
+                  className="text-2xl font-serif text-aurora-200/95 tabular-nums"
+                  aria-hidden="true"
+                >
                   {m.emoji}
                 </span>
                 <span className="font-sans text-caption font-medium text-ivory-50">

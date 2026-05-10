@@ -19,12 +19,12 @@ const MOOD_META: Record<
   MoodKey,
   { emoji: string; label: string; bg: string; ring: string }
 > = {
-  radiant:  { emoji: '☀️', label: 'Radieux',  bg: 'bg-aurora-400/40', ring: 'ring-aurora-400/60' },
-  inspired: { emoji: '✨', label: 'Inspiré',  bg: 'bg-aurora-400/30', ring: 'ring-aurora-400/50' },
-  calm:     { emoji: '🌊', label: 'Apaisé',  bg: 'bg-aurora-400/15', ring: 'ring-aurora-400/30' },
-  pensive:  { emoji: '🌙', label: 'Pensif',  bg: 'bg-ivory-50/[0.08]', ring: 'ring-ivory-50/[0.15]' },
-  tense:    { emoji: '⚡', label: 'Tendu',   bg: 'bg-magenta-500/25', ring: 'ring-magenta-400/50' },
-  tired:    { emoji: '🌫️', label: 'Fatigué', bg: 'bg-night-700/70',  ring: 'ring-ivory-50/[0.10]' },
+  radiant:  { emoji: '☉', label: 'Radieux',  bg: 'bg-aurora-400/40', ring: 'ring-aurora-400/60' },
+  inspired: { emoji: '✶', label: 'Inspiré',  bg: 'bg-aurora-400/30', ring: 'ring-aurora-400/50' },
+  calm:     { emoji: '◇', label: 'Apaisé',  bg: 'bg-aurora-400/15', ring: 'ring-aurora-400/30' },
+  pensive:  { emoji: '☽', label: 'Pensif',  bg: 'bg-ivory-50/[0.08]', ring: 'ring-ivory-50/[0.15]' },
+  tense:    { emoji: '⌁', label: 'Tendu',   bg: 'bg-magenta-500/25', ring: 'ring-magenta-400/50' },
+  tired:    { emoji: '○', label: 'Fatigué', bg: 'bg-night-700/70',  ring: 'ring-ivory-50/[0.10]' },
 };
 
 /**

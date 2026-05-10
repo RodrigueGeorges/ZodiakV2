@@ -303,7 +303,7 @@ export default function DailyGuidanceChannel({
         )}
 
         <p className="text-micro text-ivory-400 text-center">
-          ✦ Personnalisée selon ton thème natal et les transits du jour
+          · Personnalisée selon ton thème natal et les transits du jour
         </p>
       </div>
     </Card>

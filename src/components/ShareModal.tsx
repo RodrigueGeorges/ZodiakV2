@@ -43,7 +43,7 @@ export function ShareModal({ isOpen, onClose, guidance, userName, url }: ShareMo
 
   if (!isOpen) return null;
 
-  const shareText = `🌟 Guidance du jour de ${userName} : ${guidance}`;
+  const shareText = `Guidance du jour — ${userName}\n${guidance}`;
 
   const tryNativeShare = async () => {
     if (typeof navigator !== 'undefined' && 'share' in navigator) {

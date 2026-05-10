@@ -69,7 +69,6 @@ export default function ShareButton({
     copyLink();
     toast(
       "Texte copié — colle-le dans ton DM Instagram.",
-      { icon: '📋' }
     );
   };
 

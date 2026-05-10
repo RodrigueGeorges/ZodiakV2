@@ -125,6 +125,7 @@ class OpenAIService {
 
       Style :
       - Ton chaleureux, contemporain, jamais ésotérique cliché.
+      - Aucun emoji ni pictogramme décoratif dans le JSON ; la présence doit rester lisible comme un carnet sérieux.
       - Tutoie la personne ("tu" et non "vous").
       - Mets les 1-2 mots-clés les plus importants de chaque paragraphe entre astérisques. Exemple : "la *communication* est ton alliée".
       - Évite les généralités : ancre toujours dans un transit ou une planète présente dans les données ci-dessous.
@@ -185,13 +186,13 @@ class OpenAIService {
     return `
       Tu es un astrologue visionnaire et conteur. En te basant sur le thème natal suivant, écris une "Signature Astrale" immersive et poétique pour ${firstName}, structurée ainsi :
 
-      1. Accroche cosmique : Commence par une phrase qui transporte ${firstName} dans l'univers, évoquant la magie de sa naissance sous les étoiles (1 phrase, style poétique, avec un emoji d'étoile ou de galaxie).
-      2. Portrait en 3 astres : Pour chaque élément clé, écris une phrase personnalisée :
-         - ☀️ Soleil en {Soleil} : décris l'énergie centrale, la force de caractère ou la mission de vie.
-         - 🌙 Lune en {Lune} : décris la sensibilité, le monde intérieur, la façon d'aimer ou de ressentir.
-         - ✨ Ascendant en {Ascendant} : décris la première impression, le style, la façon d'avancer dans la vie.
-         (Chaque phrase commence par l'emoji correspondant, puis le nom du signe, puis la description.)
-      3. Mantra astral : Termine par une citation ou un mantra inspirant, unique à ce thème, à méditer chaque jour (entouré d'emojis, ex : "🌟 Je rayonne ma lumière unique 🌟").
+      1. Accroche cosmique : Commence par une phrase qui transporte ${firstName} dans l'univers, évoquant la magie de sa naissance sous les étoiles (1 phrase, style poétique, sans emoji — privilégie les images concrètes et le souffle).
+      2. Portrait en 3 astres : À partir du JSON du thème ci-dessous, rédige une phrase personnalisée pour chaque élément clé :
+         - Soleil : commence la ligne par le glyphe ☉ suivi du signe du Soleil tel qu'il figure dans les données ; décris l'énergie centrale, la force de caractère ou la mission de vie.
+         - Lune : commence par ☽ puis le signe lunaire ; décris la sensibilité, le monde intérieur, la façon d'aimer ou de ressentir.
+         - Ascendant : commence par ↑ puis le signe de l'ascendant ; décris la première impression, le style, la façon d'avancer dans la vie.
+         (Une phrase nette par astre ; pas de balises Markdown.)
+      3. Mantra astral : Termine par une citation ou un mantra inspirant, unique à ce thème ; encadre-le de guillemets français typographiques (« »), sans emoji ni surcharge de ponctuation décorative.
 
       Le ton doit être chaleureux, poétique, valorisant, et en français.
       N'utilise pas de balises Markdown ni de formatage HTML.

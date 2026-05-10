@@ -311,7 +311,7 @@ export default function ProfileTab({
                       if (ok) {
                         vibrate('success');
                         track('push_enabled');
-                        toast.success('Notifications activées ✦');
+                        toast.success('Notifications activées');
                       }
                     }}
                     loading={push.loading}

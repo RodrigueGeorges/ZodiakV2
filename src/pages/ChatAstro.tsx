@@ -165,7 +165,7 @@ export default function ChatAstro() {
         ...m,
         {
           from: 'bot',
-          text: `Tu as atteint la limite de ${quotas.chatMessagesPerDay} messages gratuits aujourd'hui. Passe en Premium pour me parler sans limite ✦`,
+          text: `Tu as atteint la limite de ${quotas.chatMessagesPerDay} messages gratuits aujourd'hui. Passe en Premium pour échanger sans limite.`,
         },
       ]);
       return;

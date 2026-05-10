@@ -97,7 +97,7 @@ export default function SynastryDetail() {
 
   const onShare = async () => {
     track('synastry_shared', { friend_id: friend.id });
-    const shareText = `${userFirstName} × ${friend.name} : ${score}/100 ✦ ${verdict}\n\nLis vos étoiles ensemble sur Zodiak.`;
+    const shareText = `${userFirstName} × ${friend.name} — ${score}/100 · ${verdict}\n\nLis vos étoiles ensemble sur Zodiak.`;
     try {
       if (typeof navigator !== 'undefined' && 'share' in navigator) {
         await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({
@@ -225,7 +225,7 @@ export default function SynastryDetail() {
           transition={{ delay: 0.4 }}
           className="eyebrow-ritual text-ivory-400/80 text-center"
         >
-          ✦ Une lecture symbolique, pas un verdict ✦
+          — Une lecture symbolique, pas un verdict —
         </motion.p>
       </div>
     </PageLayout>

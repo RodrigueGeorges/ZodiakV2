@@ -43,7 +43,7 @@ export const BADGES: BadgeDef[] = [
   },
   {
     id: 'three_dawns',
-    glyph: '☀',
+    glyph: '☉',
     name: 'Trois aurores',
     description: 'Trois jours consécutifs avec ta guidance.',
     tone: 'amber',
@@ -83,7 +83,7 @@ export const BADGES: BadgeDef[] = [
   },
   {
     id: 'magnetic',
-    glyph: '✨',
+    glyph: '✶',
     name: 'Lien magnétique',
     description: 'Une synastrie au-dessus de 85.',
     tone: 'magenta',
@@ -99,7 +99,7 @@ export const BADGES: BadgeDef[] = [
   },
   {
     id: 'new_moon_keeper',
-    glyph: '🌑',
+    glyph: '●',
     name: 'Gardien·ne de nouvelles lunes',
     description: 'Présent·e lors d\'une nouvelle lune.',
     tone: 'silver',
@@ -107,7 +107,7 @@ export const BADGES: BadgeDef[] = [
   },
   {
     id: 'full_moon_witness',
-    glyph: '🌕',
+    glyph: '○',
     name: 'Témoin de pleine lune',
     description: 'Présent·e lors d\'une pleine lune.',
     tone: 'amber',

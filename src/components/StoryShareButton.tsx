@@ -65,7 +65,7 @@ export default function StoryShareButton({
       if (!blob) return;
       const file = new File([blob], 'zodiak-story.png', { type: 'image/png' });
       const shareData: ShareData & { files?: File[] } = {
-        title: 'Zodiak ✦',
+        title: 'Zodiak',
         text: 'Découvre ton ciel sur Zodiak.',
         files: [file],
       };
@@ -96,7 +96,7 @@ export default function StoryShareButton({
 
   const handleInstagram = () => {
     handleDownload();
-    toast.success('Image téléchargée — colle-la dans ta story Instagram ✦');
+    toast.success('Image téléchargée — colle-la dans ta story Instagram.');
     window.setTimeout(() => {
       window.open('https://www.instagram.com', '_blank', 'noopener');
     }, 600);

@@ -139,7 +139,7 @@ function drawText(
 }
 
 function drawWordmark(ctx: CanvasRenderingContext2D, y: number) {
-  drawText(ctx, '✦ ZODIAK', {
+  drawText(ctx, 'ZODIAK', {
     x: W / 2,
     y,
     size: 36,

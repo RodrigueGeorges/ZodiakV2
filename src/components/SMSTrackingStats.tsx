@@ -117,7 +117,7 @@ export default function SMSTrackingStats() {
   return (
     <div className="bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 rounded-2xl shadow-xl border border-primary/20 p-6">
       <h2 className="text-xl font-bold font-display bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-6">
-        📊 Statistiques SMS
+        Statistiques SMS
       </h2>
       {/* Statistiques globales */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -138,7 +138,7 @@ export default function SMSTrackingStats() {
       {/* Graphique des 7 derniers jours */}
       <div className="mb-4">
         <h3 className="text-lg font-semibold text-gray-700 mb-3">
-          📈 Activité des 7 derniers jours
+          Activité des 7 derniers jours
         </h3>
         <div className="space-y-2">
           {stats.recent_stats.map((day, index) => (
@@ -189,7 +189,7 @@ export default function SMSTrackingStats() {
           onClick={fetchTrackingStats}
           className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
         >
-          🔄 Actualiser
+          Actualiser
         </button>
       </div>
     </div>

@@ -22,12 +22,12 @@ interface AddFriendFormProps {
 }
 
 const RELATIONSHIPS: { key: FriendRelationship; label: string; emoji: string }[] = [
-  { key: 'partner', label: 'Partenaire', emoji: '💞' },
-  { key: 'crush', label: 'Crush', emoji: '✨' },
-  { key: 'friend', label: 'Ami·e', emoji: '🌙' },
-  { key: 'family', label: 'Famille', emoji: '🌿' },
-  { key: 'colleague', label: 'Collègue', emoji: '☄️' },
-  { key: 'other', label: 'Autre', emoji: '✦' },
+  { key: 'partner', label: 'Partenaire', emoji: '♥' },
+  { key: 'crush', label: 'Crush', emoji: '✶' },
+  { key: 'friend', label: 'Ami·e', emoji: '☽' },
+  { key: 'family', label: 'Famille', emoji: '◆' },
+  { key: 'colleague', label: 'Collègue', emoji: '△' },
+  { key: 'other', label: 'Autre', emoji: '…' },
 ];
 
 /**
@@ -86,7 +86,7 @@ export default function AddFriendForm({ onAdded, onCancel }: AddFriendFormProps)
         avatar_emoji: emoji || undefined,
         natal_chart: json.chart,
       });
-      toast.success(`${name} ajouté·e ✦`);
+      toast.success(`${name} ajouté·e`);
     } catch (err) {
       console.error(err);
       toast.error('Impossible de calculer la carte. Réessaie.');
@@ -183,11 +183,14 @@ export default function AddFriendForm({ onAdded, onCancel }: AddFriendFormProps)
           />
         </Field>
 
-        <Field icon={<Heart className="w-4 h-4 text-magenta-300" />} label="Emoji (optionnel)">
+        <Field
+          icon={<Heart className="w-4 h-4 text-magenta-300" />}
+          label="Marqueur (optionnel)"
+        >
           <input
             value={emoji}
             onChange={(e) => setEmoji(e.target.value.slice(0, 2))}
-            placeholder="💞"
+            placeholder="★"
             maxLength={2}
             className="input-cosmic"
           />
