@@ -8,14 +8,12 @@ import {
 } from 'framer-motion';
 import {
   ArrowRight,
-  Compass,
-  Heart,
+  Check,
   MessageCircle,
   Sparkles,
   Sun,
 } from 'lucide-react';
 import Logo from '../components/Logo';
-import CosmicWheel from '../components/CosmicWheel';
 import LiveCounter from '../components/LiveCounter';
 import FAQ from '../components/FAQ';
 import { ButtonLink } from '../components/ui/ButtonLink';
@@ -214,7 +212,7 @@ export default function Home() {
               to="/login"
               variant="ghost"
               size="lg"
-              className="w-full sm:w-auto min-w-[220px] border-white/20 hover:border-aurora-400/35 hover:bg-white/[0.04]"
+              className="w-full sm:w-auto min-w-[220px]"
             >
               Se connecter
             </ButtonLink>
@@ -276,178 +274,97 @@ export default function Home() {
         }
       />
 
-      {/* ─── CHAPITRE 3 : TROIS RITUELS (bento) ─────────────────── */}
+      {/* ─── Ce que tu utilises au quotidien — 2 blocs ───────────── */}
       <section className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/[0.09]">
-        <div className="relative max-w-6xl mx-auto">
-          <div className="text-center mb-16 md:mb-24 max-w-2xl mx-auto space-y-6">
-            <p className="protocol-caption text-ivory-400">
-              Rituels
-            </p>
+        <div className="relative max-w-5xl mx-auto">
+          <div className="text-center mb-16 md:mb-20 max-w-2xl mx-auto space-y-6">
+            <p className="protocol-caption text-ivory-400">L’expérience</p>
             <h2 className="font-display font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
-              Trois façons{' '}
-              <span className="italic-editorial font-light text-aurora-400">d’être guidé.</span>
+              Deux usages,{' '}
+              <span className="italic-editorial font-light text-aurora-400">un même ciel.</span>
             </h2>
             <p className="text-body-lg text-ivory-400/90 leading-[1.75]">
-              Pas trois apps, pas trois abonnements. Une seule expérience qui
-              t’accompagne du matin au soir.
+              Tout repose sur <span className="text-ivory-200 font-medium">ton thème de naissance</span>{' '}
+              (calculé une fois au compte). Ensuite tu reçois la guidance là où tu discutes déjà —
+              plus un chat pensé pour toi quand tu as besoin d’éclairage.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 gap-5 md:gap-6 lg:gap-px lg:rounded-2xl lg:overflow-hidden lg:border lg:border-white/[0.11] lg:bg-white/[0.06] lg:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
             <RitualCard
-              featured
+              spotlight
               index={1}
-              className="lg:col-span-2 lg:row-span-2"
-              icon={<Sun className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-300" />}
+              icon={<Sun className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-200" />}
               title="Guidance du jour"
-              kicker="Chaque matin · 1 message"
-              text="Une lecture courte du ciel, calibrée sur ton thème natal. Livrée sur WhatsApp ou Instagram à l’heure que tu choisis."
+              kicker="Rituel du matin"
+              text="Chaque jour, une lecture courte : transits du moment croisés avec ton ascendant,
+              ta lune et les maisons qui comptent pour toi. Pas de copier-coller générique : le ton
+              et les angles suivent ta carte."
+              bullets={[
+                'Envoi sur WhatsApp ou Instagram, à l’heure que tu choisis',
+                'Un seul message clair pour cadrer la journée (énergie, vigilance, opportunités)',
+                'Réglages dans ton espace après inscription — rien à installer',
+              ]}
             />
             <RitualCard
+              spotlight
               index={2}
-              className="lg:col-span-1 lg:row-span-1"
-              icon={<MessageCircle className="w-5 h-5" />}
-              title="Guide astral IA"
-              kicker="À toute heure · sans limite"
-              text="Pose tes questions, reçois des réponses adaptées à ton thème. La voix se souvient de toi — plus tu échanges, mieux elle te lit."
-            />
-            <RitualCard
-              index={3}
-              className="lg:col-span-1 lg:row-span-1"
-              icon={<Heart className="w-5 h-5" />}
-              title="Liens & synastrie"
-              kicker="En quelques secondes"
-              text="Compare ton ciel à celui d’un proche. Compatibilité, tensions, points forts — illustré, expliqué, partageable."
+              icon={<MessageCircle className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-200" />}
+              title="Chat avec ton guide astral"
+              kicker="Quand tu veux, à ton rythme"
+              text="Pose une question précise (« travail », « relation », timing »…) ou déroule une
+              réflexion. Le guide s’appuie sur ton thème pour rester dans le même langage symbolique que
+              la guidance quotidienne — avec une continuité de conversation."
+              bullets={[
+                'Réponses contextualisées (pas un horoscope passe-partout)',
+                'Mémoire de tes échanges : plus tu précises ta vie, mieux ça cadre avec ton ciel',
+                'Idéal entre deux guidances ou quand tu as besoin d’un éclairage ciblé',
+              ]}
             />
           </div>
-        </div>
-      </section>
 
-      {/* ─── CHAPITRE 4 : ŒUVRE QUI TE RESSEMBLE ────────────────── */}
-      <section className="relative py-24 md:py-40 px-6 border-t border-white/[0.09] overflow-hidden">
-        <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-14 md:gap-24 items-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-120px' }}
-            transition={{ duration: 0.9 }}
-            className="order-2 md:order-1"
-          >
-            <p className="protocol-caption text-ivory-400 mb-6 md:mb-8">
-              Carte natale
-            </p>
-            <h2 className="font-sans font-extralight text-display text-ivory-50 mb-8 leading-[0.96] tracking-[-0.03em]">
-              Ton ciel
-              <br />
-              <span className="italic-editorial font-light text-aurora-400">figé puis animé.</span>
-            </h2>
-            <p className="drop-cap-edit text-body-lg text-ivory-400/95 leading-[1.7] mb-8">
-              On calcule ton thème natal au degré près à partir de ta date,
-              ton heure et ton lieu de naissance. Tu vois tes douze signes,
-              tes maisons, tes sept planètes — et les aspects qu'elles forment
-              entre elles. Vivant, animé, partageable.
-            </p>
-            <ul className="space-y-3 mb-10 text-body text-ivory-300">
-              <FeatureLi>Calcul précis (Swiss Ephemeris-grade)</FeatureLi>
-              <FeatureLi>Ascendant, planètes, maisons, aspects</FeatureLi>
-              <FeatureLi>Œuvre générative à imprimer ou partager</FeatureLi>
-            </ul>
+          <div className="mt-12 md:mt-16 flex justify-center">
             <ButtonLink
               to="/register"
               variant="primary"
-              iconLeft={<Compass className="w-4 h-4" />}
+              size="lg"
+              iconLeft={<Sparkles className="w-4 h-4" />}
+              iconRight={<ArrowRight className="w-4 h-4" />}
+              className="landing-primary-cta-glow shadow-none"
             >
-              Voir ma carte
+              Essayer 7 jours offerts
             </ButtonLink>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true, margin: '-120px' }}
-            transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-            className="relative order-1 md:order-2 max-w-md mx-auto w-full"
-          >
-            <CosmicWheel className="w-full" />
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* ─── CHAPITRE 5 : PRICING ───────────────────────────────── */}
+      {/* ─── OFFRE ────────────────────────────────────────────── */}
       <section
         id="pricing"
         className="relative py-24 md:py-40 px-6 border-t border-white/[0.09]"
       >
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16 md:mb-20">
+        <div className="max-w-lg mx-auto">
+          <div className="text-center mb-12 md:mb-14">
             <p className="protocol-caption text-ivory-400 mb-8 md:mb-10">
-              Tarifs
+              Offre simple
             </p>
             <div className="mb-10 flex justify-center">
               <LiveCounter />
             </div>
-            <h2 className="font-sans font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
-              Choisis ce qui te <span className="italic-editorial font-light text-aurora-400">ressemble.</span>
+            <h2 className="font-display font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
+              Une formule pour{' '}
+              <span className="italic-editorial font-light text-aurora-400">tout suivre.</span>
             </h2>
             <p className="mt-7 text-body-lg text-ivory-400/90 max-w-xl mx-auto leading-[1.7]">
-              Pas de pub, pas de revente de données, pas de paliers cachés.
-              Tu paies une fois, tu profites de tout.
+              Pas de grille de prix à décrypter : <span className="text-ivory-200 font-medium">8,99 € par mois</span>, tout compris —
+              guidance du jour et chat illimités, calibrés sur ton thème. Pas de publicité ni de revente de données.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-px bg-white/12 items-stretch">
-            <PriceCard
-              eyebrow="Mensuel"
-              price="8,99 €"
-              priceSuffix="/ mois"
-              hint="Idéal pour essayer"
-              ctaLabel="Commencer mon essai"
-              features={[
-                'Guidance quotidienne illimitée',
-                'Chat astral IA (mémoire long-terme)',
-                'Synastries illimitées',
-                'Calendrier lunaire 30 jours',
-                'Œuvre cosmique partageable',
-              ]}
-            />
+          <PriceOfferCard />
 
-            <PriceCard
-              eyebrow="Annuel"
-              price="69 €"
-              priceSuffix="/ an"
-              perMonth="≈ 5,75 € / mois"
-              badge="Recommandé · −36 %"
-              highlighted
-              hint="Tu économises 38 € sur l'année"
-              ctaLabel="Choisir l'annuel"
-              features={[
-                'Tout du plan mensuel',
-                '2 mois offerts',
-                'Stories HD imprimables',
-                'Accès anticipé aux nouveautés',
-                'Support prioritaire',
-              ]}
-            />
-
-            <PriceCard
-              eyebrow="À vie"
-              price="129 €"
-              priceSuffix="une fois"
-              hint="Offre fondateur · 100 places"
-              badge="Édition limitée"
-              ctaLabel="Devenir fondateur"
-              features={[
-                'Tout, pour toujours',
-                'Aucun renouvellement',
-                'Place fondateur · profil orné',
-                'Vote sur la roadmap',
-                'Accès aux betas privées',
-              ]}
-            />
-          </div>
-
-          <p className="text-center mt-12 eyebrow-ritual text-ivory-400/80">
-            7 jours offerts sur tous les plans · sans carte bancaire
+          <p className="text-center mt-10 eyebrow-ritual text-ivory-400/80 leading-relaxed">
+            7 premiers jours offerts pour tester · sans carte bancaire au départ · résiliation depuis ton espace personnel
           </p>
         </div>
       </section>
@@ -469,12 +386,13 @@ export default function Home() {
                 q: 'Comment ça marche concrètement ?',
                 a: (
                   <>
-                    Tu crées ton compte avec ta date, heure et lieu de
-                    naissance. On calcule ton thème natal en quelques
-                    secondes. Tu choisis WhatsApp ou Instagram, l'heure
-                    qui te va, et chaque matin tu reçois une lecture
-                    courte du ciel adaptée à ton thème. Tu peux aussi
-                    converser avec ton guide astral à toute heure.
+                    Tu crées ton compte avec ta date, ton heure et ton lieu de naissance : on en déduit ton
+                    thème natal une fois pour toutes. Chaque matin, tu reçois la{' '}
+                    <strong className="font-medium text-ivory-200">guidance du jour</strong> — une lecture courte,
+                    envoyée là où tu discutes déjà (WhatsApp ou Instagram). À côté, tu ouvres le{' '}
+                    <strong className="font-medium text-ivory-200">chat</strong> avec ton guide astral quand tu as
+                    besoin d’un éclairage : questions ciblées, réponses qui restent dans le langage symbolique de ton
+                    ciel — avec mémoire de ce que vous vous dites au fil du temps.
                   </>
                 ),
               },
@@ -626,8 +544,12 @@ interface RitualCardProps {
   title: string;
   kicker: string;
   text: string;
-  /** Carte principale du bento (plus grande, halo). */
+  /** Carte principale du bento (plus grande, halo). @deprecated préférer spotlight */
   featured?: boolean;
+  /** Déux cartes mises au même niveau visuel avec halo aurora */
+  spotlight?: boolean;
+  /** Puces lisibles sous le paragraphe */
+  bullets?: string[];
   /** Numéro décoratif (01, 02…). */
   index?: number;
   className?: string;
@@ -638,23 +560,25 @@ function RitualCard({
   kicker,
   text,
   featured = false,
+  spotlight = false,
+  bullets,
   index,
   className,
 }: RitualCardProps) {
+  const accent = spotlight || featured;
   return (
     <motion.article
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: featured ? -2 : -1 }}
+      whileHover={{ y: accent ? -2 : -1 }}
       className={cn(
-        'relative backdrop-blur-md border border-white/12 group flex flex-col overflow-hidden',
+        'relative backdrop-blur-md border group flex flex-col overflow-hidden',
         'shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[border-color,background-color,transform] duration-300 ease-brutal',
-        'hover:border-white/22',
-        featured
-          ? 'ritual-card-featured p-8 md:p-12 lg:p-14 lg:min-h-[min(68vh,540px)]'
-          : 'bg-white/[0.04] hover:bg-white/[0.07] p-8 md:p-10',
+        accent
+          ? 'border-aurora-400/35 bg-gradient-to-br from-aurora-500/[0.08] via-white/[0.04] to-white/[0.02] hover:border-aurora-400/48 shadow-[inset_0_1px_0_rgba(56,189,248,0.12),0_40px_100px_-56px_rgba(0,0,0,0.75)] p-8 md:p-11 lg:p-12 lg:min-h-[min(58vh,480px)]'
+          : 'border-white/12 bg-white/[0.04] hover:bg-white/[0.07] hover:border-white/22 p-8 md:p-10',
         className,
       )}
     >
@@ -663,8 +587,8 @@ function RitualCard({
           aria-hidden
           className={cn(
             'pointer-events-none select-none absolute font-display font-extralight leading-none text-white/[0.05]',
-            featured
-              ? 'top-5 right-5 md:top-7 md:right-8 text-[clamp(3.5rem,14vw,9rem)]'
+            accent
+              ? 'top-5 right-5 md:top-7 md:right-8 text-[clamp(3rem,12vw,6.5rem)]'
               : 'top-4 right-5 text-[clamp(2.25rem,6vw,3.25rem)] opacity-90',
           )}
         >
@@ -674,141 +598,123 @@ function RitualCard({
 
       <div
         className={cn(
-          'mb-6 inline-flex items-center justify-center rounded-full border text-aurora-300 transition-colors duration-300',
-          featured
-            ? 'h-14 w-14 border-aurora-400/30 bg-aurora-500/[0.09] shadow-[0_0_40px_-16px_rgba(56,189,248,0.5)]'
+          'mb-6 inline-flex items-center justify-center rounded-full border text-aurora-200 transition-colors duration-300',
+          accent
+            ? 'h-14 w-14 border-aurora-400/40 bg-aurora-500/[0.12] shadow-[0_0_44px_-14px_rgba(56,189,248,0.55)]'
             : 'h-11 w-11 border-white/15 bg-white/[0.04]',
         )}
       >
         {icon}
       </div>
 
-      <span className="protocol-caption text-ivory-500 mb-3 normal-case tracking-[0.14em] relative z-[1]">
+      <span className="protocol-caption text-aurora-200/85 mb-3 normal-case tracking-[0.14em] relative z-[1]">
         {kicker}
       </span>
       <h3
         className={cn(
           'font-display font-light text-ivory-50 mb-5 leading-[1.08] tracking-[-0.02em] relative z-[1]',
-          featured ? 'text-[clamp(1.85rem,4vw,2.75rem)]' : 'text-h1',
+          accent ? 'text-[clamp(1.65rem,3.8vw,2.35rem)]' : 'text-h1',
         )}
       >
         {title}
       </h3>
-      <p className="text-body text-ivory-400/95 leading-[1.75] flex-1 relative z-[1]">
+      <p className="text-body text-ivory-300/95 leading-[1.75] flex-1 relative z-[1]">
         {text}
       </p>
-      <div className="mt-10 lg:mt-12 flex items-center gap-3 text-aurora-400 relative z-[1]">
-        <span className="block h-px w-10 bg-aurora-400/55 group-hover:w-20 transition-all duration-500 ease-brutal" />
-        <span className="text-micro font-mono uppercase tracking-[0.2em] text-ivory-500 group-hover:text-aurora-300/90 transition-colors">
-          Détail
-        </span>
-      </div>
+      {bullets && bullets.length > 0 && (
+        <ul className="mt-8 space-y-3 text-caption text-ivory-400/95 relative z-[1] leading-relaxed">
+          {bullets.map((b) => (
+            <li key={b} className="flex gap-3 text-left">
+              <Check className="w-4 h-4 text-aurora-400 shrink-0 mt-0.5 opacity-95" aria-hidden />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {!bullets?.length && (
+        <div className="mt-10 lg:mt-12 flex items-center gap-3 text-aurora-400 relative z-[1]">
+          <span className="block h-px w-10 bg-aurora-400/55 group-hover:w-16 transition-all duration-500 ease-brutal" />
+          <span className="text-micro font-mono uppercase tracking-[0.2em] text-ivory-500 group-hover:text-aurora-300/90 transition-colors">
+            Détail
+          </span>
+        </div>
+      )}
     </motion.article>
   );
 }
 
-function FeatureLi({ children }: { children: ReactNode }) {
-  return (
-    <li className="flex items-start gap-3">
-      <span
-        aria-hidden="true"
-        className="flex-shrink-0 mt-2.5 block h-px w-4 bg-aurora-400/50"
-      />
-      <span>{children}</span>
-    </li>
-  );
-}
+function PriceOfferCard() {
+  const includes = [
+    'Guidance du jour sur le canal que tu choisis (WhatsApp ou Instagram), horaire au choix',
+    'Chat avec ton guide astral, autant que tu veux, avec mémoire de la conversation',
+    'Profil basé sur ton thème natal — tout le contenu tourne autour de ta carte',
+    'Pas de carte bancaire pour commencer : tu actives ton essai puis tu décides à froid',
+  ];
 
-interface PriceCardProps {
-  eyebrow: string;
-  price: string;
-  priceSuffix: string;
-  perMonth?: string;
-  badge?: string;
-  hint?: string;
-  highlighted?: boolean;
-  ctaLabel: string;
-  /** Route d’inscription (lien réel plutôt que history.push). */
-  ctaTo?: string;
-  features: string[];
-}
-function PriceCard({
-  eyebrow,
-  price,
-  priceSuffix,
-  perMonth,
-  badge,
-  hint,
-  highlighted = false,
-  ctaLabel,
-  ctaTo = '/register',
-  features,
-}: PriceCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
-      transition={{ duration: 0.8 }}
+      transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        'relative h-full flex flex-col rounded-sm bg-white/[0.04] backdrop-blur-md border border-white/12',
-        'hover:bg-white/[0.06] transition-colors duration-200 ease-brutal p-8 md:p-10',
-        highlighted && 'bg-white/[0.07] border-aurora-400/35 shadow-[inset_0_1px_0_rgba(56,189,248,0.15)]',
+        'relative rounded-xl overflow-hidden backdrop-blur-md',
+        'border border-aurora-400/40 bg-gradient-to-b from-aurora-500/[0.12] via-white/[0.045] to-white/[0.02]',
+        'shadow-[inset_0_1px_0_rgba(56,189,248,0.18),0_32px_80px_-44px_rgba(0,0,0,0.9)]',
+        'p-8 md:p-10 lg:p-12',
       )}
     >
-      {highlighted && (
-        <span
-          aria-hidden="true"
-          className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-aurora-400/80 to-transparent"
-        />
-      )}
+      <span
+        aria-hidden="true"
+        className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-aurora-400/85 to-transparent"
+      />
 
-      <div className="flex items-center justify-between mb-6">
-        <span className="protocol-caption text-ivory-400">{eyebrow}</span>
-        {badge && (
-          <span className="font-mono text-[10px] uppercase tracking-[0.16em] px-2 py-1 rounded-sm border border-white/20 text-ivory-300">
-            {badge}
-          </span>
-        )}
-      </div>
-
-      <div className="flex items-baseline gap-2 mb-2">
-        <span className="font-sans font-extralight text-[clamp(3rem,5vw,4rem)] text-ivory-50 leading-none">
-          {price}
+      <div className="text-center pb-8 border-b border-white/[0.1] mb-8">
+        <span className="inline-flex items-center rounded-full border border-aurora-400/35 bg-aurora-500/15 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-aurora-100">
+          Formule unique
         </span>
-        <span className="text-caption text-ivory-300/80">{priceSuffix}</span>
-      </div>
-      {perMonth && (
-        <p className="text-caption text-ivory-400 mb-1">{perMonth}</p>
-      )}
-      {hint && (
-        <p className="text-caption text-ivory-300/70 italic-editorial mb-7">
-          {hint}
+        <div className="mt-8 flex flex-wrap items-end justify-center gap-x-3 gap-y-1">
+          <span className="font-display font-extralight text-[clamp(3.25rem,8vw,4.25rem)] text-ivory-50 leading-none tracking-[-0.03em]">
+            8,99&nbsp;€
+          </span>
+          <span className="pb-1 text-body text-aurora-200/90 font-medium">
+            par mois
+          </span>
+        </div>
+        <p className="mt-5 text-body text-ivory-400/95 leading-relaxed max-w-md mx-auto">
+          Après <span className="text-ivory-200 font-medium">7 jours gratuits sans engagement</span>, ce tarif mensuel ouvre tout l’outil : même expérience que dans l’article ci-dessus, sans surprises sur la facture.
         </p>
-      )}
+      </div>
 
-      <ul className="space-y-3 text-body text-ivory-300/95 mb-10">
-        {features.map((f) => (
-          <li key={f} className="flex items-start gap-3">
-            <span
-              aria-hidden="true"
-              className="flex-shrink-0 mt-2.5 block h-px w-4 bg-aurora-400/50"
-            />
-            <span>{f}</span>
+      <p className="text-micro uppercase tracking-[0.2em] text-aurora-200/85 mb-4">
+        Ce que tu débloques
+      </p>
+      <ul className="space-y-3.5 text-body text-ivory-200/95 mb-10 md:mb-11">
+        {includes.map((line) => (
+          <li key={line} className="flex gap-3 leading-snug">
+            <Check className="w-[18px] h-[18px] text-aurora-400 shrink-0 mt-0.5" aria-hidden />
+            <span>{line}</span>
           </li>
         ))}
       </ul>
 
       <ButtonLink
-        to={ctaTo}
-        variant={highlighted ? 'primary' : 'ghost'}
+        to="/register"
+        variant="primary"
         size="lg"
         fullWidth
+        iconLeft={<Sparkles className="w-4 h-4" />}
         iconRight={<ArrowRight className="w-4 h-4" />}
-        className="mt-auto"
+        className="landing-primary-cta-glow shadow-none text-night-950"
       >
-        {ctaLabel}
+        Commencer gratuitement pendant 7 jours
       </ButtonLink>
+
+      <p className="text-center mt-4 text-caption text-ivory-500/95">
+        Puis facturation à <span className="text-aurora-200/95 font-medium">8,99&nbsp;€</span>{' '}
+        / mois si tu poursuis — résilie gratuitement depuis ton espace avant la fin des 7 jours pour éviter tout
+        prélèvement.
+      </p>
     </motion.div>
   );
 }

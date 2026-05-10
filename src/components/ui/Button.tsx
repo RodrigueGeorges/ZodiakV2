@@ -28,17 +28,17 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-ivory-50 text-night-950 hover:bg-white active:bg-ivory-200 font-semibold tracking-tight',
+          'bg-gradient-to-b from-aurora-400 to-aurora-600 text-night-950 hover:from-aurora-300 hover:to-aurora-500 active:from-aurora-500 active:to-aurora-700 font-semibold tracking-tight shadow-[0_0_28px_-10px_rgba(56,189,248,0.55)] border border-aurora-300/35',
         secondary:
-          'bg-white/[0.04] text-ivory-50 hover:bg-white/[0.07] border border-white/12',
+          'bg-aurora-500/[0.12] text-aurora-50 hover:bg-aurora-500/[0.18] border border-aurora-400/30 hover:border-aurora-400/55',
         ghost:
-          'bg-transparent text-ivory-100 border border-white/15 hover:border-white/40 hover:text-ivory-50',
+          'bg-transparent text-aurora-100 border border-aurora-400/35 hover:border-aurora-300/65 hover:bg-aurora-500/[0.08] hover:text-ivory-50',
         danger:
           'bg-transparent text-magenta-400 border border-magenta-500/30 hover:bg-magenta-500/10 hover:border-magenta-500/50',
         text:
           'bg-transparent text-aurora-400 hover:text-aurora-300 underline-offset-4 hover:underline border-0',
         ritual:
-          'bg-ivory-50 text-night-950 hover:bg-white active:bg-ivory-200 font-semibold tracking-tight',
+          'bg-gradient-to-b from-aurora-400 to-aurora-600 text-night-950 hover:from-aurora-300 hover:to-aurora-500 active:from-aurora-500 active:to-aurora-700 font-semibold tracking-tight shadow-[0_0_28px_-10px_rgba(56,189,248,0.55)] border border-aurora-300/35',
       },
       size: {
         sm: 'h-9  px-5 text-caption gap-1.5',

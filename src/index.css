@@ -340,22 +340,24 @@ a {
 
 .landing-primary-cta-glow {
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.06),
-    0 1px 0 rgba(255, 255, 255, 0.1) inset,
-    0 22px 60px -28px rgba(56, 189, 248, 0.45);
+    0 0 0 1px rgba(56, 189, 248, 0.35),
+    0 1px 0 rgba(255, 255, 255, 0.12) inset,
+    0 22px 60px -28px rgba(56, 189, 248, 0.5);
 }
 
 .landing-primary-cta-glow:hover {
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.12),
-    0 1px 0 rgba(255, 255, 255, 0.14) inset,
-    0 28px 72px -32px rgba(56, 189, 248, 0.55);
+    0 0 0 1px rgba(125, 211, 252, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.16) inset,
+    0 28px 72px -28px rgba(56, 189, 248, 0.62);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .landing-primary-cta-glow,
   .landing-primary-cta-glow:hover {
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+    box-shadow:
+      0 0 0 1px rgba(56, 189, 248, 0.3),
+      0 1px 0 rgba(255, 255, 255, 0.1) inset;
   }
 }
 

@@ -9,7 +9,7 @@ interface StarFieldProps {
   parallax?: boolean;
   /** Active une brume diffuse froide après le fond. */
   nebula?: boolean;
-  /** Bande très diffuse type Voie lactée (landing premium). */
+  /** @deprecated Ancienne « Voie lactée » (ellipse) — retirée : bande horizontale trop visible. Gardé pour compat API. */
   milkyWay?: boolean;
   /** Constellations stylisées (12 motifs type zodiaque, traits discrets). */
   constellations?: boolean;
@@ -70,13 +70,14 @@ interface ShootingStarState {
  * StarField — champ d'étoiles vivant, canvas 2D.
  *
  * Inspiration : ciel atlas + constellations « signes » (stylisation Zodiak).
- * Options `milkyWay`, `mountains`, `constellations` — rendu volontairement sobre (carte d’art).
+ * Options `mountains`, `constellations` — rendu volontairement sobre (carte d’art).
+ * La prop `milkyWay` est ignorée (ancienne ellipse retirée).
  */
 export default function StarField({
   density = 1,
   parallax = true,
   nebula = true,
-  milkyWay = false,
+  milkyWay: _milkyWay = false,
   constellations = false,
   mountains = false,
   shootingStars = false,
@@ -198,7 +199,7 @@ export default function StarField({
       }
     };
 
-  /** Halo bleu léger après le fond (option `nebula`). */
+    /** Halo bleu léger après le fond (option `nebula`). */
     const drawNebula = () => {
       if (!nebula) return;
       const { w, h } = sizeRef.current;
@@ -222,25 +223,33 @@ export default function StarField({
       ctx.fillRect(0, 0, w, h);
     };
 
-    const drawMilkyWay = () => {
-      if (!milkyWay) return;
+    /** Halos discrets au barycentre de chaque motif zodiaque (pas de bande horizontale). */
+    const drawZodiacAmbience = () => {
+      if (!constellations) return;
       const { w, h } = sizeRef.current;
+      const R = Math.max(w, h);
       ctx.save();
-      ctx.translate(w * 0.28, h * 0.78);
-      ctx.rotate(-0.36 * Math.PI);
-      const gx = ctx.createRadialGradient(0, 0, 0, 0, 0, Math.max(w, h) * 1.05);
-      gx.addColorStop(0, 'rgba(118, 198, 255, 0.26)');
-      gx.addColorStop(0.22, 'rgba(86, 150, 220, 0.16)');
-      gx.addColorStop(0.45, 'rgba(44, 88, 150, 0.09)');
-      gx.addColorStop(0.7, 'rgba(22, 40, 72, 0.04)');
-      gx.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = gx;
-      ctx.globalAlpha = chromaBoost ? 0.88 : 0.72;
-      const rw = Math.max(w, h) * 2.1;
-      const rh = Math.max(w, h) * 0.2;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, rw, rh, 0, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.globalCompositeOperation = 'screen';
+      for (const poly of ZODIAC_CONSTELLATIONS) {
+        let sx = 0;
+        let sy = 0;
+        for (const [nx, ny] of poly) {
+          sx += nx;
+          sy += ny;
+        }
+        sx /= poly.length;
+        sy /= poly.length;
+        const px = sx * w;
+        const py = sy * h;
+        const rr = R * (chromaBoost ? 0.19 : 0.15);
+        const a0 = chromaBoost ? 0.065 : 0.04;
+        const g = ctx.createRadialGradient(px, py, 0, px, py, rr);
+        g.addColorStop(0, `rgba(72, 155, 215, ${a0})`);
+        g.addColorStop(0.5, `rgba(38, 88, 145, ${a0 * 0.4})`);
+        g.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, w, h);
+      }
       ctx.restore();
     };
 
@@ -249,8 +258,8 @@ export default function StarField({
       if (!constellations) return;
       const { w, h } = sizeRef.current;
       ctx.strokeStyle = chromaBoost
-        ? 'rgba(172, 210, 255, 0.14)'
-        : 'rgba(150, 200, 255, 0.095)';
+        ? 'rgba(172, 210, 255, 0.17)'
+        : 'rgba(150, 200, 255, 0.12)';
       ctx.lineWidth = Math.max(0.45, (dprRef.current || 1) * 0.36);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
@@ -468,17 +477,18 @@ export default function StarField({
       }
       lastTime = now;
 
-      // Fond dégradé nuit → bleu horizon ( références « atlas » immersions )
+      // Fond nuit uniforme (évite bande type « horizon » en bas)
       const sky = ctx.createLinearGradient(0, 0, 0, h);
       sky.addColorStop(0, '#010102');
-      sky.addColorStop(0.32, '#040810');
-      sky.addColorStop(0.65, '#081728');
-      sky.addColorStop(1, chromaBoost ? '#122a52' : '#0e223f');
+      sky.addColorStop(0.3, '#040810');
+      sky.addColorStop(0.55, '#061018');
+      sky.addColorStop(0.82, chromaBoost ? '#0a1830' : '#060d1a');
+      sky.addColorStop(1, chromaBoost ? '#0c1a32' : '#04080f');
       ctx.fillStyle = sky;
       ctx.fillRect(0, 0, w, h);
 
       drawNebula();
-      drawMilkyWay();
+      drawZodiacAmbience();
 
       const scrollForLines = parallax ? scrollRef.current : 0;
       drawConstellationLines(scrollForLines);
@@ -544,7 +554,6 @@ export default function StarField({
     density,
     parallax,
     nebula,
-    milkyWay,
     constellations,
     mountains,
     shootingStars,

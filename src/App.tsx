@@ -189,7 +189,6 @@ function App() {
         <StarField
           density={celestialMode === 'stars' ? 1.08 : 0.88}
           nebula
-          milkyWay
           constellations
           mountains
           chromaBoost={celestialMode === 'color'}
