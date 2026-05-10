@@ -127,7 +127,7 @@ export function GuidanceContent({
             <p className="eyebrow-ritual text-aurora-400/80 mb-5">
               Ton ciel du jour
             </p>
-            <h2 className="font-serif text-display text-ivory-50 leading-[0.95] mb-6">
+            <h2 className="font-display font-extralight text-display text-ivory-50 leading-[0.95] mb-6">
               Prêt(e) à lire <span className="italic-editorial text-aurora-400">les étoiles ?</span>
             </h2>
             <p className="max-w-xl mx-auto text-body-lg text-ivory-200/85 leading-[1.7] mb-10">

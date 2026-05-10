@@ -101,7 +101,7 @@ export default function ReferralLanding() {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-aurora-500/10 border border-aurora-400/30 mb-5 text-aurora-200">
             <Gift className="w-6 h-6" aria-hidden="true" />
           </div>
-          <h2 className="font-serif text-h2 text-ivory-50 leading-[0.95] mb-5">
+          <h2 className="font-display font-light text-h2 text-ivory-50 leading-[0.95] mb-5">
             14 jours{' '}
             <span className="italic-editorial text-aurora-400">offerts</span>
           </h2>

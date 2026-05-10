@@ -111,13 +111,13 @@ export default function ProfileTab({
               <div className="flex items-start justify-between mb-7 gap-3">
                 <div className="flex items-center gap-5">
                   <div className="relative">
-                    <div className="w-14 h-14 rounded-full bg-aurora-400 flex items-center justify-center text-night-950 font-serif font-semibold text-h3">
+                    <div className="w-14 h-14 rounded-full bg-aurora-400 flex items-center justify-center text-night-950 font-display font-semibold text-h3">
                       {getInitials(profile.name)}
                     </div>
                   </div>
                   <div>
                     <p className="eyebrow-ritual text-aurora-400/80">Profil</p>
-                    <h3 className="font-serif text-h2 text-ivory-50 leading-tight mt-1">
+                    <h3 className="font-display text-h2 text-ivory-50 leading-tight mt-1">
                       {profile.name || 'Voyageur·euse'}
                     </h3>
                     <p className="text-caption text-ivory-400/80 italic-editorial mt-1">
@@ -242,7 +242,7 @@ export default function ProfileTab({
                   className="w-5 h-5 text-aurora-400"
                   aria-hidden="true"
                 />
-                <h3 className="font-serif text-h2 text-ivory-50 leading-tight">
+                <h3 className="font-display text-h2 text-ivory-50 leading-tight">
                   Abonnement
                 </h3>
               </div>
@@ -273,7 +273,7 @@ export default function ProfileTab({
                   ) : (
                     <BellOff className="w-5 h-5 text-ivory-400" aria-hidden="true" />
                   )}
-                  <h3 className="font-serif text-h2 text-ivory-50 leading-tight">
+                  <h3 className="font-display text-h2 text-ivory-50 leading-tight">
                     Notifications
                   </h3>
                 </div>
@@ -334,7 +334,7 @@ export default function ProfileTab({
                       ? 'Essai'
                       : 'Premium'}
                 </p>
-                <p className="font-serif italic-editorial text-h2 text-ivory-50 leading-tight">
+                <p className="font-display italic-editorial text-h2 text-ivory-50 leading-tight">
                   Toutes les étoiles débloquées
                 </p>
               </div>
@@ -386,9 +386,9 @@ interface RowProps {
 }
 function Row({ label, value }: RowProps) {
   return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-signal-600/15 pb-3">
+    <div className="flex items-baseline justify-between gap-3 border-b border-white/[0.09] pb-3">
       <dt className="eyebrow-ritual text-ivory-400/80">{label}</dt>
-      <dd className="text-body text-ivory-100 font-serif text-right">{value}</dd>
+      <dd className="text-body text-ivory-100 font-display text-right">{value}</dd>
     </div>
   );
 }

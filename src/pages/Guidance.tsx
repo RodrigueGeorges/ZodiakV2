@@ -17,7 +17,7 @@ import { useBadges } from '../lib/hooks/useBadges';
 import { usePushNotifications } from '../lib/hooks/usePushNotifications';
 import { useFriends } from '../lib/hooks/useFriends';
 import { useChatMemory } from '../lib/hooks/useChatMemory';
-import { moonPhaseAt } from '../lib/moonPhase';
+import MoonPhaseVisual from '../components/MoonPhaseVisual';
 import { vibrate } from '../lib/haptics';
 import { track } from '../lib/analytics';
 import { birthdayInfo } from '../lib/birthday';
@@ -148,7 +148,22 @@ export default function Guidance() {
 
   return (
     <PageLayout
-      eyebrow={`${today} · ${moonToday.glyph} ${moonToday.label.toLowerCase()}`}
+      eyebrow={
+        <>
+          <span className="capitalize">{today}</span>
+          <span aria-hidden className="text-white/35">
+            &nbsp;·&nbsp;
+          </span>
+          <MoonPhaseVisual
+            phase={moonToday}
+            size="sm"
+            variant="aurora"
+            instrumentRing={false}
+            className="inline-block align-text-bottom -translate-y-px"
+          />
+          <span className="ml-1 lowercase">{moonToday.label}</span>
+        </>
+      }
       titlePlain={false}
       title={
         <>
@@ -216,7 +231,7 @@ export default function Guidance() {
                   <Bell className="w-4 h-4 text-aurora-400" aria-hidden="true" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-serif text-body-lg text-ivory-50">
+                  <p className="font-display text-body-lg text-ivory-50">
                     Un signal silencieux <span className="italic-editorial text-aurora-400">quand le ciel parle ?</span>
                   </p>
                   <p className="text-caption text-ivory-300/80 mt-1">

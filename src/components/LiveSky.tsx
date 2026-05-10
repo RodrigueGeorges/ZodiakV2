@@ -98,7 +98,7 @@ export default function LiveSky({
           <span>La Lune ce soir</span>
           <span aria-hidden="true" className="block h-px w-7 bg-aurora-400/50" />
         </p>
-        <p className="font-serif italic-editorial text-h2 text-ivory-50 leading-tight">
+        <p className="font-display font-light italic-editorial text-h2 text-ivory-50 leading-tight">
           {phase.label}
         </p>
         <p className="mt-2 text-caption text-ivory-300/70 small-caps">

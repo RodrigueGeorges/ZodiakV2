@@ -116,7 +116,7 @@ export default function SMSTrackingStats() {
 
   return (
     <div className="bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 rounded-2xl shadow-xl border border-primary/20 p-6">
-      <h2 className="text-xl font-bold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-6">
+      <h2 className="text-xl font-bold font-display bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text mb-6">
         📊 Statistiques SMS
       </h2>
       {/* Statistiques globales */}

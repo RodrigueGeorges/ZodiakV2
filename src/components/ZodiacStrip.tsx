@@ -115,7 +115,7 @@ export default function ZodiacStrip({
               <ZodiacGlyph sign={sign} size={36} />
               <span
                 className={cn(
-                  'font-cinzel text-caption uppercase tracking-[0.22em]',
+                  'font-mono text-caption uppercase tracking-[0.22em]',
                   isActive ? 'text-aurora-300' : 'text-ivory-300/70',
                 )}
               >

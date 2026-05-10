@@ -89,7 +89,7 @@ export default function AdminProtection({ children }: AdminProtectionProps) {
                   <XCircle className="w-6 h-6" aria-hidden="true" />
                 </div>
                 <div>
-                  <h1 className="font-cinzel text-h2 text-ivory-50 mb-2">
+                  <h1 className="font-display font-light text-h2 text-ivory-50 mb-2 tracking-[-0.02em]">
                     Accès refusé
                   </h1>
                   <p className="text-body text-ivory-300">

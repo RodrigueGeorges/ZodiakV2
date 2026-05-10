@@ -59,7 +59,7 @@ function NatalSignature({
     return (
       <Card variant="surface" className={className}>
         <div className="px-6 py-6 text-center">
-          <p className="text-magenta-400 text-h3 font-cinzel mb-2">⚠ Signature incomplète</p>
+          <p className="text-magenta-400 text-h3 font-display font-medium mb-2">⚠ Signature incomplète</p>
           <p className="text-body text-ivory-300">
             Vérifie ton heure et ton lieu de naissance pour révéler ta carte.
           </p>
@@ -102,7 +102,7 @@ function NatalSignature({
           } max-w-sm w-full bg-night-900/95 backdrop-blur-md border border-aurora-400/30 rounded-md px-6 py-5`}
         >
           <p className="eyebrow-ritual text-aurora-400/80 mb-2">{label}</p>
-          <p className="text-h2 font-serif text-ivory-50 mb-2 leading-tight">
+          <p className="text-h2 font-display font-light text-ivory-50 mb-2 leading-tight">
             {ZODIAC_GLYPH[sign] || '✦'}{' '}
             <span className="italic-editorial text-aurora-400">{sign}</span>
           </p>
@@ -116,10 +116,10 @@ function NatalSignature({
   return (
     <Card variant="elevated" className={className}>
       <div className="px-7 py-9 md:px-10 md:py-12">
-        <p className="protocol-caption text-signal-400/85 text-center mb-4">
+        <p className="protocol-caption text-ivory-400 text-center mb-4">
           Ta signature astrale
         </p>
-        <h3 className="font-serif text-h1 text-ivory-50 text-center mb-9 leading-tight">
+        <h3 className="font-display font-extralight text-h1 text-ivory-50 text-center mb-9 leading-tight tracking-[-0.02em]">
           Soleil · Lune ·{' '}
           <span className="italic-editorial text-aurora-400">Ascendant</span>
         </h3>
@@ -133,7 +133,7 @@ function NatalSignature({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.08 }}
               whileHover={{ y: -3 }}
-              className="group flex flex-col items-center gap-2 bg-night-900/40 border border-signal-600/18 p-5 text-center rounded-sm hover:border-signal-400/40 transition-colors duration-200 ease-brutal focus:outline-none focus-visible:ring-1 focus-visible:ring-signal-400"
+              className="group flex flex-col items-center gap-2 bg-night-900/40 border border-white/[0.1] p-5 text-center rounded-sm hover:border-aurora-400/35 transition-colors duration-300 ease-brutal focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400"
               aria-label={`${label} en ${sign} — voir la description`}
             >
               <p className="eyebrow-ritual text-ivory-400/80">{eyebrow}</p>
@@ -141,7 +141,7 @@ function NatalSignature({
               <span className="text-3xl text-ivory-50 leading-none my-1">
                 {ZODIAC_GLYPH[sign] || '✦'}
               </span>
-              <span className="text-caption text-ivory-200 font-serif">
+              <span className="text-caption text-ivory-200 font-display font-normal">
                 {sign}
               </span>
               <span className="eyebrow-ritual text-ivory-400/70 mt-1">{label}</span>

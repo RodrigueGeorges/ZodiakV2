@@ -28,7 +28,7 @@ interface RevealTextProps {
  * qu'un fade + y traditionnel — le texte SE LÈVE comme un rideau.
  *
  * Usage typique :
- *   <h1 className="font-serif text-display-xl">
+ *   <h1 className="font-display text-display-xl">
  *     <RevealText>Ton ciel,</RevealText>
  *     <RevealText delay={250}>chaque matin.</RevealText>
  *   </h1>

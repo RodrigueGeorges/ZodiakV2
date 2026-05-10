@@ -15,7 +15,7 @@ function LoadingScreen({ message = 'Chargement...', error }: LoadingScreenProps)
         <CosmicLoader size="md" />
         {!error && (
           <p
-            className="mt-8 protocol-caption text-signal-400/75 text-center max-w-[20rem] mx-auto"
+            className="mt-8 protocol-caption text-ivory-400/90 text-center max-w-[20rem] mx-auto"
             aria-live="polite"
           >
             {message}

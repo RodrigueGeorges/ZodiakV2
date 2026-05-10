@@ -313,7 +313,7 @@ export default function ChatAstro() {
                   'max-w-[85%] rounded-md px-4 py-3 text-body whitespace-pre-line',
                   msg.from === 'user'
                     ? 'bg-aurora-500 text-night-950'
-                    : 'bg-night-800/80 text-ivory-100 border border-signal-600/18'
+                    : 'bg-night-800/80 text-ivory-100 border border-white/[0.1]'
                 )}
               >
                 {msg.from === 'bot' && (
@@ -332,7 +332,7 @@ export default function ChatAstro() {
 
           {typingText && (
             <div className="flex justify-start">
-              <div className="max-w-[85%] rounded-md px-4 py-3 bg-night-800/80 text-ivory-100 border border-signal-600/18">
+              <div className="max-w-[85%] rounded-sm px-4 py-3 bg-night-800/80 text-ivory-100 border border-white/[0.1]">
                 <span className="inline-flex items-center gap-1.5 eyebrow-ritual mb-1">
                   <Sparkles className="w-3 h-3" aria-hidden="true" />
                   Guide
@@ -346,7 +346,7 @@ export default function ChatAstro() {
 
           {loading && !typingText && (
             <div className="flex justify-start">
-              <div className="rounded-md px-4 py-3 bg-night-800/80 text-ivory-300 border border-signal-600/18 italic">
+              <div className="rounded-sm px-4 py-3 bg-night-800/80 text-ivory-300 border border-white/[0.1] italic">
                 Le guide consulte les étoiles…
               </div>
             </div>
@@ -354,7 +354,7 @@ export default function ChatAstro() {
         </div>
 
         {/* Suggestions contextuelles */}
-        <div className="relative px-7 pt-2 pb-3 border-t border-signal-600/15">
+        <div className="relative px-7 pt-2 pb-3 border-t border-white/[0.09]">
           <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
             {allSuggestions.map((s, i) => (
               <button
@@ -388,7 +388,7 @@ export default function ChatAstro() {
             e.preventDefault();
             send();
           }}
-          className="relative flex items-center gap-2 p-4 border-t border-signal-600/15 bg-night-900/40"
+          className="relative flex items-center gap-2 p-4 border-t border-white/[0.09] bg-night-950/35"
         >
           <div className="relative flex-1">
             <MessageCircle

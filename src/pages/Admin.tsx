@@ -230,7 +230,7 @@ export function Admin() {
                           <div>
                             <div className="flex items-center gap-2 mb-1.5">
                               <UserIcon className="w-4 h-4 text-aurora-300" aria-hidden="true" />
-                              <span className="font-serif text-h3 text-ivory-50">
+                              <span className="font-display text-h3 text-ivory-50">
                                 {profile.name || '—'}
                               </span>
                             </div>

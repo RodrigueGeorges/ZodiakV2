@@ -119,7 +119,7 @@ export default function Subscribe() {
                   'focus-within:border-aurora-400 focus-within:ring-1 focus-within:ring-aurora-400/30',
                   selected === plan.id
                     ? 'border-aurora-400/60 shadow-glow-aurora'
-                    : 'border-signal-600/18 hover:border-signal-400/40',
+                    : 'border-white/[0.1] hover:border-aurora-400/35',
                 )}
                 onClick={() => setSelected(plan.id)}
                 role="radio"
@@ -145,7 +145,7 @@ export default function Subscribe() {
                   </div>
 
                   <div className="flex items-baseline gap-2 mb-1">
-                    <span className="font-serif text-display-xl text-ivory-50 leading-none">
+                    <span className="font-display font-extralight text-display-xl text-ivory-50 leading-none">
                       {plan.price}
                     </span>
                     <span className="text-caption text-ivory-300">
@@ -220,7 +220,7 @@ export default function Subscribe() {
           ].map((g) => (
             <div
               key={g}
-              className="rounded-md border border-signal-600/18 bg-night-900/50 backdrop-blur-md px-4 py-3 flex items-center gap-3 text-caption text-ivory-200"
+              className="rounded-sm border border-white/[0.1] bg-night-950/50 backdrop-blur-md px-4 py-3 flex items-center gap-3 text-caption text-ivory-200 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
             >
               <Check
                 className="w-4 h-4 text-aurora-300 shrink-0"

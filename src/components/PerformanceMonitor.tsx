@@ -56,7 +56,7 @@ export function PerformanceMonitor({ className, showDetails = false }: Performan
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-20 right-4 z-50 w-80 bg-gray-900/95 backdrop-blur-lg rounded-lg shadow-xl border border-white/10 p-4"
+            className="fixed bottom-20 right-4 z-50 w-80 bg-gray-900/95 backdrop-blur-lg rounded-lg shadow-xl border border-white/[0.1] p-4"
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-white font-semibold flex items-center gap-2">
@@ -97,7 +97,7 @@ export function PerformanceMonitor({ className, showDetails = false }: Performan
 
             {/* Détails des requêtes */}
             {showDetails && metrics.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-white/10">
+              <div className="mt-4 pt-4 border-t border-white/[0.09]">
                 <h4 className="text-white font-medium mb-2">Dernières requêtes:</h4>
                 <div className="space-y-2 max-h-32 overflow-y-auto">
                   {metrics.slice(-5).map((metric, index) => (

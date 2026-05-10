@@ -82,7 +82,7 @@ export default function NatalRevealSplash({
               <p className="text-micro uppercase tracking-[0.32em] text-aurora-300">
                 Bonjour {firstName}
               </p>
-              <h1 className="font-cinzel text-display-xl md:text-[64px] text-ivory-50 leading-tight">
+              <h1 className="font-display font-light text-display-xl md:text-[64px] text-ivory-50 leading-tight">
                 Le ciel se relit
                 <br /> pour toi…
               </h1>
@@ -133,7 +133,7 @@ export default function NatalRevealSplash({
               className="flex flex-col items-center gap-4"
             >
               <Sparkles className="w-8 h-8 text-aurora-200" aria-hidden="true" />
-              <h2 className="font-cinzel text-display-xl md:text-[72px] text-gradient-aurora leading-none">
+              <h2 className="font-display font-light text-display-xl md:text-[72px] text-gradient-aurora leading-none">
                 Ta carte
               </h2>
               <p className="text-body text-ivory-200 max-w-md">
@@ -196,7 +196,7 @@ function RevealCorps({ icon, eyebrow, value, accent, halo }: RevealProps) {
         </span>
       </motion.div>
       <p className="text-micro uppercase tracking-[0.28em] text-ivory-300">{eyebrow}</p>
-      <h2 className="font-cinzel text-display-xl md:text-[72px] text-ivory-50 leading-none">
+      <h2 className="font-display font-light text-display-xl md:text-[72px] text-ivory-50 leading-none">
         {value}
       </h2>
     </motion.div>

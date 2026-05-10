@@ -75,7 +75,7 @@ export class ErrorBoundary extends Component<Props, State> {
           <Card variant="elevated" className="relative overflow-hidden">
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-signal-600/08 to-night-950/90"
+              className="pointer-events-none absolute inset-0 bg-gradient-to-br from-aurora-500/10 to-night-950/90"
             />
             <div className="relative p-8 text-center space-y-6">
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-magenta-500/15 ring-1 ring-magenta-500/30 text-magenta-400">
@@ -83,7 +83,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </div>
 
               <div>
-                <h1 className="font-cinzel text-h2 text-ivory-50 mb-2">
+                <h1 className="font-display font-light text-h2 text-ivory-50 mb-2 tracking-[-0.02em]">
                   Le ciel s'est troublé
                 </h1>
                 <p className="text-body text-ivory-300">

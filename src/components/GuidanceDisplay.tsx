@@ -158,8 +158,8 @@ export default function GuidanceDisplay({
 
   const gridClass =
     sections.length === 4
-      ? 'grid gap-px bg-ivory-50/[0.06] md:grid-cols-2 lg:grid-cols-4'
-      : 'grid gap-px bg-ivory-50/[0.06] md:grid-cols-3';
+      ? 'grid gap-px bg-white/[0.06] md:grid-cols-2 lg:grid-cols-4'
+      : 'grid gap-px bg-white/[0.06] md:grid-cols-3';
 
   const dos = parseList((guidance as any).dos);
   const donts = parseList((guidance as any).donts);
@@ -196,7 +196,7 @@ export default function GuidanceDisplay({
                 <span>{today} · Lecture du ciel</span>
                 <span aria-hidden="true" className="block h-px w-8 bg-aurora-400/50" />
               </p>
-              <h2 className="font-serif italic-editorial text-h1 md:text-display text-ivory-50 leading-[1.1]">
+              <h2 className="font-display italic-editorial text-h1 md:text-display text-ivory-50 leading-[1.1]">
                 {guidance.summary}
               </h2>
             </div>
@@ -253,7 +253,7 @@ export default function GuidanceDisplay({
                 aria-hidden="true"
               />
               <p className="eyebrow-ritual mb-8">Mantra du jour</p>
-              <blockquote className="font-serif italic-editorial text-h1 md:text-display text-ivory-50 leading-[1.15]">
+              <blockquote className="font-display italic-editorial text-h1 md:text-display text-ivory-50 leading-[1.15]">
                 « {mantraText} »
               </blockquote>
 
@@ -316,11 +316,11 @@ function PillarCard({
   const [open, setOpen] = useState(false);
 
   return (
-    <article className="h-full relative group bg-night-900/45 backdrop-blur-md border border-signal-600/12 hover:bg-night-900/58 transition-colors duration-500 p-7 md:p-9 flex flex-col gap-5">
+    <article className="h-full relative group bg-night-900/45 backdrop-blur-md border border-white/[0.1] hover:border-aurora-400/25 hover:bg-night-900/58 transition-colors duration-500 p-7 md:p-9 flex flex-col gap-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="eyebrow-ritual text-ivory-400/70">{eyebrow}</p>
-          <h3 className="mt-2 font-serif text-h2 text-ivory-50 flex items-center gap-3 leading-tight">
+          <h3 className="mt-2 font-display font-light text-h2 text-ivory-50 flex items-center gap-3 leading-tight">
             <Icon className="w-5 h-5 text-aurora-400" aria-hidden="true" />
             {label}
           </h3>
@@ -336,7 +336,7 @@ function PillarCard({
 
       {/* "Pourquoi ça t'est dit" — révélé sur clic */}
       {why && (
-        <div className="border-t border-signal-600/15 pt-4 -mb-1">
+        <div className="border-t border-white/[0.09] pt-4 -mb-1">
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
@@ -386,7 +386,7 @@ function DosDontsColumn({ tone, title, items }: DosDontsColumnProps) {
   const isDos = tone === 'dos';
   return (
     <div>
-      <h4 className="flex items-center gap-3 font-serif text-h2 text-ivory-50 mb-5 leading-tight">
+      <h4 className="flex items-center gap-3 font-display font-light text-h2 text-ivory-50 mb-5 leading-tight">
         {isDos ? (
           <CheckCircle2 className="w-5 h-5 text-aurora-400" aria-hidden="true" />
         ) : (

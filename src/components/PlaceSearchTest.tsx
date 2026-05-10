@@ -36,7 +36,7 @@ export function PlaceSearchTest() {
           transition={{ delay: 0.1 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-4"
         >
-          <div className="bg-white/5 backdrop-blur-lg rounded-lg p-4 border border-white/10">
+          <div className="bg-white/5 backdrop-blur-lg rounded-lg p-4 border border-white/[0.1]">
             <div className="flex items-center gap-2 mb-2">
               <Search className="w-5 h-5 text-primary" />
               <span className="font-medium">Requêtes</span>
@@ -45,7 +45,7 @@ export function PlaceSearchTest() {
             <div className="text-sm text-gray-400">Total effectuées</div>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-lg rounded-lg p-4 border border-white/10">
+          <div className="bg-white/5 backdrop-blur-lg rounded-lg p-4 border border-white/[0.1]">
             <div className="flex items-center gap-2 mb-2">
               <Zap className="w-5 h-5 text-green-400" />
               <span className="font-medium">Performance</span>
@@ -56,7 +56,7 @@ export function PlaceSearchTest() {
             <div className="text-sm text-gray-400">Optimisation</div>
           </div>
 
-          <div className="bg-white/5 backdrop-blur-lg rounded-lg p-4 border border-white/10">
+          <div className="bg-white/5 backdrop-blur-lg rounded-lg p-4 border border-white/[0.1]">
             <div className="flex items-center gap-2 mb-2">
               <Clock className="w-5 h-5 text-blue-400" />
               <span className="font-medium">Dernière</span>
@@ -75,7 +75,7 @@ export function PlaceSearchTest() {
           transition={{ delay: 0.2 }}
           className="space-y-4"
         >
-          <div className="bg-white/5 backdrop-blur-lg rounded-lg p-6 border border-white/10">
+          <div className="bg-white/5 backdrop-blur-lg rounded-lg p-6 border border-white/[0.1]">
             <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
               <Database className="w-5 h-5 text-primary" />
               Test de Recherche

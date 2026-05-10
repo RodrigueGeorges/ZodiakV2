@@ -5,7 +5,7 @@ export const LogoTest: React.FC = () => {
   return (
     <div className="min-h-screen bg-cosmic-900 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl md:text-3xl font-bold font-cinzel text-primary mb-6 md:mb-8 text-center">
+        <h1 className="text-2xl md:text-3xl font-bold font-display text-primary mb-6 md:mb-8 text-center">
           Test du Nouveau Logo Cosmique
         </h1>
         

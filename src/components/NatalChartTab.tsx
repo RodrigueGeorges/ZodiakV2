@@ -141,7 +141,7 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
           <p className="eyebrow-ritual text-aurora-400/80 mb-3">
             {view === 'art' ? 'Œuvre cosmique' : 'Carte du ciel'}
           </p>
-          <h2 className="font-serif text-display text-ivory-50 mb-3 text-center leading-[0.95]">
+          <h2 className="font-display font-extralight text-display text-ivory-50 mb-3 text-center leading-[0.95] tracking-[-0.02em]">
             {view === 'art' ? (
               <>
                 Ta signature{' '}
@@ -163,14 +163,14 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
           {/* Toggle Art / Carte */}
           <div
             role="tablist"
-            className="flex items-center gap-1 p-1 mb-8 rounded-md bg-night-900/45 border border-signal-600/20"
+            className="flex items-center gap-1 p-1 mb-8 rounded-md bg-night-950/50 border border-white/[0.1] backdrop-blur-sm"
           >
             <button
               type="button"
               role="tab"
               aria-selected={view === 'art'}
               onClick={() => setView('art')}
-              className={`px-5 py-2 rounded-full text-caption font-serif transition-colors ${
+              className={`px-5 py-2 rounded-full text-caption font-sans transition-colors ${
                 view === 'art'
                   ? 'bg-aurora-400/15 text-ivory-50 border border-aurora-400/30'
                   : 'text-ivory-300 hover:text-ivory-50'
@@ -184,7 +184,7 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
               role="tab"
               aria-selected={view === 'wheel'}
               onClick={() => setView('wheel')}
-              className={`px-5 py-2 rounded-full text-caption font-serif transition-colors ${
+              className={`px-5 py-2 rounded-full text-caption font-sans transition-colors ${
                 view === 'wheel'
                   ? 'bg-aurora-400/15 text-ivory-50 border border-aurora-400/30'
                   : 'text-ivory-300 hover:text-ivory-50'
@@ -249,7 +249,7 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
             {loadingSummary ? (
               <SkeletonText lines={3} />
             ) : astroSummary ? (
-              <p className="text-body-lg leading-[1.7] text-ivory-100 italic-editorial font-serif">
+              <p className="text-body-lg leading-[1.72] text-ivory-100 italic-editorial font-light">
                 « {astroSummary.replace(/^([A-Z][a-z]+),/i, `Cher·e ${firstName},`)} »
               </p>
             ) : null}

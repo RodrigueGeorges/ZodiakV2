@@ -2,9 +2,9 @@ import { type CelestialMode } from '../lib/celestialMode';
 import { cn } from '../lib/utils';
 
 const MODES: { id: CelestialMode; label: string }[] = [
-  { id: 'stars', label: 'Star Effect' },
-  { id: 'cursor', label: 'Cursor Effect' },
-  { id: 'color', label: 'Color Effect' },
+  { id: 'stars', label: 'Étoiles' },
+  { id: 'cursor', label: 'Curseur' },
+  { id: 'color', label: 'Couleur' },
 ];
 
 interface CelestialModeDockProps {
@@ -33,9 +33,9 @@ export default function CelestialModeDock({
     >
       <div
         className={cn(
-          'pointer-events-auto flex items-center gap-0.5 rounded-full border border-white/20',
-          'bg-white/[0.08] backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.35)]',
-          'px-2 py-2.5',
+          'pointer-events-auto flex items-center gap-0.5 rounded-full border border-white/[0.11]',
+          'bg-night-950/55 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_8px_32px_rgba(0,0,0,0.4)]',
+          'px-1.5 py-2',
         )}
       >
         {MODES.map(({ id, label }) => {
@@ -48,11 +48,11 @@ export default function CelestialModeDock({
               aria-selected={active}
               onClick={() => onChange(id)}
               className={cn(
-                'rounded-full px-3.5 py-1.5 text-[13px] font-sans transition-colors duration-200',
-                'focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-300/50 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent',
+                'rounded-full px-3.5 py-1.5 text-caption font-sans tracking-tight transition-all duration-300 ease-brutal',
+                'focus:outline-none focus-visible:ring-2 focus-visible:ring-aurora-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
                 active
-                  ? 'font-semibold text-white'
-                  : 'font-normal text-zinc-400 hover:text-zinc-200',
+                  ? 'font-medium text-ivory-50 bg-aurora-400/18 border border-aurora-400/35 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]'
+                  : 'font-normal text-ivory-400 border border-transparent hover:text-ivory-100 hover:bg-white/[0.04]',
               )}
             >
               {label}

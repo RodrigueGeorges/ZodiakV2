@@ -106,7 +106,7 @@ export default function AddFriendForm({ onAdded, onCancel }: AddFriendFormProps)
           <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-1">
             Synastrie
           </p>
-          <h2 className="font-cinzel text-h2 text-ivory-50">Lis vos étoiles ensemble</h2>
+          <h2 className="font-display font-light text-h2 text-ivory-50 tracking-[-0.02em]">Lis vos étoiles ensemble</h2>
           <p className="text-caption text-ivory-300 mt-1">
             Quelques infos sur la personne — ses données restent privées.
           </p>
@@ -133,7 +133,7 @@ export default function AddFriendForm({ onAdded, onCancel }: AddFriendFormProps)
                   type="button"
                   whileTap={{ scale: 0.96 }}
                   onClick={() => setRelationship(r.key)}
-                  className={`rounded-2xl px-2 py-2 text-caption font-cinzel ring-1 transition ${
+                  className={`rounded-2xl px-2 py-2 text-caption font-mono uppercase tracking-wider ring-1 transition ${
                     active
                       ? 'bg-aurora-500/20 ring-aurora-400/50 text-ivory-50'
                       : 'bg-night-900/60 ring-night-700/70 text-ivory-300'

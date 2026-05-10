@@ -112,7 +112,7 @@ export function ShareModal({ isOpen, onClose, guidance, userName, url }: ShareMo
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
+          <h3 className="text-xl font-semibold font-display bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
             Partager ma guidance
           </h3>
           <button

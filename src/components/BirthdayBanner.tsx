@@ -36,7 +36,7 @@ export default function BirthdayBanner({
             </span>
           </div>
 
-          <h2 className="font-serif text-h1 md:text-display leading-[1.0]">
+          <h2 className="font-display text-h1 md:text-display leading-[1.0]">
             <span className="text-ivory-50">{firstName}, </span>
             <span className="italic-editorial text-aurora-400">
               aujourd'hui le ciel rejoue ta naissance.

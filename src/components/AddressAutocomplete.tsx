@@ -116,7 +116,7 @@ function AddressAutocomplete({
           className={cn(
             'w-full pl-12 pr-12 py-3 rounded-lg',
             'bg-white/5 backdrop-blur-lg',
-            'border border-white/10',
+            'border border-white/[0.1]',
             'text-white placeholder-gray-400',
             'focus:border-primary focus:ring-2 focus:ring-primary/50',
             'transition-all duration-200',

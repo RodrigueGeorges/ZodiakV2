@@ -16,7 +16,7 @@ interface StreakFlameProps {
 const sizeMap = {
   sm: { wrap: 'h-9 px-4 gap-2',   icon: 'w-3.5 h-3.5', count: 'text-caption' },
   md: { wrap: 'h-11 px-5 gap-2.5', icon: 'w-4 h-4',     count: 'text-body font-semibold' },
-  lg: { wrap: 'h-14 px-6 gap-3',  icon: 'w-5 h-5',     count: 'text-h3 font-serif' },
+  lg: { wrap: 'h-14 px-6 gap-3',  icon: 'w-5 h-5',     count: 'text-h3 font-display' },
 } as const;
 
 /**
@@ -40,7 +40,7 @@ export default function StreakFlame({
   const tone = useMemo(() => {
     if (willBreakSoon) {
       return {
-        bg: 'bg-night-900/40 border-signal-600/22 text-ivory-300',
+        bg: 'bg-night-900/40 border-white/[0.12] text-ivory-300',
         flame: 'text-ivory-400',
         glow: '',
       };
@@ -67,7 +67,7 @@ export default function StreakFlame({
       };
     }
     return {
-      bg: 'bg-night-900/40 border-signal-600/18 text-ivory-300',
+      bg: 'bg-night-900/40 border-white/[0.1] text-ivory-300',
       flame: 'text-ivory-400',
       glow: '',
     };

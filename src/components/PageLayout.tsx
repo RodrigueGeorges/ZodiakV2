@@ -16,7 +16,7 @@ interface PageLayoutProps {
   withAmbientOverlays?: boolean;
   title?: ReactNode;
   subtitle?: ReactNode;
-  eyebrow?: string;
+  eyebrow?: ReactNode;
   showLogo?: boolean;
   headerSlot?: ReactNode;
   children: ReactNode;
@@ -83,7 +83,7 @@ export default function PageLayout({
 
       <div
         className={cn(
-          'relative z-[1] isolate mx-auto px-5 md:px-10 pt-10 md:pt-20',
+          'relative z-[1] isolate mx-auto px-5 md:px-8 lg:px-12 pt-10 md:pt-16 lg:pt-20',
           fullHeight ? 'pb-6' : 'pb-32 md:pb-24',
           maxWidthClasses[maxWidth],
           contentClassName,
@@ -122,7 +122,7 @@ export default function PageLayout({
         <motion.main
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.65, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
         >
           {children}
         </motion.main>

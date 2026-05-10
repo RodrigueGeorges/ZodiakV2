@@ -7,7 +7,8 @@ import { Card } from '../components/ui/Card';
 import PremiumGate from '../components/PremiumGate';
 import { useAuth } from '../lib/hooks/useAuth';
 import { usePremium } from '../lib/hooks/usePremium';
-import { moonPhasesNextDays, nextKeyMoonDates } from '../lib/moonPhase';
+import { moonPhasesNextDays, nextKeyMoonDates, moonPhaseAt } from '../lib/moonPhase';
+import MoonPhaseVisual from '../components/MoonPhaseVisual';
 import { cn } from '../lib/utils';
 
 const formatDay = (iso: string) => {
@@ -52,7 +53,7 @@ export default function CalendarPage() {
             <Moon className="w-4 h-4" aria-hidden="true" />
             <span className="eyebrow-ritual">Lunaisons à venir</span>
           </div>
-          <h2 className="font-serif text-h2 text-ivory-50 leading-[0.95] mb-5">
+          <h2 className="font-display font-light text-h2 text-ivory-50 leading-[0.95] mb-5">
             Pose tes intentions{' '}
             <span className="italic-editorial text-aurora-400">au bon moment.</span>
           </h2>
@@ -65,11 +66,15 @@ export default function CalendarPage() {
                 transition={{ delay: i * 0.06 }}
                 className="flex items-center gap-3 p-3 rounded-md bg-night-900/60 border border-ivory-50/[0.06]"
               >
-                <span className="text-3xl" aria-hidden="true">
-                  {k.glyph}
-                </span>
+                <MoonPhaseVisual
+                  phase={moonPhaseAt(new Date(`${k.date}T12:00:00`))}
+                  size="md"
+                  variant="aurora"
+                  instrumentRing={false}
+                  className="shrink-0"
+                />
                 <div className="min-w-0">
-                  <p className="font-serif text-body text-ivory-50">{k.label}</p>
+                  <p className="text-body text-ivory-50 font-sans font-normal">{k.label}</p>
                   <p className="text-caption text-ivory-300 truncate">
                     {formatLong(k.date)}
                   </p>
@@ -94,7 +99,7 @@ export default function CalendarPage() {
             <CalendarDays className="w-4 h-4" aria-hidden="true" />
             <span className="eyebrow-ritual">Trente jours</span>
           </div>
-          <h2 className="font-serif text-h2 text-ivory-50 leading-[0.95] mb-5">
+          <h2 className="font-display font-light text-h2 text-ivory-50 leading-[0.95] mb-5">
             Ton mois{' '}
             <span className="italic-editorial text-aurora-400">cosmique.</span>
           </h2>
@@ -123,9 +128,13 @@ export default function CalendarPage() {
                   aria-label={`${formatLong(p.date)} — ${p.label}`}
                   title={`${formatLong(p.date)} — ${p.label}`}
                 >
-                  <span className="text-xl leading-none" aria-hidden="true">
-                    {p.glyph}
-                  </span>
+                  <MoonPhaseVisual
+                    phase={p}
+                    size="sm"
+                    variant="aurora"
+                    instrumentRing={false}
+                    className="scale-[0.92]"
+                  />
                   <span className="text-micro tabular-nums text-ivory-300">
                     {formatDay(p.date)}
                   </span>

@@ -296,7 +296,7 @@ export default function ZodiacWheel({
         <motion.div
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 px-3 py-1.5 rounded-full bg-night-900/95 border border-aurora-500/30 text-caption text-ivory-100 font-cinzel shadow-card backdrop-blur-md"
+          className="pointer-events-none absolute left-1/2 top-3 -translate-x-1/2 px-3 py-1.5 rounded-full bg-night-900/95 border border-aurora-500/30 text-caption text-ivory-100 font-mono uppercase tracking-[0.14em] backdrop-blur-md"
         >
           {hover}
         </motion.div>

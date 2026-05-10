@@ -134,7 +134,7 @@ export default function ReferralCard({
               <p className="eyebrow-ritual text-aurora-400/80 mb-2">
                 Parrainage · gagnant-gagnant
               </p>
-              <h3 className="font-serif text-h1 text-ivory-50 leading-tight">
+              <h3 className="font-display font-extralight text-h1 text-ivory-50 leading-tight tracking-[-0.02em]">
                 Invite, <span className="italic-editorial text-aurora-400">gagnez ensemble.</span>
               </h3>
               <p className="mt-3 text-caption text-ivory-300/80 max-w-md italic-editorial">
@@ -147,7 +147,7 @@ export default function ReferralCard({
 
           {/* Code + bouton copier */}
           <div className="flex flex-col sm:flex-row gap-2 mb-7">
-            <div className="flex-1 flex items-center justify-between gap-3 px-4 h-12 border border-signal-600/20 font-mono text-caption text-ivory-50 bg-night-900/40 rounded-sm">
+            <div className="flex-1 flex items-center justify-between gap-3 px-4 h-12 border border-white/[0.11] font-mono text-caption text-ivory-50 bg-night-950/45 rounded-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
               <span className="truncate">{url}</span>
             </div>
             <Button
@@ -206,7 +206,7 @@ interface StatProps {
 }
 function Stat({ icon, label, value, accent }: StatProps) {
   return (
-    <div className="border border-signal-600/15 px-3 py-4 text-center rounded-sm">
+    <div className="border border-white/[0.1] px-3 py-4 text-center rounded-sm bg-night-950/20">
       <div className="flex items-center justify-center gap-1.5 text-aurora-400 mb-2">
         {icon}
         <span className="eyebrow-ritual text-ivory-400/80">{label}</span>
@@ -214,8 +214,8 @@ function Stat({ icon, label, value, accent }: StatProps) {
       <p
         className={
           accent
-            ? 'font-serif text-h1 text-aurora-400 tabular-nums leading-none'
-            : 'font-serif text-h1 text-ivory-50 tabular-nums leading-none'
+            ? 'font-display font-extralight text-h1 text-aurora-400 tabular-nums leading-none'
+            : 'font-display font-extralight text-h1 text-ivory-50 tabular-nums leading-none'
         }
       >
         {value}

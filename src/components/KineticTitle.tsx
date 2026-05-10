@@ -28,7 +28,7 @@ export default function KineticTitle({
 }: KineticTitleProps) {
   let wordIndex = 0;
   return (
-    <h1 className={cn('font-cinzel leading-[1.05]', className)}>
+    <h1 className={cn('font-display font-light leading-[1.05]', className)}>
       {lines.map((line, lineIdx) => (
         <span
           key={lineIdx}

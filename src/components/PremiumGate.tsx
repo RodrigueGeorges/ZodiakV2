@@ -85,7 +85,7 @@ export default function PremiumGate({
               <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-1">
                 Premium
               </p>
-              <h3 className="font-cinzel text-h3 text-ivory-50">{title}</h3>
+              <h3 className="font-display font-medium text-h3 text-ivory-50">{title}</h3>
               <p className="text-caption text-ivory-300 mt-2 max-w-sm">{description}</p>
             </div>
             <Button

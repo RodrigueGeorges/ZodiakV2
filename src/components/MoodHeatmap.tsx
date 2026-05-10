@@ -87,7 +87,7 @@ export default function MoodHeatmap({
             <p className="eyebrow-ritual text-aurora-400/80 mb-3">
               {days} derniers jours
             </p>
-            <h3 className="font-serif text-h1 text-ivory-50 leading-tight">
+            <h3 className="font-display text-h1 text-ivory-50 leading-tight">
               Tes vagues <span className="italic-editorial text-aurora-400">intérieures.</span>
             </h3>
             <p className="mt-3 text-caption text-ivory-300/80 italic-editorial">

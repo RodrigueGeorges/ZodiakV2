@@ -24,7 +24,7 @@ function TopNavBar() {
 
   return (
     <header className="hidden md:block sticky top-0 z-40">
-      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-night-950/95 via-night-950/75 to-transparent backdrop-blur-md border-b border-signal-600/10" />
+      <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-night-950/95 via-night-950/75 to-transparent backdrop-blur-md border-b border-white/[0.09]" />
       <nav
         aria-label="Navigation principale"
         className="relative mx-auto max-w-7xl flex items-center justify-between px-6 lg:px-12 py-5"
@@ -35,13 +35,13 @@ function TopNavBar() {
           aria-label="Accueil Zodiak"
         >
           <Logo size="sm" />
-          <span className="font-serif text-h3 text-ivory-50 tracking-tight group-hover:text-signal-300 transition-colors duration-200 ease-brutal">
+          <span className="font-display text-h3 text-ivory-50 tracking-[-0.02em] font-medium group-hover:text-aurora-400 transition-colors duration-300 ease-brutal">
             Zodiak
           </span>
         </Link>
 
         <div
-          className="flex items-center gap-1 p-1.5 rounded-md bg-night-900/55 border border-signal-600/20 backdrop-blur-md"
+          className="flex items-center gap-1 p-1.5 rounded-md bg-night-950/55 border border-white/[0.1] backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"
           role="tablist"
         >
           {NAV.map((item) => {
@@ -58,9 +58,9 @@ function TopNavBar() {
                   navigate(item.path);
                 }}
                 className={cn(
-                  'relative flex items-center gap-2 px-4 py-2 rounded-md font-serif text-caption transition-colors duration-200 ease-brutal',
-                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-signal-400',
-                  active ? 'text-ivory-50' : 'text-ivory-300 hover:text-ivory-50',
+                  'relative flex items-center gap-2 px-4 py-2 rounded-md font-sans text-caption transition-colors duration-300 ease-brutal',
+                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
+                  active ? 'text-ivory-50' : 'text-ivory-400 hover:text-ivory-100',
                 )}
               >
                 {active && (
@@ -71,7 +71,7 @@ function TopNavBar() {
                       stiffness: 380,
                       damping: 32,
                     }}
-                    className="absolute inset-0 rounded-md bg-signal-400/10 border border-signal-400/30"
+                    className="absolute inset-0 rounded-md bg-aurora-400/12 border border-aurora-400/35"
                     aria-hidden="true"
                   />
                 )}

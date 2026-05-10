@@ -41,7 +41,7 @@ export default function FriendCard({ friend, onClick, onDelete, className }: Fri
       className={cn('relative overflow-hidden group', className)}
     >
       <div className="relative p-6 flex items-center gap-5">
-        <div className="w-14 h-14 rounded-full bg-aurora-400/15 border border-aurora-400/30 flex items-center justify-center font-serif text-h3 text-ivory-50">
+        <div className="w-14 h-14 rounded-full bg-aurora-400/15 border border-aurora-400/30 flex items-center justify-center font-display text-h3 text-ivory-50">
           {friend.avatar_emoji ? (
             <span aria-hidden="true">{friend.avatar_emoji}</span>
           ) : (
@@ -50,7 +50,7 @@ export default function FriendCard({ friend, onClick, onDelete, className }: Fri
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-3 mb-1">
-            <p className="font-serif text-body-lg text-ivory-50 truncate leading-tight">
+            <p className="font-display text-body-lg text-ivory-50 truncate leading-tight">
               {friend.name}
             </p>
             {friend.relationship && (
@@ -65,7 +65,7 @@ export default function FriendCard({ friend, onClick, onDelete, className }: Fri
           {score !== null && (
             <div className="mt-3 flex items-center gap-3">
               <GuidanceMeter score={score} className="max-w-[160px]" />
-              <span className="font-serif text-caption text-aurora-400 tabular-nums">
+              <span className="font-display text-caption text-aurora-400 tabular-nums">
                 {score}
               </span>
             </div>

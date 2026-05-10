@@ -128,7 +128,7 @@ export function PlaceAutocomplete({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute z-50 w-full mt-2 bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-xl border border-white/10 max-h-60 overflow-auto"
+            className="absolute z-50 w-full mt-2 bg-gray-900/90 backdrop-blur-lg rounded-lg shadow-xl border border-white/[0.1] overflow-auto"
           >
             {loading && !places.length ? (
               <div className="px-4 py-8 text-gray-400 text-center flex items-center justify-center gap-2">

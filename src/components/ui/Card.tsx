@@ -15,11 +15,11 @@ export interface CardProps extends Omit<HTMLMotionProps<'div'>, 'ref'> {
 
 const variantStyles: Record<NonNullable<CardProps['variant']>, string> = {
   surface:
-    'bg-white/[0.04] border border-white/10 backdrop-blur-md',
+    'bg-white/[0.04] border border-white/[0.1] backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]',
   elevated:
-    'bg-white/[0.06] border border-white/14 backdrop-blur-md shadow-editorial shadow-[inset_0_1px_0_rgba(255,255,255,0.06),inset_0_-1px_0_rgba(0,0,0,0.5)]',
+    'bg-white/[0.06] border border-white/[0.12] backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.45)]',
   ghost:
-    'bg-transparent border border-white/10',
+    'bg-transparent border border-white/[0.09]',
 };
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
@@ -65,7 +65,7 @@ export function CardBody({ className, children, ...rest }: CardSubProps) {
 export function CardFooter({ className, children, ...rest }: CardSubProps) {
   return (
     <div
-      className={cn('px-7 py-4 border-t border-white/10', className)}
+      className={cn('px-7 py-4 border-t border-white/[0.09]', className)}
       {...rest}
     >
       {children}

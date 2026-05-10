@@ -99,8 +99,7 @@ a {
 
   /* Helpers pages (titres centrés, noms de classes hérités `.card-aurora`, etc.) */
   .page-title {
-    @apply font-sans font-extralight text-display text-ivory-50 text-center tracking-tight;
-    letter-spacing: -0.03em;
+    @apply font-display font-extralight text-display text-ivory-50 text-center tracking-[-0.02em];
   }
   .page-subtitle {
     @apply font-sans text-body-lg text-center mt-3 mb-6 font-light;
@@ -108,9 +107,10 @@ a {
   }
 
   .card-aurora {
-    @apply rounded-sm backdrop-blur-md transition-colors duration-200 ease-brutal border;
+    @apply rounded-sm backdrop-blur-md transition-colors duration-300 ease-brutal border;
     border-color: rgba(255, 255, 255, 0.1);
     background-color: rgba(255, 255, 255, 0.04);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
   }
   .card-aurora:hover {
     border-color: rgba(255, 255, 255, 0.18);
@@ -371,6 +371,48 @@ a {
   height: 70%;
   background: radial-gradient(ellipse 70% 55% at 50% 0%, rgba(56, 189, 248, 0.07), transparent 70%);
   pointer-events: none;
+}
+
+/* Bloc lunaire — composition calme, une seule “boîte” lisible */
+.harmony-lunar {
+  width: 100%;
+  max-width: 40rem;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(
+    155deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.03) 42%,
+    rgba(0, 0, 0, 0.22) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 28px 72px -40px rgba(0, 0, 0, 0.65);
+  padding: clamp(1.5rem, 4.5vw, 2.5rem) clamp(1.25rem, 3.5vw, 2rem);
+  backdrop-filter: blur(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .harmony-lunar {
+    backdrop-filter: none;
+  }
+}
+
+/* Séparateur vertical doux (desktop) */
+.harmony-vdivider {
+  width: 1px;
+  min-height: 5.25rem;
+  align-self: center;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(56, 189, 248, 0.28) 48%,
+    rgba(255, 255, 255, 0.14) 50%,
+    rgba(56, 189, 248, 0.22) 52%,
+    transparent 100%
+  );
 }
 
 .safe-top    { padding-top:    env(safe-area-inset-top);    }

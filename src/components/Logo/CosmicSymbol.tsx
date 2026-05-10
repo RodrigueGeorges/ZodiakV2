@@ -1,4 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion';
+import { useId, useMemo } from 'react';
 
 /**
  * Glyphe marque : orbite tronquée + cardinaux discrets + foyer glace (#38bdf8).
@@ -28,6 +29,10 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
   const px = sizeMap[size];
   const prefersReducedMotion = useReducedMotion();
   const runMotion = Boolean(animated && !prefersReducedMotion);
+  const rawId = useId();
+  const uid = useMemo(() => rawId.replace(/[^a-zA-Z0-9]/g, ''), [rawId]);
+  const idFrost = `zk-mark-frost-${uid}`;
+  const idCore = `zk-mark-core-${uid}`;
 
   return (
     <motion.svg
@@ -43,19 +48,25 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
       transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
     >
       <defs>
-        <linearGradient id="zk-mark-frost" x1="14" y1="14" x2="50" y2="52" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#fafafa" stopOpacity={0.95} />
-          <stop offset="100%" stopColor="#38bdf8" />
+        <linearGradient id={idFrost} x1="14" y1="14" x2="50" y2="52" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#f8fafc" stopOpacity={0.98} />
+          <stop offset="52%" stopColor="#7dd3fc" stopOpacity={0.95} />
+          <stop offset="100%" stopColor="#0ea5e9" />
         </linearGradient>
-        <radialGradient id="zk-mark-core" cx="50%" cy="45%" r="55%">
-          <stop offset="0%" stopColor="#e0f2fe" stopOpacity={1} />
-          <stop offset="55%" stopColor="#38bdf8" />
-          <stop offset="100%" stopColor="#0369a1" stopOpacity={0.35} />
+        <radialGradient id={idCore} cx="50%" cy="45%" r="55%">
+          <stop offset="0%" stopColor="#f0f9ff" stopOpacity={1} />
+          <stop offset="48%" stopColor="#38bdf8" />
+          <stop offset="100%" stopColor="#0369a1" stopOpacity={0.45} />
+        </radialGradient>
+        <radialGradient id={`zk-mark-halo-${uid}`} cx="50%" cy="50%" r="50%">
+          <stop offset="55%" stopColor="rgba(56, 189, 248, 0)" />
+          <stop offset="100%" stopColor="rgba(56, 189, 248, 0.12)" />
         </radialGradient>
       </defs>
 
-      {/* Foyer diffus très bas */}
-      <circle cx="32" cy="32" r="29" fill="rgba(56, 189, 248, 0.07)" />
+      {/* Foyer + halo lecture */}
+      <circle cx="32" cy="32" r="30.5" fill={`url(#zk-mark-halo-${uid})`} opacity={0.95} />
+      <circle cx="32" cy="32" r="29" fill="rgba(56, 189, 248, 0.055)" />
 
       {/* Orbite : arc incomplet */}
       {runMotion ? (
@@ -73,7 +84,7 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
             cy="32"
             r="24"
             fill="none"
-            stroke="url(#zk-mark-frost)"
+            stroke={`url(#${idFrost})`}
             strokeWidth="1.35"
             strokeLinecap="round"
             strokeDasharray={`${circleLen * 0.62} ${circleLen}`}
@@ -95,7 +106,7 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
             cy="32"
             r="24"
             fill="none"
-            stroke="url(#zk-mark-frost)"
+            stroke={`url(#${idFrost})`}
             strokeWidth="1.35"
             strokeLinecap="round"
             strokeDasharray={`${circleLen * 0.62} ${circleLen}`}
@@ -109,9 +120,9 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
         cy="32"
         r="16.5"
         fill="none"
-        stroke="#7dd3fc"
-        strokeOpacity={0.24}
-        strokeWidth="0.5"
+        stroke="#bae6fd"
+        strokeOpacity={0.18}
+        strokeWidth="0.45"
       />
 
       {/* Cardinals — traits d’instrument */}
@@ -127,8 +138,8 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
           y1={y1}
           x2={x2}
           y2={y2}
-          stroke="#7dd3fc"
-          strokeOpacity={0.52}
+          stroke="#bae6fd"
+          strokeOpacity={0.42}
           strokeWidth="1.1"
           strokeLinecap="round"
           initial={composeOnLoad ? { opacity: 0 } : { opacity: 1 }}
@@ -147,7 +158,7 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
         cy="32"
         r="5.5"
         fill="none"
-        stroke="url(#zk-mark-core)"
+        stroke={`url(#${idCore})`}
         strokeOpacity={0.35}
         strokeWidth="0.6"
         initial={composeOnLoad ? { scale: 0.85, opacity: 0 } : { opacity: 0.35 }}
@@ -171,7 +182,7 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
         cx="32"
         cy="32"
         r="2.15"
-        fill="url(#zk-mark-core)"
+        fill={`url(#${idCore})`}
         initial={composeOnLoad ? { scale: 0, opacity: 0 } : { scale: 1, opacity: 1 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{
@@ -182,16 +193,14 @@ export const CosmicSymbol: React.FC<CosmicSymbolProps> = ({
       />
       <circle cx="32" cy="32" r="0.95" fill="#fafafa" fillOpacity={0.95} />
 
-      {/* Repère résiduel (étoile de mesure — discret, signal) */}
-      <motion.circle
-        cx="50"
-        cy="15"
-        r="0.9"
+      {/* Repère nord — losange microscopique (évite le point « pastille » cheap) */}
+      <motion.path
+        d="M50 13.4l1.05 1.6-1.05 1.6-1.05-1.6 1.05-1.6z"
         fill="#38bdf8"
-        fillOpacity={0.85}
-        initial={composeOnLoad ? { opacity: 0 } : { opacity: 0.85 }}
+        fillOpacity={0.75}
+        initial={composeOnLoad ? { opacity: 0 } : { opacity: 0.75 }}
         animate={
-          runMotion ? { opacity: [0.45, 1, 0.45] } : { opacity: 0.85 }
+          runMotion ? { opacity: [0.35, 0.85, 0.35] } : { opacity: 0.75 }
         }
         transition={
           runMotion

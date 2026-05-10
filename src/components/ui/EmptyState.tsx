@@ -42,7 +42,7 @@ export default function EmptyState({
           {icon}
         </div>
       )}
-      <h3 className="font-cinzel text-h3 text-ivory-50">{title}</h3>
+      <h3 className="font-display font-medium text-h3 text-ivory-50">{title}</h3>
       {description && (
         <p className="text-body text-ivory-300 max-w-md">{description}</p>
       )}

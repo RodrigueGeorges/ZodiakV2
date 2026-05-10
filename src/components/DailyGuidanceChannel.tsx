@@ -146,7 +146,7 @@ export default function DailyGuidanceChannel({
           </div>
           <div>
             <p className="eyebrow-ritual text-aurora-400/80">Quotidien</p>
-            <h3 className="font-serif text-h2 text-ivory-50 leading-tight mt-1">
+            <h3 className="font-display font-light text-h2 text-ivory-50 leading-tight mt-1">
               Ma guidance du matin
             </h3>
           </div>
@@ -200,7 +200,7 @@ export default function DailyGuidanceChannel({
                       onClick={() => onChannelChange(id)}
                       aria-pressed={active}
                       className={cn(
-                        'flex items-center justify-center gap-2 py-3 rounded-xl border text-caption font-cinzel transition-colors',
+                        'flex items-center justify-center gap-2 py-3 rounded-xl border text-caption font-mono uppercase tracking-[0.14em] transition-colors',
                         active
                           ? accent === 'aurora'
                             ? 'bg-aurora-500/15 border-aurora-400/50 text-aurora-100'

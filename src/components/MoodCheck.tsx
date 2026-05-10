@@ -57,7 +57,7 @@ export default function MoodCheck({
             <p className="eyebrow-ritual text-aurora-400/80 mb-4">
               Avant ta guidance
             </p>
-            <h2 className="font-serif text-h1 text-ivory-50 leading-tight">
+            <h2 className="font-display font-light text-h1 text-ivory-50 leading-tight">
               Comment tu te sens, <span className="italic-editorial text-aurora-400">là ?</span>
             </h2>
             <p className="text-caption text-ivory-300/80 italic-editorial mt-3">
@@ -84,7 +84,7 @@ export default function MoodCheck({
                   'relative px-3 py-4 flex flex-col items-center gap-2 border transition-colors duration-300',
                   active
                     ? 'border-aurora-400/60 bg-aurora-400/5'
-                    : 'border-signal-600/20 bg-night-900/40 hover:border-signal-400/35',
+                    : 'border-white/[0.11] bg-night-900/40 hover:border-aurora-400/35',
                   isSubmitting && 'opacity-70',
                   'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-300',
                 )}
@@ -92,7 +92,7 @@ export default function MoodCheck({
                 <span className="text-2xl" aria-hidden="true">
                   {m.emoji}
                 </span>
-                <span className="font-serif text-caption text-ivory-50">
+                <span className="font-sans text-caption font-medium text-ivory-50">
                   {m.label}
                 </span>
               </motion.button>

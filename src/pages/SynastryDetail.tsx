@@ -137,7 +137,7 @@ export default function SynastryDetail() {
                     damping: 18,
                     delay: 0.2,
                   }}
-                  className="font-serif text-[88px] md:text-[120px] leading-[0.95] text-aurora-400 tabular-nums"
+                  className="font-display text-[88px] md:text-[120px] leading-[0.95] text-aurora-400 tabular-nums"
                   aria-label={`Score ${score} sur 100`}
                 >
                   <AnimatedCounter
@@ -147,7 +147,7 @@ export default function SynastryDetail() {
                     damping={20}
                   />
                 </motion.div>
-                <p className="mt-2 font-serif text-h3 italic-editorial text-ivory-50">{verdict}</p>
+                <p className="mt-2 font-display text-h3 italic-editorial text-ivory-50">{verdict}</p>
                 <div className="mt-5 w-full max-w-md">
                   <GuidanceMeter score={score} showLegend />
                 </div>
@@ -238,7 +238,7 @@ function Section({ icon, eyebrow, title, tone, aspects, who1, who2 }: SectionPro
             {icon}
             <span className="eyebrow-ritual">{eyebrow}</span>
           </div>
-          <h3 className="font-serif text-h3 text-ivory-50 mb-5">{title}</h3>
+          <h3 className="font-display text-h3 text-ivory-50 mb-5">{title}</h3>
           <ul className="space-y-2.5">
             {aspects.map((a, i) => (
               <li

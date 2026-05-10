@@ -63,7 +63,7 @@ export function ApiDashboard({ className }: ApiDashboardProps) {
 
   if (isLoading) {
     return (
-      <div className={cn('p-6 bg-gray-900/50 backdrop-blur-lg rounded-lg border border-white/10', className)}>
+      <div className={cn('p-6 bg-gray-900/50 backdrop-blur-lg rounded-lg border border-white/[0.1]', className)}>
         <div className="flex items-center justify-center">
           <Activity className="w-6 h-6 animate-spin text-primary" />
           <span className="ml-2 text-white">Chargement du dashboard API...</span>
@@ -74,7 +74,7 @@ export function ApiDashboard({ className }: ApiDashboardProps) {
 
   if (!healthReport) {
     return (
-      <div className={cn('p-6 bg-gray-900/50 backdrop-blur-lg rounded-lg border border-white/10', className)}>
+      <div className={cn('p-6 bg-gray-900/50 backdrop-blur-lg rounded-lg border border-white/[0.1]', className)}>
         <div className="text-center text-red-400">
           <AlertTriangle className="w-8 h-8 mx-auto mb-2" />
           <p>Impossible de charger le rapport de santé des APIs</p>
@@ -121,7 +121,7 @@ export function ApiDashboard({ className }: ApiDashboardProps) {
             className="p-4 bg-gradient-to-br from-cosmic-800/80 to-cosmic-900/80 backdrop-blur-lg rounded-lg border border-primary/20 shadow-xl"
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold font-cinzel bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text capitalize">{service.service}</h3>
+              <h3 className="font-semibold font-display capitalize bg-gradient-to-r from-primary to-secondary text-transparent bg-clip-text">
               {getStatusIcon(service.status)}
             </div>
             <div className="space-y-2 text-sm">
@@ -152,7 +152,7 @@ export function ApiDashboard({ className }: ApiDashboardProps) {
         className="grid grid-cols-1 md:grid-cols-2 gap-6"
       >
         {/* Performance globale */}
-        <div className="p-6 bg-gray-900/50 backdrop-blur-lg rounded-lg border border-white/10">
+        <div className="p-6 bg-gray-900/50 backdrop-blur-lg rounded-lg border border-white/[0.1]">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Activity className="w-5 h-5 text-primary" />
             Performance Globale
@@ -176,7 +176,7 @@ export function ApiDashboard({ className }: ApiDashboardProps) {
         </div>
 
         {/* Cache */}
-        <div className="p-6 bg-gray-900/50 backdrop-blur-lg rounded-lg border border-white/10">
+        <div className="p-6 bg-gray-900/50 backdrop-blur-lg rounded-lg border border-white/[0.1]">
           <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
             <Database className="w-5 h-5 text-primary" />
             Cache
@@ -203,7 +203,7 @@ export function ApiDashboard({ className }: ApiDashboardProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="p-6 bg-gray-900/50 backdrop-blur-lg rounded-lg border border-white/10"
+        className="p-6 bg-gray-900/50 backdrop-blur-lg rounded-lg border border-white/[0.1]"
       >
         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <Clock className="w-5 h-5 text-primary" />

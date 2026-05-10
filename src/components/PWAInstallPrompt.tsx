@@ -168,7 +168,7 @@ export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptPr
                   <div>
                     <p
                       id="pwa-install-title"
-                      className="font-serif text-body-lg text-ivory-50 leading-tight"
+                      className="font-display font-light text-body-lg text-ivory-50 leading-tight"
                     >
                       Installe Zodiak sur iPhone
                     </p>
@@ -179,7 +179,7 @@ export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptPr
                 </div>
                 <ol className="space-y-3 mt-4 text-caption text-ivory-200">
                   <li className="flex items-center gap-3">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-aurora-400/40 text-aurora-400 font-serif">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-aurora-400/40 text-aurora-400 font-sans font-medium text-caption tabular-nums">
                       1
                     </span>
                     <span>
@@ -189,7 +189,7 @@ export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptPr
                     </span>
                   </li>
                   <li className="flex items-center gap-3">
-                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-aurora-400/40 text-aurora-400 font-serif">
+                    <span className="inline-flex items-center justify-center w-6 h-6 rounded-full border border-aurora-400/40 text-aurora-400 font-sans font-medium text-caption tabular-nums">
                       2
                     </span>
                     <span>
@@ -208,7 +208,7 @@ export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptPr
                 <div className="flex-1">
                   <p
                     id="pwa-install-title"
-                    className="font-serif text-body-lg text-ivory-50 leading-tight"
+                    className="font-display font-light text-body-lg text-ivory-50 leading-tight"
                   >
                     Installe Zodiak
                   </p>

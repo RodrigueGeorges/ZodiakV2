@@ -27,7 +27,7 @@ export default function BadgesGrid({ earned, className }: BadgesGridProps) {
           <p className="eyebrow-ritual text-aurora-400/80 mb-3">
             Marqueurs cosmiques
           </p>
-          <h3 className="font-serif text-h1 text-ivory-50 leading-tight">
+          <h3 className="font-display font-extralight text-h1 text-ivory-50 leading-tight tracking-[-0.02em]">
             <span className="text-aurora-400">{earned.length}</span>
             <span className="text-ivory-400/60"> / {BADGES.length}</span>
           </h3>
@@ -60,7 +60,7 @@ function BadgeTile({ badge, got, index }: TileProps) {
         'relative aspect-square rounded-md flex flex-col items-center justify-center gap-2 border backdrop-blur-md',
         got
           ? `${tone.bg} ${tone.ring}`
-          : 'bg-night-900/40 border-signal-600/18 grayscale opacity-40',
+          : 'bg-night-900/40 border-white/[0.08] grayscale opacity-40',
       )}
       title={got ? `${badge.name} — ${badge.description}` : '— Marqueur à découvrir —'}
     >
@@ -72,7 +72,7 @@ function BadgeTile({ badge, got, index }: TileProps) {
       </span>
       <span
         className={cn(
-          'px-1 text-center text-micro leading-tight font-serif',
+          'px-1 text-center text-micro leading-tight font-sans font-medium',
           got ? 'text-ivory-50' : 'text-ivory-400/60',
         )}
       >

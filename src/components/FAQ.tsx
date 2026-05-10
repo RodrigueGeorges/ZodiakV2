@@ -21,7 +21,7 @@ export default function FAQ({ items, className }: FAQProps) {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   return (
-    <ul className={cn('divide-y divide-signal-600/12', className)}>
+    <ul className={cn('divide-y divide-white/[0.07]', className)}>
       {items.map((item, i) => {
         const open = openIdx === i;
         return (
@@ -30,14 +30,14 @@ export default function FAQ({ items, className }: FAQProps) {
               type="button"
               onClick={() => setOpenIdx(open ? null : i)}
               aria-expanded={open}
-              className="w-full flex items-start justify-between gap-5 py-7 md:py-8 text-left group"
+              className="w-full flex items-start justify-between gap-5 py-7 md:py-8 text-left group transition-colors duration-200 ease-brutal"
             >
               <span
                 className={cn(
-                  'font-serif text-h2 md:text-h1 transition-colors leading-tight',
+                  'font-display font-light text-h2 md:text-h1 transition-colors leading-[1.12]',
                   open
-                    ? 'text-aurora-400 italic-editorial'
-                    : 'text-ivory-100 group-hover:text-aurora-300',
+                    ? 'text-aurora-300 italic-editorial'
+                    : 'text-ivory-100 group-hover:text-aurora-200/95',
                 )}
               >
                 {item.q}
@@ -45,10 +45,10 @@ export default function FAQ({ items, className }: FAQProps) {
               <span
                 aria-hidden="true"
                 className={cn(
-                  'flex-shrink-0 mt-2 w-8 h-8 rounded-md border flex items-center justify-center transition-all duration-200 ease-brutal',
+                  'flex-shrink-0 mt-2 w-9 h-9 rounded-sm border flex items-center justify-center transition-all duration-300 ease-brutal',
                   open
-                    ? 'border-aurora-400/60 rotate-45'
-                    : 'border-white/15 group-hover:border-white/35',
+                    ? 'border-aurora-400/50 rotate-45 bg-aurora-400/8'
+                    : 'border-white/[0.11] bg-white/[0.02] group-hover:border-white/25',
                 )}
               >
                 <Plus
@@ -68,7 +68,7 @@ export default function FAQ({ items, className }: FAQProps) {
                   transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                   className="overflow-hidden"
                 >
-                  <div className="pb-8 pr-14 text-body-lg text-ivory-200/90 leading-[1.7] drop-cap-edit">
+                  <div className="pb-8 pr-14 text-body-lg text-ivory-300/95 font-light leading-[1.74] drop-cap-edit">
                     {item.a}
                   </div>
                 </motion.div>

@@ -23,6 +23,7 @@ import CosmicLoader from '../components/CosmicLoader';
 import { useAuth } from '../lib/hooks/useAuth';
 import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
 import { moonPhaseAt } from '../lib/moonPhase';
+import MoonPhaseVisual from '../components/MoonPhaseVisual';
 import { cn } from '../lib/utils';
 
 const heroReveal = {
@@ -102,7 +103,7 @@ export default function Home() {
           'fixed z-30 top-0 inset-x-0 px-6 md:px-10 lg:px-14 py-4 md:py-5 flex items-center justify-between border-b transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-brutal safe-top',
           headerSolid
             ? 'border-white/[0.14] bg-black/60 backdrop-blur-xl shadow-[0_1px_0_rgba(56,189,248,0.07)]'
-            : 'border-white/10 bg-black/15 backdrop-blur-lg',
+            : 'border-white/[0.1] bg-black/15 backdrop-blur-lg',
         )}
       >
         <Link
@@ -222,27 +223,51 @@ export default function Home() {
       </section>
 
       {/* Réassurance */}
-      <section className="relative z-10 border-y border-white/10 py-12 md:py-14 px-6 reassurance-band">
-        <p className="max-w-2xl mx-auto text-center text-body-lg text-ivory-300/95 leading-relaxed">
-          Construit sur{' '}
-          <span className="text-ivory-100 font-medium">ton thème de naissance</span>
-          , pas sur un texte générique. Données hébergées en{' '}
-          <span className="text-aurora-300/95">Europe</span>
-          .
-        </p>
+      <section className="relative z-10 border-t border-white/[0.09] py-14 md:py-16 px-6 reassurance-band">
+        <div className="max-w-2xl mx-auto flex flex-col items-center gap-4">
+          <span
+            aria-hidden
+            className="h-px w-16 bg-gradient-to-r from-transparent via-aurora-400/35 to-transparent"
+          />
+          <p className="text-center text-body-lg text-ivory-300/95 leading-[1.75] font-light">
+            Construit sur{' '}
+            <span className="text-ivory-100 font-medium">ton thème de naissance</span>
+            , pas sur un texte générique. Données hébergées en{' '}
+            <span className="text-aurora-200/90">Europe</span>.
+          </p>
+        </div>
       </section>
 
-      {/* Ciel du jour — typographie + glyphe */}
+      {/* Ciel du jour — composition dans un seul bloc */}
       <Chapter
         eyebrow="Ce qui domine aujourd'hui"
         title={
-          <>
-            <span className="inline-block mr-3 align-middle text-[0.85em] text-aurora-300">
-              {moonNow.glyph}
-            </span>
-            <span className="italic-editorial text-aurora-400">{moonNow.label}</span>
-            <span className="text-ivory-400/80">.</span>
-          </>
+          <div className="harmony-lunar">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-7 md:gap-5 lg:gap-8">
+              <div className="flex justify-center md:shrink-0">
+                <MoonPhaseVisual
+                  phase={moonNow}
+                  size="lg"
+                  variant="aurora"
+                  instrumentRing
+                  className="drop-shadow-[0_0_40px_rgba(56,189,248,0.2)]"
+                />
+              </div>
+              <div
+                className="hidden md:block harmony-vdivider mx-1 lg:mx-2"
+                aria-hidden
+              />
+              <div className="min-w-0 space-y-2.5 text-center md:text-left">
+                <span className="block font-mono text-[10px] uppercase tracking-[0.26em] text-ivory-500">
+                  Phase observée
+                </span>
+                <span className="block font-display font-light text-[clamp(1.7rem,4.2vw,2.75rem)] leading-[1.06] tracking-[-0.022em] text-ivory-50">
+                  <span className="italic-editorial text-aurora-300">{moonNow.label}</span>
+                  <span className="text-ivory-500/65">.</span>
+                </span>
+              </div>
+            </div>
+          </div>
         }
         body={
           <span className="not-italic">
@@ -252,9 +277,9 @@ export default function Home() {
       />
 
       {/* ─── CHAPITRE 3 : TROIS RITUELS (bento) ─────────────────── */}
-      <section className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/10">
+      <section className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/[0.09]">
         <div className="relative max-w-6xl mx-auto">
-          <div className="text-center mb-16 md:mb-24 max-w-3xl mx-auto space-y-7">
+          <div className="text-center mb-16 md:mb-24 max-w-2xl mx-auto space-y-6">
             <p className="protocol-caption text-ivory-400">
               Rituels
             </p>
@@ -268,7 +293,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 gap-5 lg:gap-px lg:rounded-sm lg:overflow-hidden lg:border lg:border-white/12 lg:bg-white/12">
+          <div className="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 gap-5 md:gap-6 lg:gap-px lg:rounded-2xl lg:overflow-hidden lg:border lg:border-white/[0.11] lg:bg-white/[0.06] lg:shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
             <RitualCard
               featured
               index={1}
@@ -299,7 +324,7 @@ export default function Home() {
       </section>
 
       {/* ─── CHAPITRE 4 : ŒUVRE QUI TE RESSEMBLE ────────────────── */}
-      <section className="relative py-24 md:py-40 px-6 border-t border-white/10 overflow-hidden">
+      <section className="relative py-24 md:py-40 px-6 border-t border-white/[0.09] overflow-hidden">
         <div className="relative max-w-6xl mx-auto grid md:grid-cols-2 gap-14 md:gap-24 items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -351,7 +376,7 @@ export default function Home() {
       {/* ─── CHAPITRE 5 : PRICING ───────────────────────────────── */}
       <section
         id="pricing"
-        className="relative py-24 md:py-40 px-6 border-t border-white/10"
+        className="relative py-24 md:py-40 px-6 border-t border-white/[0.09]"
       >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16 md:mb-20">
@@ -428,7 +453,7 @@ export default function Home() {
       </section>
 
       {/* ─── FAQ ────────────────────────────────────────────────── */}
-      <section className="relative py-24 md:py-32 px-6 border-t border-white/10">
+      <section className="relative py-24 md:py-32 px-6 border-t border-white/[0.09]">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-14 md:mb-16">
             <p className="protocol-caption text-ivory-400 mb-8">
@@ -520,7 +545,7 @@ export default function Home() {
       </section>
 
       {/* ─── CHAPITRE 6 : CTA FINAL ─────────────────────────────── */}
-      <section className="relative py-24 md:py-40 px-6 text-center border-t border-white/10">
+      <section className="relative py-24 md:py-40 px-6 text-center border-t border-white/[0.09]">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -531,7 +556,7 @@ export default function Home() {
           <p className="protocol-caption text-ivory-400 mb-10">
             Prochain pas
           </p>
-          <h2 className="font-sans font-extralight text-display-xl text-ivory-50 leading-[1.02] mb-10 md:mb-12 tracking-[-0.03em]">
+          <h2 className="font-display font-extralight text-display-xl text-ivory-50 leading-[1.02] mb-10 md:mb-12 tracking-[-0.03em]">
             Le ciel travaille en silence.
             <br />
             <span className="italic-editorial font-light text-aurora-400">
@@ -575,22 +600,22 @@ interface ChapterProps {
 }
 function Chapter({ eyebrow, title, body }: ChapterProps) {
   return (
-    <section className="relative z-[1] py-22 md:py-32 px-6 border-t border-white/10 overflow-hidden">
+    <section className="relative z-[1] py-24 md:py-36 px-5 sm:px-6 border-t border-white/[0.09] overflow-hidden">
       <div className="chapter-halo" aria-hidden />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-100px' }}
         transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-        className="relative max-w-2xl mx-auto text-center"
+        className="relative max-w-3xl mx-auto text-center space-y-8 md:space-y-10"
       >
-        <p className="protocol-caption text-ivory-400 mb-8 md:mb-10 max-w-xl mx-auto">
-          {eyebrow}
-        </p>
-        <h2 className="font-display font-extralight text-display text-ivory-50 leading-[0.96] mb-10 tracking-[-0.03em]">
+        <p className="protocol-caption text-ivory-400 max-w-xl mx-auto">{eyebrow}</p>
+        <h2 className="font-normal text-ivory-50 leading-none mb-0 tracking-[-0.03em]">
           {title}
         </h2>
-        <p className="text-body-lg text-ivory-400/90 leading-relaxed">{body}</p>
+        <p className="text-body-lg text-ivory-400/90 leading-[1.7] max-w-xl mx-auto font-light">
+          {body}
+        </p>
       </motion.div>
     </section>
   );

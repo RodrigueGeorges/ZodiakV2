@@ -34,14 +34,14 @@ export default function SoundToggle({ className }: SoundToggleProps) {
         type="button"
         onClick={toggle}
         aria-pressed={enabled}
-        className="relative w-full flex items-center gap-5 p-7 text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-signal-400 focus-visible:ring-inset"
+        className="relative w-full flex items-center gap-5 p-7 text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400 focus-visible:ring-inset rounded-sm"
       >
         <span
           className={cn(
             'flex-shrink-0 w-11 h-11 rounded-md border flex items-center justify-center transition-colors duration-200 ease-brutal',
             enabled
               ? 'border-aurora-400/40 text-aurora-400'
-              : 'border-signal-600/25 text-ivory-400',
+              : 'border-white/[0.12] text-ivory-400',
           )}
         >
           {enabled ? (
@@ -51,7 +51,7 @@ export default function SoundToggle({ className }: SoundToggleProps) {
           )}
         </span>
         <div className="flex-1 min-w-0">
-          <p className="font-serif text-h2 text-ivory-50 leading-tight">
+          <p className="font-display font-light text-h2 text-ivory-50 leading-tight">
             Sons d'interaction
           </p>
           <p className="text-caption text-ivory-300/80 italic-editorial mt-1">

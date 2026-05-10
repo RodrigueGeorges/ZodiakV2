@@ -106,7 +106,7 @@ export default function CosmicLoader({
       </div>
 
       {label && (
-        <p className="text-caption text-ivory-300 font-cinzel tracking-wide animate-pulse">
+        <p className="protocol-caption text-ivory-300/90 animate-pulse">
           {label}
         </p>
       )}

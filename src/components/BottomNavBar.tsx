@@ -28,10 +28,10 @@ function BottomNavBar() {
       {/* Voile de transition pour faire fondre la nav dans la page */}
       <div
         aria-hidden="true"
-        className="absolute -top-14 inset-x-0 h-14 bg-gradient-to-t from-[#030710]/90 via-[#030710]/45 to-transparent pointer-events-none"
+        className="absolute -top-14 inset-x-0 h-14 bg-gradient-to-t from-night-950/92 via-night-950/48 to-transparent pointer-events-none"
       />
       <div className="px-3 pb-3 pt-2">
-        <div className="flex items-center justify-around gap-1 rounded-full bg-white/[0.08] backdrop-blur-md border border-white/18 px-2 py-2 shadow-[0_-4px_28px_rgba(0,0,0,0.25)]">
+        <div className="flex items-center justify-around gap-1 rounded-full bg-night-950/50 backdrop-blur-md border border-white/[0.11] px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_-8px_32px_rgba(0,0,0,0.35)]">
           {NAV.map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.path;
@@ -45,9 +45,9 @@ function BottomNavBar() {
                 aria-label={item.label}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'relative flex flex-col items-center justify-center gap-1 flex-1 rounded-lg py-2 px-1 min-h-[48px] transition-colors duration-200 ease-brutal',
-                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-signal-400',
-                  active ? 'text-ivory-50' : 'text-ivory-400',
+                  'relative flex flex-col items-center justify-center gap-1 flex-1 rounded-lg py-2 px-1 min-h-[48px] transition-colors duration-300 ease-brutal',
+                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
+                  active ? 'text-ivory-50' : 'text-ivory-400 hover:text-ivory-100',
                 )}
               >
                 {active && (
@@ -58,7 +58,7 @@ function BottomNavBar() {
                       stiffness: 380,
                       damping: 32,
                     }}
-                    className="absolute inset-0 rounded-lg bg-signal-400/10 border border-signal-400/28"
+                    className="absolute inset-0 rounded-lg bg-aurora-400/12 border border-aurora-400/35"
                     aria-hidden="true"
                   />
                 )}
