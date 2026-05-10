@@ -19,6 +19,7 @@ import {
 } from '../lib/synastry';
 import { useAuth } from '../lib/hooks/useAuth';
 import { track } from '../lib/analytics';
+import { useDocumentSeo } from '../lib/documentSeo';
 import AnimatedCounter from '../components/AnimatedCounter';
 import StoryShareButton from '../components/StoryShareButton';
 
@@ -52,6 +53,23 @@ export default function SynastryDetail() {
     }
   }, [friend, liveSynastry, recomputeSynastry, recomputing]);
 
+  const userFirstName = profile?.name?.split(' ')[0] || 'Toi';
+
+  useDocumentSeo({
+    title:
+      authLoading || loading
+        ? 'Synastrie · Zodiak'
+        : !friend
+          ? 'Synastrie introuvable · Zodiak'
+          : `Synastrie avec ${friend.name} · Zodiak`,
+    description:
+      authLoading || loading
+        ? 'Compatibilité astrologique calculée depuis deux thèmes natals sur Zodiak.'
+        : !friend
+          ? 'Ce lien de synastrie n’est plus disponible — retrouve tes compatibilités dans Mes liens.'
+          : `Analyse des aspects entre ${userFirstName} et ${friend.name} à partir de vos cartes du ciel — Zodiak Premium, 8,99 € / mois, essai sans carte bancaire.`,
+  });
+
   if (authLoading || loading) return <LoadingScreen message="Lecture des aspects…" />;
 
   if (!friend) {
@@ -76,8 +94,6 @@ export default function SynastryDetail() {
   const highlights = liveSynastry
     ? pickHighlights(liveSynastry.aspects)
     : { harmonies: [], frictions: [] };
-
-  const userFirstName = profile?.name?.split(' ')[0] || 'Toi';
 
   const onShare = async () => {
     track('synastry_shared', { friend_id: friend.id });

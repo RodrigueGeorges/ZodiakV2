@@ -19,6 +19,7 @@ import SMSTrackingStats from '../components/SMSTrackingStats';
 import AdminProtection from '../components/AdminProtection';
 import type { Profile } from '../lib/types/supabase';
 import { cn } from '../lib/utils';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 type SubStatus = 'trial' | 'active' | 'expired';
 type FilterKey = 'all' | SubStatus;
@@ -128,6 +129,12 @@ export function Admin() {
     });
   };
 
+  useDocumentSeo({
+    title: loading ? 'Admin · chargement · Zodiak' : error ? 'Admin · erreur · Zodiak' : 'Admin · tableau de bord · Zodiak',
+    description:
+      'Interface interne réservée à l’équipe Zodiak pour la supervision des profils et abonnements.',
+  });
+
   if (loading) return <LoadingScreen message="Chargement de l'espace admin…" />;
 
   return (
@@ -141,7 +148,7 @@ export function Admin() {
             <span className="block text-gradient-aurora">Zodiak.</span>
           </>
         }
-        subtitle="Suivi des comptes, des abonnements et des envois."
+        subtitle="Utilisateurs, statuts d’abonnement (essai, actif, expiré) et suivi des envois — accès restreint."
         maxWidth="6xl"
         showLogo={false}
         headerSlot={

@@ -26,6 +26,7 @@ import { cn } from '../lib/utils';
 import { getStoredReferral, clearReferral } from '../lib/referral';
 import { supabase } from '../lib/supabase';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 interface RevealData {
   firstName: string;
@@ -61,6 +62,12 @@ function pickOAuthName(user: SupabaseUser | null): string {
 }
 
 export default function RegisterComplete() {
+  useDocumentSeo({
+    title: 'Thème natal · étape 2 — Zodiak',
+    description:
+      'Saisie de ta naissance pour calculer ton thème natal et recevoir ton horoscope personnalisé chaque matin sur WhatsApp ou Instagram.',
+  });
+
   const navigate = useNavigate();
   const { user } = useAuth();
   const { redirectTo } = useAuthRedirect();
@@ -237,8 +244,8 @@ export default function RegisterComplete() {
   return (
     <AuthLayout
       eyebrow="Étape 2 sur 2"
-      title="Tes infos de naissance"
-      subtitle="Pour calculer ta carte du ciel — chiffrées et jamais partagées."
+      title="Informations pour ton thème natal"
+      subtitle="Date, heure et lieu de naissance : on calcule ta carte une fois pour tout ton horoscope personnalisé — données chiffrées, en Europe."
     >
       <OnboardingStepper currentStep={2} totalSteps={2} className="mb-7" />
 

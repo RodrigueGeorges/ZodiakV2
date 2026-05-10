@@ -14,15 +14,91 @@ import {
   Sun,
 } from 'lucide-react';
 import Logo from '../components/Logo';
-import LiveCounter from '../components/LiveCounter';
 import FAQ from '../components/FAQ';
 import { ButtonLink } from '../components/ui/ButtonLink';
 import CosmicLoader from '../components/CosmicLoader';
 import { useAuth } from '../lib/hooks/useAuth';
 import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
-import { moonPhaseAt } from '../lib/moonPhase';
-import MoonPhaseVisual from '../components/MoonPhaseVisual';
 import { cn } from '../lib/utils';
+import {
+  DEFAULT_DOC_TITLE as DOC_TITLE,
+  DEFAULT_META_DESCRIPTION as META_DESCRIPTION,
+} from '../lib/documentSeo';
+
+const FAQ_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: "Qu'est-ce qu'un thème natal ?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text:
+          'Le thème natal est une carte du ciel calculée à partir de ta date, ton heure et ton lieu de naissance. Il révèle la position exacte de toutes les planètes au moment où tu es né(e), et constitue ta signature astrologique unique.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Comment fonctionne la guidance personnalisée Zodiak ?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text:
+          'Chaque matin, Zodiak croise les transits du jour avec ton thème natal pour générer une guidance écrite spécifiquement pour toi. Aucun texte recyclé, aucun horoscope générique.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: "Pourquoi WhatsApp ou Instagram plutôt qu'une appli ?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text:
+          'Parce que tu ouvres déjà WhatsApp et Instagram chaque jour. Pas besoin de télécharger une app de plus que tu vas oublier. Ta guidance arrive là où tu es déjà.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: "L'heure de naissance exacte est-elle obligatoire ?",
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text:
+          'Idéalement oui — elle permet de calculer ton ascendant et tes maisons astrologiques. Mais on peut commencer sans, et affiner ensuite.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Comment annuler mon abonnement ?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text:
+          'Depuis ton espace personnel, en 1 clic. Aucune justification demandée, aucune relance.',
+      },
+    },
+    {
+      '@type': 'Question',
+      name: 'Mes données sont-elles protégées ?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text:
+          'Oui. Hébergement en Europe, conforme RGPD, aucune revente à des tiers.',
+      },
+    },
+  ],
+};
+
+const PRODUCT_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: 'Zodiak',
+  description:
+    'Guidance astrologique personnalisée basée sur ton thème natal, livrée chaque matin sur WhatsApp ou Instagram.',
+  offers: {
+    '@type': 'Offer',
+    price: '8.99',
+    priceCurrency: 'EUR',
+    availability: 'https://schema.org/InStock',
+  },
+};
 
 const heroReveal = {
   hidden: {},
@@ -41,9 +117,7 @@ const heroItem = {
 };
 
 /**
- * Home — landing Zodiak.
- *
- * Fond : ciel + constellations globaux (`App`). Coque transparente ; cartes en verre sombre.
+ * Home — landing Zodiak (SEO : un H1, sections en H2, sous-points en H3).
  */
 export default function Home() {
   const { isLoading, user } = useAuth();
@@ -82,7 +156,49 @@ export default function Home() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  if ((isLoading && user === null) || shouldRedirect) {
+  /** SEO landing : titre, méta-description, FAQ + Product schema.org — uniquement quand la landing s’affiche */
+  useEffect(() => {
+    const blocked =
+      (isLoading && user === null) || shouldRedirect || user != null;
+    if (blocked) return undefined;
+
+    const prevTitle = document.title;
+    document.title = DOC_TITLE;
+    let metaDesc = document.querySelector<HTMLMetaElement>(
+      'meta[name="description"]',
+    );
+    const prevDesc = metaDesc?.getAttribute('content') ?? '';
+    if (!metaDesc) {
+      metaDesc = document.createElement('meta');
+      metaDesc.setAttribute('name', 'description');
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute('content', META_DESCRIPTION);
+
+    const mountScript = (
+      marker: string,
+      data: object,
+    ): HTMLScriptElement => {
+      const el = document.createElement('script');
+      el.type = 'application/ld+json';
+      el.setAttribute('data-zodiak-landing', marker);
+      el.textContent = JSON.stringify(data);
+      document.head.appendChild(el);
+      return el;
+    };
+
+    const sFaq = mountScript('faq', FAQ_JSON_LD);
+    const sProd = mountScript('product', PRODUCT_JSON_LD);
+
+    return () => {
+      document.title = prevTitle;
+      metaDesc?.setAttribute('content', prevDesc);
+      sFaq.remove();
+      sProd.remove();
+    };
+  }, [isLoading, user, shouldRedirect]);
+
+  if (shouldRedirect || (isLoading && user === null) || user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-transparent">
         <CosmicLoader />
@@ -90,479 +206,452 @@ export default function Home() {
     );
   }
 
-  const moonNow = moonPhaseAt(new Date());
-
   return (
     <div className="relative bg-transparent text-ivory-50 overflow-x-hidden min-h-screen">
       <div className="relative z-[1] isolate">
-      {/* Header — fixe, intensité selon le scroll */}
-      <header
-        className={cn(
-          'fixed z-30 top-0 inset-x-0 px-6 md:px-10 lg:px-14 py-4 md:py-5 flex items-center justify-between border-b transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-brutal safe-top',
-          headerSolid
-            ? 'border-white/[0.14] bg-black/60 backdrop-blur-xl shadow-[0_1px_0_rgba(56,189,248,0.07)]'
-            : 'border-white/[0.1] bg-black/15 backdrop-blur-lg',
-        )}
-      >
-        <Link
-          to="/"
-          className="flex items-center gap-3 group"
-          aria-label="Accueil Zodiak"
+        <header
+          className={cn(
+            'fixed z-30 top-0 inset-x-0 px-6 md:px-10 lg:px-14 py-4 md:py-5 flex items-center justify-between border-b transition-[background-color,backdrop-filter,border-color,box-shadow] duration-500 ease-brutal safe-top',
+            headerSolid
+              ? 'border-white/[0.14] bg-black/60 backdrop-blur-xl shadow-[0_1px_0_rgba(56,189,248,0.07)]'
+              : 'border-white/[0.1] bg-black/15 backdrop-blur-lg',
+          )}
         >
-          <Logo size="sm" composeOnLoad />
-          <span className="font-display text-h3 text-ivory-50 tracking-[-0.02em] font-medium group-hover:text-aurora-400 transition-colors duration-300 ease-brutal">
-            Zodiak
-          </span>
-        </Link>
-        <div className="flex items-center gap-3 md:gap-5">
           <Link
-            to="/login"
-            className="hidden sm:inline-block text-caption text-ivory-400 hover:text-ivory-50 transition-colors duration-300 ease-brutal underline-offset-4 hover:underline decoration-aurora-400/40"
+            to="/"
+            className="flex items-center gap-3 group"
+            aria-label="Accueil Zodiak"
           >
-            Se connecter
+            <Logo size="sm" composeOnLoad />
+            <span className="font-display text-h3 text-ivory-50 tracking-[-0.02em] font-medium group-hover:text-aurora-400 transition-colors duration-300 ease-brutal">
+              Zodiak
+            </span>
           </Link>
-          <ButtonLink to="/register" variant="primary" size="sm" className="shadow-[0_0_24px_-8px_rgba(56,189,248,0.45)]">
-            Essayer gratuitement
-          </ButtonLink>
-        </div>
-      </header>
-
-      {/* Hero — immersion : halos parallax, anneaux, display Fraunces */}
-      <section
-        ref={heroRef}
-        className="relative min-h-[100svh] flex flex-col justify-center items-center px-6 md:px-10 pt-32 pb-24 md:pt-36 md:pb-32 overflow-hidden"
-        aria-labelledby="hero-title"
-      >
-        <motion.div
-          style={{ y: haloY, opacity: haloOpacity }}
-          className="hero-parallax-layer pointer-events-none absolute inset-0 hero-aurora-bloom"
-          aria-hidden
-        />
-        <motion.div
-          style={{ y: haloY2 }}
-          className="hero-parallax-layer pointer-events-none absolute inset-x-0 bottom-0 h-[45%] hero-aurora-bloom-warm"
-          aria-hidden
-        />
-        <div
-          className="absolute inset-x-0 top-[8%] h-[50vh] max-h-[620px] bg-gradient-to-b from-aurora-500/[0.08] via-aurora-600/[0.02] to-transparent pointer-events-none"
-          aria-hidden
-        />
-
-        <div className="hero-orbit" aria-hidden>
-          <span className="hero-orbit-ring" />
-          <span className="hero-orbit-ring" />
-          <span className="hero-orbit-ring" />
-        </div>
-
-        <motion.div
-          variants={heroReveal}
-          initial="hidden"
-          animate="show"
-          className="relative z-10 flex flex-col items-center text-center max-w-[40rem] mx-auto"
-        >
-          <motion.div variants={heroItem} className="relative mb-9 md:mb-11 flex justify-center">
-            <span
-              aria-hidden
-              className="absolute inset-0 -m-6 rounded-full bg-aurora-400/[0.07] blur-3xl scale-110"
-            />
-            <Logo size="lg" composeOnLoad />
-          </motion.div>
-
-          <motion.div variants={heroItem} className="space-y-2 md:space-y-3">
-            <p className="eyebrow-ritual text-aurora-200/95 text-[0.65rem] md:text-micro">
-              Guidance quotidienne · chat sur ton thème · sans installer d’app
-            </p>
-            <h1
-              id="hero-title"
-              className="font-hero-display font-light text-[clamp(3.25rem,10.5vw,5.25rem)] leading-[0.94] text-ivory-50"
+          <div className="flex items-center gap-3 md:gap-5">
+            <Link
+              to="/login"
+              className="hidden sm:inline-block text-caption text-ivory-400 hover:text-ivory-50 transition-colors duration-300 ease-brutal underline-offset-4 hover:underline decoration-aurora-400/40"
             >
-              <span className="text-gradient-gold">Zodiak</span>
-            </h1>
-          </motion.div>
-
-          <motion.p
-            variants={heroItem}
-            className="mt-8 md:mt-10 text-[clamp(1.06rem,2.5vw,1.38rem)] leading-[1.55] font-light text-ivory-200/95 max-w-[26rem] md:max-w-[34rem] mx-auto"
-          >
-            Au réveil, un message fait le point avec{' '}
-            <span className="text-ivory-50 font-normal">toi</span> — à partir de ta carte et du jour qui commence.
-            Le reste du temps,{' '}
-            <span className="text-ivory-50 font-normal">le chat ouvre une conversation avec ton guide</span>
-            {' '}quand tu as besoin d’une mise au clair — toujours sur la même grille symbolique que la guidance du matin.
-          </motion.p>
-
-          <motion.p
-            variants={heroItem}
-            className="mt-6 font-mono text-[0.7rem] sm:text-caption uppercase tracking-[0.14em] text-aurora-300/90"
-          >
-            7 jours complets sans carte · annulation en deux clics
-          </motion.p>
-
-          <motion.div
-            variants={heroItem}
-            className="mt-11 flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto"
-          >
+              Se connecter
+            </Link>
             <ButtonLink
               to="/register"
               variant="primary"
-              size="lg"
-              iconLeft={<Sparkles className="w-4 h-4" />}
-              className="w-full sm:w-auto min-w-[220px] landing-primary-cta-glow transition-shadow duration-300"
+              size="sm"
+              className="shadow-[0_0_24px_-8px_rgba(56,189,248,0.45)]"
             >
-              Découvrir avec 7&nbsp;jours offerts
+              Essayer 7 jours gratuits
             </ButtonLink>
-            <ButtonLink
-              to="/login"
-              variant="ghost"
-              size="lg"
-              className="w-full sm:w-auto min-w-[220px]"
-            >
-              Se connecter
-            </ButtonLink>
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* Réassurance */}
-      <section className="relative z-10 border-t border-white/[0.09] py-14 md:py-16 px-6 reassurance-band">
-        <div className="max-w-2xl mx-auto flex flex-col items-center gap-4">
-          <span
-            aria-hidden
-            className="h-px w-16 bg-gradient-to-r from-transparent via-aurora-400/35 to-transparent"
-          />
-          <p className="text-center text-body-lg text-ivory-300/95 leading-[1.75] font-light">
-            Chaque phrase repose sur{' '}
-            <span className="text-ivory-100 font-medium">ton thème calculé au compte</span>
-            {' '}— ascendant, lune et transits du jour lus à travers ta carte, pas un paragraphe « signe par signe ».
-            Tes données restent en{' '}
-            <span className="text-aurora-200/90">Europe</span>, sans revente à des annonceurs.
-          </p>
-        </div>
-      </section>
-
-      {/* Ciel du jour — composition dans un seul bloc */}
-      <Chapter
-        eyebrow="Ciel du jour"
-        title={
-          <div className="harmony-lunar">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-7 md:gap-5 lg:gap-8">
-              <div className="flex justify-center md:shrink-0">
-                <MoonPhaseVisual
-                  phase={moonNow}
-                  size="lg"
-                  variant="aurora"
-                  instrumentRing
-                  className="drop-shadow-[0_0_40px_rgba(56,189,248,0.2)]"
-                />
-              </div>
-              <div
-                className="hidden md:block harmony-vdivider mx-1 lg:mx-2"
-                aria-hidden
-              />
-              <div className="min-w-0 space-y-2.5 text-center md:text-left">
-                <span className="block font-mono text-[10px] uppercase tracking-[0.26em] text-ivory-500">
-                  Phase observée
-                </span>
-                <span className="block font-display font-light text-[clamp(1.7rem,4.2vw,2.75rem)] leading-[1.06] tracking-[-0.022em] text-ivory-50">
-                  <span className="italic-editorial text-aurora-300">{moonNow.label}</span>
-                  <span className="text-ivory-500/65">.</span>
-                </span>
-              </div>
-            </div>
           </div>
-        }
-        body={
-          <span className="not-italic">
-            Ce que tu lis le matin fusionne <strong className="font-medium text-ivory-200">l’instant cosmique</strong>
-            {' '}avec les points sensibles de ta carte : d’où des angles et un ton qui diffèrent nettement d’un profil à l’autre.
-          </span>
-        }
-      />
+        </header>
 
-      {/* ─── Ce que tu utilises au quotidien — 2 blocs ───────────── */}
-      <section className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/[0.09] landing-features-ambient">
-        <div className="relative max-w-5xl mx-auto">
-          <div className="text-center mb-16 md:mb-20 max-w-2xl mx-auto space-y-6">
-            <p className="protocol-caption text-aurora-200/80">Les deux piliers</p>
-            <h2 className="font-display font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
-              Le matin pour cadrer,{' '}
-              <span className="italic-editorial font-light text-aurora-400">le chat pour approfondir.</span>
+        {/* Hero — seul H1 de la page */}
+        <section
+          ref={heroRef}
+          className="relative min-h-[100svh] flex flex-col justify-center items-center px-6 md:px-10 pt-32 pb-16 md:pt-36 md:pb-24 overflow-hidden"
+          aria-labelledby="hero-title"
+        >
+          <motion.div
+            style={{ y: haloY, opacity: haloOpacity }}
+            className="hero-parallax-layer pointer-events-none absolute inset-0 hero-aurora-bloom"
+            aria-hidden
+          />
+          <motion.div
+            style={{ y: haloY2 }}
+            className="hero-parallax-layer pointer-events-none absolute inset-x-0 bottom-0 h-[45%] hero-aurora-bloom-warm"
+            aria-hidden
+          />
+          <div
+            className="absolute inset-x-0 top-[8%] h-[50vh] max-h-[620px] bg-gradient-to-b from-aurora-500/[0.08] via-aurora-600/[0.02] to-transparent pointer-events-none"
+            aria-hidden
+          />
+
+          <div className="hero-orbit" aria-hidden>
+            <span className="hero-orbit-ring" />
+            <span className="hero-orbit-ring" />
+            <span className="hero-orbit-ring" />
+          </div>
+
+          <motion.div
+            variants={heroReveal}
+            initial="hidden"
+            animate="show"
+            className="relative z-10 flex flex-col items-center text-center max-w-[42rem] mx-auto"
+          >
+            <motion.div variants={heroItem} className="relative mb-8 md:mb-10 flex justify-center">
+              <span
+                aria-hidden
+                className="absolute inset-0 -m-6 rounded-full bg-aurora-400/[0.07] blur-3xl scale-110"
+              />
+              <Logo size="lg" composeOnLoad />
+            </motion.div>
+
+            <motion.p variants={heroItem} className="protocol-caption text-aurora-200/90 mb-4">
+              Zodiak
+            </motion.p>
+
+            <motion.div variants={heroItem}>
+              <h1
+                id="hero-title"
+                className="font-display font-extralight text-[clamp(1.95rem,5.8vw,3.05rem)] leading-[1.12] tracking-[-0.03em] text-ivory-50 max-w-[36rem] mx-auto"
+              >
+                Ton{' '}
+                <span className="text-gradient-gold">horoscope personnalisé</span>, chaque matin sur WhatsApp.
+              </h1>
+            </motion.div>
+
+            <motion.p
+              variants={heroItem}
+              className="mt-7 md:mt-9 text-[clamp(1.06rem,2.4vw,1.35rem)] leading-[1.6] font-light text-ivory-300/95 max-w-[34rem] mx-auto"
+            >
+              Pas un texte générique. Une guidance basée sur{' '}
+              <strong className="font-medium text-ivory-100">ton thème natal</strong> — livrée là où tu lis déjà tes
+              messages.
+            </motion.p>
+
+            <motion.ul
+              variants={heroItem}
+              className="mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-x-8 gap-y-3 text-caption text-ivory-400/95"
+              aria-label="Garanties"
+            >
+              <li className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-aurora-400 shrink-0" aria-hidden />
+                Sans carte bancaire
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-aurora-400 shrink-0" aria-hidden />
+                Résiliable en 1 clic
+              </li>
+              <li className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-aurora-400 shrink-0" aria-hidden />
+                Données en Europe
+              </li>
+            </motion.ul>
+
+            <motion.div
+              variants={heroItem}
+              className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto"
+            >
+              <ButtonLink
+                to="/register"
+                variant="primary"
+                size="lg"
+                iconLeft={<Sparkles className="w-4 h-4" />}
+                className="w-full sm:w-auto min-w-[220px] landing-primary-cta-glow transition-shadow duration-300"
+              >
+                Essayer 7 jours gratuits
+              </ButtonLink>
+              <ButtonLink
+                to="/login"
+                variant="ghost"
+                size="lg"
+                className="w-full sm:w-auto min-w-[220px]"
+              >
+                Se connecter
+              </ButtonLink>
+            </motion.div>
+          </motion.div>
+        </section>
+
+        {/* Pourquoi Zodiak */}
+        <section
+          className="relative z-10 border-t border-white/[0.09] py-20 md:py-28 px-6 reassurance-band"
+          aria-labelledby="section-pourquoi"
+        >
+          <div className="max-w-2xl mx-auto text-center space-y-6">
+            <span
+              aria-hidden
+              className="mx-auto block h-px w-16 bg-gradient-to-r from-transparent via-aurora-400/35 to-transparent"
+            />
+            <h2
+              id="section-pourquoi"
+              className="font-display font-extralight text-display text-ivory-50 leading-[1.05] tracking-[-0.03em]"
+            >
+              Pourquoi les horoscopes classiques ne marchent pas.
             </h2>
-            <p className="text-body-lg text-ivory-400/90 leading-[1.75]">
-              On calcule <span className="text-ivory-200 font-medium">ton thème une seule fois</span> à l’inscription.
-              Ensuite : un fil court chaque jour sur le canal que tu choisis, et une conversation à la demande qui ne
-              « repart pas de zéro » à chaque message.
+            <p className="text-body-lg text-ivory-300/95 leading-[1.78] font-light">
+              Un horoscope qui parle à <strong className="font-medium text-ivory-100">un douzième</strong> de la
+              population, ça ne peut pas vraiment te parler à toi. Zodiak calcule ton{' '}
+              <strong className="font-medium text-ivory-100">thème natal complet</strong> — soleil, lune, ascendant,
+              planètes, maisons — et croise chaque jour les <strong className="font-medium text-ivory-100">transits du ciel</strong> avec ta carte unique.{' '}
+              <span className="text-ivory-50">Résultat&nbsp;: une guidance qui te concerne vraiment.</span>
             </p>
           </div>
+        </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-            <RitualCard
-              spotlight
-              index={1}
-              icon={<Sun className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-200" />}
-              title="Guidance du jour"
-              kicker="Le fil du matin"
-              text="Une synthèse courte : ce que le ciel « dit » aujourd’hui par rapport à ton ascendant, ta lune
-              et les zones de ta carte qui s’activent. Le fil éditorial reste le tien — pas un horoscope du même
-              ton pour tout le monde."
-              bullets={[
-                'Reçu sur WhatsApp ou Instagram, à l’heure que tu fixes',
-                'Un message pour cadrer la journée : énergie, vigilance, ouvertures possibles',
-                'Rien à télécharger : tout se règle depuis ton espace après inscription',
-              ]}
-            />
-            <RitualCard
-              spotlight
-              index={2}
-              icon={<MessageCircle className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-200" />}
-              title="Chat avec ton guide astral"
-              kicker="À la demande"
-              text="Un espace où tu poses une question nette (« travail », « relation », « timing »…) ou où tu fais
-              dériver la discussion. Les réponses s’alignent sur ton thème pour parler le même langage que la guidance
-              du matin — avec une mémoire de ce que vous vous êtes déjà dit."
-              bullets={[
-                'Réponses calibrées sur ta carte, pas des paragraphes « signe par signe »',
-                'Le fil se souvient : plus le contexte est riche, plus la lecture serre les angles',
-                'Parfait quand tu veux zoomer entre deux messages du matin',
+        {/* Comment ça marche */}
+        <section
+          className="relative py-24 md:py-36 px-6 border-t border-white/[0.09]"
+          aria-labelledby="section-etapes"
+        >
+          <div className="max-w-4xl mx-auto">
+            <h2
+              id="section-etapes"
+              className="font-display font-extralight text-display text-ivory-50 text-center leading-[1.05] tracking-[-0.03em] mb-14 md:mb-20"
+            >
+              3 étapes. C&apos;est tout.
+            </h2>
+            <ol className="space-y-12 md:space-y-16 md:grid md:grid-cols-3 md:gap-10 md:space-y-0 list-none">
+              <li className="relative rounded-2xl border border-white/[0.09] bg-white/[0.03] backdrop-blur-md p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <span
+                  aria-hidden
+                  className="mb-6 inline-flex h-10 w-10 items-center justify-center rounded-full border border-aurora-400/30 bg-aurora-500/10 font-mono text-micro text-aurora-200"
+                >
+                  01
+                </span>
+                <h3 className="font-display font-light text-h1 text-ivory-50 mb-4 leading-tight tracking-[-0.02em]">
+                  Tu crées ton thème natal.
+                </h3>
+                <p className="text-body text-ivory-400/95 leading-relaxed">
+                  Date, heure et lieu de naissance. Ton thème astral — la base de tout ton{' '}
+                  <span className="text-ivory-200 font-medium">horoscope personnalisé</span> — est calculé une fois pour
+                  toutes en quelques secondes.
+                </p>
+              </li>
+              <li className="relative rounded-2xl border border-white/[0.09] bg-white/[0.03] backdrop-blur-md p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <span
+                  aria-hidden
+                  className="mb-6 inline-flex h-10 w-10 items-center justify-center rounded-full border border-aurora-400/30 bg-aurora-500/10 font-mono text-micro text-aurora-200"
+                >
+                  02
+                </span>
+                <h3 className="font-display font-light text-h1 text-ivory-50 mb-4 leading-tight tracking-[-0.02em]">
+                  Tu reçois ta guidance chaque matin.
+                </h3>
+                <p className="text-body text-ivory-400/95 leading-relaxed">
+                  Sur WhatsApp ou Instagram, à l&apos;heure que tu choisis. Un message court, clair, qui parle de{' '}
+                  <strong className="font-medium text-ivory-200">ta journée</strong>.
+                </p>
+              </li>
+              <li className="relative rounded-2xl border border-white/[0.09] bg-white/[0.03] backdrop-blur-md p-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                <span
+                  aria-hidden
+                  className="mb-6 inline-flex h-10 w-10 items-center justify-center rounded-full border border-aurora-400/30 bg-aurora-500/10 font-mono text-micro text-aurora-200"
+                >
+                  03
+                </span>
+                <h3 className="font-display font-light text-h1 text-ivory-50 mb-4 leading-tight tracking-[-0.02em]">
+                  Tu chattes quand tu veux.
+                </h3>
+                <p className="text-body text-ivory-400/95 leading-relaxed">
+                  Une question sur le travail, une relation, un timing&nbsp;? Ton guide astral répond — et se souvient
+                  de vos échanges. Même fil conducteur que tes messages du matin, ancré dans{' '}
+                  <span className="text-ivory-200 font-medium">ton thème natal</span>.
+                </p>
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        {/* L&apos;expérience */}
+        <section
+          className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/[0.09] landing-features-ambient"
+          aria-labelledby="section-experience"
+        >
+          <div className="relative max-w-5xl mx-auto">
+            <div className="text-center mb-14 md:mb-20 max-w-2xl mx-auto space-y-5">
+              <h2
+                id="section-experience"
+                className="font-display font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]"
+              >
+                Deux moments. Une seule carte du ciel.
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+              <RitualCard
+                spotlight
+                index={1}
+                icon={<Sun className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-200" />}
+                title="🌅 La guidance du matin"
+                text="Ton horoscope personnalisé, chaque jour, en 30 secondes de lecture."
+                bullets={[
+                  'Basé sur ton thème natal et les transits du jour',
+                  'Énergie, vigilances, opportunités — tout est dit',
+                  'Reçu sur WhatsApp ou Instagram, à ton heure',
+                ]}
+              />
+              <RitualCard
+                spotlight
+                index={2}
+                icon={<MessageCircle className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-200" />}
+                title="💬 Le chat avec ton guide astral"
+                text="Une question précise ? Une réflexion ? Tu poses, il répond."
+                bullets={[
+                  'Réponses contextualisées sur ta carte du ciel',
+                  'Mémoire complète de la conversation',
+                  'Échanges illimités',
+                ]}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Offre */}
+        <section
+          id="pricing"
+          className="relative py-24 md:py-40 px-6 border-t border-white/[0.09]"
+          aria-labelledby="section-offre"
+        >
+          <div className="max-w-xl mx-auto">
+            <div className="text-center mb-10 md:mb-12 space-y-4">
+              <h2
+                id="section-offre"
+                className="font-display font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]"
+              >
+                Une seule formule. Tout est inclus.
+              </h2>
+              <p className="text-body-lg text-aurora-100 font-medium tracking-tight">
+                8,99&nbsp;€ / mois
+              </p>
+              <p className="text-body text-ivory-400/95 leading-relaxed max-w-lg mx-auto">
+                Pas de version premium cachée. Pas de pubs. Pas de revente de données.
+              </p>
+            </div>
+
+            <PriceOfferCard />
+
+            <p className="text-center mt-10 text-caption text-ivory-400/85 leading-relaxed max-w-md mx-auto">
+              Une fois ton <span className="text-ivory-200 font-medium">thème natal</span> créé et ton canal choisi, tu retrouves le même prix sur la durée — pas de mise à niveau surprise.
+            </p>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section
+          className="relative py-24 md:py-32 px-6 border-t border-white/[0.09]"
+          aria-labelledby="section-faq"
+        >
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-14 md:mb-16">
+              <h2
+                id="section-faq"
+                className="font-display font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]"
+              >
+                Questions fréquentes
+              </h2>
+            </div>
+            <FAQ
+              items={[
+                {
+                  q: "Qu'est-ce qu'un thème natal ?",
+                  a: (
+                    <>
+                      Le thème natal est une carte du ciel calculée à partir de ta date, ton heure et ton lieu de naissance.
+                      Il révèle la position exacte de toutes les planètes au moment où tu es né(e), et constitue ta signature
+                      astrologique unique.
+                    </>
+                  ),
+                },
+                {
+                  q: 'Comment fonctionne la guidance personnalisée Zodiak ?',
+                  a: (
+                    <>
+                      Chaque matin, Zodiak croise les transits du jour avec ton thème natal pour générer une guidance
+                      écrite spécifiquement pour toi. Aucun texte recyclé, aucun horoscope générique.
+                    </>
+                  ),
+                },
+                {
+                  q: "Pourquoi WhatsApp ou Instagram plutôt qu'une appli ?",
+                  a: (
+                    <>
+                      Parce que tu ouvres déjà WhatsApp et Instagram chaque jour. Pas besoin de télécharger une app de plus
+                      que tu vas oublier. Ta guidance arrive là où tu es déjà.
+                    </>
+                  ),
+                },
+                {
+                  q: "L'heure de naissance exacte est-elle obligatoire ?",
+                  a: (
+                    <>
+                      Idéalement oui — elle permet de calculer ton ascendant et tes maisons astrologiques. Mais on peut
+                      commencer sans, et affiner ensuite.
+                    </>
+                  ),
+                },
+                {
+                  q: 'Comment annuler mon abonnement ?',
+                  a: (
+                    <>
+                      Depuis ton espace personnel, en 1 clic. Aucune justification demandée, aucune relance.
+                    </>
+                  ),
+                },
+                {
+                  q: 'Mes données sont-elles protégées ?',
+                  a: (
+                    <>
+                      Oui. Hébergement en Europe, conforme RGPD, aucune revente à des tiers.
+                    </>
+                  ),
+                },
               ]}
             />
           </div>
+        </section>
 
-          <div className="mt-12 md:mt-16 flex justify-center">
+        {/* Closing */}
+        <section
+          className="relative py-24 md:py-40 px-6 text-center border-t border-white/[0.09]"
+          aria-labelledby="section-closing"
+        >
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+            className="max-w-3xl mx-auto"
+          >
+            <h2
+              id="section-closing"
+              className="font-display font-extralight text-display-xl text-ivory-50 leading-[1.06] mb-10 md:mb-12 tracking-[-0.03em]"
+            >
+              Demain matin, ton ciel te parle.
+            </h2>
             <ButtonLink
               to="/register"
               variant="primary"
               size="lg"
               iconLeft={<Sparkles className="w-4 h-4" />}
               iconRight={<ArrowRight className="w-4 h-4" />}
-              className="landing-primary-cta-glow shadow-none"
+              className="landing-primary-cta-glow transition-shadow duration-300"
             >
-              Profiter de 7&nbsp;jours offerts
+              Démarrer mes 7 jours offerts
             </ButtonLink>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── OFFRE ────────────────────────────────────────────── */}
-      <section
-        id="pricing"
-        className="relative py-24 md:py-40 px-6 border-t border-white/[0.09]"
-      >
-        <div className="max-w-xl mx-auto">
-          <div className="text-center mb-12 md:mb-14">
-            <p className="protocol-caption text-aurora-200/85 mb-8 md:mb-10">
-              Abonnement
+            <p className="mt-5 text-caption text-ivory-400/85">
+              Sans CB · Résiliable en 1 clic
             </p>
-            <div className="mb-10 flex justify-center">
-              <LiveCounter />
-            </div>
-            <h2 className="font-display font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
-              Un prix,{' '}
-              <span className="italic-editorial font-light text-aurora-400">zéro à la carte.</span>
-            </h2>
-            <p className="mt-7 text-body-lg text-ivory-400/90 max-w-xl mx-auto leading-[1.7]">
-              <span className="text-ivory-200 font-medium">8,99&nbsp;€ par mois</span> après ton essai : guidance
-              quotidienne et chat illimité, tous deux calés sur ton thème. Pas de paliers ni de packs cachés — et
-              pas de publicité ni de revente de tes données.
-            </p>
-          </div>
+          </motion.div>
 
-          <PriceOfferCard />
-
-          <p className="text-center mt-10 text-caption text-ivory-400/90 leading-relaxed max-w-md mx-auto">
-            La première semaine est offerte : tu testes le matin + le chat sans entrer de carte. Tu résilies depuis
-            ton espace quand tu veux, sans mail de justification.
-          </p>
-        </div>
-      </section>
-
-      {/* ─── FAQ ────────────────────────────────────────────────── */}
-      <section className="relative py-24 md:py-32 px-6 border-t border-white/[0.09]">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-14 md:mb-16">
-            <p className="protocol-caption text-ivory-400 mb-8">
-              Questions
-            </p>
-            <h2 className="font-sans font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
-              Tu te demandes <span className="italic-editorial text-aurora-400">peut-être…</span>
-            </h2>
-          </div>
-          <FAQ
-            items={[
-              {
-                q: 'Comment ça marche, concrètement ?',
-                a: (
-                  <>
-                    Inscription avec date, heure et lieu de naissance : on pose ton{' '}
-                    <strong className="font-medium text-ivory-200">thème une fois pour toutes</strong>. Chaque matin tu
-                    reçois la <strong className="font-medium text-ivory-200">guidance du jour</strong> là où tu discutes déjà —
-                    WhatsApp ou Instagram — à l&apos;heure choisie. Le{' '}
-                    <strong className="font-medium text-ivory-200">chat</strong>{' '}
-                    reprend cette même grille symbolique : tu poursuis une ligne de pensée, avec mémoire de ce que vous
-                    vous êtes déjà dit.
-                  </>
-                ),
-              },
-              {
-                q: 'Faut-il connaître son heure de naissance exacte ?',
-                a: (
-                  <>
-                    Idéalement oui : c'est elle qui détermine ton
-                    ascendant et tes maisons astrologiques. Sans heure
-                    précise, on calcule un thème "solaire" un peu plus
-                    général, mais toujours personnalisé sur ton signe,
-                    ta lune et les transits du jour.
-                  </>
-                ),
-              },
-              {
-                q: 'Pourquoi WhatsApp ou Instagram et pas une app ?',
-                a: (
-                  <>
-                    Parce que tu y es déjà. Pas une appli de plus à
-                    ouvrir, pas une notification de plus à ignorer. Les
-                    messages WhatsApp ont un taux d'ouverture de 95 %
-                    en moins d'une heure — c'est là que la guidance
-                    prend du sens, dans ton flux quotidien.
-                  </>
-                ),
-              },
-              {
-                q: 'Est-ce que mes données sont protégées ?',
-                a: (
-                  <>
-                    Oui. Tes infos de naissance et tes échanges sont
-                    chiffrés et hébergés en Europe (conforme RGPD). On
-                    ne les revend jamais à des tiers, on ne fait pas de
-                    pub ciblée. Tu peux supprimer ton compte et toutes
-                    tes données en 1 clic depuis ton profil.
-                  </>
-                ),
-              },
-              {
-                q: 'Et si je veux annuler ?',
-                a: (
-                  <>
-                    Tu vas dans ton profil, tu cliques sur "Annuler
-                    l'abonnement", c'est fait. Aucun mail à envoyer,
-                    aucune justification à donner. Si tu pars pendant
-                    l'essai, tu n'as rien payé.
-                  </>
-                ),
-              },
-              {
-                q: "L'astrologie, c'est sérieux ?",
-                a: (
-                  <>
-                    On ne prétend pas prédire ton avenir. Zodiak est un
-                    outil d'introspection : il croise des positions
-                    planétaires réelles (calculées au degré près) avec
-                    ton thème natal pour te proposer une lecture
-                    symbolique du jour. À toi d'en faire ce que tu
-                    veux — un miroir, un guide, ou juste un moment
-                    pour toi.
-                  </>
-                ),
-              },
-            ]}
-          />
-        </div>
-      </section>
-
-      {/* ─── CHAPITRE 6 : CTA FINAL ─────────────────────────────── */}
-      <section className="relative py-24 md:py-40 px-6 text-center border-t border-white/[0.09]">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-          className="max-w-3xl mx-auto"
-        >
-          <p className="protocol-caption text-aurora-200/85 mb-10">
-            Dernière ligne droite
-          </p>
-          <h2 className="font-display font-extralight text-display-xl text-ivory-50 leading-[1.06] mb-10 md:mb-12 tracking-[-0.03em]">
-            Une semaine pour prendre tes marques&nbsp;:{' '}
-            <span className="italic-editorial font-light text-aurora-400">
-              le message du matin, la conversation sur demande,
+          <footer className="mt-24 md:mt-32 text-center font-mono text-[11px] tracking-[0.12em] text-ivory-500 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
+            <Logo size="sm" />
+            <span className="text-ivory-400/80 normal-case tracking-normal font-sans text-micro">
+              Zodiak · Le ciel t&apos;écrit.
             </span>
-            <br />
-            la même voix sur ton thème — sans carte pour commencer.
-          </h2>
-          <ButtonLink
-            to="/register"
-            variant="primary"
-            size="lg"
-            iconLeft={<Sparkles className="w-4 h-4" />}
-            iconRight={<ArrowRight className="w-4 h-4" />}
-            className="landing-primary-cta-glow transition-shadow duration-300"
-          >
-            Ouvrir mon essai gratuit
-          </ButtonLink>
-          <p className="mt-5 text-caption text-ivory-400/85">
-            7 jours complets · pas de carte pour commencer
-          </p>
-        </motion.div>
-
-        <footer className="mt-24 md:mt-32 text-center font-mono text-[11px] tracking-[0.12em] text-ivory-500 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
-          <Logo size="sm" />
-          <span className="text-ivory-400/80 normal-case tracking-normal font-sans text-micro">
-            Zodiak · Le ciel t&apos;écrit.
-          </span>
-        </footer>
-      </section>
+          </footer>
+        </section>
       </div>
     </div>
   );
 }
 
 /* ──────────────────────────────────────────────────────────────────── */
-/*  Sous-composants éditoriaux                                          */
+/*  Cartes rituel · offre                                                     */
 /* ──────────────────────────────────────────────────────────────────── */
-
-interface ChapterProps {
-  eyebrow: string;
-  title: ReactNode;
-  body: ReactNode;
-}
-function Chapter({ eyebrow, title, body }: ChapterProps) {
-  return (
-    <section className="relative z-[1] py-24 md:py-36 px-5 sm:px-6 border-t border-white/[0.09] overflow-hidden">
-      <div className="chapter-halo" aria-hidden />
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
-        className="relative max-w-3xl mx-auto text-center space-y-8 md:space-y-10"
-      >
-        <p className="protocol-caption text-ivory-400 max-w-xl mx-auto">{eyebrow}</p>
-        <h2 className="font-normal text-ivory-50 leading-none mb-0 tracking-[-0.03em]">
-          {title}
-        </h2>
-        <p className="text-body-lg text-ivory-400/90 leading-[1.7] max-w-xl mx-auto font-light">
-          {body}
-        </p>
-      </motion.div>
-    </section>
-  );
-}
 
 interface RitualCardProps {
   icon: ReactNode;
   title: string;
-  kicker: string;
+  kicker?: string;
   text: string;
-  /** Carte principale du bento (plus grande, halo). @deprecated préférer spotlight */
   featured?: boolean;
-  /** Deux cartes mises au même niveau visuel avec halo aurora */
   spotlight?: boolean;
-  /** Puces lisibles sous le paragraphe */
   bullets?: string[];
-  /** Numéro décoratif (01, 02…). */
   index?: number;
   className?: string;
 }
+
 function RitualCard({
   icon,
   title,
@@ -616,13 +705,16 @@ function RitualCard({
         {icon}
       </div>
 
-      <span className="protocol-caption text-aurora-200/85 mb-3 normal-case tracking-[0.14em] relative z-[1]">
-        {kicker}
-      </span>
+      {kicker ? (
+        <span className="protocol-caption text-aurora-200/85 mb-3 normal-case tracking-[0.14em] relative z-[1]">
+          {kicker}
+        </span>
+      ) : null}
+
       <h3
         className={cn(
-          'font-display font-light text-ivory-50 mb-5 leading-[1.08] tracking-[-0.02em] relative z-[1]',
-          accent ? 'text-[clamp(1.65rem,3.8vw,2.35rem)]' : 'text-h1',
+          'font-display font-light text-ivory-50 mb-5 leading-[1.12] tracking-[-0.02em] relative z-[1]',
+          accent ? 'text-[clamp(1.5rem,3.6vw,2.15rem)]' : 'text-h1',
         )}
       >
         {title}
@@ -643,24 +735,17 @@ function RitualCard({
           ))}
         </ul>
       )}
-      {!bullets?.length && (
-        <div className="mt-10 lg:mt-12 flex items-center gap-3 text-aurora-400 relative z-[1]">
-          <span className="block h-px w-10 bg-aurora-400/55 group-hover:w-16 transition-all duration-500 ease-brutal" />
-          <span className="text-micro font-mono uppercase tracking-[0.2em] text-ivory-500 group-hover:text-aurora-300/90 transition-colors">
-            Détail
-          </span>
-        </div>
-      )}
     </motion.article>
   );
 }
 
 function PriceOfferCard() {
   const includes = [
-    'Guidance du jour sans limite : WhatsApp ou Instagram, à l’heure que tu choisis',
-    'Chat illimité avec ton guide — la conversation reprend là où tu l’as laissée',
-    'Thème natal en fondation : chaque phrase reste cohérente avec ta carte',
-    'Essai démarré sans carte : tu ajoutes un moyen de paiement seulement si tu continues',
+    'Guidance quotidienne illimitée',
+    'Chat illimité avec ton guide astral',
+    'Mémoire complète de tes échanges',
+    'WhatsApp ou Instagram, au choix',
+    'Profil basé sur ton thème natal',
   ];
 
   return (
@@ -683,28 +768,16 @@ function PriceOfferCard() {
 
       <div className="text-center pb-8 border-b border-white/[0.08] mb-8">
         <div className="landing-price-well rounded-xl border border-aurora-400/20 px-6 py-7 md:px-8 md:py-8">
-          <span className="inline-flex items-center rounded-full border border-aurora-400/40 bg-aurora-500/20 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-aurora-50">
-            Tout inclus
-          </span>
-          <div className="mt-7 flex flex-wrap items-end justify-center gap-x-3 gap-y-1">
-            <span className="font-display font-extralight text-[clamp(3.25rem,8vw,4.25rem)] text-ivory-50 leading-none tracking-[-0.03em]">
+          <div className="flex flex-wrap items-end justify-center gap-x-3 gap-y-1">
+            <span className="font-display font-extralight text-[clamp(3rem,8vw,4rem)] text-ivory-50 leading-none tracking-[-0.03em]">
               8,99&nbsp;€
             </span>
-            <span className="pb-1 text-body text-aurora-100/90 font-medium">
-              par mois
-            </span>
+            <span className="pb-1 text-body text-aurora-100/90 font-medium">/ mois</span>
           </div>
-          <p className="mt-5 text-caption text-ivory-300/95 leading-relaxed max-w-sm mx-auto">
-            Après <span className="text-ivory-100 font-medium">7 jours offerts</span>, ce tarif couvre la guidance
-            quotidienne et le chat — la même expérience que plus haut sur la page, sans module payant à part.
-          </p>
         </div>
       </div>
 
-      <p className="text-micro uppercase tracking-[0.2em] text-aurora-200/90 mb-4">
-        Inclus dans l’abonnement
-      </p>
-      <ul className="space-y-3.5 text-body text-ivory-200/95 mb-10 md:mb-11">
+      <ul className="space-y-3.5 text-body text-ivory-200/95 mb-10">
         {includes.map((line) => (
           <li key={line} className="flex gap-3 leading-snug">
             <Check className="w-[18px] h-[18px] text-aurora-400 shrink-0 mt-0.5" aria-hidden />
@@ -712,6 +785,18 @@ function PriceOfferCard() {
           </li>
         ))}
       </ul>
+
+      <div className="rounded-xl border border-aurora-400/35 bg-aurora-500/[0.12] px-5 py-6 text-center mb-10 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+        <p className="text-body-lg text-ivory-50 font-light leading-snug">
+          <span className="not-italic" aria-hidden="true">
+            🎁
+          </span>{' '}
+          <strong className="font-semibold text-aurora-100">7 jours offerts. Sans carte bancaire.</strong>
+        </p>
+        <p className="mt-3 text-caption text-ivory-300/95 leading-relaxed">
+          Tu testes. Tu décides après. Si tu continues, c&apos;est 8,99&nbsp;€/mois — résiliable en 1 clic.
+        </p>
+      </div>
 
       <ButtonLink
         to="/register"
@@ -722,13 +807,8 @@ function PriceOfferCard() {
         iconRight={<ArrowRight className="w-4 h-4" />}
         className="landing-primary-cta-glow shadow-none text-night-950"
       >
-        Commencer — 7 jours offerts
+        Commencer mes 7 jours gratuits
       </ButtonLink>
-
-      <p className="text-center mt-4 text-caption text-ivory-500/95 leading-relaxed">
-        Si tu continues au-delà de l’essai : <span className="text-aurora-200/95 font-medium">8,99&nbsp;€</span> débités
-        chaque mois. Stoppe depuis ton espace avant la fin des 7 jours pour ne rien payer.
-      </p>
     </motion.div>
   );
 }

@@ -10,6 +10,7 @@ import MoodHeatmap from '../components/MoodHeatmap';
 import SoundToggle from '../components/SoundToggle';
 import { useMood } from '../lib/hooks/useMood';
 import type { Profile } from '../lib/types/supabase';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 export default function ProfilePage() {
   const { user, isLoading: authLoading, signOut } = useAuth();
@@ -43,6 +44,19 @@ export default function ProfilePage() {
       cancelled = true;
     };
   }, [user?.id]);
+
+  useDocumentSeo({
+    title: error
+      ? 'Erreur · Zodiak'
+      : !profile && user
+        ? 'Profil à compléter · Zodiak'
+        : 'Mon profil · Zodiak — compte & abonnement',
+    description: error
+      ? 'Une erreur a empêché le chargement de ton profil Zodiak.'
+      : !profile && user
+        ? 'Complète ton profil et ton thème natal pour activer ta guidance personnalisée et ton chat astral.'
+        : 'Réglages compte Zodiak : canal WhatsApp ou Instagram, thème natal, abonnement 8,99 € / mois et résiliation en un clic.',
+  });
 
   const handleLogout = async () => {
     try {
@@ -101,7 +115,7 @@ export default function ProfilePage() {
         </>
       }
       titlePlain={false}
-      subtitle="Tes informations, ton canal de guidance et ton abonnement."
+      subtitle="Ton compte, ton canal WhatsApp ou Instagram, ton thème natal et ton abonnement — tout au même endroit."
       maxWidth="5xl"
       showLogo={false}
       dim

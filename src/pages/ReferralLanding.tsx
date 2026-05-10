@@ -8,6 +8,7 @@ import { Card } from '../components/ui/Card';
 import LoadingScreen from '../components/LoadingScreen';
 import { rememberReferralCode } from '../lib/referral';
 import { track } from '../lib/analytics';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 /**
  * /r/:code — landing du parrainage.
@@ -40,6 +41,21 @@ export default function ReferralLanding() {
     };
   }, [code]);
 
+  useDocumentSeo({
+    title:
+      status === 'loading'
+        ? 'Invitation parrainage · Zodiak'
+        : status === 'invalid'
+          ? 'Invitation invalide · Zodiak'
+          : 'Invitation parrainage — bonus Premium · Zodiak',
+    description:
+      status === 'loading'
+        ? 'Vérification de ton code d’invitation Zodiak : horoscope personnalisé, thème natal, guidance sur WhatsApp ou Instagram.'
+        : status === 'invalid'
+          ? 'Rejoins Zodiak pour ton horoscope personnalisé et ton thème natal — guidance chaque matin sur WhatsApp ou Instagram, essai sans carte bancaire, puis 8,99 € / mois.'
+          : 'Accepte ton invitation : 14 jours de Premium offerts (horoscope personnalisé, chat astral, synastries) — puis 8,99 € / mois, résiliable en un clic.',
+  });
+
   if (status === 'loading') {
     return <LoadingScreen message="Vérification de l'invitation…" />;
   }
@@ -49,7 +65,7 @@ export default function ReferralLanding() {
       <PageLayout
         eyebrow="Invitation"
         title="Lien d'invitation invalide"
-        subtitle="Tu peux rejoindre Zodiak directement, ton expérience reste personnalisée."
+        subtitle="Ton horoscope personnalisé et ton thème natal t’attendent — rejoins Zodiak même sans ce lien, l’expérience reste la même."
         maxWidth="lg"
         showLogo
         dim
@@ -87,7 +103,7 @@ export default function ReferralLanding() {
           <span className="block text-gradient-aurora">Zodiak.</span>
         </>
       }
-      subtitle="Une lecture du ciel personnalisée chaque matin sur WhatsApp ou Instagram."
+      subtitle="Horoscope quotidien sur WhatsApp ou Instagram, chat astral calé sur ton thème natal — 8,99 € / mois après l’essai, sans engagement."
       maxWidth="lg"
       showLogo
     >

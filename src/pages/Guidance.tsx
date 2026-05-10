@@ -23,6 +23,8 @@ import { track } from '../lib/analytics';
 import { birthdayInfo } from '../lib/birthday';
 import { playSound } from '../lib/sounds';
 import { nextSmartPushMoment } from '../lib/smartPush';
+import { moonPhaseAt } from '../lib/moonPhase';
+import { useDocumentSeo } from '../lib/documentSeo';
 import { Bell, BellOff, X, Telescope } from 'lucide-react';
 
 /**
@@ -58,6 +60,12 @@ export default function Guidance() {
   const push = usePushNotifications();
   const [showPushNudge, setShowPushNudge] = useState(false);
   const [showBadges, setShowBadges] = useState(false);
+
+  useDocumentSeo({
+    title: 'Guidance du jour · Zodiak — horoscope personnalisé',
+    description:
+      'Ta lecture astrale du matin croisée à ton thème natal — transits du jour, humeur et carte du ciel sur Zodiak.',
+  });
 
   // Auto check-in au mount (idempotent côté hook)
   useEffect(() => {
@@ -173,7 +181,7 @@ export default function Guidance() {
           </span>
         </>
       }
-      subtitle="Une lecture du ciel au prisme de ton thème natal."
+      subtitle="Ton horoscope personnalisé du jour au prisme de ton thème natal."
       maxWidth="6xl"
       showLogo={false}
       headerSlot={

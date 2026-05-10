@@ -7,6 +7,7 @@ import AuthLayout from '../components/AuthLayout';
 import { Button } from '../components/ui/Button';
 import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
 import { cn } from '../lib/utils';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 export default function ResetPassword() {
   const [password, setPassword] = useState('');
@@ -16,6 +17,14 @@ export default function ResetPassword() {
   const [error, setError] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const navigate = useNavigate();
+
+  useDocumentSeo({
+    title: ready
+      ? 'Nouveau mot de passe · Zodiak'
+      : 'Lien de réinitialisation · Zodiak',
+    description:
+      'Définis un nouveau mot de passe sécurisé pour retrouver ta guidance quotidienne et ton chat astral Zodiak.',
+  });
 
   // Supabase parse le hash et établit la session "recovery". On attend que ce
   // soit fait avant d'afficher le form, pour éviter les "Auth session missing".

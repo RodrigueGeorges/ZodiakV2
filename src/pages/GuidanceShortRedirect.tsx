@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoadingScreen from '../components/LoadingScreen';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 /**
  * GuidanceShortRedirect — résolveur de short codes (ex: /g/abc123).
@@ -16,6 +17,12 @@ import LoadingScreen from '../components/LoadingScreen';
 export default function GuidanceShortRedirect() {
   const { short } = useParams();
   const navigate = useNavigate();
+
+  useDocumentSeo({
+    title: 'Ouverture de ta guidance · Zodiak',
+    description:
+      'Redirection sécurisée vers une guidance astrale du jour partagée sur Zodiak — même service que sur WhatsApp ou Instagram.',
+  });
 
   useEffect(() => {
     const run = async () => {

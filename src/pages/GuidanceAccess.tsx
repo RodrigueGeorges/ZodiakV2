@@ -7,6 +7,7 @@ import LoadingScreen from '../components/LoadingScreen';
 import EmptyState from '../components/ui/EmptyState';
 import PageLayout from '../components/PageLayout';
 import { Card } from '../components/ui/Card';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 export default function GuidanceAccess() {
   const [searchParams] = useSearchParams();
@@ -83,6 +84,19 @@ export default function GuidanceAccess() {
     fetchGuidance();
   }, [searchParams]);
 
+  useDocumentSeo({
+    title: loading
+      ? 'Guidance partagée · Zodiak'
+      : error
+        ? 'Lien de guidance invalide · Zodiak'
+        : 'Guidance du jour · lien sécurisé — Zodiak',
+    description: loading
+      ? 'Ouverture sécurisée d’une guidance astrale quotidienne partagée sur Zodiak.'
+      : error
+        ? 'Ce lien de guidance a expiré ou n’est plus valide — demande un nouvel envoi à la personne abonnée à Zodiak.'
+        : 'Horoscope et lecture du jour partagés sous lien sécurisé. Découvre Zodiak : guidance quotidienne sur WhatsApp ou Instagram à partir du thème natal — essai gratuit sans carte bancaire, puis 8,99 € / mois.',
+  });
+
   if (loading) return <LoadingScreen message="Chargement de la guidance…" />;
 
   if (error) {
@@ -90,7 +104,7 @@ export default function GuidanceAccess() {
       <PageLayout
         eyebrow="Lien partagé"
         title="Lien invalide"
-        subtitle="Ce lien n'est plus accessible — il a peut-être expiré."
+        subtitle="Ce lien était valable peu de temps uniquement — la guidance personnelle quotidienne, elle, arrive chaque matin sur WhatsApp ou Instagram avec Zodiak."
         maxWidth="lg"
         showLogo
         dim
@@ -122,7 +136,7 @@ export default function GuidanceAccess() {
           <span className="text-gradient-aurora">Une lecture du ciel</span>
         )
       }
-      subtitle="Lien sécurisé · partagé pour cette journée uniquement."
+      subtitle="Lecture du jour partagée depuis le thème natal — même expérience que ta guidance WhatsApp ou Instagram, ici sous lien sécurisé pour 24 h."
       maxWidth="5xl"
       showLogo
     >

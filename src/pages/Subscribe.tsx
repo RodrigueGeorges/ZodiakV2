@@ -5,14 +5,22 @@ import PageLayout from '../components/PageLayout';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { cn } from '../lib/utils';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 const PLAN_FEATURES = [
-  'Guidance du jour sur WhatsApp ou Instagram — même fil que sur la landing',
-  'Chat astral avec fil de conversation mémorisé',
-  'Thème natal utilisé automatiquement : rien à recopier avant chaque message',
+  'Guidance quotidienne illimitée · WhatsApp ou Instagram',
+  'Chat astral illimité, mémoire de conversation',
+  'Profil fondé sur ton thème natal — tout reste personnel',
 ];
 
 export default function Subscribe() {
+  useDocumentSeo({
+    title:
+      'Abonnement · Zodiak · 8,99 € — horoscope personnalisé & chat',
+    description:
+      'Une seule formule : guidance du jour + chat illimités, basés sur ton thème natal. 7 jours sans carte puis 8,99 € / mois, résiliable en un clic.',
+  });
+
   const navigate = useNavigate();
 
   const handleStart = () => {
@@ -21,12 +29,14 @@ export default function Subscribe() {
 
   return (
     <PageLayout
-      eyebrow="S’abonner"
-      title="Un tarif lisible · pas de petite ligne"
+      eyebrow="Abonnement"
+      title="Une seule formule. Tout est inclus."
       subtitle={
         <>
-          Tu testes tout pendant <span className="text-ivory-100 font-medium">7 jours offerts sans carte</span>. Si ça reste avec toi après la semaine, le prélèvement tourne à{' '}
-          <span className="text-aurora-200 font-medium">8,99&nbsp;€ par mois</span> pour la guidance quotidienne + le chat.
+          <span className="text-ivory-200 font-medium">8,99&nbsp;€ par mois</span> après{' '}
+          <span className="text-ivory-100 font-medium">7 jours offerts sans carte</span> : guidance du matin + chat
+          astral, calibrés sur ton <span className="text-aurora-200/95 font-medium">thème natal</span>. Pas de palier
+          caché, pas de pub, pas de revente de données.
         </>
       }
       maxWidth="lg"

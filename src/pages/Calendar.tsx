@@ -10,6 +10,7 @@ import { usePremium } from '../lib/hooks/usePremium';
 import { moonPhasesNextDays, nextKeyMoonDates, moonPhaseAt } from '../lib/moonPhase';
 import MoonPhaseVisual from '../components/MoonPhaseVisual';
 import { cn } from '../lib/utils';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 const formatDay = (iso: string) => {
   const d = new Date(iso);
@@ -35,6 +36,12 @@ export default function CalendarPage() {
 
   const phases = useMemo(() => moonPhasesNextDays(30), []);
   const keyDates = useMemo(() => nextKeyMoonDates(60), []);
+
+  useDocumentSeo({
+    title: 'Calendrier lunaire 30 jours · Zodiak',
+    description:
+      'Phases de la Lune et dates clés pour t’aligner avec ton horoscope personnalisé — calendrier cosmique réservé aux abonnés Premium Zodiak (8,99 € / mois, essai sans CB).',
+  });
 
   if (isLoading) return <LoadingScreen message="Lecture du calendrier…" />;
 
@@ -156,7 +163,7 @@ export default function CalendarPage() {
     <PageLayout
       eyebrow="Calendrier"
       title="Ton mois cosmique"
-      subtitle="Phases lunaires et dates clés pour t'aligner."
+      subtitle="Les lunaisons du mois qui rythment ton horoscope — pour t’aligner avec la Lune."
       maxWidth="5xl"
       showLogo={false}
       dim

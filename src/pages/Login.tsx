@@ -6,8 +6,15 @@ import { supabase } from '../lib/supabase';
 import AuthLayout from '../components/AuthLayout';
 import { Button } from '../components/ui/Button';
 import OAuthButtons from '../components/OAuthButtons';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 export default function Login() {
+  useDocumentSeo({
+    title: 'Connexion · Zodiak — horoscope personnalisé',
+    description:
+      'Connecte-toi à Zodiak pour retrouver ta guidance du jour sur WhatsApp ou Instagram et ton chat astral basés sur ton thème natal.',
+  });
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -43,8 +50,8 @@ export default function Login() {
   return (
     <AuthLayout
       eyebrow="Bon retour"
-      title="Reconnecte-toi aux étoiles"
-      subtitle="Ta guidance t'attend, exactement où tu l'avais laissée."
+      title="Reconnecte-toi à ton ciel"
+      subtitle="Ton horoscope personnalisé et ton guide astral t'attendent — même compte, même thème natal."
       footer={
         <>
           Pas encore de compte ?{' '}

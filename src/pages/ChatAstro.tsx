@@ -14,6 +14,7 @@ import { vibrate } from '../lib/haptics';
 import { track } from '../lib/analytics';
 import { MOOD_LABELS } from '../components/MoodCheck';
 import { cn } from '../lib/utils';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 const BASE_SUGGESTIONS = [
   'Quels sont mes points forts selon mon thème ?',
@@ -136,6 +137,15 @@ export default function ChatAstro() {
   const quotaReached =
     !isPremium && todayUserMessages >= quotas.chatMessagesPerDay;
 
+  useDocumentSeo({
+    title: profileIncomplete
+      ? 'Chat astral · compléter ton profil — Zodiak'
+      : 'Chat astral & thème natal — Zodiak',
+    description: profileIncomplete
+      ? 'Complète ton nom et tes données de naissance pour activer le guide astral Zodiak, calé sur ton thème natal.'
+      : 'Pose tes questions à un guide qui connaît ton thème natal et ton historique — messages gratuits limités ou illimité en Premium (8,99 € / mois, essai sans CB).',
+  });
+
   const send = async (suggestion?: string) => {
     const question = (suggestion || input).trim();
     if (!question || loading) return;
@@ -253,7 +263,7 @@ export default function ChatAstro() {
       <PageLayout
         eyebrow="Guide astral"
         title="Profil à compléter"
-        subtitle="Renseigne ton nom et tes infos de naissance pour discuter avec ton guide."
+        subtitle="Renseigne ton nom et ta naissance pour que le guide lise ton thème natal et réponde sur ta guidance."
       >
         <Card variant="surface">
           <div className="p-8 text-center">
@@ -273,7 +283,7 @@ export default function ChatAstro() {
     <PageLayout
       eyebrow="Guide astral"
       title="Pose tes questions"
-      subtitle="Une conversation directe — je me souviens de nos précédents échanges."
+      subtitle="Une conversation directe avec ton thème natal en mémoire — pour compléter ta guidance WhatsApp ou Instagram."
       maxWidth="3xl"
       showLogo={false}
       dim

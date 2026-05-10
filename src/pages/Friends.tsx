@@ -13,6 +13,7 @@ import { useAuth } from '../lib/hooks/useAuth';
 import { useFriends } from '../lib/hooks/useFriends';
 import { usePremium } from '../lib/hooks/usePremium';
 import { track } from '../lib/analytics';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 /**
  * Page "Mes liens" — annuaire des proches + accès aux synastries.
@@ -31,6 +32,12 @@ export default function Friends() {
   const navigate = useNavigate();
   const [adding, setAdding] = useState(false);
 
+  useDocumentSeo({
+    title: 'Mes liens · synastries & compatibilités — Zodiak',
+    description:
+      'Enregistre les personnes qui comptent avec leur date de naissance et explore tes synastries à partir du thème natal — inclus dans Zodiak Premium à 8,99 € / mois, essai sans carte bancaire.',
+  });
+
   if (isLoading) return <LoadingScreen message="Chargement…" />;
   if (!isAuthenticated) {
     navigate('/login', { replace: true });
@@ -43,7 +50,7 @@ export default function Friends() {
     <PageLayout
       eyebrow="Synastries"
       title="Tes liens"
-      subtitle="Ajoute les personnes qui comptent — découvre comment vos ciels s'accordent."
+      subtitle="Ajoute tes proches depuis leur thème natal — découvre comment vos deux cieux s’accordent dans Zodiak."
       maxWidth="4xl"
       showLogo={false}
       dim

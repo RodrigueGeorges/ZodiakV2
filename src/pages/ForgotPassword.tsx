@@ -5,12 +5,22 @@ import { AlertCircle, Mail, MailCheck, ArrowLeft } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import AuthLayout from '../components/AuthLayout';
 import { Button } from '../components/ui/Button';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useDocumentSeo({
+    title: sent
+      ? 'Email envoyé · Zodiak — mot de passe'
+      : 'Mot de passe oublié · Zodiak',
+    description: sent
+      ? 'Vérifie ta boîte mail : lien sécurisé pour réinitialiser ton accès à Zodiak et ta guidance personnalisée.'
+      : 'Réinitialiser ton mot de passe pour retrouver ton compte Zodiak — horoscope personnalisé et chat astral.',
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

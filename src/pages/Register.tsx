@@ -9,8 +9,15 @@ import OnboardingStepper from '../components/OnboardingStepper';
 import OAuthButtons from '../components/OAuthButtons';
 import PasswordStrengthMeter from '../components/PasswordStrengthMeter';
 import { cn } from '../lib/utils';
+import { useDocumentSeo } from '../lib/documentSeo';
 
 export default function Register() {
+  useDocumentSeo({
+    title: 'Inscription · Zodiak — 7 jours offerts sans carte',
+    description:
+      'Crée ton compte pour recevoir ton horoscope personnalisé selon ton thème natal sur WhatsApp ou Instagram. Chat astral inclus. Essai gratuit une semaine sans carte.',
+  });
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -53,7 +60,7 @@ export default function Register() {
     <AuthLayout
       eyebrow="Étape 1 sur 2"
       title="Crée ton compte"
-      subtitle="Email + mot de passe. C'est tout — on s'occupe du reste juste après."
+      subtitle="Email et mot de passe — ensuite on calcule ton thème natal pour activer ton horoscope personnalisé du matin."
       footer={
         <>
           Déjà un compte ?{' '}
