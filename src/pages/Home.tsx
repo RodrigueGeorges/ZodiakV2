@@ -169,8 +169,8 @@ export default function Home() {
           </motion.div>
 
           <motion.div variants={heroItem} className="space-y-2 md:space-y-3">
-            <p className="eyebrow-ritual text-ivory-500/90 text-[0.65rem] md:text-micro">
-              Guidance astrale · thème natal
+            <p className="eyebrow-ritual text-aurora-200/95 text-[0.65rem] md:text-micro">
+              Guidance quotidienne · chat sur ton thème · sans installer d’app
             </p>
             <h1
               id="hero-title"
@@ -184,15 +184,18 @@ export default function Home() {
             variants={heroItem}
             className="mt-8 md:mt-10 text-[clamp(1.06rem,2.5vw,1.38rem)] leading-[1.55] font-light text-ivory-200/95 max-w-[26rem] md:max-w-[34rem] mx-auto"
           >
-            Une lecture{' '}
-            <span className="text-ivory-50 font-normal">personnelle du ciel</span>, chaque matin — calibrée sur ta naissance, sans nouvelle appli à installer.
+            Au réveil, un message fait le point avec{' '}
+            <span className="text-ivory-50 font-normal">toi</span> — à partir de ta carte et du jour qui commence.
+            Le reste du temps,{' '}
+            <span className="text-ivory-50 font-normal">le chat ouvre une conversation avec ton guide</span>
+            {' '}quand tu as besoin d’une mise au clair — toujours sur la même grille symbolique que la guidance du matin.
           </motion.p>
 
           <motion.p
             variants={heroItem}
             className="mt-6 font-mono text-[0.7rem] sm:text-caption uppercase tracking-[0.14em] text-aurora-300/90"
           >
-            7 jours offerts · sans carte bancaire
+            7 jours complets sans carte · annulation en deux clics
           </motion.p>
 
           <motion.div
@@ -206,7 +209,7 @@ export default function Home() {
               iconLeft={<Sparkles className="w-4 h-4" />}
               className="w-full sm:w-auto min-w-[220px] landing-primary-cta-glow transition-shadow duration-300"
             >
-              Commencer
+              Découvrir avec 7&nbsp;jours offerts
             </ButtonLink>
             <ButtonLink
               to="/login"
@@ -228,17 +231,18 @@ export default function Home() {
             className="h-px w-16 bg-gradient-to-r from-transparent via-aurora-400/35 to-transparent"
           />
           <p className="text-center text-body-lg text-ivory-300/95 leading-[1.75] font-light">
-            Construit sur{' '}
-            <span className="text-ivory-100 font-medium">ton thème de naissance</span>
-            , pas sur un texte générique. Données hébergées en{' '}
-            <span className="text-aurora-200/90">Europe</span>.
+            Chaque phrase repose sur{' '}
+            <span className="text-ivory-100 font-medium">ton thème calculé au compte</span>
+            {' '}— ascendant, lune et transits du jour lus à travers ta carte, pas un paragraphe « signe par signe ».
+            Tes données restent en{' '}
+            <span className="text-aurora-200/90">Europe</span>, sans revente à des annonceurs.
           </p>
         </div>
       </section>
 
       {/* Ciel du jour — composition dans un seul bloc */}
       <Chapter
-        eyebrow="Ce qui domine aujourd'hui"
+        eyebrow="Ciel du jour"
         title={
           <div className="harmony-lunar">
             <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-7 md:gap-5 lg:gap-8">
@@ -269,24 +273,25 @@ export default function Home() {
         }
         body={
           <span className="not-italic">
-            Chaque message part de <strong className="font-medium text-ivory-200">ton thème</strong> et du ciel du jour — pas d’un même texte pour tout le monde.
+            Ce que tu lis le matin fusionne <strong className="font-medium text-ivory-200">l’instant cosmique</strong>
+            {' '}avec les points sensibles de ta carte : d’où des angles et un ton qui diffèrent nettement d’un profil à l’autre.
           </span>
         }
       />
 
       {/* ─── Ce que tu utilises au quotidien — 2 blocs ───────────── */}
-      <section className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/[0.09]">
+      <section className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/[0.09] landing-features-ambient">
         <div className="relative max-w-5xl mx-auto">
           <div className="text-center mb-16 md:mb-20 max-w-2xl mx-auto space-y-6">
-            <p className="protocol-caption text-ivory-400">L’expérience</p>
+            <p className="protocol-caption text-aurora-200/80">Les deux piliers</p>
             <h2 className="font-display font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
-              Deux usages,{' '}
-              <span className="italic-editorial font-light text-aurora-400">un même ciel.</span>
+              Le matin pour cadrer,{' '}
+              <span className="italic-editorial font-light text-aurora-400">le chat pour approfondir.</span>
             </h2>
             <p className="text-body-lg text-ivory-400/90 leading-[1.75]">
-              Tout repose sur <span className="text-ivory-200 font-medium">ton thème de naissance</span>{' '}
-              (calculé une fois au compte). Ensuite tu reçois la guidance là où tu discutes déjà —
-              plus un chat pensé pour toi quand tu as besoin d’éclairage.
+              On calcule <span className="text-ivory-200 font-medium">ton thème une seule fois</span> à l’inscription.
+              Ensuite : un fil court chaque jour sur le canal que tu choisis, et une conversation à la demande qui ne
+              « repart pas de zéro » à chaque message.
             </p>
           </div>
 
@@ -296,14 +301,14 @@ export default function Home() {
               index={1}
               icon={<Sun className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-200" />}
               title="Guidance du jour"
-              kicker="Rituel du matin"
-              text="Chaque jour, une lecture courte : transits du moment croisés avec ton ascendant,
-              ta lune et les maisons qui comptent pour toi. Pas de copier-coller générique : le ton
-              et les angles suivent ta carte."
+              kicker="Le fil du matin"
+              text="Une synthèse courte : ce que le ciel « dit » aujourd’hui par rapport à ton ascendant, ta lune
+              et les zones de ta carte qui s’activent. Le fil éditorial reste le tien — pas un horoscope du même
+              ton pour tout le monde."
               bullets={[
-                'Envoi sur WhatsApp ou Instagram, à l’heure que tu choisis',
-                'Un seul message clair pour cadrer la journée (énergie, vigilance, opportunités)',
-                'Réglages dans ton espace après inscription — rien à installer',
+                'Reçu sur WhatsApp ou Instagram, à l’heure que tu fixes',
+                'Un message pour cadrer la journée : énergie, vigilance, ouvertures possibles',
+                'Rien à télécharger : tout se règle depuis ton espace après inscription',
               ]}
             />
             <RitualCard
@@ -311,14 +316,14 @@ export default function Home() {
               index={2}
               icon={<MessageCircle className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-200" />}
               title="Chat avec ton guide astral"
-              kicker="Quand tu veux, à ton rythme"
-              text="Pose une question précise (« travail », « relation », timing »…) ou déroule une
-              réflexion. Le guide s’appuie sur ton thème pour rester dans le même langage symbolique que
-              la guidance quotidienne — avec une continuité de conversation."
+              kicker="À la demande"
+              text="Un espace où tu poses une question nette (« travail », « relation », « timing »…) ou où tu fais
+              dériver la discussion. Les réponses s’alignent sur ton thème pour parler le même langage que la guidance
+              du matin — avec une mémoire de ce que vous vous êtes déjà dit."
               bullets={[
-                'Réponses contextualisées (pas un horoscope passe-partout)',
-                'Mémoire de tes échanges : plus tu précises ta vie, mieux ça cadre avec ton ciel',
-                'Idéal entre deux guidances ou quand tu as besoin d’un éclairage ciblé',
+                'Réponses calibrées sur ta carte, pas des paragraphes « signe par signe »',
+                'Le fil se souvient : plus le contexte est riche, plus la lecture serre les angles',
+                'Parfait quand tu veux zoomer entre deux messages du matin',
               ]}
             />
           </div>
@@ -332,7 +337,7 @@ export default function Home() {
               iconRight={<ArrowRight className="w-4 h-4" />}
               className="landing-primary-cta-glow shadow-none"
             >
-              Essayer 7 jours offerts
+              Profiter de 7&nbsp;jours offerts
             </ButtonLink>
           </div>
         </div>
@@ -343,28 +348,30 @@ export default function Home() {
         id="pricing"
         className="relative py-24 md:py-40 px-6 border-t border-white/[0.09]"
       >
-        <div className="max-w-lg mx-auto">
+        <div className="max-w-xl mx-auto">
           <div className="text-center mb-12 md:mb-14">
-            <p className="protocol-caption text-ivory-400 mb-8 md:mb-10">
-              Offre simple
+            <p className="protocol-caption text-aurora-200/85 mb-8 md:mb-10">
+              Abonnement
             </p>
             <div className="mb-10 flex justify-center">
               <LiveCounter />
             </div>
             <h2 className="font-display font-extralight text-display text-ivory-50 leading-[0.96] tracking-[-0.03em]">
-              Une formule pour{' '}
-              <span className="italic-editorial font-light text-aurora-400">tout suivre.</span>
+              Un prix,{' '}
+              <span className="italic-editorial font-light text-aurora-400">zéro à la carte.</span>
             </h2>
             <p className="mt-7 text-body-lg text-ivory-400/90 max-w-xl mx-auto leading-[1.7]">
-              Pas de grille de prix à décrypter : <span className="text-ivory-200 font-medium">8,99 € par mois</span>, tout compris —
-              guidance du jour et chat illimités, calibrés sur ton thème. Pas de publicité ni de revente de données.
+              <span className="text-ivory-200 font-medium">8,99&nbsp;€ par mois</span> après ton essai : guidance
+              quotidienne et chat illimité, tous deux calés sur ton thème. Pas de paliers ni de packs cachés — et
+              pas de publicité ni de revente de tes données.
             </p>
           </div>
 
           <PriceOfferCard />
 
-          <p className="text-center mt-10 eyebrow-ritual text-ivory-400/80 leading-relaxed">
-            7 premiers jours offerts pour tester · sans carte bancaire au départ · résiliation depuis ton espace personnel
+          <p className="text-center mt-10 text-caption text-ivory-400/90 leading-relaxed max-w-md mx-auto">
+            La première semaine est offerte : tu testes le matin + le chat sans entrer de carte. Tu résilies depuis
+            ton espace quand tu veux, sans mail de justification.
           </p>
         </div>
       </section>
@@ -383,16 +390,16 @@ export default function Home() {
           <FAQ
             items={[
               {
-                q: 'Comment ça marche concrètement ?',
+                q: 'Comment ça marche, concrètement ?',
                 a: (
                   <>
-                    Tu crées ton compte avec ta date, ton heure et ton lieu de naissance : on en déduit ton
-                    thème natal une fois pour toutes. Chaque matin, tu reçois la{' '}
-                    <strong className="font-medium text-ivory-200">guidance du jour</strong> — une lecture courte,
-                    envoyée là où tu discutes déjà (WhatsApp ou Instagram). À côté, tu ouvres le{' '}
-                    <strong className="font-medium text-ivory-200">chat</strong> avec ton guide astral quand tu as
-                    besoin d’un éclairage : questions ciblées, réponses qui restent dans le langage symbolique de ton
-                    ciel — avec mémoire de ce que vous vous dites au fil du temps.
+                    Inscription avec date, heure et lieu de naissance : on pose ton{' '}
+                    <strong className="font-medium text-ivory-200">thème une fois pour toutes</strong>. Chaque matin tu
+                    reçois la <strong className="font-medium text-ivory-200">guidance du jour</strong> là où tu discutes déjà —
+                    WhatsApp ou Instagram — à l&apos;heure choisie. Le{' '}
+                    <strong className="font-medium text-ivory-200">chat</strong>{' '}
+                    reprend cette même grille symbolique : tu poursuis une ligne de pensée, avec mémoire de ce que vous
+                    vous êtes déjà dit.
                   </>
                 ),
               },
@@ -471,27 +478,29 @@ export default function Home() {
           transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-3xl mx-auto"
         >
-          <p className="protocol-caption text-ivory-400 mb-10">
-            Prochain pas
+          <p className="protocol-caption text-aurora-200/85 mb-10">
+            Dernière ligne droite
           </p>
-          <h2 className="font-display font-extralight text-display-xl text-ivory-50 leading-[1.02] mb-10 md:mb-12 tracking-[-0.03em]">
-            Le ciel travaille en silence.
-            <br />
+          <h2 className="font-display font-extralight text-display-xl text-ivory-50 leading-[1.06] mb-10 md:mb-12 tracking-[-0.03em]">
+            Une semaine pour prendre tes marques&nbsp;:{' '}
             <span className="italic-editorial font-light text-aurora-400">
-              Toi aussi, tu peux t’y mettre.
+              le message du matin, la conversation sur demande,
             </span>
+            <br />
+            la même voix sur ton thème — sans carte pour commencer.
           </h2>
           <ButtonLink
             to="/register"
             variant="primary"
             size="lg"
             iconLeft={<Sparkles className="w-4 h-4" />}
+            iconRight={<ArrowRight className="w-4 h-4" />}
             className="landing-primary-cta-glow transition-shadow duration-300"
           >
-            Démarrer gratuitement
+            Ouvrir mon essai gratuit
           </ButtonLink>
-          <p className="mt-5 eyebrow-ritual text-ivory-400/80">
-            7 jours offerts · sans CB
+          <p className="mt-5 text-caption text-ivory-400/85">
+            7 jours complets · pas de carte pour commencer
           </p>
         </motion.div>
 
@@ -546,7 +555,7 @@ interface RitualCardProps {
   text: string;
   /** Carte principale du bento (plus grande, halo). @deprecated préférer spotlight */
   featured?: boolean;
-  /** Déux cartes mises au même niveau visuel avec halo aurora */
+  /** Deux cartes mises au même niveau visuel avec halo aurora */
   spotlight?: boolean;
   /** Puces lisibles sous le paragraphe */
   bullets?: string[];
@@ -577,8 +586,8 @@ function RitualCard({
         'relative backdrop-blur-md border group flex flex-col overflow-hidden',
         'shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] transition-[border-color,background-color,transform] duration-300 ease-brutal',
         accent
-          ? 'border-aurora-400/35 bg-gradient-to-br from-aurora-500/[0.08] via-white/[0.04] to-white/[0.02] hover:border-aurora-400/48 shadow-[inset_0_1px_0_rgba(56,189,248,0.12),0_40px_100px_-56px_rgba(0,0,0,0.75)] p-8 md:p-11 lg:p-12 lg:min-h-[min(58vh,480px)]'
-          : 'border-white/12 bg-white/[0.04] hover:bg-white/[0.07] hover:border-white/22 p-8 md:p-10',
+          ? 'rounded-2xl border-aurora-400/35 bg-gradient-to-br from-aurora-500/[0.08] via-white/[0.04] to-white/[0.02] hover:border-aurora-400/48 shadow-[inset_0_1px_0_rgba(56,189,248,0.12),0_40px_100px_-56px_rgba(0,0,0,0.75)] p-8 md:p-11 lg:p-12 lg:min-h-[min(52vh,440px)]'
+          : 'rounded-xl border-white/12 bg-white/[0.04] hover:bg-white/[0.07] hover:border-white/22 p-8 md:p-10',
         className,
       )}
     >
@@ -622,10 +631,13 @@ function RitualCard({
         {text}
       </p>
       {bullets && bullets.length > 0 && (
-        <ul className="mt-8 space-y-3 text-caption text-ivory-400/95 relative z-[1] leading-relaxed">
+        <ul className="mt-8 pt-8 ritual-spotlights-divider space-y-3.5 text-caption text-ivory-300/95 relative z-[1] leading-relaxed">
           {bullets.map((b) => (
             <li key={b} className="flex gap-3 text-left">
-              <Check className="w-4 h-4 text-aurora-400 shrink-0 mt-0.5 opacity-95" aria-hidden />
+              <span
+                className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-aurora-400 shadow-[0_0_10px_rgba(56,189,248,0.5)]"
+                aria-hidden
+              />
               <span>{b}</span>
             </li>
           ))}
@@ -645,10 +657,10 @@ function RitualCard({
 
 function PriceOfferCard() {
   const includes = [
-    'Guidance du jour sur le canal que tu choisis (WhatsApp ou Instagram), horaire au choix',
-    'Chat avec ton guide astral, autant que tu veux, avec mémoire de la conversation',
-    'Profil basé sur ton thème natal — tout le contenu tourne autour de ta carte',
-    'Pas de carte bancaire pour commencer : tu actives ton essai puis tu décides à froid',
+    'Guidance du jour sans limite : WhatsApp ou Instagram, à l’heure que tu choisis',
+    'Chat illimité avec ton guide — la conversation reprend là où tu l’as laissée',
+    'Thème natal en fondation : chaque phrase reste cohérente avec ta carte',
+    'Essai démarré sans carte : tu ajoutes un moyen de paiement seulement si tu continues',
   ];
 
   return (
@@ -658,7 +670,7 @@ function PriceOfferCard() {
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        'relative rounded-xl overflow-hidden backdrop-blur-md',
+        'relative rounded-2xl overflow-hidden backdrop-blur-md',
         'border border-aurora-400/40 bg-gradient-to-b from-aurora-500/[0.12] via-white/[0.045] to-white/[0.02]',
         'shadow-[inset_0_1px_0_rgba(56,189,248,0.18),0_32px_80px_-44px_rgba(0,0,0,0.9)]',
         'p-8 md:p-10 lg:p-12',
@@ -669,25 +681,28 @@ function PriceOfferCard() {
         className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-aurora-400/85 to-transparent"
       />
 
-      <div className="text-center pb-8 border-b border-white/[0.1] mb-8">
-        <span className="inline-flex items-center rounded-full border border-aurora-400/35 bg-aurora-500/15 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-aurora-100">
-          Formule unique
-        </span>
-        <div className="mt-8 flex flex-wrap items-end justify-center gap-x-3 gap-y-1">
-          <span className="font-display font-extralight text-[clamp(3.25rem,8vw,4.25rem)] text-ivory-50 leading-none tracking-[-0.03em]">
-            8,99&nbsp;€
+      <div className="text-center pb-8 border-b border-white/[0.08] mb-8">
+        <div className="landing-price-well rounded-xl border border-aurora-400/20 px-6 py-7 md:px-8 md:py-8">
+          <span className="inline-flex items-center rounded-full border border-aurora-400/40 bg-aurora-500/20 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-aurora-50">
+            Tout inclus
           </span>
-          <span className="pb-1 text-body text-aurora-200/90 font-medium">
-            par mois
-          </span>
+          <div className="mt-7 flex flex-wrap items-end justify-center gap-x-3 gap-y-1">
+            <span className="font-display font-extralight text-[clamp(3.25rem,8vw,4.25rem)] text-ivory-50 leading-none tracking-[-0.03em]">
+              8,99&nbsp;€
+            </span>
+            <span className="pb-1 text-body text-aurora-100/90 font-medium">
+              par mois
+            </span>
+          </div>
+          <p className="mt-5 text-caption text-ivory-300/95 leading-relaxed max-w-sm mx-auto">
+            Après <span className="text-ivory-100 font-medium">7 jours offerts</span>, ce tarif couvre la guidance
+            quotidienne et le chat — la même expérience que plus haut sur la page, sans module payant à part.
+          </p>
         </div>
-        <p className="mt-5 text-body text-ivory-400/95 leading-relaxed max-w-md mx-auto">
-          Après <span className="text-ivory-200 font-medium">7 jours gratuits sans engagement</span>, ce tarif mensuel ouvre tout l’outil : même expérience que dans l’article ci-dessus, sans surprises sur la facture.
-        </p>
       </div>
 
-      <p className="text-micro uppercase tracking-[0.2em] text-aurora-200/85 mb-4">
-        Ce que tu débloques
+      <p className="text-micro uppercase tracking-[0.2em] text-aurora-200/90 mb-4">
+        Inclus dans l’abonnement
       </p>
       <ul className="space-y-3.5 text-body text-ivory-200/95 mb-10 md:mb-11">
         {includes.map((line) => (
@@ -707,13 +722,12 @@ function PriceOfferCard() {
         iconRight={<ArrowRight className="w-4 h-4" />}
         className="landing-primary-cta-glow shadow-none text-night-950"
       >
-        Commencer gratuitement pendant 7 jours
+        Commencer — 7 jours offerts
       </ButtonLink>
 
-      <p className="text-center mt-4 text-caption text-ivory-500/95">
-        Puis facturation à <span className="text-aurora-200/95 font-medium">8,99&nbsp;€</span>{' '}
-        / mois si tu poursuis — résilie gratuitement depuis ton espace avant la fin des 7 jours pour éviter tout
-        prélèvement.
+      <p className="text-center mt-4 text-caption text-ivory-500/95 leading-relaxed">
+        Si tu continues au-delà de l’essai : <span className="text-aurora-200/95 font-medium">8,99&nbsp;€</span> débités
+        chaque mois. Stoppe depuis ton espace avant la fin des 7 jours pour ne rien payer.
       </p>
     </motion.div>
   );
