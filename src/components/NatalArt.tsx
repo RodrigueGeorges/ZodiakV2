@@ -240,7 +240,7 @@ export default function NatalArt({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        'relative inline-block rounded-3xl overflow-hidden bg-night-950',
+        'relative inline-block rounded-3xl overflow-hidden bg-black',
         'ring-1 ring-aurora-400/25 shadow-glow-aurora',
         className
       )}

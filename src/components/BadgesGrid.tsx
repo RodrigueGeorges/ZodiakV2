@@ -57,7 +57,7 @@ function BadgeTile({ badge, got, index }: TileProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.03 }}
       className={cn(
-        'relative aspect-square rounded-md flex flex-col items-center justify-center gap-2 border backdrop-blur-md',
+        'relative aspect-square rounded-xl flex flex-col items-center justify-center gap-2 border backdrop-blur-md',
         got
           ? `${tone.bg} ${tone.ring}`
           : 'bg-night-900/40 border-white/[0.08] grayscale opacity-40',

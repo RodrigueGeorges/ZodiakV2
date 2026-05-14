@@ -315,6 +315,5 @@ IMPORTANT : Chaque guidance doit être UNIQUE, professionnelle, bienveillante et
   }
 }
 
-// NB : la fonction `sendSms` historique a été retirée — l'envoi de la guidance
-// passe désormais exclusivement par WhatsApp / Instagram via `_metaUtils.ts`
+// NB : l'envoi de la guidance passe exclusivement par WhatsApp / Instagram via `_metaUtils.ts`
 // et `send-daily-guidance.ts`. Cf. `MIGRATION_META.md` pour le détail.

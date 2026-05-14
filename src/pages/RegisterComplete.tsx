@@ -7,7 +7,6 @@ import {
   Clock,
   Sparkles,
   AlertCircle,
-  HelpCircle,
   Check,
 } from 'lucide-react';
 import { useAuth } from '../lib/hooks/useAuth';
@@ -70,7 +69,7 @@ export default function RegisterComplete() {
 
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { redirectTo } = useAuthRedirect();
+  useAuthRedirect();
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -225,7 +224,7 @@ export default function RegisterComplete() {
 
   if (loading) return <LoadingScreen message="Préparation…" />;
   if (!user) {
-    redirectTo('/login');
+    navigate('/login', { replace: true });
     return <LoadingScreen message="Redirection…" />;
   }
 
@@ -244,10 +243,26 @@ export default function RegisterComplete() {
   return (
     <AuthLayout
       eyebrow="Étape 2 sur 2"
-      title="Informations pour ton thème natal"
-      subtitle="Date, heure et lieu de naissance : on calcule ta carte une fois pour tout ton horoscope personnalisé — données chiffrées, en Europe."
+      title="Trace ton ciel de naissance"
+      subtitle="Trois coordonnées suffisent pour ouvrir ton thème natal : prénom, moment, lieu. Ensuite Zodiak personnalise chaque guidance."
     >
       <OnboardingStepper currentStep={2} totalSteps={2} className="mb-7" />
+
+      <div className="grid grid-cols-3 gap-2 mb-6">
+        {[
+          ['01', 'Identité'],
+          ['02', 'Naissance'],
+          ['03', 'Carte'],
+        ].map(([index, label]) => (
+          <div
+            key={index}
+            className="rounded-2xl border border-white/[0.08] bg-white/[0.035] px-3 py-3 text-center"
+          >
+            <div className="font-mono text-[10px] tracking-[0.22em] text-aurora-300">{index}</div>
+            <div className="mt-1 text-micro text-ivory-300 normal-case tracking-normal">{label}</div>
+          </div>
+        ))}
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {error && (
@@ -255,7 +270,7 @@ export default function RegisterComplete() {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             role="alert"
-            className="flex items-start gap-2 rounded-md border border-magenta-500/30 bg-magenta-500/10 px-4 py-3"
+            className="flex items-start gap-2 rounded-2xl border border-magenta-500/30 bg-magenta-500/10 px-4 py-3"
           >
             <AlertCircle className="w-4 h-4 text-magenta-400 flex-shrink-0 mt-0.5" />
             <p className="text-caption text-magenta-200">{error}</p>
@@ -353,7 +368,7 @@ export default function RegisterComplete() {
               animate={{ opacity: 1, y: 0 }}
               className="mt-2 flex items-start gap-1.5 text-micro text-ivory-300 leading-relaxed"
             >
-              <HelpCircle className="w-3.5 h-3.5 text-aurora-300 flex-shrink-0 mt-0.5" />
+              <Sparkles className="w-3.5 h-3.5 text-aurora-300 flex-shrink-0 mt-0.5" />
               <span>
                 On calcule un thème solaire fiable (signes, planètes, transits).
                 L'ascendant et les maisons resteront approximatifs — tu pourras

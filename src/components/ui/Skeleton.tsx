@@ -15,8 +15,8 @@ interface SkeletonProps {
 }
 
 const roundedMap: Record<NonNullable<SkeletonProps['rounded']>, string> = {
-  sm: 'rounded-sm',
-  md: 'rounded-md',
+  sm: 'rounded-lg',
+  md: 'rounded-lg',
   lg: 'rounded-lg',
   xl: 'rounded-xl',
   '2xl': 'rounded-2xl',

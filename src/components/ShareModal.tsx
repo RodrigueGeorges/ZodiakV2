@@ -6,9 +6,7 @@ import { toast } from 'react-hot-toast';
 /**
  * Modale de partage — natif uniquement (deeplinks vers les apps tierces).
  *
- * Le partage par SMS a été retiré (la migration vers WhatsApp/Instagram via
- * Meta Cloud API rend le SMS technique obsolète + coût). Pour partager à un
- * contact, on s'appuie sur les deep-links natifs des apps cibles.
+ * Le partage s'appuie sur les deep-links natifs des apps cibles.
  */
 
 const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (

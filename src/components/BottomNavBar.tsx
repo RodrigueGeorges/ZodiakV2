@@ -28,10 +28,10 @@ function BottomNavBar() {
       {/* Voile de transition pour faire fondre la nav dans la page */}
       <div
         aria-hidden="true"
-        className="absolute -top-14 inset-x-0 h-14 bg-gradient-to-t from-night-950/92 via-night-950/48 to-transparent pointer-events-none"
+        className="absolute -top-14 inset-x-0 h-14 bg-gradient-to-t from-black/92 via-black/48 to-transparent pointer-events-none"
       />
       <div className="px-3 pb-3 pt-2">
-        <div className="flex items-center justify-around gap-1 rounded-full bg-night-950/50 backdrop-blur-md border border-white/[0.11] px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_-8px_32px_rgba(0,0,0,0.35)]">
+        <div className="flex items-center justify-around gap-1 rounded-full bg-black/50 backdrop-blur-md border border-white/[0.11] px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_-8px_32px_rgba(0,0,0,0.35)]">
           {NAV.map((item) => {
             const Icon = item.icon;
             const active = location.pathname === item.path;

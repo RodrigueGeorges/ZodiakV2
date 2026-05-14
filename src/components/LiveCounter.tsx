@@ -67,8 +67,8 @@ export default function LiveCounter({
       viewport={{ once: true, amount: 0.6 }}
       transition={{ duration: 0.6 }}
       className={cn(
-        'inline-flex items-center gap-3 rounded-md px-5 py-2.5',
-        'bg-night-950/50 backdrop-blur border border-white/[0.11] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]',
+        'inline-flex items-center gap-3 rounded-lg px-5 py-2.5',
+        'bg-white/[0.06] backdrop-blur border border-white/[0.11] shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]',
         'text-caption text-ivory-200',
         className,
       )}

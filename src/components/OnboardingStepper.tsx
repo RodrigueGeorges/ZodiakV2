@@ -19,7 +19,7 @@ export default function OnboardingStepper({
   return (
     <div
       className={cn(
-        'flex items-center justify-center gap-2',
+        'flex items-center justify-center gap-2.5',
         className,
       )}
       role="progressbar"
@@ -38,12 +38,12 @@ export default function OnboardingStepper({
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: i * 0.08, duration: 0.3 }}
             className={cn(
-              'h-px rounded-full transition-all duration-500',
+              'h-1 rounded-full transition-all duration-500 shadow-[0_0_18px_-8px_rgba(56,189,248,0.85)]',
               isActive
-                ? 'w-12 bg-aurora-400'
+                ? 'w-16 bg-gradient-to-r from-aurora-200 via-aurora-400 to-aurora-600'
                 : isCompleted
-                  ? 'w-6 bg-aurora-400/60'
-                  : 'w-6 bg-ivory-50/[0.10]',
+                  ? 'w-8 bg-aurora-400/60'
+                  : 'w-8 bg-ivory-50/[0.10]',
             )}
           />
         );

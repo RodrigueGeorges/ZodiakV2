@@ -40,7 +40,7 @@ export default function WhatsAppPreview({
       />
 
       {/* Téléphone */}
-      <div className="relative rounded-[40px] overflow-hidden ring-1 ring-ivory-50/15 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] bg-night-950">
+      <div className="relative rounded-[40px] overflow-hidden ring-1 ring-ivory-50/15 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.6)] bg-black">
         {/* Notch */}
         <div className="absolute top-2 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-full z-20" />
 
@@ -139,9 +139,9 @@ function WhatsAppHeader() {
 
 function InstagramHeader() {
   return (
-    <div className="bg-night-950/80 backdrop-blur px-3 py-2.5 flex items-center gap-3 border-b border-white/5">
+    <div className="bg-black/80 backdrop-blur px-3 py-2.5 flex items-center gap-3 border-b border-white/5">
       <div className="w-8 h-8 rounded-full bg-aurora-400 p-[2px]">
-        <div className="w-full h-full rounded-full bg-night-950 flex items-center justify-center">
+        <div className="w-full h-full rounded-full bg-black flex items-center justify-center">
           <Logo size="sm" />
         </div>
       </div>
@@ -160,7 +160,7 @@ function InstagramHeader() {
 function DateChip({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex justify-center">
-      <span className="px-2.5 py-0.5 rounded-md bg-white/5 text-[10px] uppercase tracking-wider text-ivory-300">
+      <span className="px-2.5 py-0.5 rounded-lg bg-white/5 text-[10px] uppercase tracking-wider text-ivory-300">
         {children}
       </span>
     </div>
@@ -179,7 +179,7 @@ function BubbleIn({
       initial={{ opacity: 0, y: 8, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
-      className="max-w-[88%] bg-[#1f2c33] text-ivory-50 rounded-2xl rounded-tl-md px-3.5 py-2.5 shadow-sm"
+      className="max-w-[88%] bg-[#1f2c33] text-ivory-50 rounded-2xl rounded-tl-lg px-3.5 py-2.5 shadow-sm"
     >
       {children}
     </motion.div>
@@ -198,7 +198,7 @@ function BubbleOut({
       initial={{ opacity: 0, y: 8, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
-      className="ml-auto max-w-[80%] bg-[#005c4b] text-ivory-50 rounded-2xl rounded-tr-md px-3.5 py-2 text-[13.5px] leading-relaxed"
+      className="ml-auto max-w-[80%] bg-[#005c4b] text-ivory-50 rounded-2xl rounded-tr-lg px-3.5 py-2 text-[13.5px] leading-relaxed"
     >
       {children}
     </motion.div>
@@ -237,7 +237,7 @@ function TypingDots({ delay = 0 }: { delay?: number }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay, duration: 0.4 }}
-      className="flex items-center gap-1.5 bg-[#1f2c33] w-fit rounded-2xl rounded-tl-md px-3 py-2"
+      className="flex items-center gap-1.5 bg-[#1f2c33] w-fit rounded-2xl rounded-tl-lg px-3 py-2"
     >
       {[0, 1, 2].map((i) => (
         <motion.span

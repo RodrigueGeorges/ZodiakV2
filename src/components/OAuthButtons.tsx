@@ -89,10 +89,10 @@ function OAuthButton({ onClick, icon, label, loading }: OAuthButtonProps) {
       disabled={loading}
       whileTap={{ scale: 0.98 }}
       className={cn(
-        'w-full inline-flex items-center justify-center gap-3 h-12 px-7 rounded-sm',
-        'border border-white/[0.12] bg-night-950/40 backdrop-blur-md',
+        'w-full inline-flex items-center justify-center gap-3 h-12 px-7 rounded-full',
+        'border border-white/[0.12] bg-white/[0.045] backdrop-blur-md',
         'text-body text-ivory-50 font-medium',
-        'hover:border-aurora-400/40 hover:text-ivory-50 transition-colors duration-300 ease-brutal',
+        'hover:border-aurora-300/45 hover:bg-white/[0.07] hover:text-ivory-50 transition-[background-color,border-color,transform] duration-300 ease-brutal',
         'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
         'disabled:opacity-60 disabled:cursor-wait',
       )}

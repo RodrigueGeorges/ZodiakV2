@@ -146,15 +146,18 @@ function generateShortCode(length = 8): string {
 }
 
 function generateUUID(): string {
-  // crypto.randomUUID est disponible sur Node ≥ 14.17 (Netlify Functions OK)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const c: any = (globalThis as any).crypto;
+  const c = globalThis.crypto;
   if (c?.randomUUID) return c.randomUUID();
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (ch) => {
-    const r = (Math.random() * 16) | 0;
-    const v = ch === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
+  const bytes = new Uint8Array(16);
+  c.getRandomValues(bytes);
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  return [...bytes]
+    .map((b, i) => {
+      const hex = b.toString(16).padStart(2, '0');
+      return i === 4 || i === 6 || i === 8 || i === 10 ? `-${hex}` : hex;
+    })
+    .join('');
 }
 
 async function getOrCreateGuidanceToken(userId: string, dateISO: string): Promise<{

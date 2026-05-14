@@ -285,8 +285,6 @@ async function findUserByChannelId(channel: Channel, fromId: string): Promise<st
 async function persistInboundMessage(msg: IncomingMessage) {
   const userId = await findUserByChannelId(msg.channel, msg.fromId);
 
-  // Stocke dans inbound_messages (table existante, héritée du flux SMS, qu'on
-  // continue à alimenter pour la rétrocompat des écrans admin)
   await supabase.from('inbound_messages').insert({
     user_id: userId,
     msisdn: msg.channel === 'whatsapp' ? msg.fromId : null,

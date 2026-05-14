@@ -141,7 +141,7 @@ export function useGuidance(): UseGuidanceReturn {
         return;
       }
 
-      if (!profile.natal_chart || typeof profile.natal_chart === 'string') {
+      if (!profile.natal_chart || (typeof profile.natal_chart === 'string' && profile.natal_chart.trim() === '')) {
         throw new Error('Thème natal non disponible. Veuillez compléter votre profil.');
       }
 

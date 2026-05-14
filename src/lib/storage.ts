@@ -30,11 +30,9 @@ export class StorageService {
     try {
       const cached = localStorage.getItem(`profile_${userId}`);
       if (cached) {
-        const profile = JSON.parse(cached);
-        // console.log('✅ Profil récupéré du cache');
-        return profile;
+        return JSON.parse(cached);
       }
-      return null;
+      return await this.loadProfileFromSupabase(userId);
     } catch (error) {
       console.error('Erreur lors de la récupération du cache:', error);
       return null;
@@ -189,7 +187,7 @@ export class StorageService {
   // === FORM DATA (localStorage only) ===
   static saveFormData(data: Record<string, unknown>): void {
     try {
-      localStorage.setItem('formData', JSON.stringify(data));
+      localStorage.setItem(this.FORM_DATA_KEY, JSON.stringify(data));
     } catch (error) {
       console.error('Error saving form data:', error);
     }

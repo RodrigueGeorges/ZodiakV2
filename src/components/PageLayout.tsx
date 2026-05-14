@@ -33,6 +33,7 @@ interface PageLayoutProps {
     | '7xl';
   className?: string;
   contentClassName?: string;
+  dim?: boolean;
   /** Désactive le padding-bottom mobile. */
   fullHeight?: boolean;
   /**
@@ -66,6 +67,7 @@ export default function PageLayout({
   maxWidth = '5xl',
   className,
   contentClassName,
+  dim = false,
   withAmbientOverlays = false,
   fullHeight = false,
   titlePlain = true,
@@ -79,6 +81,9 @@ export default function PageLayout({
     >
       {withAmbientOverlays ? (
         <AppBackdrop vignette grain />
+      ) : null}
+      {dim ? (
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(56,189,248,0.07),transparent_44%),linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.46))]" />
       ) : null}
 
       <div

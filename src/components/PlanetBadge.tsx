@@ -82,7 +82,7 @@ export default function PlanetBadge({ planet, variant = 'default', className = '
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         whileHover={{ scale: 1.05 }}
-        className={`inline-flex items-center gap-1 px-2 py-1 rounded-md bg-gradient-to-r ${colorClass} shadow-md ${className}`}
+        className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r ${colorClass} shadow-md ${className}`}
       >
         {icon}
         <span className="text-sm font-semibold">{planet.name}</span>

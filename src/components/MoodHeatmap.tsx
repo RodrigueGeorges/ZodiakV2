@@ -111,7 +111,7 @@ export default function MoodHeatmap({
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: Math.min(i * 0.012, 0.6), duration: 0.25 }}
                 className={cn(
-                  'relative aspect-square rounded-sm flex items-center justify-center text-[11px] tabular-nums ring-1 transition-colors',
+                  'relative aspect-square rounded-xl flex items-center justify-center text-[11px] tabular-nums ring-1 transition-[background-color,box-shadow,transform] hover:scale-105',
                   meta
                     ? `${meta.bg} ${meta.ring} text-ivory-50`
                     : 'bg-night-900/40 ring-ivory-50/[0.06] text-ivory-500',

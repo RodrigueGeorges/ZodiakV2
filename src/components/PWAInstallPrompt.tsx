@@ -149,7 +149,7 @@ export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptPr
           role="dialog"
           aria-labelledby="pwa-install-title"
         >
-          <div className="relative rounded-md border border-aurora-400/30 bg-night-900/90 backdrop-blur-xl p-6 overflow-hidden">
+          <div className="relative rounded-xl border border-aurora-400/30 bg-night-900/90 backdrop-blur-xl p-6 overflow-hidden">
             <button
               type="button"
               onClick={dismiss}

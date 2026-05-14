@@ -60,10 +60,13 @@ export function GuidanceContent({
     return (
       <div className={`space-y-6 ${className}`}>
         <Card variant="elevated">
-          <div className="px-6 md:px-10 py-10 space-y-4">
-            <Skeleton className="h-3 w-40 mx-auto" />
-            <Skeleton className="h-10 w-3/4 mx-auto" rounded="lg" />
-            <Skeleton className="h-10 w-1/2 mx-auto" rounded="lg" />
+          <div className="px-6 md:px-10 py-12 space-y-5 text-center">
+            <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-full border border-aurora-300/20 bg-aurora-400/10">
+              <Sparkles className="h-5 w-5 text-aurora-300 animate-pulse" aria-hidden="true" />
+            </div>
+            <Skeleton className="h-3 w-44 mx-auto" />
+            <Skeleton className="h-11 w-3/4 mx-auto" rounded="lg" />
+            <Skeleton className="h-9 w-1/2 mx-auto" rounded="lg" />
           </div>
         </Card>
         <div className="grid gap-5 md:grid-cols-3">

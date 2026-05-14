@@ -15,7 +15,6 @@ import LoadingScreen from '../components/LoadingScreen';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
-import SMSTrackingStats from '../components/SMSTrackingStats';
 import AdminProtection from '../components/AdminProtection';
 import type { Profile } from '../lib/types/supabase';
 import { cn } from '../lib/utils';
@@ -157,7 +156,6 @@ export function Admin() {
             Mode admin
           </span>
         }
-        dim
       >
         <div className="space-y-8">
           {error && (
@@ -165,9 +163,6 @@ export function Admin() {
               <div className="px-5 py-3 text-caption text-magenta-200">{error}</div>
             </Card>
           )}
-
-          {/* Stats SMS */}
-          <SMSTrackingStats />
 
           {/* Recherche + filtres */}
           <Card variant="surface">

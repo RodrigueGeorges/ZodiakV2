@@ -78,11 +78,7 @@ test.describe('Zodiak - Parcours Utilisateur', () => {
     await page.click('button:has-text("Sauvegarder")');
     await expect(page.locator('text=Profil mis à jour')).toBeVisible();
 
-    // 7. Test SMS
-    await page.click('text=Tester l\'envoi');
-    await expect(page.locator('text=SMS de test envoyé')).toBeVisible();
-
-    // 8. Sécurité : accès guidance sans login
+    // 7. Sécurité : accès guidance sans login
     await page.context().clearCookies();
     await page.goto('http://localhost:5173/guidance');
     await expect(page).toHaveURL(/login/);

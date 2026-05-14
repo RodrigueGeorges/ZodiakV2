@@ -99,7 +99,7 @@ function NatalSignature({
         <div
           className={`${
             t.visible ? 'animate-enter' : 'animate-leave'
-          } max-w-sm w-full bg-night-900/95 backdrop-blur-md border border-aurora-400/30 rounded-md px-6 py-5`}
+          } max-w-sm w-full bg-night-900/95 backdrop-blur-md border border-aurora-400/30 rounded-2xl px-6 py-5`}
         >
           <p className="eyebrow-ritual text-aurora-400/80 mb-2">{label}</p>
           <p className="text-h2 font-display font-light text-ivory-50 mb-2 leading-tight">
@@ -133,7 +133,7 @@ function NatalSignature({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.08 }}
               whileHover={{ y: -3 }}
-              className="group flex flex-col items-center gap-2 bg-night-900/40 border border-white/[0.1] p-5 text-center rounded-sm hover:border-aurora-400/35 transition-colors duration-300 ease-brutal focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400"
+              className="group flex flex-col items-center gap-2 bg-night-900/40 border border-white/[0.1] p-5 text-center rounded-xl hover:border-aurora-400/35 transition-colors duration-300 ease-brutal focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400"
               aria-label={`${label} en ${sign} — voir la description`}
             >
               <p className="eyebrow-ritual text-ivory-400/80">{eyebrow}</p>

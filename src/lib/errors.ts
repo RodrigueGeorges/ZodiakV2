@@ -39,6 +39,5 @@ export const ErrorMessages = {
   UNAUTHORIZED: 'Non autorisé',
   PROFILE_NOT_FOUND: 'Profil non trouvé',
   API_ERROR: 'Une erreur est survenue',
-  SMS_ERROR: 'Erreur lors de l\'envoi du SMS',
   INVALID_BIRTH_DATA: 'Données de naissance invalides'
 };

@@ -71,7 +71,7 @@ export default function CalendarPage() {
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.06 }}
-                className="flex items-center gap-3 p-3 rounded-md bg-night-900/60 border border-ivory-50/[0.06]"
+                className="flex items-center gap-3 p-3 rounded-lg bg-night-900/60 border border-ivory-50/[0.06]"
               >
                 <MoonPhaseVisual
                   phase={moonPhaseAt(new Date(`${k.date}T12:00:00`))}
@@ -122,7 +122,7 @@ export default function CalendarPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.015 }}
                   className={cn(
-                    'relative aspect-square rounded-md flex flex-col items-center justify-center gap-1 border transition-colors',
+                    'relative aspect-square rounded-lg flex flex-col items-center justify-center gap-1 border transition-colors',
                     'bg-night-900/60 border-ivory-50/[0.06]',
                     isFull && 'border-amber-300/40 bg-amber-500/10',
                     isNew && 'border-aurora-400/30 bg-aurora-500/10'

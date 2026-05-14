@@ -35,7 +35,7 @@ interface ImportMetaEnv {
   // ─────────────────────────────────────────────────────────────────────
   // SUPPRIMÉS (P0 sécurité — migration Meta) :
   //   - VITE_OPENAI_API_KEY        → côté serveur uniquement (OPENAI_API_KEY)
-  //   - VITE_BREVO_API_KEY         → SMS retiré, Meta côté serveur
+  //   - VITE_BREVO_API_KEY         → Meta côté serveur
   //   - VITE_VONAGE_API_KEY        → idem
   //   - VITE_VONAGE_API_SECRET     → idem
   //   - VITE_ASTRO_*               → astrologie côté serveur uniquement

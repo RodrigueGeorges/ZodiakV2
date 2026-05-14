@@ -1,25 +1,16 @@
-// Configuration des administrateurs
-// Modifiez ces listes selon vos besoins
+const rawEmails = import.meta.env.VITE_ADMIN_EMAILS ?? '';
+const rawUserIds = import.meta.env.VITE_ADMIN_USER_IDS ?? '';
 
 export const ADMIN_CONFIG = {
-  // Emails autorisés pour l'accès admin
-  authorizedEmails: [
-    'rodrigue@zodiak.app', // Remplacez par votre email admin
-    'admin@zodiak.app',
-    // Ajoutez d'autres emails admin ici
-  ],
+  authorizedEmails: rawEmails
+    ? rawEmails.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean)
+    : [],
 
-  // IDs utilisateur autorisés (optionnel, pour plus de sécurité)
-  authorizedUserIds: [
-    // Ajoutez les UUIDs des utilisateurs admin ici si nécessaire
-    // Exemple: '12345678-1234-1234-1234-123456789012'
-  ],
+  authorizedUserIds: rawUserIds
+    ? rawUserIds.split(',').map((id) => id.trim()).filter(Boolean)
+    : [],
 
-  // Rôles autorisés (si vous utilisez un système de rôles)
-  authorizedRoles: [
-    'admin',
-    'super_admin'
-  ]
+  authorizedRoles: ['admin', 'super_admin'],
 };
 
 // Fonction utilitaire pour vérifier si un email est autorisé

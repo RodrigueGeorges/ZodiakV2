@@ -10,6 +10,7 @@
  */
 
 export type AnalyticsEvent =
+  | '$pageview'
   | 'app_opened'
   | 'guidance_viewed'
   | 'guidance_generated'
@@ -104,5 +105,5 @@ export function reset(): void {
 }
 
 export function trackPageView(path: string): void {
-  track('app_opened', { path });
+  track('$pageview', { path });
 }

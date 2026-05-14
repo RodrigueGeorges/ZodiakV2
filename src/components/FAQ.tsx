@@ -45,7 +45,7 @@ export default function FAQ({ items, className }: FAQProps) {
               <span
                 aria-hidden="true"
                 className={cn(
-                  'flex-shrink-0 mt-2 w-9 h-9 rounded-sm border flex items-center justify-center transition-all duration-300 ease-brutal',
+                  'flex-shrink-0 mt-2 w-9 h-9 rounded-lg border flex items-center justify-center transition-all duration-300 ease-brutal',
                   open
                     ? 'border-aurora-400/50 rotate-45 bg-aurora-400/8'
                     : 'border-white/[0.11] bg-white/[0.02] group-hover:border-white/25',

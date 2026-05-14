@@ -320,7 +320,7 @@ export default function ChatAstro() {
             >
               <div
                 className={cn(
-                  'max-w-[85%] rounded-md px-4 py-3 text-body whitespace-pre-line',
+                  'max-w-[85%] rounded-xl px-4 py-3 text-body whitespace-pre-line',
                   msg.from === 'user'
                     ? 'bg-aurora-500 text-night-950'
                     : 'bg-night-800/80 text-ivory-100 border border-white/[0.1]'
@@ -342,7 +342,7 @@ export default function ChatAstro() {
 
           {typingText && (
             <div className="flex justify-start">
-              <div className="max-w-[85%] rounded-sm px-4 py-3 bg-night-800/80 text-ivory-100 border border-white/[0.1]">
+              <div className="max-w-[85%] rounded-xl px-4 py-3 bg-night-800/80 text-ivory-100 border border-white/[0.1]">
                 <span className="inline-flex items-center gap-1.5 eyebrow-ritual mb-1">
                   <Sparkles className="w-3 h-3" aria-hidden="true" />
                   Guide
@@ -356,7 +356,7 @@ export default function ChatAstro() {
 
           {loading && !typingText && (
             <div className="flex justify-start">
-              <div className="rounded-sm px-4 py-3 bg-night-800/80 text-ivory-300 border border-white/[0.1] italic">
+              <div className="rounded-xl px-4 py-3 bg-night-800/80 text-ivory-300 border border-white/[0.1] italic">
                 Le guide consulte les étoiles…
               </div>
             </div>
@@ -398,7 +398,7 @@ export default function ChatAstro() {
             e.preventDefault();
             send();
           }}
-          className="relative flex items-center gap-2 p-4 border-t border-white/[0.09] bg-night-950/35"
+          className="relative flex items-center gap-2 p-4 border-t border-white/[0.09] bg-white/[0.04]"
         >
           <div className="relative flex-1">
             <MessageCircle

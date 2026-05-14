@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     let didTimeout = false;
-    let timeout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       didTimeout = true;
       setTimeoutError(true);
       setIsLoading(false);
@@ -103,6 +103,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (didTimeout) return;
+        setTimeoutError(false);
         if (session?.user) {
           setSession(session);
           setUser(session.user);
@@ -115,6 +116,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           setIsAuthenticated(false);
         }
       } catch (error) {
+        setTimeoutError(false);
         setSession(null);
         setUser(null);
         setProfile(null);
@@ -140,7 +142,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log('[useAuth] Déconnexion en cours...');
       
-      // Déconnexion de Supabase
       const { error } = await supabase.auth.signOut();
       
       if (error) {
@@ -148,31 +149,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         throw error;
       }
       
-      // Nettoyer l'état local
       setSession(null);
       setUser(null);
       setProfile(null);
       setIsAuthenticated(false);
-      
-      // Nettoyer le cache local
       StorageService.clearUserCache();
       
       console.log('[useAuth] Déconnexion réussie');
-      
-      // Redirection vers la page d'accueil
-      window.location.href = '/';
+      navigate('/', { replace: true });
       
     } catch (error) {
       console.error('[useAuth] Erreur lors de la déconnexion:', error);
       
-      // En cas d'erreur, forcer la redirection et le nettoyage
       setSession(null);
       setUser(null);
       setProfile(null);
       setIsAuthenticated(false);
       StorageService.clearUserCache();
       
-      window.location.href = '/';
+      navigate('/', { replace: true });
     }
   };
 

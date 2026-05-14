@@ -41,10 +41,6 @@ export interface Database {
           trial_ends_at: string
           subscription_status: 'trial' | 'active' | 'expired'
           last_guidance_sent: string | null
-          // Legacy SMS (à supprimer en phase 2 — voir migration P0)
-          daily_guidance_sms_enabled: boolean
-          guidance_sms_time: string
-          // Nouveau modèle multi-canal Meta (WhatsApp / Instagram)
           daily_guidance_enabled: boolean
           preferred_channel: 'whatsapp' | 'instagram' | null
           whatsapp_wa_id: string | null

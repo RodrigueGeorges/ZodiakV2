@@ -9,7 +9,7 @@ import { useDocumentSeo } from '../lib/documentSeo';
  * Logique :
  *   1. Appelle la fonction Netlify `get-token` (source de vérité, bypass RLS).
  *   2. Redirige vers `/guidance/access?token=…` avec le token long.
- *   3. Tracke ouverture + clic via `track-sms` (best effort, pas bloquant).
+ *   3. Tracke l'ouverture via `track-guidance-open` (best effort, pas bloquant).
  *
  * Côté UI : juste un splash de chargement aurora — l'utilisateur ne reste
  * jamais ici plus de 300ms en pratique.
@@ -41,7 +41,7 @@ export default function GuidanceShortRedirect() {
           if (payload?.token) {
             // Tracking best-effort
             try {
-              const url = `/.netlify/functions/track-sms?shortCode=${encodeURIComponent(
+              const url = `/.netlify/functions/track-guidance-open?shortCode=${encodeURIComponent(
                 short
               )}&token=${encodeURIComponent(payload.token)}&action=open`;
               const img = new Image();

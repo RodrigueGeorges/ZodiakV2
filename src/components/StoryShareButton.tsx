@@ -121,7 +121,7 @@ export default function StoryShareButton({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[60] flex items-center justify-center px-4 bg-night-950/80 backdrop-blur-md"
+            className="fixed inset-0 z-[60] flex items-center justify-center px-4 bg-black/80 backdrop-blur-md"
             onClick={() => setOpen(false)}
             role="dialog"
             aria-label="Aperçu de la story"

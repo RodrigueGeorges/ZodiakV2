@@ -79,7 +79,7 @@ export default function StreakFlame({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        'inline-flex items-center rounded-md border backdrop-blur-md transition-colors duration-200 ease-brutal',
+        'inline-flex items-center rounded-lg border backdrop-blur-md transition-colors duration-200 ease-brutal',
         tone.bg,
         tone.glow,
         sizes.wrap,

@@ -15,11 +15,11 @@ export interface CardProps extends Omit<HTMLMotionProps<'div'>, 'ref'> {
 
 const variantStyles: Record<NonNullable<CardProps['variant']>, string> = {
   surface:
-    'bg-white/[0.04] border border-white/[0.1] backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]',
+    'premium-surface',
   elevated:
-    'bg-white/[0.06] border border-white/[0.12] backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.08),inset_0_-1px_0_rgba(0,0,0,0.45)]',
+    'premium-surface premium-surface-elevated',
   ghost:
-    'bg-transparent border border-white/[0.09]',
+    'bg-white/[0.025] border border-white/[0.08] backdrop-blur-sm',
 };
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
@@ -30,10 +30,10 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
     <motion.div
       ref={ref}
       className={cn(
-        'relative rounded-sm overflow-hidden transition-colors duration-200 ease-brutal',
-        variantStyles[variant],
+        'relative rounded-[1.35rem] overflow-hidden transition-[border-color,background-color,box-shadow,transform] duration-300 ease-brutal',
+        variantStyles[variant as NonNullable<CardProps['variant']>],
         interactive &&
-          'cursor-pointer hover:border-aurora-400/35 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
+          'cursor-pointer hover:-translate-y-0.5 hover:border-aurora-300/35 hover:bg-white/[0.07] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
         glow && 'shadow-glow-aurora',
         className,
       )}
@@ -50,14 +50,14 @@ interface CardSubProps extends HTMLAttributes<HTMLDivElement> {
 
 export function CardHeader({ className, children, ...rest }: CardSubProps) {
   return (
-    <div className={cn('px-7 pt-7 pb-3', className)} {...rest}>
+    <div className={cn('px-6 md:px-7 pt-6 md:pt-7 pb-3', className)} {...rest}>
       {children}
     </div>
   );
 }
 export function CardBody({ className, children, ...rest }: CardSubProps) {
   return (
-    <div className={cn('px-7 py-5', className)} {...rest}>
+    <div className={cn('px-6 md:px-7 py-5', className)} {...rest}>
       {children}
     </div>
   );
@@ -65,7 +65,7 @@ export function CardBody({ className, children, ...rest }: CardSubProps) {
 export function CardFooter({ className, children, ...rest }: CardSubProps) {
   return (
     <div
-      className={cn('px-7 py-4 border-t border-white/[0.09]', className)}
+      className={cn('px-6 md:px-7 py-4 border-t border-white/[0.09] bg-white/[0.02]', className)}
       {...rest}
     >
       {children}

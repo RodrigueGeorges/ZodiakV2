@@ -96,20 +96,13 @@ const handler: Handler = async (event) => {
 
     console.log('✅ Token trouvé et valide pour le short code:', shortCode);
 
-    // Tracker l'accès
     try {
       await supabase
-        .from('sms_tracking')
-        .insert({
-          user_id: tokenRow.user_id,
-          short_code: shortCode,
-          token: tokenRow.token,
-          action: 'access',
-          accessed_at: new Date().toISOString()
-        });
+        .from('message_log')
+        .update({ read_at: new Date().toISOString() })
+        .eq('short_code', shortCode);
     } catch (trackingError) {
       console.warn('⚠️ Erreur lors du tracking:', trackingError);
-      // Continuer même si le tracking échoue
     }
 
     return {

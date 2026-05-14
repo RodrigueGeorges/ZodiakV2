@@ -122,7 +122,7 @@ export default function Subscribe() {
           ].map((g) => (
             <div
               key={g}
-              className="rounded-xl border border-aurora-400/18 bg-night-950/40 backdrop-blur-md px-4 py-3.5 flex items-center gap-3 text-caption text-ivory-200 shadow-[inset_0_1px_0_rgba(56,189,248,0.06)]"
+              className="rounded-xl border border-aurora-400/18 bg-white/[0.06] backdrop-blur-md px-4 py-3.5 flex items-center gap-3 text-caption text-ivory-200 shadow-[inset_0_1px_0_rgba(56,189,248,0.06)]"
             >
               <Check className="w-4 h-4 text-aurora-400 shrink-0" aria-hidden />
               {g}
