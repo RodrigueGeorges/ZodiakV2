@@ -50,11 +50,11 @@ const FAQ_JSON_LD = {
     },
     {
       '@type': 'Question',
-      name: "Pourquoi WhatsApp ou Instagram plutôt qu'une appli ?",
+      name: "Pourquoi les réseaux sociaux plutôt qu'une appli ?",
       acceptedAnswer: {
         '@type': 'Answer',
         text:
-          'Parce que tu ouvres déjà WhatsApp et Instagram chaque jour. Pas besoin de télécharger une app de plus que tu vas oublier. Ta guidance arrive là où tu es déjà.',
+          "Parce que tu ouvres déjà tes réseaux sociaux chaque jour. Pas besoin de télécharger une app de plus que tu vas oublier. Ta guidance arrive là où tu es déjà.",
       },
     },
     {
@@ -92,7 +92,7 @@ const PRODUCT_JSON_LD = {
   '@type': 'Product',
   name: 'Zodiak',
   description:
-    'Guidance astrologique personnalisée basée sur ton thème natal, livrée chaque matin sur WhatsApp ou Instagram.',
+    "Guidance astrologique personnalisée basée sur ton thème natal, livrée chaque matin sur tes réseaux sociaux.",
   offers: {
     '@type': 'Offer',
     price: '8.99',
@@ -294,12 +294,12 @@ export default function Home() {
             <motion.div variants={heroItem}>
               <h1
                 id="hero-title"
-                className="font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.08] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto"
+                className="font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.15] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto"
               >
                 Ton{' '}
                 <span className="text-gradient-gold italic-editorial">horoscope natal</span>,
                 <br className="hidden sm:block" />
-                chaque matin sur WhatsApp.
+                chaque matin sur tes réseaux sociaux.
               </h1>
             </motion.div>
 
@@ -309,7 +309,7 @@ export default function Home() {
             >
               Pas un texte générique. Une guidance écrite pour{' '}
               <strong className="font-medium text-ivory-100">toi seul·e</strong>, à partir de ton ciel de naissance —
-              livrée là où tu lis déjà tes messages.
+              livrée directement sur tes réseaux sociaux.
             </motion.p>
 
             <motion.ul
@@ -348,7 +348,7 @@ export default function Home() {
                 to="/login"
                 variant="ghost"
                 size="lg"
-                className="w-full sm:w-auto min-w-[240px] text-base"
+                className="w-full sm:w-auto min-w-[240px] text-base hover:bg-white/[0.07] hover:border-white/[0.18] hover:shadow-[0_0_20px_-6px_rgba(255,255,255,0.06)] transition-all duration-300"
               >
                 Se connecter
               </ButtonLink>
@@ -422,7 +422,7 @@ export default function Home() {
                   Tu reçois ta guidance chaque matin.
                 </h3>
                 <p className="text-body text-ivory-400/95 leading-relaxed">
-                  Sur WhatsApp ou Instagram, à l&apos;heure que tu choisis. Un message court, clair, qui parle de{' '}
+                  Sur tes réseaux sociaux, à l&apos;heure que tu choisis. Un message court, clair, qui parle de{' '}
                   <strong className="font-medium text-ivory-200">ta journée</strong>.
                 </p>
               </li>
@@ -471,7 +471,7 @@ export default function Home() {
                 bullets={[
                   'Basé sur ton thème natal et les transits du jour',
                   'Énergie, vigilances, opportunités — tout est dit',
-                  'Reçu sur WhatsApp ou Instagram, à ton heure',
+                  'Reçu sur tes réseaux sociaux, à ton heure',
                 ]}
               />
               <RitualCard
@@ -556,10 +556,10 @@ export default function Home() {
                   ),
                 },
                 {
-                  q: "Pourquoi WhatsApp ou Instagram plutôt qu'une appli ?",
+                  q: "Pourquoi les réseaux sociaux plutôt qu'une appli ?",
                   a: (
                     <>
-                      Parce que tu ouvres déjà WhatsApp et Instagram chaque jour. Pas besoin de télécharger une app de plus
+                      Parce que tu ouvres déjà tes réseaux sociaux chaque jour. Pas besoin de télécharger une app de plus
                       que tu vas oublier. Ta guidance arrive là où tu es déjà.
                     </>
                   ),
@@ -630,7 +630,7 @@ export default function Home() {
           <footer className="mt-24 md:mt-32 text-center font-mono text-[11px] tracking-[0.12em] text-ivory-500 flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4">
             <Logo size="sm" />
             <span className="text-ivory-400/80 normal-case tracking-normal font-sans text-micro">
-              Zodiak · Le ciel t&apos;écrit.
+              {APP_NAME} · Le ciel t&apos;écrit.
             </span>
           </footer>
         </section>
@@ -747,7 +747,7 @@ function PriceOfferCard() {
     'Guidance quotidienne illimitée',
     'Chat illimité avec ton guide astral',
     'Mémoire complète de tes échanges',
-    'WhatsApp ou Instagram, au choix',
+    'Tes réseaux sociaux, au choix',
     'Profil basé sur ton thème natal',
   ];
 
