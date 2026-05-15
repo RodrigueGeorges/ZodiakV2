@@ -12,7 +12,6 @@ import {
   MessageCircle,
   Sparkles,
   Sun,
-  Star,
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import FAQ from '../components/FAQ';
@@ -287,21 +286,14 @@ export default function Home() {
               <Logo size="lg" withWordmark composeOnLoad />
             </motion.div>
 
-            <motion.div variants={heroItem} className="mb-5 md:mb-6">
-              <span className="hero-tagline">
-                <Star className="w-3.5 h-3.5 text-aurora-300" aria-hidden />
-                Ton horoscope personnalisé
-              </span>
-            </motion.div>
-
             <motion.div variants={heroItem}>
               <h1
                 id="hero-title"
                 className="font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.22] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto"
               >
-                Ton ciel de naissance,
+                Ton horoscope personnalisé en fonction de ton thème natal,
                 <br className="hidden sm:block" />
-                chaque matin sur tes réseaux sociaux.
+                dans la messagerie de tes réseaux sociaux favoris.
               </h1>
             </motion.div>
 
