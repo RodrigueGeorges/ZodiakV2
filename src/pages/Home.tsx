@@ -12,6 +12,7 @@ import {
   MessageCircle,
   Sparkles,
   Sun,
+  Star,
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import FAQ from '../components/FAQ';
@@ -224,7 +225,7 @@ export default function Home() {
             aria-label={`Accueil ${APP_NAME}`}
           >
             <Logo size="sm" composeOnLoad />
-            <span className="font-display text-h3 text-ivory-50 tracking-[-0.02em] font-medium group-hover:text-aurora-400 transition-colors duration-300 ease-brutal">
+            <span className="font-display text-h3 tracking-[-0.02em] font-medium text-shimmer-cosmic group-hover:opacity-90 transition-opacity duration-300 ease-brutal">
               {APP_NAME}
             </span>
           </Link>
@@ -237,9 +238,8 @@ export default function Home() {
             </Link>
             <ButtonLink
               to="/register"
-              variant="primary"
+              variant="cosmic"
               size="sm"
-              className="shadow-[0_0_24px_-8px_rgba(56,189,248,0.45)]"
             >
               Essayer 7 jours gratuits
             </ButtonLink>
@@ -287,13 +287,19 @@ export default function Home() {
               <Logo size="lg" withWordmark composeOnLoad />
             </motion.div>
 
+            <motion.div variants={heroItem} className="mb-5 md:mb-6">
+              <span className="hero-tagline">
+                <Star className="w-3.5 h-3.5 text-aurora-300" aria-hidden />
+                Ton horoscope personnalisé
+              </span>
+            </motion.div>
+
             <motion.div variants={heroItem}>
               <h1
                 id="hero-title"
                 className="font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.22] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto"
               >
-                Ton{' '}
-                <span className="text-gradient-gold italic-editorial">horoscope natal</span>,
+                Ton ciel de naissance,
                 <br className="hidden sm:block" />
                 chaque matin sur tes réseaux sociaux.
               </h1>
@@ -333,18 +339,18 @@ export default function Home() {
             >
               <ButtonLink
                 to="/register"
-                variant="primary"
+                variant="cosmic"
                 size="lg"
                 iconLeft={<Sparkles className="w-4 h-4" />}
-                className="w-full sm:w-auto min-w-[240px] landing-primary-cta-glow transition-shadow duration-300 text-base"
+                className="w-full sm:w-auto min-w-[240px] text-base"
               >
                 Démarrer gratuitement
               </ButtonLink>
               <ButtonLink
                 to="/login"
-                variant="ghost"
+                variant="cosmic"
                 size="lg"
-                className="w-full sm:w-auto min-w-[240px] text-base hover:bg-white/[0.07] hover:border-white/[0.18] hover:shadow-[0_0_20px_-6px_rgba(255,255,255,0.06)] transition-all duration-300"
+                className="w-full sm:w-auto min-w-[240px] text-base"
               >
                 Se connecter
               </ButtonLink>
@@ -610,11 +616,10 @@ export default function Home() {
             </h2>
             <ButtonLink
               to="/register"
-              variant="primary"
+              variant="cosmic"
               size="lg"
               iconLeft={<Sparkles className="w-4 h-4" />}
               iconRight={<ArrowRight className="w-4 h-4" />}
-              className="landing-primary-cta-glow transition-shadow duration-300"
             >
               Démarrer mes 7 jours offerts
             </ButtonLink>

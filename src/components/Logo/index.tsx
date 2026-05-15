@@ -53,7 +53,7 @@ const Logo = memo(function Logo({
       {symbol}
       <span
         className={cn(
-          'font-display tracking-[-0.02em] text-ivory-50 font-medium',
+          'font-display tracking-[-0.02em] font-medium text-shimmer-cosmic',
           wordmarkSize[size],
           wordmarkClassName
         )}

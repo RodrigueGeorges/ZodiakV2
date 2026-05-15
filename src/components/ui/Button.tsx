@@ -14,7 +14,8 @@ export type ButtonVariant =
   | 'ghost'
   | 'danger'
   | 'text'
-  | 'ritual';
+  | 'ritual'
+  | 'cosmic';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export const buttonVariants = cva(
@@ -39,6 +40,8 @@ export const buttonVariants = cva(
           'bg-transparent text-aurora-400 hover:text-aurora-300 underline-offset-4 hover:underline border-0',
         ritual:
           'bg-[linear-gradient(135deg,#f8fdff_0%,#7dd3fc_42%,#0ea5e9_100%)] text-night-950 hover:shadow-[0_0_42px_-14px_rgba(56,189,248,0.95)] font-semibold tracking-tight shadow-[0_0_32px_-14px_rgba(56,189,248,0.75)] border border-aurora-100/60',
+        cosmic:
+          'bg-transparent text-ivory-50 border border-aurora-300/30 backdrop-blur-xl hover:border-aurora-300/60 hover:bg-aurora-500/[0.06] hover:shadow-[0_0_40px_-12px_rgba(56,189,248,0.45),inset_0_1px_0_rgba(255,255,255,0.08)] active:scale-[0.99] tracking-tight',
       },
       size: {
         sm: 'h-9  px-5 text-caption gap-1.5',

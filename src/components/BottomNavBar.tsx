@@ -34,7 +34,7 @@ function BottomNavBar() {
         className="absolute -top-14 inset-x-0 h-14 bg-gradient-to-t from-black/92 via-black/48 to-transparent pointer-events-none"
       />
       <div className="px-3 pb-3 pt-2">
-        <div className="flex items-center justify-around gap-1 rounded-full bg-black/50 backdrop-blur-md border border-white/[0.11] px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_-8px_32px_rgba(0,0,0,0.35)]">
+        <div className="flex items-center justify-around gap-1 rounded-[28px] bg-black/50 backdrop-blur-xl border border-white/[0.11] px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_-12px_40px_rgba(0,0,0,0.45)]">
           {NAV.map((item) => {
             const Icon = item.icon;
             const active = isNavActive(item.path, location.pathname);
@@ -48,7 +48,7 @@ function BottomNavBar() {
                 aria-label={item.label}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'relative flex flex-col items-center justify-center gap-1 flex-1 rounded-lg py-2 px-1 min-h-[48px] transition-colors duration-300 ease-brutal',
+                  'relative flex flex-col items-center justify-center gap-1 flex-1 rounded-2xl py-2 px-1 min-h-[48px] transition-colors duration-300 ease-brutal overflow-hidden',
                   'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
                   active ? 'text-ivory-50' : 'text-ivory-400 hover:text-ivory-100',
                 )}
@@ -57,20 +57,37 @@ function BottomNavBar() {
                   <motion.span
                     layoutId="bottomnav-active"
                     transition={TRANSITION.spring}
-                    className="absolute inset-0 rounded-lg bg-aurora-400/12 border border-aurora-400/35"
+                    className="absolute inset-0 rounded-2xl bg-aurora-400/12 border border-aurora-400/35 shadow-[0_0_24px_-6px_rgba(56,189,248,0.4)]"
+                    aria-hidden="true"
+                  />
+                )}
+                {active && (
+                  <span
+                    className="absolute -top-1 left-1/2 -translate-x-1/2 w-6 h-[3px] rounded-full bg-gradient-to-r from-transparent via-aurora-400 to-transparent shadow-[0_0_8px_rgba(56,189,248,0.6)]"
                     aria-hidden="true"
                   />
                 )}
                 <Icon
                   className={cn(
-                    'relative w-5 h-5 transition-transform',
-                    active && 'text-aurora-400 scale-105',
+                    'relative w-5 h-5 transition-all duration-300',
+                    active
+                      ? 'text-aurora-400 scale-110 drop-shadow-[0_0_8px_rgba(56,189,248,0.55)]'
+                      : 'group-hover:scale-105',
                   )}
                   aria-hidden="true"
                 />
-                <span className="relative text-[10px] font-medium leading-none font-mono tracking-tight">
+                <span className={cn(
+                  'relative text-[10px] font-medium leading-none font-mono tracking-tight transition-colors duration-300',
+                  active && 'text-aurora-100',
+                )}>
                   {item.label}
                 </span>
+                {!active && (
+                  <span
+                    className="absolute bottom-1 left-1/2 -translate-x-1/2 h-[2px] w-0 bg-gradient-to-r from-transparent via-aurora-400/60 to-transparent rounded-full transition-all duration-300 group-hover:w-1/2"
+                    aria-hidden="true"
+                  />
+                )}
               </button>
             );
           })}

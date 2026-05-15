@@ -542,6 +542,97 @@ a {
   background: rgba(56, 189, 248, 0.55);
 }
 
+/* ─── Text shimmer effect for Zodiak wordmark ─── */
+@keyframes shimmer-cosmic {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.text-shimmer-cosmic {
+  background: linear-gradient(
+    90deg,
+    #fafafa 0%,
+    #7dd3fc 25%,
+    #f0f9ff 50%,
+    #7dd3fc 75%,
+    #fafafa 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer-cosmic 4s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .text-shimmer-cosmic {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: #fafafa;
+  }
+}
+
+/* ─── Constellation anchor pulse (canvas driven, but class for UI reuse) ─── */
+@keyframes constellation-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.85; }
+}
+
+/* ─── Nav glow hover ─── */
+.nav-glow-hover {
+  position: relative;
+}
+.nav-glow-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at center, rgba(56, 189, 248, 0.18), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.nav-glow-hover:hover::after {
+  opacity: 1;
+}
+
+/* ─── Aurora underline for active nav ─── */
+.nav-aurora-underline {
+  position: relative;
+}
+.nav-aurora-underline::before {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.75), transparent);
+  border-radius: 999px;
+  opacity: 0;
+  transform: scaleX(0.6);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-aurora-underline:hover::before,
+.nav-aurora-underline[data-active="true"]::before {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* ─── Hero tagline badge ─── */
+.hero-tagline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.22);
+  background: rgba(56, 189, 248, 0.06);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: #7dd3fc;
+  backdrop-filter: blur(8px);
+}
+
 @media print {
   .no-print { display: none !important; }
   body { background: #fff !important; color: #000 !important; }

@@ -253,19 +253,24 @@ export default function StarField({
       ctx.restore();
     };
 
-    /** Filets constellation : bleu très pâle, lisibles sur ciel atlas. */
-    const drawConstellationLines = (scrollOffset: number) => {
+    /** Filets constellation : bleu très pâle, lisibles sur ciel atlas.
+     *  Animation subtile : opacité pulsante + dash-offset décalé pour effet "signal".
+     */
+    const drawConstellationLines = (scrollOffset: number, time: number) => {
       if (!constellations) return;
       const { w, h } = sizeRef.current;
+      const baseAlpha = chromaBoost ? 0.17 : 0.12;
+      const pulse = 0.08 * Math.sin(time * 0.0008);
       ctx.strokeStyle = chromaBoost
-        ? 'rgba(172, 210, 255, 0.17)'
-        : 'rgba(150, 200, 255, 0.12)';
+        ? `rgba(172, 210, 255, ${baseAlpha + pulse})`
+        : `rgba(150, 200, 255, ${baseAlpha + pulse})`;
       ctx.lineWidth = Math.max(0.45, (dprRef.current || 1) * 0.36);
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.globalCompositeOperation = 'source-over';
 
-      for (const poly of ZODIAC_CONSTELLATIONS) {
+      for (let p = 0; p < ZODIAC_CONSTELLATIONS.length; p++) {
+        const poly = ZODIAC_CONSTELLATIONS[p]!;
         ctx.beginPath();
         for (let i = 0; i < poly.length; i++) {
           const [nx, ny] = poly[i]!;
@@ -279,30 +284,32 @@ export default function StarField({
       }
     };
 
-    /** Nœuds = points de carte (fixes, très discrets). */
-    const drawConstellationAnchors = (scrollOffset: number) => {
+    /** Nœuds = points de carte avec pulse dynamique. */
+    const drawConstellationAnchors = (scrollOffset: number, time: number) => {
       if (!constellations) return;
       const { w, h } = sizeRef.current;
 
-      for (const poly of ZODIAC_CONSTELLATIONS) {
+      for (let p = 0; p < ZODIAC_CONSTELLATIONS.length; p++) {
+        const poly = ZODIAC_CONSTELLATIONS[p]!;
+        const nodePulse = 0.22 + 0.18 * Math.sin(time * 0.0012 + p * 1.1);
         for (const [nx, ny] of poly) {
           const px = nx * w;
           const py = ((ny * h * 1.5) - scrollOffset * 0.06) % (h * 1.5);
           const wy = py < 0 ? py + h * 1.5 : py;
           if (wy < -15 || wy > h + 15) continue;
 
-          const g = ctx.createRadialGradient(px, wy, 0, px, wy, 5);
-          g.addColorStop(0, 'rgba(200, 230, 255, 0.32)');
-          g.addColorStop(0.45, 'rgba(120, 180, 235, 0.12)');
+          const g = ctx.createRadialGradient(px, wy, 0, px, wy, 6);
+          g.addColorStop(0, `rgba(200, 230, 255, ${nodePulse})`);
+          g.addColorStop(0.45, `rgba(120, 180, 235, ${nodePulse * 0.4})`);
           g.addColorStop(1, 'rgba(0,0,0,0)');
           ctx.fillStyle = g;
           ctx.beginPath();
-          ctx.arc(px, wy, 5, 0, Math.PI * 2);
+          ctx.arc(px, wy, 6, 0, Math.PI * 2);
           ctx.fill();
 
-          ctx.fillStyle = 'rgba(220, 235, 255, 0.55)';
+          ctx.fillStyle = `rgba(220, 235, 255, ${0.45 + nodePulse * 0.5})`;
           ctx.beginPath();
-          ctx.arc(px, wy, 0.85, 0, Math.PI * 2);
+          ctx.arc(px, wy, 1.1, 0, Math.PI * 2);
           ctx.fill();
         }
       }
@@ -491,8 +498,8 @@ export default function StarField({
       drawZodiacAmbience();
 
       const scrollForLines = parallax ? scrollRef.current : 0;
-      drawConstellationLines(scrollForLines);
-      drawConstellationAnchors(scrollForLines);
+      drawConstellationLines(scrollForLines, now);
+      drawConstellationAnchors(scrollForLines, now);
 
       // Étoiles avec twinkle
       const stars = starsRef.current;
