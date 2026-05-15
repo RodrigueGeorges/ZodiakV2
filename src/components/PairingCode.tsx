@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Copy, Check, RefreshCw, MessageCircle, Instagram } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { toast } from '../lib/toast';
 import { supabase } from '../lib/supabase';
 import { Button } from './ui/Button';
 

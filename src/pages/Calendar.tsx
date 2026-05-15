@@ -110,7 +110,7 @@ export default function CalendarPage() {
             Ton mois{' '}
             <span className="italic-editorial text-aurora-400">cosmique.</span>
           </h2>
-          <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-10 gap-2">
+          <motion.div layout className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-10 gap-2">
             {phases.map((p, i) => {
               const intensity = p.illumination;
               const isFull = p.kind === 'full';
@@ -118,11 +118,13 @@ export default function CalendarPage() {
               return (
                 <motion.div
                   key={p.date}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.015 }}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.012, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                  whileHover={{ scale: 1.06, transition: { duration: 0.15 } }}
                   className={cn(
-                    'relative aspect-square rounded-lg flex flex-col items-center justify-center gap-1 border transition-colors',
+                    'relative aspect-square rounded-xl flex flex-col items-center justify-center gap-1 border cursor-default',
                     'bg-night-900/60 border-ivory-50/[0.06]',
                     isFull && 'border-amber-300/40 bg-amber-500/10',
                     isNew && 'border-aurora-400/30 bg-aurora-500/10'
@@ -148,7 +150,7 @@ export default function CalendarPage() {
                 </motion.div>
               );
             })}
-          </div>
+          </motion.div>
           <p className="mt-4 text-caption text-ivory-400 text-center">
             Halo plus fort = lune plus pleine. Pleine et nouvelle lune sont mises en
             valeur.

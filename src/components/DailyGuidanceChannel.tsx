@@ -8,7 +8,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { toast } from 'react-hot-toast';
+import { toast } from '../lib/toast';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/hooks/useAuth';
 import { Card } from './ui/Card';

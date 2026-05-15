@@ -5,7 +5,7 @@ import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { supabase } from '../lib/supabase';
 import { buildReferralUrl } from '../lib/referral';
-import { toast } from 'react-hot-toast';
+import { toast } from '../lib/toast';
 import { track } from '../lib/analytics';
 
 interface ReferralCardProps {

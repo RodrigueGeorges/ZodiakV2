@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { useAuth } from '../lib/hooks/useAuth';
 import { StorageService } from '../lib/storage';
 import LoadingScreen from '../components/LoadingScreen';
@@ -120,23 +121,44 @@ export default function ProfilePage() {
       showLogo={false}
       dim
     >
-      <div className="space-y-12 md:space-y-16">
-        <ProfileTab profile={profile} onLogout={handleLogout} />
+      <div className="space-y-10 md:space-y-14">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <ProfileTab profile={profile} onLogout={handleLogout} />
+        </motion.div>
 
-        {/* Parrainage : viralité K-factor */}
-        <ReferralCard
-          userId={user.id}
-          referralCode={
-            (profile as Profile & { referral_code?: string | null })
-              .referral_code
-          }
-        />
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <ReferralCard
+            userId={user.id}
+            referralCode={
+              (profile as Profile & { referral_code?: string | null })
+                .referral_code
+            }
+          />
+        </motion.div>
 
-        {/* Heatmap des humeurs sur 30 jours */}
-        <MoodHeatmap history={moodHistory} />
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <MoodHeatmap history={moodHistory} />
+        </motion.div>
 
-        {/* Préférences sonores */}
-        <SoundToggle />
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <SoundToggle />
+        </motion.div>
       </div>
     </PageLayout>
   );

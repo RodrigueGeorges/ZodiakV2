@@ -12,6 +12,8 @@ import Admin from './pages/Admin';
 import BottomNavBar from './components/BottomNavBar';
 import TopNavBar from './components/TopNavBar';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
+import CommandPalette, { useCommandPalette } from './components/CommandPalette';
+import { ToastProvider } from './lib/toast';
 import { useAuth } from './lib/hooks/useAuth';
 import PrivateRoute from './components/PrivateRoute';
 import GuidanceAccess from './pages/GuidanceAccess';
@@ -154,11 +156,12 @@ function AnimatedRoutes() {
   );
 }
 
-function App() {
+function AppContent() {
   const { user } = useAuth();
   const [celestialMode, setCelestialMode] = useState<CelestialMode>(() =>
     readCelestialMode(),
   );
+  const { open, setOpen } = useCommandPalette();
 
   // Identify user for analytics quand connecté
   useEffect(() => {
@@ -219,7 +222,16 @@ function App() {
       </div>
       {user && <BottomNavBar />}
       {user && <PWAInstallPrompt />}
+      <CommandPalette open={open} onOpenChange={setOpen} />
     </>
+  );
+}
+
+function App() {
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
   );
 }
 

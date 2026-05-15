@@ -18,11 +18,53 @@
   --color-signal: rgba(255, 255, 255, 0.45);
   --color-mute:   #a1a1aa;
 
+  /* ─────── Tokens sémantiques (consommés par tailwind.config) ───────
+   * Format RGB triplets pour permettre l'opacité Tailwind (`bg-surface-base/80`).
+   * Préfère ces alias dans les nouveaux composants. */
+
+  /* Surfaces (z-axis) */
+  --surface-base:    5 6 8;       /* page (= night-950) */
+  --surface-raised:  15 13 12;    /* cards posées sur la page (= night-800) */
+  --surface-overlay: 26 23 20;    /* modals, popovers, command palette (= night-700) */
+
+  /* Bordures hairline */
+  --border-subtle: 255 255 255;   /* utilisé avec /10 ou /15 */
+  --border-strong: 255 255 255;   /* utilisé avec /22 ou /35 */
+
+  /* Texte (mappé sur ivory pour cohérence) */
+  --text-primary:   250 250 250;  /* ivory-50 */
+  --text-secondary: 212 212 216;  /* ivory-300 */
+  --text-muted:     161 161 170;  /* ivory-400 */
+
+  /* Espacement éditorial — pour CSS-only / non-Tailwind */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  /* Rayons de bord sémantiques */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --radius-2xl: 28px;
+  --radius-pill: 999px;
+
   /* Jetons motion & focus */
   --zodiak-ease-ritual: cubic-bezier(0.22, 1, 0.36, 1);
+  --zodiak-ease-brutal: cubic-bezier(0.16, 1, 0.3, 1);
+  --zodiak-duration-xs: 120ms;
   --zodiak-duration-sm: 200ms;
   --zodiak-duration-md: 450ms;
   --zodiak-duration-lg: 700ms;
+  --zodiak-duration-xl: 1100ms;
   --zodiak-focus-ring: 1px solid rgba(56, 189, 248, 0.75);
   --zodiak-focus-offset: 2px;
 }

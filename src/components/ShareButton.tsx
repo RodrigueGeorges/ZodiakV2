@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Share2, Check, Link2, MessageCircle, Twitter, Instagram } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { toast } from '../lib/toast';
 import { Button } from './ui/Button';
 import { cn } from '../lib/utils';
 
@@ -67,7 +67,7 @@ export default function ShareButton({
   };
   const openInstagram = () => {
     copyLink();
-    toast(
+    toast.info(
       "Texte copié — colle-le dans ton DM Instagram.",
     );
   };

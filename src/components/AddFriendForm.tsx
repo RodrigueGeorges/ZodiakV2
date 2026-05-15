@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Calendar, Clock, MapPin, Heart, Sparkles } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { toast } from '../lib/toast';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
 import type { FriendRelationship } from '../lib/types/supabase';

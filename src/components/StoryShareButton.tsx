@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, Image as ImageIcon, Instagram, Share2 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { toast } from '../lib/toast';
 import { Button } from './ui/Button';
 import { canvasToBlob, renderStory, StoryProps } from '../lib/storyGenerator';
 import { track } from '../lib/analytics';

@@ -3,7 +3,7 @@ import { useAuth } from './useAuth';
 import { StorageService } from '../storage';
 import { AstrologyService } from '../astrology';
 import { DateTime } from 'luxon';
-import { toast } from 'react-hot-toast';
+import { toast } from '../toast';
 import type { DailyGuidance, NatalChart } from '../types/supabase';
 
 interface PillarData {
@@ -137,7 +137,7 @@ export function useGuidance(): UseGuidanceReturn {
       if (existingGuidance) {
         setGuidance(mapStoredToGuidance(existingGuidance));
         setLoading(false);
-        toast('Une guidance existe déjà pour aujourd\'hui.');
+        toast.info('Une guidance existe déjà pour aujourd\'hui.');
         return;
       }
 

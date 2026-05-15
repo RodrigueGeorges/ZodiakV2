@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Sun, Moon, Compass } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { toast } from '../lib/toast';
 import { Card } from './ui/Card';
 
 const ZODIAC_GLYPH: Record<string, string> = {
@@ -94,23 +94,7 @@ function NatalSignature({
 
   const onSignClick = (label: string, sign: string) => {
     const desc = SIGN_DESC[sign] || 'Une signature unique.';
-    toast.custom(
-      (t) => (
-        <div
-          className={`${
-            t.visible ? 'animate-enter' : 'animate-leave'
-          } max-w-sm w-full bg-night-900/95 backdrop-blur-md border border-aurora-400/30 rounded-2xl px-6 py-5`}
-        >
-          <p className="eyebrow-ritual text-aurora-400/80 mb-2">{label}</p>
-          <p className="text-h2 font-display font-light text-ivory-50 mb-2 leading-tight">
-            {ZODIAC_GLYPH[sign] || '✦'}{' '}
-            <span className="italic-editorial text-aurora-400">{sign}</span>
-          </p>
-          <p className="text-caption text-ivory-300/90 italic-editorial">{desc}</p>
-        </div>
-      ),
-      { duration: 3500, position: 'bottom-center' },
-    );
+    toast.info(`${label} : ${ZODIAC_GLYPH[sign] || '✦'} ${sign} — ${desc}`);
   };
 
   return (

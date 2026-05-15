@@ -6,6 +6,7 @@ import PageLayout from '../components/PageLayout';
 import LoadingScreen from '../components/LoadingScreen';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
 import { useChatMemory } from '../lib/hooks/useChatMemory';
 import { usePremium } from '../lib/hooks/usePremium';
 import { useMood } from '../lib/hooks/useMood';
@@ -401,12 +402,8 @@ export default function ChatAstro() {
           className="relative flex items-center gap-2 p-4 border-t border-white/[0.09] bg-white/[0.04]"
         >
           <div className="relative flex-1">
-            <MessageCircle
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ivory-400"
-              aria-hidden="true"
-            />
-            <input
-              className="input-cosmic !pl-9"
+            <Input
+              className="!pl-9"
               placeholder={
                 quotaReached
                   ? 'Limite atteinte — passe en Premium pour continuer.'
@@ -416,6 +413,11 @@ export default function ChatAstro() {
               onChange={(e) => setInput(e.target.value)}
               disabled={loading || quotaReached}
               autoFocus
+              hideLabel
+            />
+            <MessageCircle
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ivory-400 pointer-events-none"
+              aria-hidden="true"
             />
           </div>
           {quotaReached ? (

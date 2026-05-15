@@ -1,13 +1,16 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Compass, Sparkles, MessageSquare, Heart } from 'lucide-react';
+import { User, Compass, Sparkles, MessageSquare, Heart, CalendarDays } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../lib/hooks/useAuth';
 import { vibrate } from '../lib/haptics';
+import { isNavActive } from '../lib/nav';
+import { TRANSITION } from '../lib/motion-tokens';
 
 const NAV = [
   { path: '/guidance', icon: Sparkles, label: 'Guidance' },
   { path: '/natal', icon: Compass, label: 'Natal' },
+  { path: '/calendar', icon: CalendarDays, label: 'Mois' },
   { path: '/friends', icon: Heart, label: 'Liens' },
   { path: '/guide-astral', icon: MessageSquare, label: 'Guide' },
   { path: '/profile', icon: User, label: 'Profil' },
@@ -34,7 +37,7 @@ function BottomNavBar() {
         <div className="flex items-center justify-around gap-1 rounded-full bg-black/50 backdrop-blur-md border border-white/[0.11] px-2 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_-8px_32px_rgba(0,0,0,0.35)]">
           {NAV.map((item) => {
             const Icon = item.icon;
-            const active = location.pathname === item.path;
+            const active = isNavActive(item.path, location.pathname);
             return (
               <button
                 key={item.path}
@@ -53,11 +56,7 @@ function BottomNavBar() {
                 {active && (
                   <motion.span
                     layoutId="bottomnav-active"
-                    transition={{
-                      type: 'spring',
-                      stiffness: 380,
-                      damping: 32,
-                    }}
+                    transition={TRANSITION.spring}
                     className="absolute inset-0 rounded-lg bg-aurora-400/12 border border-aurora-400/35"
                     aria-hidden="true"
                   />
@@ -69,7 +68,7 @@ function BottomNavBar() {
                   )}
                   aria-hidden="true"
                 />
-                <span className="relative text-[11px] font-medium leading-none font-mono tracking-tight">
+                <span className="relative text-[10px] font-medium leading-none font-mono tracking-tight">
                   {item.label}
                 </span>
               </button>

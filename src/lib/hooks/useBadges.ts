@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'react-hot-toast';
+import { toast } from '../toast';
 import { supabase } from '../supabase';
 import { useAuth } from './useAuth';
 import { BADGES, BadgeContext, BadgeDef } from '../badges';
@@ -65,15 +65,7 @@ export function useBadges(): UseBadgesReturn {
       // UX : toast subtil + haptic, un seul par évaluation pour ne pas spammer.
       const first = newlyEarned[0];
       vibrate('streak');
-      toast.success(`${first.glyph}  ${first.name}`, {
-        duration: 4000,
-        style: {
-          background: 'rgba(17,17,31,0.95)',
-          color: '#FAF7F2',
-          border: '1px solid rgba(201,166,255,0.35)',
-          fontFamily: 'Cinzel, serif',
-        },
-      });
+      toast.success(`${first.glyph}  ${first.name}`, 4000);
       newlyEarned.forEach((b) => track('badge_earned', { badge_id: b.id }));
       return rows;
     },

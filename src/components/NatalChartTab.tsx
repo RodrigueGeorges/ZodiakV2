@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Stars, BookOpen, Eye } from 'lucide-react';
+import { Stars, BookOpen, Eye, Share2, Printer } from 'lucide-react';
 import OpenAIService from '../lib/services/OpenAIService';
 import { StorageService } from '../lib/storage';
 import NatalSignature from './NatalSignature';
@@ -10,6 +10,7 @@ import StoryShareButton from './StoryShareButton';
 import EmptyState from './EmptyState';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/Tabs';
 import { SkeletonText } from './ui/Skeleton';
 import type { Profile } from '../lib/types/supabase';
 
@@ -28,7 +29,7 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
   const [loadingSummary, setLoadingSummary] = useState(false);
   const [loadingInterp, setLoadingInterp] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<'art' | 'wheel'>('art');
+  const [view, setView] = useState('art');
 
   const firstName = profile?.name?.split(' ')[0] || 'voyageur';
   const natalChart = profile?.natal_chart
@@ -160,46 +161,25 @@ export default function NatalChartTab({ profile }: NatalChartTabProps) {
               : 'La carte technique de ta naissance — survole les planètes.'}
           </p>
 
-          {/* Toggle Art / Carte */}
-          <div
-            role="tablist"
-            className="flex items-center gap-1 p-1 mb-8 rounded-lg bg-white/[0.06] border border-white/[0.1] backdrop-blur-sm"
-          >
-            <button
-              type="button"
-              role="tab"
-              aria-selected={view === 'art'}
-              onClick={() => setView('art')}
-              className={`px-5 py-2 rounded-full text-caption font-sans transition-colors ${
-                view === 'art'
-                  ? 'bg-aurora-400/15 text-ivory-50 border border-aurora-400/30'
-                  : 'text-ivory-300 hover:text-ivory-50'
-              }`}
-            >
-              <Eye className="w-3.5 h-3.5 inline mr-1.5" aria-hidden="true" />
-              Œuvre
-            </button>
-            <button
-              type="button"
-              role="tab"
-              aria-selected={view === 'wheel'}
-              onClick={() => setView('wheel')}
-              className={`px-5 py-2 rounded-full text-caption font-sans transition-colors ${
-                view === 'wheel'
-                  ? 'bg-aurora-400/15 text-ivory-50 border border-aurora-400/30'
-                  : 'text-ivory-300 hover:text-ivory-50'
-              }`}
-            >
-              <Stars className="w-3.5 h-3.5 inline mr-1.5" aria-hidden="true" />
-              Carte
-            </button>
-          </div>
-
-          {view === 'art' ? (
-            <NatalArt chart={natalChart} size={460} />
-          ) : (
-            <ZodiacWheel natalChart={natalChart} size={400} />
-          )}
+          {/* Tabs Art / Carte */}
+          <Tabs value={view} onValueChange={setView} className="mb-8 w-full max-w-xs">
+            <TabsList variant="pill" className="w-full">
+              <TabsTrigger value="art">
+                <Eye className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
+                Œuvre
+              </TabsTrigger>
+              <TabsTrigger value="wheel">
+                <Stars className="w-3.5 h-3.5 mr-1.5" aria-hidden="true" />
+                Carte
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="art" className="mt-6 flex justify-center">
+              <NatalArt chart={natalChart} size={460} />
+            </TabsContent>
+            <TabsContent value="wheel" className="mt-6 flex justify-center">
+              <ZodiacWheel natalChart={natalChart} size={400} />
+            </TabsContent>
+          </Tabs>
 
           <div className="mt-6 flex flex-col sm:flex-row gap-3">
             <StoryShareButton

@@ -110,7 +110,11 @@ export default function Friends() {
         </AnimatePresence>
 
         {loading ? (
-          <p className="text-center text-caption text-ivory-300">Chargement…</p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-32 rounded-2xl bg-white/[0.03] border border-white/[0.06] animate-pulse" />
+            ))}
+          </div>
         ) : friends.length === 0 && !adding ? (
           <EmptyState
             icon={<Users className="w-7 h-7" />}
@@ -127,19 +131,29 @@ export default function Friends() {
             }
           />
         ) : (
-          <div className="grid sm:grid-cols-2 gap-4">
-            {friends.map((f) => (
-              <FriendCard
-                key={f.id}
-                friend={f}
-                onClick={() => {
-                  track('synastry_viewed', { friend_id: f.id });
-                  navigate(`/synastry/${f.id}`);
-                }}
-                onDelete={() => removeFriend(f.id)}
-              />
-            ))}
-          </div>
+          <motion.div layout className="grid sm:grid-cols-2 gap-4">
+            <AnimatePresence mode="popLayout">
+              {friends.map((f) => (
+                <motion.div
+                  key={f.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.96, y: 12 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96, y: -8 }}
+                  transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <FriendCard
+                    friend={f}
+                    onClick={() => {
+                      track('synastry_viewed', { friend_id: f.id });
+                      navigate(`/synastry/${f.id}`);
+                    }}
+                    onDelete={() => removeFriend(f.id)}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
         )}
 
         {limitReached && !adding && (

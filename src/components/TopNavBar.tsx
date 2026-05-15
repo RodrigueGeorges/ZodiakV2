@@ -5,6 +5,8 @@ import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
 import Logo from './Logo';
 import { vibrate } from '../lib/haptics';
+import { isNavActive } from '../lib/nav';
+import { TRANSITION } from '../lib/motion-tokens';
 
 const NAV = [
   { label: 'Guidance', icon: Sparkles, path: '/guidance' },
@@ -46,7 +48,7 @@ function TopNavBar() {
         >
           {NAV.map((item) => {
             const Icon = item.icon;
-            const active = location.pathname === item.path;
+            const active = isNavActive(item.path, location.pathname);
             return (
               <button
                 key={item.path}
@@ -66,11 +68,7 @@ function TopNavBar() {
                 {active && (
                   <motion.span
                     layoutId="topnav-active-pill"
-                    transition={{
-                      type: 'spring',
-                      stiffness: 380,
-                      damping: 32,
-                    }}
+                    transition={TRANSITION.spring}
                     className="absolute inset-0 rounded-lg bg-aurora-400/12 border border-aurora-400/35"
                     aria-hidden="true"
                   />

@@ -25,7 +25,28 @@ export default {
           700: '#1A1714',
           800: '#0f0d0c',
           900: '#080706',
-          950: '#000000',
+          // 950 = "vraie nuit profonde" (légèrement bleutée).
+          // Utilisé comme texte sombre sur boutons clairs et ring-offset.
+          // NE PAS remettre à #000000 — ça casse la sémantique et les contrastes.
+          950: '#050608',
+        },
+
+        // ─────── Tokens sémantiques (CSS vars, voir index.css) ───────
+        // Préfère ces alias dans les nouveaux composants : ils sont stables
+        // si la palette évolue, et rendent l'intent lisible.
+        surface: {
+          base:    'rgb(var(--surface-base) / <alpha-value>)',
+          raised:  'rgb(var(--surface-raised) / <alpha-value>)',
+          overlay: 'rgb(var(--surface-overlay) / <alpha-value>)',
+        },
+        border: {
+          subtle: 'rgb(var(--border-subtle) / <alpha-value>)',
+          strong: 'rgb(var(--border-strong) / <alpha-value>)',
+        },
+        text: {
+          primary:   'rgb(var(--text-primary) / <alpha-value>)',
+          secondary: 'rgb(var(--text-secondary) / <alpha-value>)',
+          muted:     'rgb(var(--text-muted) / <alpha-value>)',
         },
 
         // Filets & chrome — hairlines blancs (pas bronze)
@@ -179,6 +200,15 @@ export default {
         'card':         'none',
         'card-hover':   '0 1px 0 rgba(244,236,219,0.04) inset',
         'editorial':    '0 1px 0 rgba(244,236,219,0.04) inset, 0 30px 80px -40px rgba(0,0,0,0.6)',
+
+        // ─────── Échelle d'élévation sémantique (à privilégier) ───────
+        // shadow-1 = chip/badge ; shadow-2 = card ; shadow-3 = card hover ;
+        // shadow-4 = popover/menu ; shadow-5 = modal/sheet.
+        '1': 'inset 0 1px 0 rgba(255,255,255,0.04)',
+        '2': 'inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 2px rgba(0,0,0,0.4)',
+        '3': 'inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 24px -12px rgba(0,0,0,0.6)',
+        '4': 'inset 0 1px 0 rgba(255,255,255,0.09), 0 18px 40px -20px rgba(0,0,0,0.75)',
+        '5': 'inset 0 1px 0 rgba(255,255,255,0.10), 0 32px 80px -32px rgba(0,0,0,0.85)',
       },
 
       backdropBlur: {

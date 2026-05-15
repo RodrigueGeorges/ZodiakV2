@@ -293,20 +293,22 @@ export default function Home() {
             <motion.div variants={heroItem}>
               <h1
                 id="hero-title"
-                className="font-display font-extralight text-[clamp(1.95rem,5.8vw,3.05rem)] leading-[1.12] tracking-[-0.03em] text-ivory-50 max-w-[36rem] mx-auto"
+                className="font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.08] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto"
               >
                 Ton{' '}
-                <span className="text-gradient-gold">horoscope personnalisé</span>, chaque matin sur WhatsApp.
+                <span className="text-gradient-gold italic-editorial">horoscope natal</span>,
+                <br className="hidden sm:block" />
+                chaque matin sur WhatsApp.
               </h1>
             </motion.div>
 
             <motion.p
               variants={heroItem}
-              className="mt-7 md:mt-9 text-[clamp(1.06rem,2.4vw,1.35rem)] leading-[1.6] font-light text-ivory-300/95 max-w-[34rem] mx-auto"
+              className="mt-7 md:mt-9 text-[clamp(1.08rem,2.4vw,1.35rem)] leading-[1.58] font-light text-ivory-300/95 max-w-[34rem] mx-auto"
             >
-              Pas un texte générique. Une guidance basée sur{' '}
-              <strong className="font-medium text-ivory-100">ton thème natal</strong> — livrée là où tu lis déjà tes
-              messages.
+              Pas un texte générique. Une guidance écrite pour{' '}
+              <strong className="font-medium text-ivory-100">toi seul·e</strong>, à partir de ton ciel de naissance —
+              livrée là où tu lis déjà tes messages.
             </motion.p>
 
             <motion.ul
@@ -337,15 +339,15 @@ export default function Home() {
                 variant="primary"
                 size="lg"
                 iconLeft={<Sparkles className="w-4 h-4" />}
-                className="w-full sm:w-auto min-w-[220px] landing-primary-cta-glow transition-shadow duration-300"
+                className="w-full sm:w-auto min-w-[240px] landing-primary-cta-glow transition-shadow duration-300 text-base"
               >
-                Essayer 7 jours gratuits
+                Démarrer gratuitement
               </ButtonLink>
               <ButtonLink
                 to="/login"
                 variant="ghost"
                 size="lg"
-                className="w-full sm:w-auto min-w-[220px]"
+                className="w-full sm:w-auto min-w-[240px] text-base"
               >
                 Se connecter
               </ButtonLink>

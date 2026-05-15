@@ -12,7 +12,7 @@ import {
   Bell,
   BellOff,
 } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import { toast } from '../lib/toast';
 import type { Profile } from '../lib/types/supabase';
 import { useAuth } from '../lib/hooks/useAuth';
 import { supabase } from '../lib/supabase';
