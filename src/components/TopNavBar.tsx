@@ -1,5 +1,6 @@
 import { useAuth } from '../lib/hooks/useAuth';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { APP_NAME } from '../lib/constants';
 import { User, Compass, Sparkles, MessageSquare, Heart, CalendarDays } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
@@ -34,11 +35,11 @@ function TopNavBar() {
         <Link
           to="/guidance"
           className="flex items-center gap-3 group"
-          aria-label="Accueil Zodiak"
+          aria-label={`Accueil ${APP_NAME}`}
         >
           <Logo size="sm" />
           <span className="font-display text-h3 text-ivory-50 tracking-[-0.02em] font-medium group-hover:text-aurora-400 transition-colors duration-300 ease-brutal">
-            Zodiak
+            {APP_NAME}
           </span>
         </Link>
 

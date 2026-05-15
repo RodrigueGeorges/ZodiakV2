@@ -16,6 +16,7 @@ import {
 import Logo from '../components/Logo';
 import FAQ from '../components/FAQ';
 import { ButtonLink } from '../components/ui/ButtonLink';
+import { APP_NAME } from '../lib/constants';
 import CosmicLoader from '../components/CosmicLoader';
 import { useAuth } from '../lib/hooks/useAuth';
 import { useAuthRedirect } from '../lib/hooks/useAuthRedirect';
@@ -220,11 +221,11 @@ export default function Home() {
           <Link
             to="/"
             className="flex items-center gap-3 group"
-            aria-label="Accueil Zodiak"
+            aria-label={`Accueil ${APP_NAME}`}
           >
             <Logo size="sm" composeOnLoad />
             <span className="font-display text-h3 text-ivory-50 tracking-[-0.02em] font-medium group-hover:text-aurora-400 transition-colors duration-300 ease-brutal">
-              Zodiak
+              {APP_NAME}
             </span>
           </Link>
           <div className="flex items-center gap-3 md:gap-5">

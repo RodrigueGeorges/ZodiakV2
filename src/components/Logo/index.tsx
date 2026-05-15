@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import CosmicSymbol from './CosmicSymbol';
 import { cn } from '../../lib/utils';
+import { APP_NAME } from '../../lib/constants';
 
 interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
@@ -8,7 +9,7 @@ interface LogoProps {
   /** Conservé pour compat. `classic` est mappé vers `cosmic` désormais. */
   variant?: 'classic' | 'cosmic';
   style?: React.CSSProperties;
-  /** Affiche le wordmark "Zodiak" à côté du glyphe. */
+  /** Affiche le wordmark ({@link APP_NAME}) à côté du glyphe. */
   withWordmark?: boolean;
   /** Couleur du wordmark, par défaut `text-ivory-50`. */
   wordmarkClassName?: string;
@@ -57,7 +58,7 @@ const Logo = memo(function Logo({
           wordmarkClassName
         )}
       >
-        Zodiak
+        {APP_NAME}
       </span>
     </span>
   );

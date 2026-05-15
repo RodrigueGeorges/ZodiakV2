@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
+import { APP_NAME } from '../lib/constants';
 
 interface AuthLayoutProps {
   eyebrow?: string;
@@ -34,7 +35,7 @@ export default function AuthLayout({
           >
             <Logo size="sm" />
             <span className="font-display text-h3 text-ivory-50 tracking-[-0.02em] font-medium group-hover:text-aurora-400 transition-colors duration-300 ease-brutal">
-              Zodiak
+              {APP_NAME}
             </span>
           </Link>
         </header>

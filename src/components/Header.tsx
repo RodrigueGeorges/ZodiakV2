@@ -2,6 +2,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { cn } from '../lib/utils';
+import { APP_NAME } from '../lib/constants';
 
 function Header() {
   const location = useLocation();
@@ -28,14 +29,15 @@ function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-30 bg-cosmic-900/80 backdrop-blur-lg border-b border-primary">
-      <div className="flex items-center justify-between px-4 py-3">
-        <div className="flex items-center gap-4">
-  
-          <h1 className="text-lg font-semibold text-blue-300">Zodiak</h1>
+    <header className="sticky top-0 z-30 bg-black/60 backdrop-blur-xl border-b border-white/[0.09]">
+      <div className="flex items-center justify-between px-6 lg:px-10 py-4">
+        <div className="flex items-center gap-3">
+          <span className="font-display text-h3 text-ivory-50 tracking-[-0.02em] font-medium">
+            {APP_NAME}
+          </span>
         </div>
-        
-        <nav className="hidden md:flex items-center gap-1">
+
+        <nav className="hidden md:flex items-center gap-1 p-1 rounded-lg bg-black/55 border border-white/[0.1] backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
           {tabs.map((tab) => {
             const isActive = getActiveTab() === tab.key;
             return (
@@ -43,12 +45,18 @@ function Header() {
                 key={tab.key}
                 onClick={() => handleTabChange(tab.key)}
                 className={cn(
-                  'px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                  'text-blue-300 hover:text-blue-200',
-                  isActive && 'bg-gradient-to-r from-blue-300/10 to-cyan-300/10 text-blue-300'
+                  'relative flex items-center gap-2 px-4 py-2 rounded-lg font-sans text-caption transition-colors duration-300 ease-brutal',
+                  'focus:outline-none focus-visible:ring-1 focus-visible:ring-aurora-400 focus-visible:ring-offset-2 focus-visible:ring-offset-night-950',
+                  isActive ? 'text-ivory-50' : 'text-ivory-400 hover:text-ivory-100',
                 )}
               >
-                {tab.label}
+                {isActive && (
+                  <span
+                    className="absolute inset-0 rounded-lg bg-aurora-400/12 border border-aurora-400/35"
+                    aria-hidden="true"
+                  />
+                )}
+                <span className="relative">{tab.label}</span>
               </button>
             );
           })}
