@@ -1,3 +1,6 @@
+# Stripe generated files (contain price IDs — not secrets but keep local)
+.stripe-prices.env
+
 # Logs
 logs
 *.log

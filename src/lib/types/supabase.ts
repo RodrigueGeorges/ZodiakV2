@@ -39,7 +39,7 @@ export interface Database {
           natal_chart_interpretation: string | null
           natal_summary: string | null
           trial_ends_at: string
-          subscription_status: 'trial' | 'active' | 'expired'
+          subscription_status: 'trial' | 'active' | 'expired' | 'cancelled'
           last_guidance_sent: string | null
           daily_guidance_enabled: boolean
           preferred_channel: 'whatsapp' | 'instagram' | null
@@ -50,7 +50,12 @@ export interface Database {
           channel_opt_in_at: string | null
           timezone: string
           guidance_hour: number
-          // Premium tier
+          // Modèle économique v2 — compteurs de messages par cycle
+          messages_used_this_period: number
+          messages_included_per_period: number
+          extra_balance: number
+          period_resets_at: string | null
+          // Premium tier (plan déprécié — conservé pour compat)
           plan: Plan
           plan_renews_at: string | null
           stripe_customer_id: string | null

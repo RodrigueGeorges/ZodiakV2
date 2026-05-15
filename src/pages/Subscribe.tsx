@@ -1,30 +1,75 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowLeft, Check, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowLeft, Check, ArrowRight, Zap } from 'lucide-react';
 import PageLayout from '../components/PageLayout';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { cn } from '../lib/utils';
 import { useDocumentSeo } from '../lib/documentSeo';
+import { useAuth } from '../lib/hooks/useAuth';
+import { track } from '../lib/analytics';
 
 const PLAN_FEATURES = [
   'Guidance quotidienne illimitée · WhatsApp ou Instagram',
-  'Chat astral illimité, mémoire de conversation',
-  'Profil fondé sur ton thème natal — tout reste personnel',
+  '100 messages chat astral inclus par cycle (reset anniversaire abo)',
+  'Calendrier 30 jours · alertes transits push · synastries illimitées',
+  'Profil fondé sur ton thème natal — données jamais revendues',
+];
+
+const PACKS = [
+  { emoji: '⭐', name: 'Étoile Filante', messages: 10, price: '3,99', id: 'filante' },
+  { emoji: '🌙', name: 'Pleine Lune', messages: 30, price: '9,99', id: 'lune', popular: true },
+  { emoji: '✨', name: 'Constellation', messages: 100, price: '24,99', id: 'constellation' },
+  { emoji: '🌌', name: 'Galaxie', messages: 300, price: '59,99', id: 'galaxie' },
 ];
 
 export default function Subscribe() {
   useDocumentSeo({
-    title:
-      'Abonnement · Zodiak · 8,99 € — horoscope personnalisé & chat',
+    title: 'Abonnement · Zodiak · 8,90 € — horoscope personnalisé & chat',
     description:
-      'Une seule formule : guidance du jour + chat illimités, basés sur ton thème natal. 7 jours sans carte puis 8,99 € / mois, résiliable en un clic.',
+      'Une seule formule : guidance du jour + 100 messages chat inclus, basés sur ton thème natal. Essai 7 jours avec CB, puis 8,90 € / mois. Résiliable en un clic.',
   });
 
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
 
-  const handleStart = () => {
-    navigate('/profile', { state: { selectedPlan: 'monthly' } });
+  const handleStart = async () => {
+    if (!user?.id) {
+      navigate('/register');
+      return;
+    }
+
+    track('paywall_clicked_subscribe', { plan: 'premium_monthly' });
+    setLoading(true);
+
+    try {
+      const { loadStripe } = await import('@stripe/stripe-js');
+      const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ?? '');
+      if (!stripe) return;
+
+      const res = await fetch('/.netlify/functions/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId: import.meta.env.VITE_STRIPE_PRICE_PREMIUM,
+          mode: 'subscription',
+          userId: user.id,
+          userEmail: user.email ?? '',
+          successUrl: `${window.location.origin}/guide-astral?subscribed=1`,
+          cancelUrl: window.location.href,
+        }),
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+      const { sessionId } = await res.json() as { sessionId: string };
+      await stripe.redirectToCheckout({ sessionId });
+    } catch (err) {
+      console.error('[subscribe] checkout error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,16 +78,17 @@ export default function Subscribe() {
       title="Une seule formule. Tout est inclus."
       subtitle={
         <>
-          <span className="text-ivory-200 font-medium">8,99&nbsp;€ par mois</span> après{' '}
-          <span className="text-ivory-100 font-medium">7 jours offerts sans carte</span> : guidance du matin + chat
-          astral, calibrés sur ton <span className="text-aurora-200/95 font-medium">thème natal</span>. Pas de palier
-          caché, pas de pub, pas de revente de données.
+          <span className="text-ivory-200 font-medium">8,90&nbsp;€ par mois</span> après{' '}
+          <span className="text-ivory-100 font-medium">7 jours d'essai avec carte</span> — guidance du matin +
+          100 messages chat, calibrés sur ton{' '}
+          <span className="text-aurora-200/95 font-medium">thème natal</span>. Pas de palier caché.
         </>
       }
       maxWidth="lg"
       showLogo={false}
     >
       <div className="space-y-10">
+        {/* ── Carte offre principale ── */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -63,9 +109,7 @@ export default function Subscribe() {
             />
             <div className="relative p-8 md:p-10 flex flex-col">
               <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-                <span className="eyebrow-ritual text-aurora-200/95">
-                  Abonnement mensuel
-                </span>
+                <span className="eyebrow-ritual text-aurora-200/95">Zodiak Premium</span>
                 <span className="font-mono text-[10px] uppercase tracking-[0.18em] px-3 py-1 rounded-full bg-aurora-500/15 border border-aurora-400/35 text-aurora-100">
                   Sans surprise
                 </span>
@@ -74,18 +118,17 @@ export default function Subscribe() {
               <div className="landing-price-well rounded-xl border border-aurora-400/22 px-5 py-6 md:px-6 md:py-7 mb-8">
                 <div className="flex flex-wrap items-end gap-x-3 gap-y-1">
                   <span className="font-display font-extralight text-display-xl text-ivory-50 leading-none tracking-[-0.03em]">
-                    8,99&nbsp;€
+                    8,90&nbsp;€
                   </span>
                   <span className="text-body text-aurora-100/90 pb-1 font-medium">/ mois</span>
                 </div>
                 <p className="mt-3 text-caption text-ivory-300/95 leading-relaxed">
-                  Ce montant ne change pas : tu accèdes au message du matin et au chat dans le même abonnement — pas d’options cachées à cocher.
+                  Accès complet : guidance quotidienne + 100 messages chat inclus par cycle.
+                  Packs extras disponibles si tu en as besoin.
                 </p>
               </div>
 
-              <p className="text-micro uppercase tracking-[0.2em] text-aurora-200/85 mb-4">
-                Inclus
-              </p>
+              <p className="text-micro uppercase tracking-[0.2em] text-aurora-200/85 mb-4">Inclus</p>
               <ul className="space-y-3 text-body text-ivory-200 mb-10">
                 {PLAN_FEATURES.map((f) => (
                   <li key={f} className="flex items-start gap-3">
@@ -100,20 +143,69 @@ export default function Subscribe() {
                 size="lg"
                 fullWidth
                 onClick={handleStart}
+                disabled={loading}
                 iconLeft={<Sparkles className="w-4 h-4" />}
                 iconRight={<ArrowRight className="w-4 h-4" />}
                 className="landing-primary-cta-glow shadow-none"
               >
-                Lancer mon essai de 7 jours
+                {loading ? 'Redirection…' : 'Commencer mon essai 7 jours'}
               </Button>
 
               <p className="text-center mt-4 text-caption text-ivory-400/90 leading-relaxed">
-                Résiliation depuis ton profil quand tu veux — pas d’e-mail type « donnez-nous une raison ».
+                Carte bancaire requise pour l'essai · résiliation en un clic depuis ton profil
+              </p>
+              <p className="text-center mt-1 text-[11px] text-ivory-500">
+                TVA non applicable — art. 293B CGI
               </p>
             </div>
           </Card>
         </motion.div>
 
+        {/* ── Section packs extras ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.6, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <Zap className="w-4 h-4 text-aurora-300" />
+            <p className="text-caption text-ivory-300 uppercase tracking-widest">Packs de messages extras</p>
+          </div>
+          <p className="text-caption text-ivory-400 mb-5">
+            Si tu épuises tes 100 messages avant le renouvellement, tu peux acheter des crédits supplémentaires — valables 12 mois.
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {PACKS.map((pack) => (
+              <div
+                key={pack.id}
+                className={cn(
+                  'relative rounded-xl border p-4 flex flex-col items-center gap-1.5 text-center',
+                  pack.popular
+                    ? 'border-aurora-400/60 bg-aurora-500/8'
+                    : 'border-night-600/50 bg-night-800/40',
+                )}
+              >
+                {pack.popular && (
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full px-2 py-0.5 text-[10px] font-semibold bg-aurora-500 text-night-950 whitespace-nowrap">
+                    Le plus populaire ✨
+                  </span>
+                )}
+                <span className="text-xl leading-none">{pack.emoji}</span>
+                <span className="text-xs font-semibold text-ivory-200">{pack.name}</span>
+                <span className="text-[11px] text-ivory-400">{pack.messages} messages</span>
+                <span className={cn('text-sm font-bold mt-1', pack.popular ? 'text-aurora-300' : 'text-ivory-100')}>
+                  {pack.price} €
+                </span>
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-[11px] text-ivory-500 text-center">
+            Les packs sont accessibles depuis le chat une fois abonné.
+          </p>
+        </motion.div>
+
+        {/* ── Garanties ── */}
         <div className="grid md:grid-cols-3 gap-4">
           {[
             'Annulation en quelques clics',
@@ -134,10 +226,10 @@ export default function Subscribe() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => navigate('/profile')}
+            onClick={() => navigate(-1)}
             iconLeft={<ArrowLeft className="w-3.5 h-3.5" />}
           >
-            Retour au profil
+            Retour
           </Button>
         </div>
       </div>

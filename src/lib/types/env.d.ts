@@ -32,6 +32,20 @@ interface ImportMetaEnv {
   /** PostHog host (par défaut https://eu.i.posthog.com). */
   readonly VITE_POSTHOG_HOST?: string;
 
+  // ── Stripe (clés publiques — pk_test_... ou pk_live_...) ──────────────
+  /** Clé publiable Stripe (pk_test_ ou pk_live_). */
+  readonly VITE_STRIPE_PUBLISHABLE_KEY?: string;
+  /** Price ID abonnement Premium 8,90 €/mois. */
+  readonly VITE_STRIPE_PRICE_PREMIUM?: string;
+  /** Price ID pack Étoile Filante (10 messages, 3,99 €). */
+  readonly VITE_STRIPE_PRICE_FILANTE?: string;
+  /** Price ID pack Pleine Lune (30 messages, 9,99 €). */
+  readonly VITE_STRIPE_PRICE_LUNE?: string;
+  /** Price ID pack Constellation (100 messages, 24,99 €). */
+  readonly VITE_STRIPE_PRICE_CONSTELLATION?: string;
+  /** Price ID pack Galaxie (300 messages, 59,99 €). */
+  readonly VITE_STRIPE_PRICE_GALAXIE?: string;
+
   // ─────────────────────────────────────────────────────────────────────
   // SUPPRIMÉS (P0 sécurité — migration Meta) :
   //   - VITE_OPENAI_API_KEY        → côté serveur uniquement (OPENAI_API_KEY)

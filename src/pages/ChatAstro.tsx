@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, Send, MessageCircle, Lock } from 'lucide-react';
+import { Sparkles, Send, MessageCircle } from 'lucide-react';
 import { useAuth } from '../lib/hooks/useAuth';
 import PageLayout from '../components/PageLayout';
 import LoadingScreen from '../components/LoadingScreen';
@@ -9,7 +9,10 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { useChatMemory } from '../lib/hooks/useChatMemory';
 import { usePremium } from '../lib/hooks/usePremium';
+import { useSubscription } from '../lib/hooks/useSubscription';
 import { useMood } from '../lib/hooks/useMood';
+import { ChatEnergyMeter } from '../components/ChatEnergyMeter';
+import { UpgradePackModal } from '../components/UpgradePackModal';
 import { moonPhaseAt } from '../lib/moonPhase';
 import { vibrate } from '../lib/haptics';
 import { track } from '../lib/analytics';
@@ -42,7 +45,8 @@ export default function ChatAstro() {
   const { profile, user, isLoading } = useAuth();
   const { recentMessages, appendMessage } = useChatMemory();
   const { todayMood } = useMood();
-  const { isPremium, quotas } = usePremium();
+  const { isPremium } = usePremium(); // @deprecated — gardé pour analytics
+  const { isActive } = useSubscription();
   const firstName = profile?.name?.split(' ')[0] || 'voyageur';
   const natalChart = profile?.natal_chart
     ? typeof profile.natal_chart === 'string'
@@ -84,18 +88,9 @@ export default function ChatAstro() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [typingText, setTypingText] = useState('');
-  const [todayUserMessages, setTodayUserMessages] = useState(0);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
   const typingTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  // Compteur de messages user pour aujourd'hui (quota free)
-  useEffect(() => {
-    const todayStr = new Date().toISOString().slice(0, 10);
-    const count = recentMessages.filter(
-      (m) => m.role === 'user' && m.created_at.slice(0, 10) === todayStr
-    ).length;
-    setTodayUserMessages(count);
-  }, [recentMessages]);
 
   // Scroll auto en bas
   useEffect(() => {
@@ -135,8 +130,7 @@ export default function ChatAstro() {
     [contextSuggestions]
   );
 
-  const quotaReached =
-    !isPremium && todayUserMessages >= quotas.chatMessagesPerDay;
+  // Quota vérifié côté serveur (402) — plus de gating client-side
 
   useDocumentSeo({
     title: profileIncomplete
@@ -160,18 +154,6 @@ export default function ChatAstro() {
       ]);
       return;
     }
-    if (quotaReached) {
-      track('paywall_seen', { feature: 'chat_quota' });
-      setMessages((m) => [
-        ...m,
-        {
-          from: 'bot',
-          text: `Tu as atteint la limite de ${quotas.chatMessagesPerDay} messages gratuits aujourd'hui. Passe en Premium pour échanger sans limite.`,
-        },
-      ]);
-      return;
-    }
-
     setMessages((m) => [...m, { from: 'user', text: question }]);
     setInput('');
     setLoading(true);
@@ -183,7 +165,6 @@ export default function ChatAstro() {
       premium: isPremium,
     });
     await appendMessage('user', question);
-    setTodayUserMessages((c) => c + 1);
 
     try {
       const res = await fetch('/.netlify/functions/astro-chatbot', {
@@ -204,7 +185,24 @@ export default function ChatAstro() {
           })),
         }),
       });
-      const data = await res.json();
+      // 402 → quota épuisé → modal paywall
+      if (res.status === 402) {
+        track('paywall_modal_shown', { source: 'chat_quota' });
+        setShowUpgradeModal(true);
+        setMessages((m) => m.slice(0, -1)); // retire le message user optimiste
+        return;
+      }
+
+      // 403 → abonnement inactif
+      if (res.status === 403) {
+        setMessages((m) => [
+          ...m,
+          { from: 'bot', text: 'Ton abonnement est inactif. Renouvelle-le pour continuer.' },
+        ]);
+        return;
+      }
+
+      const data = await res.json() as { answer?: string; conversationId?: string; error?: string };
 
       if (data.error) {
         setMessages((m) => [
@@ -288,16 +286,7 @@ export default function ChatAstro() {
       maxWidth="3xl"
       showLogo={false}
       dim
-      headerSlot={
-        !isPremium ? (
-          <span className="text-micro text-ivory-300">
-            <span className="text-ivory-50 font-semibold">
-              {Math.max(0, quotas.chatMessagesPerDay - todayUserMessages)}
-            </span>{' '}
-            / {quotas.chatMessagesPerDay} aujourd'hui
-          </span>
-        ) : undefined
-      }
+      headerSlot={isActive ? <ChatEnergyMeter /> : undefined}
     >
       <Card variant="elevated" className="relative overflow-hidden flex flex-col">
         <div
@@ -372,7 +361,7 @@ export default function ChatAstro() {
                 key={s}
                 type="button"
                 onClick={() => send(s)}
-                disabled={loading || quotaReached}
+                disabled={loading}
                 className={cn(
                   'shrink-0 inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-caption transition-colors disabled:opacity-50',
                   i < contextSuggestions.length
@@ -404,14 +393,10 @@ export default function ChatAstro() {
           <div className="relative flex-1">
             <Input
               className="!pl-9"
-              placeholder={
-                quotaReached
-                  ? 'Limite atteinte — passe en Premium pour continuer.'
-                  : 'Pose ta question…'
-              }
+              placeholder="Pose ta question…"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              disabled={loading || quotaReached}
+              disabled={loading}
               autoFocus
               hideLabel
             />
@@ -420,27 +405,23 @@ export default function ChatAstro() {
               aria-hidden="true"
             />
           </div>
-          {quotaReached ? (
-            <Button
-              type="button"
-              variant="primary"
-              onClick={() => (window.location.href = '/subscribe')}
-              iconLeft={<Lock className="w-4 h-4" />}
-            >
-              Premium
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={loading || !input.trim()}
-              iconLeft={<Send className="w-4 h-4" />}
-            >
-              Envoyer
-            </Button>
-          )}
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={loading || !input.trim()}
+            iconLeft={<Send className="w-4 h-4" />}
+          >
+            Envoyer
+          </Button>
         </form>
       </Card>
+
+      <UpgradePackModal
+        open={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        userId={user?.id ?? ''}
+        userEmail={user?.email ?? ''}
+      />
     </PageLayout>
   );
 }

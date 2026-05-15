@@ -49,6 +49,7 @@
     "uuid": "^11.1.0",
     "zod": "^3.22.4",
     "posthog-js": "^1.201.0",
+    "stripe": "^16.0.0",
     "web-push": "^3.6.7"
   },
   "devDependencies": {

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useAuth } from './useAuth';
 import type { Plan } from '../types/supabase';
+import { useSubscription } from './useSubscription';
 
 export interface PremiumQuotas {
   /** Nombre max de messages chat / jour (free uniquement). */
@@ -49,36 +50,24 @@ interface UsePremiumReturn {
 }
 
 /**
- * Source de vérité unique pour savoir si l'user a accès à une feature
- * premium. À utiliser partout (paywalls, gating, copy).
- *
- * Règle business :
- *   - `plan === 'premium' || 'lifetime'` : accès complet.
- *   - `subscription_status === 'trial'`  : accès complet (illimité) pendant
- *     le trial — c'est ce qui convertit.
- *   - sinon : free, quotas du plan free.
+ * @deprecated Utiliser `useSubscription` à la place.
+ * Wrapper rétrocompatible pendant la migration vers le nouveau modèle économique.
+ * `isPremium` === `isActive` dans le nouveau modèle (trial ou active).
  */
 export function usePremium(): UsePremiumReturn {
   const { profile } = useAuth();
+  const { isActive, status, trialDaysLeft } = useSubscription();
 
   return useMemo<UsePremiumReturn>(() => {
     const plan: Plan = (profile?.plan as Plan | undefined) ?? 'free';
-    const isLifetimeOrPremium = plan === 'premium' || plan === 'lifetime';
-    const isTrial = profile?.subscription_status === 'trial';
-    const isPremium = isLifetimeOrPremium || isTrial;
-
-    let trialDaysLeft: number | null = null;
-    if (isTrial && profile?.trial_ends_at) {
-      const ms = new Date(profile.trial_ends_at).getTime() - Date.now();
-      trialDaysLeft = Math.max(0, Math.ceil(ms / (1000 * 60 * 60 * 24)));
-    }
+    const isTrial = status === 'trial';
 
     return {
       plan,
-      isPremium,
+      isPremium: isActive,
       isTrial,
       trialDaysLeft,
-      quotas: isPremium ? PREMIUM : FREE,
+      quotas: isActive ? PREMIUM : FREE,
     };
-  }, [profile?.plan, profile?.subscription_status, profile?.trial_ends_at]);
+  }, [profile?.plan, isActive, status, trialDaysLeft]);
 }
