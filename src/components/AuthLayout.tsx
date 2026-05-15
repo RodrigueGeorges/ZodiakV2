@@ -33,10 +33,7 @@ export default function AuthLayout({
             className="inline-flex items-center gap-3 group"
             aria-label="Retour à l'accueil"
           >
-            <Logo size="sm" />
-            <span className="font-display text-h3 text-ivory-50 tracking-[-0.02em] font-medium group-hover:text-aurora-400 transition-colors duration-300 ease-brutal">
-              {APP_NAME}
-            </span>
+            <Logo size="sm" withWordmark />
           </Link>
         </header>
 

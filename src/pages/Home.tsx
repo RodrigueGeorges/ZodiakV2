@@ -284,17 +284,13 @@ export default function Home() {
                 aria-hidden
                 className="absolute inset-0 -m-6 rounded-full bg-aurora-400/[0.07] blur-3xl scale-110"
               />
-              <Logo size="lg" composeOnLoad />
+              <Logo size="lg" withWordmark composeOnLoad />
             </motion.div>
-
-            <motion.p variants={heroItem} className="protocol-caption text-aurora-200/90 mb-4">
-              Zodiak
-            </motion.p>
 
             <motion.div variants={heroItem}>
               <h1
                 id="hero-title"
-                className="font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.15] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto"
+                className="font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.22] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto"
               >
                 Ton{' '}
                 <span className="text-gradient-gold italic-editorial">horoscope natal</span>,
