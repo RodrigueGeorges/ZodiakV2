@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Compass, Sparkles, MessageSquare, Heart, CalendarDays } from 'lucide-react';
+import { User, Compass, Sparkles, MessageSquare, LayoutGrid } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../lib/hooks/useAuth';
 import { vibrate } from '../lib/haptics';
@@ -10,8 +10,7 @@ import { TRANSITION } from '../lib/motion-tokens';
 const NAV = [
   { path: '/guidance', icon: Sparkles, label: 'Guidance' },
   { path: '/natal', icon: Compass, label: 'Natal' },
-  { path: '/calendar', icon: CalendarDays, label: 'Mois' },
-  { path: '/friends', icon: Heart, label: 'Liens' },
+  { path: '/calendar', icon: LayoutGrid, label: 'Explorer' },
   { path: '/guide-astral', icon: MessageSquare, label: 'Guide' },
   { path: '/profile', icon: User, label: 'Profil' },
 ];

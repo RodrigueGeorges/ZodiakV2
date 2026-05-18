@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sparkles, Send, MessageCircle } from 'lucide-react';
 import { useAuth } from '../lib/hooks/useAuth';
@@ -32,16 +33,18 @@ const BASE_SUGGESTIONS = [
 interface Message {
   from: 'user' | 'bot';
   text: string;
+  cta?: { label: string; href: string };
 }
 
 /**
  * ChatAstro v3 :
  *  - Mémoire long-terme : persistance Supabase + replay des derniers messages
  *  - Suggestions contextuelles : adaptées au mood + à la phase lunaire
- *  - Quota : free = 5 msg/jour, premium = illimité
+ *  - Quota : 100 messages chat inclus/cycle + extras achetables (UpgradePackModal)
  *  - Streaming visuel inchangé (typing letter-by-letter)
  */
 export default function ChatAstro() {
+  const navigate = useNavigate();
   const { profile, user, isLoading } = useAuth();
   const { recentMessages, appendMessage } = useChatMemory();
   const { todayMood } = useMood();
@@ -107,7 +110,40 @@ export default function ChatAstro() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
-  const profileIncomplete = !user?.id || !profile?.natal_chart || !profile?.name;
+  // Toast inline après paiement réussi
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const subscribed = params.get('subscribed');
+    const packSuccess = params.get('pack_success');
+    if (!subscribed && !packSuccess) return;
+
+    // Nettoie l'URL sans rechargement
+    const cleanUrl = window.location.pathname;
+    window.history.replaceState({}, '', cleanUrl);
+
+    const msg: Message = subscribed
+      ? {
+          from: 'bot',
+          text: `Bienvenue dans Zodiak Premium, ${firstName} ! Ton abonnement est actif — tu disposes de 100 messages chat inclus par cycle. Bonne exploration ✨`,
+        }
+      : {
+          from: 'bot',
+          text: `Tes crédits supplémentaires ont bien été ajoutés à ton solde. Continue à poser tes questions — ton guide est là.`,
+        };
+
+    // Délai court pour laisser les messages initiaux s'afficher
+    const t = setTimeout(() => {
+      setMessages((m: Message[]) => [...m, msg]);
+    }, 600);
+    return () => clearTimeout(t);
+  // firstName peut changer après chargement du profil — on ne le met pas en dep
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const missingName = !profile?.name;
+  const missingBirth = !profile?.natal_chart;
+  const profileIncomplete = !user?.id || missingName || missingBirth;
 
   // Suggestions contextuelles
   const contextSuggestions = useMemo<string[]>(() => {
@@ -138,14 +174,14 @@ export default function ChatAstro() {
       : 'Chat astral & thème natal — Zodiak',
     description: profileIncomplete
       ? 'Complète ton nom et tes données de naissance pour activer le guide astral Zodiak, calé sur ton thème natal.'
-      : 'Pose tes questions à un guide qui connaît ton thème natal et ton historique — messages gratuits limités ou illimité en Premium (8,99 € / mois, essai sans CB).',
+      : 'Pose tes questions à un guide qui connaît ton thème natal et ton historique — 100 messages chat inclus par cycle avec Zodiak Premium (8,90 € / mois, essai 7 jours).',
   });
 
   const send = async (suggestion?: string) => {
     const question = (suggestion || input).trim();
     if (!question || loading) return;
     if (profileIncomplete) {
-      setMessages((m) => [
+      setMessages((m: Message[]) => [
         ...m,
         {
           from: 'bot',
@@ -154,7 +190,7 @@ export default function ChatAstro() {
       ]);
       return;
     }
-    setMessages((m) => [...m, { from: 'user', text: question }]);
+    setMessages((m: Message[]) => [...m, { from: 'user', text: question }]);
     setInput('');
     setLoading(true);
     setTypingText('');
@@ -189,23 +225,37 @@ export default function ChatAstro() {
       if (res.status === 402) {
         track('paywall_modal_shown', { source: 'chat_quota' });
         setShowUpgradeModal(true);
-        setMessages((m) => m.slice(0, -1)); // retire le message user optimiste
+        setMessages((m: Message[]) => m.slice(0, -1)); // retire le message user optimiste
         return;
       }
 
       // 403 → abonnement inactif
       if (res.status === 403) {
-        setMessages((m) => [
+        setMessages((m: Message[]) => [
           ...m,
-          { from: 'bot', text: 'Ton abonnement est inactif. Renouvelle-le pour continuer.' },
+          {
+            from: 'bot',
+            text: 'Ton abonnement est inactif. Renouvelle-le pour continuer à dialoguer avec ton guide astral.',
+            cta: { label: 'Renouveler mon abonnement', href: '/subscribe' },
+          },
         ]);
         return;
       }
 
-      const data = await res.json() as { answer?: string; conversationId?: string; error?: string };
+      const data = await res.json() as {
+        answer?: string;
+        conversationId?: string;
+        error?: string;
+        source?: 'included' | 'extra' | null;
+      };
+
+      // PostHog : tracker la consommation réelle (après succès API) avec la source
+      if (data.source) {
+        track('chat_message_consumed', { source: data.source });
+      }
 
       if (data.error) {
-        setMessages((m) => [
+        setMessages((m: Message[]) => [
           ...m,
           { from: 'bot', text: 'Désolé, une erreur est survenue. Réessaie dans un instant.' },
         ]);
@@ -237,14 +287,14 @@ export default function ChatAstro() {
               10 + Math.random() * 18
             );
           } else {
-            setMessages((m) => [...m, { from: 'bot', text: fullText }]);
+            setMessages((m: Message[]) => [...m, { from: 'bot', text: fullText }]);
             setTypingText('');
           }
         };
         typeLetter();
       }
     } catch {
-      setMessages((m) => [
+      setMessages((m: Message[]) => [
         ...m,
         { from: 'bot', text: 'Erreur réseau. Réessaie plus tard.' },
       ]);
@@ -258,17 +308,29 @@ export default function ChatAstro() {
   }
 
   if (profileIncomplete) {
+    const missing: string[] = [];
+    if (missingName) missing.push('ton prénom');
+    if (missingBirth) missing.push('ta date, heure et lieu de naissance');
+
     return (
       <PageLayout
         eyebrow="Guide astral"
-        title="Profil à compléter"
-        subtitle="Renseigne ton nom et ta naissance pour que le guide lise ton thème natal et réponde sur ta guidance."
+        title="Complète ton profil"
+        subtitle="Le guide astral se calibre sur ton thème natal — il a besoin de quelques infos pour personnaliser ses réponses."
       >
         <Card variant="surface">
-          <div className="p-8 text-center">
+          <div className="p-8 flex flex-col items-center gap-5 text-center">
+            <p className="text-body text-ivory-300">
+              Il manque encore{' '}
+              <span className="text-ivory-100 font-medium">
+                {missing.join(' et ')}
+              </span>{' '}
+              pour activer ton guide.
+            </p>
             <Button
               variant="primary"
-              onClick={() => (window.location.href = '/profile')}
+              iconLeft={<Sparkles className="w-4 h-4" />}
+              onClick={() => navigate('/profile')}
             >
               Compléter mon profil
             </Button>
@@ -286,7 +348,7 @@ export default function ChatAstro() {
       maxWidth="3xl"
       showLogo={false}
       dim
-      headerSlot={isActive ? <ChatEnergyMeter /> : undefined}
+      headerSlot={isActive ? <ChatEnergyMeter onBuyPack={() => setShowUpgradeModal(true)} /> : undefined}
     >
       <Card variant="elevated" className="relative overflow-hidden flex flex-col">
         <div
@@ -326,6 +388,14 @@ export default function ChatAstro() {
                   {msg.from === 'bot' && <br />}
                   {msg.text}
                 </div>
+                {msg.cta && (
+                  <button
+                    onClick={() => navigate(msg.cta!.href)}
+                    className="mt-3 w-full rounded-lg bg-aurora-500/20 border border-aurora-400/40 text-aurora-200 text-xs font-semibold py-2 px-3 hover:bg-aurora-500/30 transition-colors"
+                  >
+                    {msg.cta.label}
+                  </button>
+                )}
               </div>
             </motion.div>
           ))}

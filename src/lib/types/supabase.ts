@@ -39,7 +39,8 @@ export interface Database {
           natal_chart_interpretation: string | null
           natal_summary: string | null
           trial_ends_at: string
-          subscription_status: 'trial' | 'active' | 'expired' | 'cancelled'
+          subscription_status: 'trial' | 'active' | 'past_due' | 'expired' | 'cancelled'
+          subscription_ends_at: string | null
           last_guidance_sent: string | null
           daily_guidance_enabled: boolean
           preferred_channel: 'whatsapp' | 'instagram' | null
@@ -55,6 +56,8 @@ export interface Database {
           messages_included_per_period: number
           extra_balance: number
           period_resets_at: string | null
+          migration_gift_credits: number
+          migration_gift_at: string | null
           // Premium tier (plan déprécié — conservé pour compat)
           plan: Plan
           plan_renews_at: string | null
@@ -154,6 +157,11 @@ export interface Database {
         Insert: Omit<DeliveryReceipt, 'id' | 'created_at'>
         Update: Partial<DeliveryReceipt>
       }
+      extra_purchases: {
+        Row: ExtraPurchase
+        Insert: Omit<ExtraPurchase, 'id' | 'purchased_at'> & { id?: string; purchased_at?: string }
+        Update: Partial<ExtraPurchase>
+      }
     }
     Views: {
       [_ in never]: never
@@ -162,6 +170,25 @@ export interface Database {
       increment_usage: {
         Args: { p_user_id: string; p_feature: string; p_max: number }
         Returns: { allowed: boolean; current_count: number }[]
+      }
+      consume_chat_message: {
+        Args: { p_user_id: string }
+        Returns:
+          | { success: true; source: 'included'; remaining_included: number }
+          | { success: true; source: 'extra'; remaining_extras: number; pack_id: string | null }
+          | { success: false; reason: 'inactive_subscription' | 'quota_exceeded' | 'user_not_found' }
+      }
+      refund_chat_message: {
+        Args: { p_user_id: string; p_source: 'included' | 'extra'; p_pack_id?: string | null }
+        Returns: { success: boolean; refunded?: 'included' | 'extra'; reason?: string }
+      }
+      add_extra_balance: {
+        Args: { p_user_id: string; p_amount: number }
+        Returns: { success: boolean; added?: number; reason?: string }
+      }
+      expire_extra_packs: {
+        Args: Record<string, never>
+        Returns: { expired_packs_cleaned: number }
       }
     }
     Enums: {
@@ -172,6 +199,21 @@ export interface Database {
 
 export type Profile = Database['public']['Tables']['profiles']['Row']
 export type DailyGuidance = Database['public']['Tables']['daily_guidance']['Row']
+
+export type ExtraPackName = 'filante' | 'lune' | 'constellation' | 'galaxie'
+export type ExtraPackSize = 10 | 30 | 100 | 300
+
+export interface ExtraPurchase {
+  id: string
+  user_id: string
+  pack_size: ExtraPackSize
+  pack_name: ExtraPackName
+  amount_paid_eur: number
+  stripe_payment_intent_id: string
+  messages_remaining: number
+  purchased_at: string
+  expires_at: string
+}
 
 export interface Streak {
   user_id: string

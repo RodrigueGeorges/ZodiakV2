@@ -33,8 +33,8 @@ interface PremiumGateProps {
 export default function PremiumGate({
   children,
   feature,
-  title = 'Réservé aux étoiles premium',
-  description = 'Cette lecture est plus profonde — passe en premium pour la débloquer.',
+  title = 'Débloquer Zodiak Premium',
+  description = 'Accède à la guidance quotidienne + 100 messages chat astral inclus par cycle, calibrés sur ton thème natal.',
   forceLocked,
   preview = true,
   className,
@@ -96,7 +96,7 @@ export default function PremiumGate({
             >
               Débloquer Zodiak Premium
             </Button>
-            <p className="text-micro text-ivory-400">7 jours d'essai · sans engagement</p>
+            <p className="text-micro text-ivory-400">Essai 7 jours · 8,90&nbsp;€/mois · résiliable en 1 clic</p>
           </div>
         </Card>
       </motion.div>

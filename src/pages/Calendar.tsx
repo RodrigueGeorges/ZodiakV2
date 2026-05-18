@@ -4,9 +4,7 @@ import { CalendarDays, Moon } from 'lucide-react';
 import PageLayout from '../components/PageLayout';
 import LoadingScreen from '../components/LoadingScreen';
 import { Card } from '../components/ui/Card';
-import PremiumGate from '../components/PremiumGate';
 import { useAuth } from '../lib/hooks/useAuth';
-import { usePremium } from '../lib/hooks/usePremium';
 import { moonPhasesNextDays, nextKeyMoonDates, moonPhaseAt } from '../lib/moonPhase';
 import MoonPhaseVisual from '../components/MoonPhaseVisual';
 import { cn } from '../lib/utils';
@@ -32,7 +30,6 @@ const formatLong = (iso: string) =>
  */
 export default function CalendarPage() {
   const { isLoading } = useAuth();
-  const { isPremium } = usePremium();
 
   const phases = useMemo(() => moonPhasesNextDays(30), []);
   const keyDates = useMemo(() => nextKeyMoonDates(60), []);
@@ -170,18 +167,7 @@ export default function CalendarPage() {
       showLogo={false}
       dim
     >
-      {isPremium ? (
-        content
-      ) : (
-        <PremiumGate
-          feature="calendar_30d"
-          title="Calendrier 30 jours"
-          description="Visualise tes lunaisons et tes dates clés en un coup d'œil."
-          preview
-        >
-          {content}
-        </PremiumGate>
-      )}
+      {content}
     </PageLayout>
   );
 }

@@ -153,7 +153,7 @@ export function UpgradePackModal({ open, onClose, userId, userEmail }: UpgradePa
             {/* Footer note */}
             <p className="mt-4 text-center text-[11px] text-ivory-500">
               <Zap className="inline w-3 h-3 mr-0.5 -mt-0.5" />
-              Valables 12 mois · TVA non applicable — art. 293B CGI
+              Valables 12 mois · TVA incluse selon ton pays · Facture par email
             </p>
           </motion.div>
         </>

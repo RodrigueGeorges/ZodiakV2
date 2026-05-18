@@ -12,8 +12,11 @@
  *
  * Output : affiche les price IDs à copier dans les variables d'environnement Netlify.
  *
- * TVA : auto-entrepreneur sous seuil → "TVA non applicable — art. 293B CGI"
- *       Pas de Stripe Tax activé.
+ * TVA : OSS (vente UE) → Stripe Tax calcule la TVA selon le pays du client.
+ *       Pré-requis : activer Stripe Tax dans le dashboard + renseigner l'adresse
+ *       de l'entreprise + s'enregistrer aux pays UE concernés.
+ *       Tax code utilisé : 'txcd_10103001' (SaaS digital service — catégorie
+ *       standard pour services numériques). À ajuster si autre catégorie.
  */
 
 import Stripe from 'stripe';
@@ -26,7 +29,10 @@ if (!secretKey) {
   process.exit(1);
 }
 
-const stripe = new Stripe(secretKey, { apiVersion: '2024-11-20.acacia' });
+// apiVersion non spécifié → default SDK installé (Stripe v16 = '2024-06-20').
+const stripe = new Stripe(secretKey);
+
+const SAAS_TAX_CODE = 'txcd_10103001'; // Digital services standard
 
 const isLive = secretKey.startsWith('sk_live_');
 console.log(`\n🔑 Mode : ${isLive ? '🔴 LIVE (production)' : '🟡 TEST'}`);
@@ -89,6 +95,7 @@ async function findOrCreateProduct(name: string, description: string): Promise<s
   const product = await stripe.products.create({
     name,
     description,
+    tax_code: SAAS_TAX_CODE,
     metadata: { zodiak: 'true' },
   });
   console.log(`  ✅ Produit créé : ${product.id}`);

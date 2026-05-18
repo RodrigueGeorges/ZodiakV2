@@ -11,24 +11,19 @@ import PremiumGate from '../components/PremiumGate';
 import { Button } from '../components/ui/Button';
 import { useAuth } from '../lib/hooks/useAuth';
 import { useFriends } from '../lib/hooks/useFriends';
-import { usePremium } from '../lib/hooks/usePremium';
 import { track } from '../lib/analytics';
 import { useDocumentSeo } from '../lib/documentSeo';
 
 /**
  * Page "Mes liens" — annuaire des proches + accès aux synastries.
  *
- * Gating premium :
- *   - Free : 1 lien max enregistré.
- *   - Premium : illimité.
- *
- * On passe par PremiumGate uniquement pour le bouton "Ajouter" lorsque
- * la limite est atteinte ; les liens existants restent accessibles.
+ * Accès premium uniquement (PrivateRoute requireActiveSubscription).
+ * Synastries illimitées pour tous les abonnés actifs.
  */
 export default function Friends() {
   const { isAuthenticated, isLoading } = useAuth();
   const { friends, loading, addFriend, removeFriend } = useFriends();
-  const { quotas, isPremium } = usePremium();
+  // Plus de gating quota côté client — la route est gatée par requireActiveSubscription.
   const navigate = useNavigate();
   const [adding, setAdding] = useState(false);
 
@@ -44,7 +39,7 @@ export default function Friends() {
     return null;
   }
 
-  const limitReached = !isPremium && friends.length >= quotas.maxFriends;
+  const limitReached = false; // synastries illimitées pour les abonnés actifs
 
   return (
     <PageLayout
@@ -61,7 +56,6 @@ export default function Friends() {
             <Users className="w-4 h-4 text-aurora-300" aria-hidden="true" />
             <span>
               {friends.length} {friends.length === 1 ? 'lien' : 'liens'}
-              {!isPremium && ` · ${quotas.maxFriends} max en gratuit`}
             </span>
           </div>
           {!adding && !limitReached && (

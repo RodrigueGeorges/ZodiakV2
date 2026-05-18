@@ -240,7 +240,7 @@ export default function Home() {
               variant="cosmic"
               size="sm"
             >
-              Essayer 7 jours gratuits
+              Essayer 7 jours
             </ButtonLink>
           </div>
         </header>
@@ -313,7 +313,7 @@ export default function Home() {
             >
               <li className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-aurora-400 shrink-0" aria-hidden />
-                Sans carte bancaire
+                Essai 7 jours avec CB
               </li>
               <li className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-aurora-400 shrink-0" aria-hidden />
@@ -336,7 +336,7 @@ export default function Home() {
                 iconLeft={<Sparkles className="w-4 h-4" />}
                 className="w-full sm:w-auto min-w-[240px] text-base"
               >
-                Démarrer gratuitement
+                Démarrer mon essai
               </ButtonLink>
               <ButtonLink
                 to="/login"
@@ -477,7 +477,7 @@ export default function Home() {
                 bullets={[
                   'Réponses contextualisées sur ta carte du ciel',
                   'Mémoire complète de la conversation',
-                  'Échanges illimités',
+                  '100 messages inclus par cycle · packs extras disponibles',
                 ]}
               />
             </div>
@@ -499,7 +499,7 @@ export default function Home() {
                 Une seule formule. Tout est inclus.
               </h2>
               <p className="text-body-lg text-aurora-100 font-medium tracking-tight">
-                8,99&nbsp;€ / mois
+                8,90&nbsp;€&thinsp;/&thinsp;mois
               </p>
               <p className="text-body text-ivory-400/95 leading-relaxed max-w-lg mx-auto">
                 Pas de version premium cachée. Pas de pubs. Pas de revente de données.
@@ -613,10 +613,10 @@ export default function Home() {
               iconLeft={<Sparkles className="w-4 h-4" />}
               iconRight={<ArrowRight className="w-4 h-4" />}
             >
-              Démarrer mes 7 jours offerts
+              Commencer mon essai 7 jours
             </ButtonLink>
             <p className="mt-5 text-caption text-ivory-400/85">
-              Sans CB · Résiliable en 1 clic
+              CB requise · Résiliable en 1 clic
             </p>
           </motion.div>
 
@@ -738,9 +738,9 @@ function RitualCard({
 function PriceOfferCard() {
   const includes = [
     'Guidance quotidienne illimitée',
-    'Chat illimité avec ton guide astral',
-    'Mémoire complète de tes échanges',
-    'Tes réseaux sociaux, au choix',
+    '100 messages chat astral inclus par cycle',
+    'Packs extras disponibles si besoin',
+    'Calendrier 30j · alertes transits · synastries',
     'Profil basé sur ton thème natal',
   ];
 
@@ -766,7 +766,7 @@ function PriceOfferCard() {
         <div className="landing-price-well rounded-xl border border-aurora-400/20 px-6 py-7 md:px-8 md:py-8">
           <div className="flex flex-wrap items-end justify-center gap-x-3 gap-y-1">
             <span className="font-display font-extralight text-[clamp(3rem,8vw,4rem)] text-ivory-50 leading-none tracking-[-0.03em]">
-              8,99&nbsp;€
+              8,90&nbsp;€
             </span>
             <span className="pb-1 text-body text-aurora-100/90 font-medium">/ mois</span>
           </div>
@@ -787,10 +787,10 @@ function PriceOfferCard() {
           <span className="not-italic text-aurora-200/85 font-mono text-[11px] tracking-[0.28em] uppercase block mb-3">
             Offre bienvenue
           </span>
-          <strong className="font-semibold text-aurora-100">7 jours offerts. Sans carte bancaire.</strong>
+          <strong className="font-semibold text-aurora-100">7 jours d'essai · carte bancaire requise.</strong>
         </p>
         <p className="mt-3 text-caption text-ivory-300/95 leading-relaxed">
-          Tu testes. Tu décides après. Si tu continues, c&apos;est 8,99&nbsp;€/mois — résiliable en 1 clic.
+          Aucun débit pendant l'essai. Si tu continues, c&apos;est 8,90&nbsp;€/mois — résiliable en 1 clic.
         </p>
       </div>
 
@@ -803,7 +803,7 @@ function PriceOfferCard() {
         iconRight={<ArrowRight className="w-4 h-4" />}
         className="landing-primary-cta-glow shadow-none text-night-950"
       >
-        Commencer mes 7 jours gratuits
+        Commencer mon essai 7 jours
       </ButtonLink>
     </motion.div>
   );

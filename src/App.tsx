@@ -95,7 +95,7 @@ function AnimatedRoutes() {
           <Route
             path="/guidance"
             element={
-              <PrivateRoute>
+              <PrivateRoute requireActiveSubscription>
                 <Suspense fallback={<PageLoader />}>
                   <Guidance />
                 </Suspense>
@@ -105,7 +105,7 @@ function AnimatedRoutes() {
           <Route
             path="/natal"
             element={
-              <PrivateRoute>
+              <PrivateRoute requireActiveSubscription>
                 <Suspense fallback={<PageLoader />}>
                   <Natal />
                 </Suspense>
@@ -115,7 +115,7 @@ function AnimatedRoutes() {
           <Route
             path="/friends"
             element={
-              <PrivateRoute>
+              <PrivateRoute requireActiveSubscription>
                 <Suspense fallback={<PageLoader />}>
                   <Friends />
                 </Suspense>
@@ -125,7 +125,7 @@ function AnimatedRoutes() {
           <Route
             path="/synastry/:id"
             element={
-              <PrivateRoute>
+              <PrivateRoute requireActiveSubscription>
                 <Suspense fallback={<PageLoader />}>
                   <SynastryDetail />
                 </Suspense>
@@ -135,7 +135,7 @@ function AnimatedRoutes() {
           <Route
             path="/calendar"
             element={
-              <PrivateRoute>
+              <PrivateRoute requireActiveSubscription>
                 <Suspense fallback={<PageLoader />}>
                   <Calendar />
                 </Suspense>

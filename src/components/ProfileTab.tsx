@@ -21,8 +21,10 @@ import { Button } from './ui/Button';
 import DailyGuidanceChannel from './DailyGuidanceChannel';
 import { usePushNotifications } from '../lib/hooks/usePushNotifications';
 import { usePremium } from '../lib/hooks/usePremium';
+import { useSubscription } from '../lib/hooks/useSubscription';
 import { vibrate } from '../lib/haptics';
 import { track } from '../lib/analytics';
+import { Sparkles } from 'lucide-react';
 
 interface ProfileTabProps {
   profile: Profile;
@@ -49,6 +51,15 @@ export default function ProfileTab({
   const { user, refreshProfile } = useAuth();
   const push = usePushNotifications();
   const { isPremium, plan, trialDaysLeft } = usePremium();
+  const {
+    status,
+    messagesUsed,
+    messagesIncluded,
+    extraBalance,
+    totalAvailable,
+    daysUntilReset,
+    subscriptionEndsAt,
+  } = useSubscription();
 
   const [editMode, setEditMode] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -323,20 +334,91 @@ export default function ProfileTab({
             </Card>
           )}
 
-          {/* Plan premium summary */}
+          {/* Dashboard crédits & abonnement */}
           {isPremium && (
             <Card variant="elevated">
-              <div className="p-7 text-center">
-                <p className="eyebrow-ritual text-aurora-400 mb-2">
-                  {plan === 'lifetime'
-                    ? 'À vie'
-                    : trialDaysLeft && trialDaysLeft > 0
-                      ? 'Essai'
-                      : 'Premium'}
-                </p>
-                <p className="font-display italic-editorial text-h2 text-ivory-50 leading-tight">
-                  Toutes les étoiles débloquées
-                </p>
+              <div className="p-7">
+                <div className="flex items-center justify-between gap-4 mb-5">
+                  <div>
+                    <p className="eyebrow-ritual text-aurora-400 mb-1">
+                      {plan === 'lifetime'
+                        ? 'À vie'
+                        : status === 'trial'
+                          ? `Essai · ${trialDaysLeft ?? 7}j restants`
+                          : status === 'cancelled'
+                            ? 'Abonnement annulé'
+                            : status === 'past_due'
+                              ? 'Paiement en attente'
+                              : 'Zodiak Premium'}
+                    </p>
+                    <p className="font-display italic-editorial text-h3 text-ivory-50 leading-tight">
+                      Mes crédits ce cycle
+                    </p>
+                  </div>
+                  <Sparkles className="w-5 h-5 text-aurora-300" aria-hidden />
+                </div>
+
+                {/* Jauge messages inclus */}
+                <div className="mb-5">
+                  <div className="flex items-baseline justify-between mb-2">
+                    <span className="text-caption text-ivory-300">Messages inclus</span>
+                    <span className="text-body text-ivory-100 font-mono tabular-nums">
+                      {Math.max(0, messagesIncluded - messagesUsed)} / {messagesIncluded}
+                    </span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-night-700/80 overflow-hidden">
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-aurora-400 to-aurora-300"
+                      initial={{ width: 0 }}
+                      animate={{
+                        width: `${Math.max(0, Math.min(100, ((messagesIncluded - messagesUsed) / Math.max(1, messagesIncluded)) * 100))}%`,
+                      }}
+                      transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                    />
+                  </div>
+                </div>
+
+                {/* Solde extras */}
+                {extraBalance > 0 && (
+                  <div className="flex items-baseline justify-between border-t border-white/[0.08] pt-3 mb-3">
+                    <span className="text-caption text-ivory-300">Packs extras</span>
+                    <span className="text-body text-aurora-300 font-mono tabular-nums">
+                      +{extraBalance} msg
+                    </span>
+                  </div>
+                )}
+
+                {/* Total */}
+                <div className="flex items-baseline justify-between border-t border-white/[0.08] pt-3 mb-3">
+                  <span className="text-caption text-ivory-300">Total disponible</span>
+                  <span className="text-body-lg text-ivory-50 font-semibold font-mono tabular-nums">
+                    {totalAvailable}
+                  </span>
+                </div>
+
+                {/* Reset / fin abo */}
+                {daysUntilReset !== null && status !== 'cancelled' && (
+                  <p className="text-caption text-ivory-400 text-center mt-3">
+                    Recharge dans <span className="text-ivory-200 font-medium">{daysUntilReset} jour{daysUntilReset !== 1 ? 's' : ''}</span>
+                  </p>
+                )}
+                {status === 'cancelled' && subscriptionEndsAt && (
+                  <p className="text-caption text-magenta-300 text-center mt-3">
+                    Accès jusqu'au {subscriptionEndsAt.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                  </p>
+                )}
+
+                {/* CTA achat extras */}
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  fullWidth
+                  className="mt-5"
+                  onClick={() => navigate('/guide-astral')}
+                  iconLeft={<Sparkles className="w-3.5 h-3.5" />}
+                >
+                  Acheter des messages extras
+                </Button>
               </div>
             </Card>
           )}

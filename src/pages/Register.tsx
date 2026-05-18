@@ -13,9 +13,9 @@ import { useDocumentSeo } from '../lib/documentSeo';
 
 export default function Register() {
   useDocumentSeo({
-    title: 'Inscription · Zodiak — 7 jours offerts sans carte',
+    title: 'Inscription · Zodiak — essai 7 jours avec carte',
     description:
-      'Crée ton compte pour recevoir ton horoscope personnalisé selon ton thème natal sur WhatsApp ou Instagram. Chat astral inclus. Essai gratuit une semaine sans carte.',
+      'Crée ton compte pour recevoir ton horoscope personnalisé selon ton thème natal sur WhatsApp ou Instagram. Chat astral inclus. Essai 7 jours, carte bancaire requise.',
   });
 
   const [email, setEmail] = useState('');
@@ -200,7 +200,7 @@ export default function Register() {
 
         <div className="flex items-center gap-2 pt-3 eyebrow-ritual text-ivory-400/70">
           <ShieldCheck className="w-3.5 h-3.5 text-aurora-400" aria-hidden="true" />
-          <span>7 jours offerts · sans carte bancaire · annulable en 1 clic</span>
+          <span>Essai 7 jours · carte bancaire requise · annulable en 1 clic</span>
         </div>
       </form>
     </AuthLayout>

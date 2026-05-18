@@ -1,7 +1,8 @@
 import type { Handler, HandlerEvent } from '@netlify/functions';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-11-20.acacia' });
+// apiVersion non spécifié → default SDK (Stripe v16 = '2024-06-20').
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 const HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -37,6 +38,14 @@ export const handler: Handler = async (event: HandlerEvent) => {
       cancel_url: cancelUrl,
       metadata: { user_id: userId },
       ...(userEmail ? { customer_email: userEmail } : {}),
+      // TVA OSS : Stripe Tax calcule automatiquement selon le pays du client.
+      // Pré-requis : produits Stripe taggés tax_code + Stripe Tax activé dans le dashboard.
+      automatic_tax: { enabled: true },
+      // L'adresse de facturation est nécessaire pour qu'automatic_tax fonctionne.
+      billing_address_collection: 'required',
+      // Persiste l'adresse côté customer pour les renouvellements automatiques.
+      customer_update: { address: 'auto', name: 'auto' },
+      tax_id_collection: { enabled: true },
     };
 
     // Abonnement : trial 7 jours avec CB obligatoire

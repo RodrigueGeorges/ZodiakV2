@@ -2,7 +2,8 @@ import type { Handler, HandlerEvent } from '@netlify/functions';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2024-11-20.acacia' });
+// apiVersion non spécifié → utilise la version par défaut du SDK installé (Stripe v16 = '2024-06-20').
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 
 const HEADERS = {
@@ -93,23 +94,35 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session): Promis
   }
 
   if (session.mode === 'subscription') {
-    // Activation abonnement Premium
+    // Activation abonnement Premium — on récupère la subscription pour avoir
+    // le current_period_end exact (anniversaire, pas hardcodé à +30j).
     const subscriptionId = typeof session.subscription === 'string'
       ? session.subscription
       : session.subscription?.id;
 
+    let periodResetsAt: string;
+    let initialStatus: 'trial' | 'active' = 'active';
+    if (subscriptionId) {
+      const sub = await stripe.subscriptions.retrieve(subscriptionId);
+      periodResetsAt = new Date(sub.current_period_end * 1000).toISOString();
+      initialStatus = sub.status === 'trialing' ? 'trial' : 'active';
+    } else {
+      // Fallback (ne devrait pas arriver)
+      periodResetsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    }
+
     await supabase
       .from('profiles')
       .update({
-        subscription_status: 'active',
+        subscription_status: initialStatus,
         stripe_customer_id: session.customer as string,
-        period_resets_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        period_resets_at: periodResetsAt,
         messages_included_per_period: 100,
         messages_used_this_period: 0,
       })
       .eq('id', userId);
 
-    console.info(`[stripe-webhook] subscription activated: user=${userId.slice(0, 8)} sub=${subscriptionId}`);
+    console.info(`[stripe-webhook] subscription activated: user=${userId.slice(0, 8)} sub=${subscriptionId} resets=${periodResetsAt}`);
 
   } else if (session.mode === 'payment') {
     // Achat pack extra — on récupère les line items pour identifier le pack
@@ -168,17 +181,25 @@ async function handleSubscriptionUpsert(subscription: Stripe.Subscription): Prom
     ? new Date(subscription.trial_end * 1000).toISOString()
     : null;
 
+  // cancel_at_period_end → on stocke la date de fin d'accès résiduel
+  // pour que le hook useSubscription garde isActive=true tant que la
+  // période payée court.
+  const subscriptionEndsAt = subscription.cancel_at
+    ? new Date(subscription.cancel_at * 1000).toISOString()
+    : null;
+
   const { error } = await supabase
     .from('profiles')
     .update({
       subscription_status: status,
+      subscription_ends_at: subscriptionEndsAt,
       ...(trialEnd ? { trial_ends_at: trialEnd } : {}),
     })
     .eq('stripe_customer_id', customerId);
 
   if (error) throw new Error(`subscription upsert failed: ${error.message}`);
 
-  console.info(`[stripe-webhook] subscription status: customer=${customerId.slice(0, 12)} → ${status}`);
+  console.info(`[stripe-webhook] subscription status: customer=${customerId.slice(0, 12)} → ${status}${subscriptionEndsAt ? ` (ends=${subscriptionEndsAt})` : ''}`);
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription): Promise<void> {
@@ -244,12 +265,12 @@ async function handleInvoiceFailed(invoice: Stripe.Invoice): Promise<void> {
 
 function stripeStatusToAppStatus(
   stripeStatus: Stripe.Subscription.Status
-): 'trial' | 'active' | 'expired' | 'cancelled' {
+): 'trial' | 'active' | 'past_due' | 'expired' | 'cancelled' {
   switch (stripeStatus) {
     case 'trialing':           return 'trial';
     case 'active':             return 'active';
+    case 'past_due':           return 'past_due';   // Smart Retries — accès maintenu côté app
     case 'canceled':           return 'cancelled';
-    case 'past_due':
     case 'unpaid':
     case 'incomplete_expired': return 'expired';
     default:                   return 'expired';

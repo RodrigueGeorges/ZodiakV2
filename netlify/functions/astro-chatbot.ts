@@ -81,9 +81,16 @@ export const handler: Handler = async (event) => {
     );
 
     if (consumeError) {
-      // Fail-open: RPC error shouldn't block user (log only)
+      // Fail-closed : un RPC qui plante est anormal — on refuse plutôt que d'offrir
+      // un message gratuit (évite l'exploitation si un attaquant fait planter le RPC).
       console.error('[astro-chatbot] consume_chat_message RPC error:', consumeError.message);
-    } else if (consumeResult && !(consumeResult as { success: boolean }).success) {
+      return {
+        statusCode: 503,
+        headers: HEADERS,
+        body: JSON.stringify({ error: 'Service temporairement indisponible. Réessaie dans un instant.' }),
+      };
+    }
+    if (consumeResult && !(consumeResult as { success: boolean }).success) {
       const reason = (consumeResult as { reason: string }).reason;
       if (reason === 'quota_exceeded') {
         return {
@@ -222,7 +229,12 @@ export const handler: Handler = async (event) => {
     return {
       statusCode: 200,
       headers: HEADERS,
-      body: JSON.stringify({ answer, conversationId: convId }),
+      body: JSON.stringify({
+        answer,
+        conversationId: convId,
+        // Exposé pour analytics côté client (event chat_message_consumed)
+        source: consumeSource,
+      }),
     };
   } catch (error) {
     return {

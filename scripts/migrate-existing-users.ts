@@ -67,7 +67,6 @@ async function main(): Promise<void> {
   console.log('\n⬆️  Migration premium/lifetime → active...');
   for (const p of premium) {
     const periodResetsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
-    const expiresAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
 
     if (DRY_RUN) {
       console.log(`  [DRY] ${p.name} (${p.id.slice(0, 8)}) → active, +200 extras`);
@@ -75,7 +74,9 @@ async function main(): Promise<void> {
       continue;
     }
 
-    // Update profile
+    // Update profile : cadeau de 200 crédits + traçabilité via colonnes
+    // dédiées (migration_gift_credits + migration_gift_at) plutôt qu'un
+    // extra_purchases fictif (qui violerait les contraintes CHECK).
     const { error: upErr } = await supabase
       .from('profiles')
       .update({
@@ -83,6 +84,8 @@ async function main(): Promise<void> {
         messages_included_per_period: 100,
         extra_balance: (p.extra_balance ?? 0) + 200,
         period_resets_at: periodResetsAt,
+        migration_gift_credits: 200,
+        migration_gift_at: new Date().toISOString(),
       })
       .eq('id', p.id);
 
@@ -90,21 +93,6 @@ async function main(): Promise<void> {
       errors.push(`profile ${p.id}: ${upErr.message}`);
       continue;
     }
-
-    // Traçabilité : extra_purchase fictif "welcome_migration_gift"
-    await supabase.from('extra_purchases').insert({
-      user_id: p.id,
-      pack_size: 300, // taille la plus proche pour 200 (contrainte CHECK 10|30|100|300)
-      pack_name: 'galaxie',
-      amount_paid_eur: 0,
-      stripe_payment_intent_id: `migration_gift_${p.id}`,
-      messages_remaining: 0, // déjà ajouté via extra_balance, ne pas double-compter
-      expires_at: expiresAt,
-    }).then(({ error: insErr }) => {
-      if (insErr && insErr.code !== '23505') {
-        console.warn(`  ⚠ gift insert for ${p.id}:`, insErr.message);
-      }
-    });
 
     console.log(`  ✅ ${p.name} (${p.id.slice(0, 8)}) → active + 200 crédits cadeau`);
     migratedPremium++;

@@ -11,7 +11,8 @@
  * la bonne entrée principale.
  */
 const ROUTE_FAMILY: Record<string, string> = {
-  '/synastry': '/friends',
+  '/synastry': '/calendar',
+  '/friends': '/calendar',
 };
 
 /**

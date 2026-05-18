@@ -1,12 +1,18 @@
 import { useMemo } from 'react';
 import { useAuth } from './useAuth';
 
-export type SubscriptionStatus = 'trial' | 'active' | 'expired' | 'cancelled';
+export type SubscriptionStatus = 'trial' | 'active' | 'past_due' | 'expired' | 'cancelled';
 
 export interface UseSubscriptionReturn {
-  /** true si l'user peut utiliser toutes les features (trial ou active). */
+  /**
+   * true si l'user peut utiliser toutes les features.
+   * Inclut : trial, active, past_due (3j de grâce Stripe Smart Retries),
+   *          cancelled tant que subscription_ends_at > now (accès résiduel).
+   */
   isActive: boolean;
   status: SubscriptionStatus;
+  /** Date de fin d'accès si l'abo est annulé (cancel_at_period_end). */
+  subscriptionEndsAt: Date | null;
   /** Messages consommés sur le cycle en cours. */
   messagesUsed: number;
   /** Messages inclus dans le forfait (100 par défaut). */
@@ -29,11 +35,28 @@ export function useSubscription(): UseSubscriptionReturn {
   return useMemo<UseSubscriptionReturn>(() => {
     const rawStatus = profile?.subscription_status ?? 'expired';
     const status: SubscriptionStatus =
-      rawStatus === 'trial' || rawStatus === 'active' || rawStatus === 'cancelled'
+      rawStatus === 'trial' ||
+      rawStatus === 'active' ||
+      rawStatus === 'past_due' ||
+      rawStatus === 'cancelled'
         ? rawStatus
         : 'expired';
 
-    const isActive = status === 'trial' || status === 'active';
+    // Accès résiduel après annulation : Stripe garde l'abo actif jusqu'à
+    // la fin de la période payée (cancel_at_period_end).
+    let subscriptionEndsAt: Date | null = null;
+    if (profile?.subscription_ends_at) {
+      subscriptionEndsAt = new Date(profile.subscription_ends_at);
+    }
+    const cancelledButStillValid =
+      status === 'cancelled' && subscriptionEndsAt !== null && subscriptionEndsAt.getTime() > Date.now();
+
+    // past_due → 3 jours de grâce gérés par Stripe Smart Retries (status reste actif côté app)
+    const isActive =
+      status === 'trial' ||
+      status === 'active' ||
+      status === 'past_due' ||
+      cancelledButStillValid;
 
     const messagesUsed = profile?.messages_used_this_period ?? 0;
     const messagesIncluded = profile?.messages_included_per_period ?? 100;
@@ -58,6 +81,7 @@ export function useSubscription(): UseSubscriptionReturn {
     return {
       isActive,
       status,
+      subscriptionEndsAt,
       messagesUsed,
       messagesIncluded,
       extraBalance,
@@ -68,6 +92,7 @@ export function useSubscription(): UseSubscriptionReturn {
     };
   }, [
     profile?.subscription_status,
+    profile?.subscription_ends_at,
     profile?.messages_used_this_period,
     profile?.messages_included_per_period,
     profile?.extra_balance,

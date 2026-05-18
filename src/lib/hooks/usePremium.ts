@@ -50,9 +50,11 @@ interface UsePremiumReturn {
 }
 
 /**
- * @deprecated Utiliser `useSubscription` à la place.
- * Wrapper rétrocompatible pendant la migration vers le nouveau modèle économique.
- * `isPremium` === `isActive` dans le nouveau modèle (trial ou active).
+ * @deprecated Utilise `useSubscription` à la place pour le nouveau modèle
+ * économique (forfait 8,90 €/mois + 100 messages inclus + packs extras).
+ * Ce hook est conservé en wrapper rétrocompatible pour les composants
+ * legacy qui consomment encore `isPremium` ou `quotas`. À supprimer après
+ * la migration complète.
  */
 export function usePremium(): UsePremiumReturn {
   const { profile } = useAuth();
