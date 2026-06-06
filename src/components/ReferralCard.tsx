@@ -102,7 +102,7 @@ export default function ReferralCard({
     try {
       if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
         await navigator.share({
-          title: 'Rejoins-moi sur Zodiak',
+          title: 'Rejoins-moi sur Zodiak Astro',
           text:
             'Une lecture personnalisée du ciel chaque matin sur WhatsApp/Instagram. Avec mon lien tu reçois 14 jours offerts.',
           url,

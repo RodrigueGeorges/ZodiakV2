@@ -65,8 +65,8 @@ export default function StoryShareButton({
       if (!blob) return;
       const file = new File([blob], 'zodiak-story.png', { type: 'image/png' });
       const shareData: ShareData & { files?: File[] } = {
-        title: 'Zodiak',
-        text: 'Découvre ton ciel sur Zodiak.',
+        title: 'Zodiak Astro',
+        text: 'Découvre ton ciel sur Zodiak Astro.',
         files: [file],
       };
       const nav = navigator as Navigator & {

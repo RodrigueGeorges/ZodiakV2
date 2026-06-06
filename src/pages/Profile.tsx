@@ -48,15 +48,15 @@ export default function ProfilePage() {
 
   useDocumentSeo({
     title: error
-      ? 'Erreur · Zodiak'
+      ? 'Erreur · Zodiak Astro'
       : !profile && user
-        ? 'Profil à compléter · Zodiak'
-        : 'Mon profil · Zodiak — compte & abonnement',
+        ? 'Profil à compléter · Zodiak Astro'
+        : 'Mon profil · Zodiak Astro — compte & abonnement',
     description: error
-      ? 'Une erreur a empêché le chargement de ton profil Zodiak.'
+      ? 'Une erreur a empêché le chargement de ton profil Zodiak Astro.'
       : !profile && user
         ? 'Complète ton profil et ton thème natal pour activer ta guidance personnalisée et ton chat astral.'
-        : 'Réglages compte Zodiak : canal WhatsApp ou Instagram, thème natal, abonnement 8,99 € / mois et résiliation en un clic.',
+        : 'Réglages compte Zodiak Astro : canal WhatsApp ou Instagram, thème natal, abonnement 8,90 € / mois et résiliation en un clic.',
   });
 
   const handleLogout = async () => {

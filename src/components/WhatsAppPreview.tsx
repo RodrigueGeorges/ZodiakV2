@@ -147,7 +147,7 @@ function InstagramHeader() {
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-[13px] text-ivory-50 font-medium leading-tight">
-          zodiak.app
+          zodiakastro
         </p>
         <p className="text-[10.5px] text-ivory-300 leading-tight">
           actif il y a 2 min

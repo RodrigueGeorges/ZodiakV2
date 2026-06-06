@@ -170,7 +170,7 @@ export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptPr
                       id="pwa-install-title"
                       className="font-display font-light text-body-lg text-ivory-50 leading-tight"
                     >
-                      Installe Zodiak sur iPhone
+                      Installe Zodiak Astro sur iPhone
                     </p>
                     <p className="text-caption text-ivory-300/80 italic-editorial mt-1">
                       Plus rapide, hors connexion, comme une vraie app.
@@ -210,7 +210,7 @@ export default function PWAInstallPrompt({ delayMs = 12000 }: PWAInstallPromptPr
                     id="pwa-install-title"
                     className="font-display font-light text-body-lg text-ivory-50 leading-tight"
                   >
-                    Installe Zodiak
+                    Installe Zodiak Astro
                   </p>
                   <p className="text-caption text-ivory-300/80 italic-editorial mt-1">
                     Sur ton écran d'accueil. Plus rapide, hors connexion.

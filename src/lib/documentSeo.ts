@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 
 /** Valeurs par défaut alignées avec `index.html` (SSR / pré-rendu). */
 export const DEFAULT_DOC_TITLE =
-  'Zodiak · Horoscope personnalisé sur WhatsApp & Instagram';
+  'Zodiak Astro · Horoscope personnalisé sur WhatsApp & Instagram';
 
 export const DEFAULT_META_DESCRIPTION =
-  'Horoscope personnalisé sur WhatsApp et Instagram : guidance astrologique basée sur ton thème natal chaque matin. 7 jours offerts sans carte, puis 8,99 € / mois. Données en Europe.';
+  'Horoscope personnalisé sur WhatsApp et Instagram : guidance astrologique basée sur ton thème natal chaque matin. Compte gratuit, essai Premium 7 jours (carte requise), puis 8,90 € / mois. Données en Europe.';
 
 /**
  * Met à jour `document.title` et la meta description pour la route courante.

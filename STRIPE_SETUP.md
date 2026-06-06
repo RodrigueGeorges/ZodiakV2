@@ -63,7 +63,7 @@ Le script génère `.stripe-prices.env` avec les `STRIPE_PRICE_*` à copier dans
 
 ### Création
 1. Dashboard → **Developers → Webhooks → Add endpoint**
-2. **Endpoint URL** : `https://zodiak.netlify.app/.netlify/functions/stripe-webhook`
+2. **Endpoint URL** : `https://zodiakastro.com/.netlify/functions/stripe-webhook`
 3. **Events to send** (cocher uniquement ces 6) :
    - `checkout.session.completed`
    - `customer.subscription.created`
@@ -140,7 +140,7 @@ VITE_STRIPE_PRICE_GALAXIE=price_...
    - **Subscription updates** : désactiver (un seul plan)
    - **Invoice history** : ✓
    - **Payment method updates** : ✓
-3. Branding : logo, couleurs, URL retour (`https://zodiak.netlify.app/profile`)
+3. Branding : logo, couleurs, URL retour (`https://zodiakastro.com/profile`)
 
 Le portal est accessible côté front via une fonction Netlify dédiée (à créer si pas encore : `create-portal-session.ts`).
 

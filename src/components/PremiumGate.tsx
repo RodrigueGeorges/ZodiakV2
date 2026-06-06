@@ -6,6 +6,7 @@ import { usePremium } from '../lib/hooks/usePremium';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
 import { track } from '../lib/analytics';
+import { APP_NAME } from '../lib/constants';
 import { cn } from '../lib/utils';
 
 interface PremiumGateProps {
@@ -33,8 +34,8 @@ interface PremiumGateProps {
 export default function PremiumGate({
   children,
   feature,
-  title = 'Débloquer Zodiak Premium',
-  description = 'Accède à la guidance quotidienne + 100 messages chat astral inclus par cycle, calibrés sur ton thème natal.',
+  title = `Débloquer ${APP_NAME}`,
+  description = 'Accède à la guidance quotidienne + 100 messages chat astral inclus par mois, calibrés sur ton thème natal.',
   forceLocked,
   preview = true,
   className,
@@ -82,10 +83,8 @@ export default function PremiumGate({
               <Lock className="w-6 h-6 text-aurora-200" aria-hidden="true" />
             </div>
             <div>
-              <p className="text-micro uppercase tracking-[0.22em] text-aurora-300 mb-1">
-                Premium
-              </p>
-              <h3 className="font-display font-medium text-h3 text-ivory-50">{title}</h3>
+              <p className="eyebrow-ritual text-aurora-300 mb-1">{APP_NAME}</p>
+              <h3 className="font-display font-light text-h3 text-ivory-50">{title}</h3>
               <p className="text-caption text-ivory-300 mt-2 max-w-sm">{description}</p>
             </div>
             <Button
@@ -94,9 +93,11 @@ export default function PremiumGate({
               onClick={handleSubscribe}
               iconLeft={<Sparkles className="w-4 h-4" />}
             >
-              Débloquer Zodiak Premium
+              Activer {APP_NAME}
             </Button>
-            <p className="text-micro text-ivory-400">Essai 7 jours · 8,90&nbsp;€/mois · résiliable en 1 clic</p>
+            <p className="text-micro text-ivory-400">
+              Essai 7 jours avec carte · 8,90&nbsp;€/mois · résiliable en 1 clic
+            </p>
           </div>
         </Card>
       </motion.div>

@@ -129,9 +129,9 @@ export function Admin() {
   };
 
   useDocumentSeo({
-    title: loading ? 'Admin · chargement · Zodiak' : error ? 'Admin · erreur · Zodiak' : 'Admin · tableau de bord · Zodiak',
+    title: loading ? 'Admin · chargement · Zodiak Astro' : error ? 'Admin · erreur · Zodiak Astro' : 'Admin · tableau de bord · Zodiak Astro',
     description:
-      'Interface interne réservée à l’équipe Zodiak pour la supervision des profils et abonnements.',
+      'Interface interne réservée à l’équipe Zodiak Astro pour la supervision des profils et abonnements.',
   });
 
   if (loading) return <LoadingScreen message="Chargement de l'espace admin…" />;
@@ -144,7 +144,7 @@ export function Admin() {
         title={
           <>
             <span className="block text-ivory-50">Tableau de bord</span>
-            <span className="block text-gradient-aurora">Zodiak.</span>
+            <span className="block text-gradient-aurora">Zodiak Astro.</span>
           </>
         }
         subtitle="Utilisateurs, statuts d’abonnement (essai, actif, expiré) et suivi des envois — accès restreint."

@@ -10,9 +10,9 @@ import { useDocumentSeo } from '../lib/documentSeo';
 
 export default function Login() {
   useDocumentSeo({
-    title: 'Connexion · Zodiak — horoscope personnalisé',
+    title: 'Connexion · Zodiak Astro — horoscope personnalisé',
     description:
-      'Connecte-toi à Zodiak pour retrouver ta guidance du jour sur WhatsApp ou Instagram et ton chat astral basés sur ton thème natal.',
+      'Connecte-toi à Zodiak Astro pour retrouver ta guidance du jour sur WhatsApp ou Instagram et ton chat astral basés sur ton thème natal.',
   });
 
   const [email, setEmail] = useState('');

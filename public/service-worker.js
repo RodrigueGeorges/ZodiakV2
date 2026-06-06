@@ -92,10 +92,10 @@ self.addEventListener('push', (event) => {
   try {
     payload = event.data.json();
   } catch {
-    payload = { title: 'Zodiak', body: event.data.text() };
+    payload = { title: 'Zodiak Astro', body: event.data.text() };
   }
 
-  const title = payload.title || 'Zodiak ✦';
+  const title = payload.title || 'Zodiak Astro ✦';
   const options = {
     body: payload.body || 'Le ciel a un message pour toi.',
     icon: payload.icon || '/icons/icon-192.png',

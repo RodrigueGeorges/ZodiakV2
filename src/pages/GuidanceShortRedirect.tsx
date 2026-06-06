@@ -19,9 +19,9 @@ export default function GuidanceShortRedirect() {
   const navigate = useNavigate();
 
   useDocumentSeo({
-    title: 'Ouverture de ta guidance · Zodiak',
+    title: 'Ouverture de ta guidance · Zodiak Astro',
     description:
-      'Redirection sécurisée vers une guidance astrale du jour partagée sur Zodiak — même service que sur WhatsApp ou Instagram.',
+      'Redirection sécurisée vers une guidance astrale du jour partagée sur Zodiak Astro — même service que sur WhatsApp ou Instagram.',
   });
 
   useEffect(() => {

@@ -24,6 +24,11 @@ interface ImportMetaEnv {
   /** Handle Instagram business (sans le "@") — public. */
   readonly VITE_ZODIAK_INSTAGRAM_HANDLE?: string;
 
+  /** Emails admin autorisés (CSV) — gating UI admin côté client. */
+  readonly VITE_ADMIN_EMAILS?: string;
+  /** User IDs admin autorisés (CSV) — gating UI admin côté client. */
+  readonly VITE_ADMIN_USER_IDS?: string;
+
   /** Clé publique VAPID pour Web Push — `npx web-push generate-vapid-keys`. */
   readonly VITE_VAPID_PUBLIC_KEY?: string;
 
@@ -37,6 +42,8 @@ interface ImportMetaEnv {
   readonly VITE_STRIPE_PUBLISHABLE_KEY?: string;
   /** Price ID abonnement Premium 8,90 €/mois. */
   readonly VITE_STRIPE_PRICE_PREMIUM?: string;
+  /** Price ID abonnement Premium annuel (89 €/an — 2 mois offerts). */
+  readonly VITE_STRIPE_PRICE_PREMIUM_ANNUAL?: string;
   /** Price ID pack Étoile Filante (10 messages, 3,99 €). */
   readonly VITE_STRIPE_PRICE_FILANTE?: string;
   /** Price ID pack Pleine Lune (30 messages, 9,99 €). */

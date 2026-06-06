@@ -65,7 +65,9 @@ export default {
           200: '#e4e4e7',
           300: '#d4d4d8',
           400: '#a1a1aa',
-          500: '#71717a',
+          // 500 remonté de #71717a → #7a7a83 pour passer le contraste WCAG AA
+          // (~4.7:1 sur fond night-900) sur le texte muté (captions, placeholders).
+          500: '#7a7a83',
         },
 
         // ─────── Accent unique = glace / ciel (cohérent StarField bleu) ───────

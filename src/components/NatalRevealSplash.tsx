@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sun, Moon, Compass, Sparkles } from 'lucide-react';
+import { Sun, Moon, Compass, Sparkles, ArrowRight } from 'lucide-react';
 import AppBackdrop from './AppBackdrop';
+import { Button } from './ui/Button';
 import { cn } from '../lib/utils';
 
 interface NatalRevealSplashProps {
@@ -21,12 +22,11 @@ const PHASES = [
   { delay: 3200, label: 'Lune' },
   { delay: 4700, label: 'Ascendant' },
   { delay: 6200, label: 'Ta carte' },
-  { delay: 7700, label: 'done' },
 ] as const;
 
 /**
  * Splash "naissance de ta carte" : reveal progressif Soleil → Lune → Asc → carte
- * complète, avec animations Framer Motion. Sans son, sans clic, automatique.
+ * complète, avec animations Framer Motion. CTA explicite vers l'essai Premium.
  *
  * Une seule occurrence : on stocke un flag localStorage pour éviter de le
  * rejouer à chaque visite après la première.
@@ -43,29 +43,28 @@ export default function NatalRevealSplash({
 }: NatalRevealSplashProps) {
   const [phase, setPhase] = useState(0);
 
+  const finish = () => {
+    try {
+      localStorage.setItem(STORAGE_KEY, new Date().toISOString());
+    } catch {
+      /* ignore */
+    }
+    onDone();
+  };
+
   useEffect(() => {
     if (fastForward) {
       onDone();
       return;
     }
     const timers = PHASES.map((p, i) =>
-      window.setTimeout(() => {
-        setPhase(i + 1);
-        if (p.label === 'done') {
-          try {
-            localStorage.setItem(STORAGE_KEY, new Date().toISOString());
-          } catch {
-            /* ignore */
-          }
-          onDone();
-        }
-      }, p.delay)
+      window.setTimeout(() => setPhase(i + 1), p.delay)
     );
     return () => timers.forEach((t) => window.clearTimeout(t));
   }, [fastForward, onDone]);
 
   return (
-    <div className="fixed inset-0 z-[70] bg-black/75 backdrop-blur-[2px]">
+    <div className="fixed inset-0 z-[70] bg-night-900/90 backdrop-blur-[2px]">
       <AppBackdrop grain />
       <div className="relative z-[1] isolate h-full flex flex-col items-center justify-center px-6 text-center">
         {/* Phase 1 : intro */}
@@ -130,14 +129,26 @@ export default function NatalRevealSplash({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col items-center gap-4"
+              className="flex flex-col items-center gap-5 max-w-md"
             >
               <Sparkles className="w-8 h-8 text-aurora-200" aria-hidden="true" />
               <h2 className="font-display font-light text-display-xl md:text-[72px] text-gradient-aurora leading-none">
                 Ta carte
               </h2>
-              <p className="text-body text-ivory-200 max-w-md">
+              <p className="text-body text-ivory-200">
                 Voici le ciel exact de ta naissance, au service de tes réponses du quotidien.
+              </p>
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={finish}
+                iconRight={<ArrowRight className="w-4 h-4" />}
+                className="mt-2 min-w-[260px] landing-primary-cta-glow"
+              >
+                Activer mon essai 7 jours
+              </Button>
+              <p className="text-caption text-ivory-400/90">
+                Carte bancaire requise · aucun débit pendant l&apos;essai
               </p>
             </motion.div>
           )}

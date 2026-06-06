@@ -62,7 +62,7 @@ function pickOAuthName(user: SupabaseUser | null): string {
 
 export default function RegisterComplete() {
   useDocumentSeo({
-    title: 'Thème natal · étape 2 — Zodiak',
+    title: 'Thème natal · étape 2 — Zodiak Astro',
     description:
       'Saisie de ta naissance pour calculer ton thème natal et recevoir ton horoscope personnalisé chaque matin sur WhatsApp ou Instagram.',
   });
@@ -235,30 +235,39 @@ export default function RegisterComplete() {
         sunSign={reveal.sunSign}
         moonSign={reveal.moonSign}
         ascSign={reveal.ascSign}
-        onDone={() => navigate('/guidance', { replace: true })}
+        onDone={() => navigate('/subscribe?from=onboarding', { replace: true })}
       />
     );
   }
 
   return (
     <AuthLayout
-      eyebrow="Étape 2 sur 2"
+      eyebrow="Étape 2 sur 3"
       title="Trace ton ciel de naissance"
-      subtitle="Trois coordonnées suffisent pour ouvrir ton thème natal : prénom, moment, lieu. Ensuite Zodiak personnalise chaque guidance."
+      subtitle="Trois coordonnées suffisent pour ouvrir ton thème natal : prénom, moment, lieu. Ensuite, active ton essai Premium."
     >
-      <OnboardingStepper currentStep={2} totalSteps={2} className="mb-7" />
+      <OnboardingStepper currentStep={2} totalSteps={3} className="mb-7" />
 
       <div className="grid grid-cols-3 gap-2 mb-6">
-        {[
-          ['01', 'Identité'],
-          ['02', 'Naissance'],
-          ['03', 'Carte'],
-        ].map(([index, label]) => (
+        {(
+          [
+            { id: '01', label: 'Compte', state: 'done' },
+            { id: '02', label: 'Thème', state: 'current' },
+            { id: '03', label: 'Essai', state: 'upcoming' },
+          ] as const
+        ).map(({ id, label, state }) => (
           <div
-            key={index}
-            className="rounded-2xl border border-white/[0.08] bg-white/[0.035] px-3 py-3 text-center"
+            key={id}
+            className={cn(
+              'rounded-2xl border px-3 py-3 text-center',
+              state === 'done'
+                ? 'border-aurora-400/35 bg-aurora-500/10'
+                : state === 'current'
+                  ? 'border-aurora-400/25 bg-white/[0.05]'
+                  : 'border-white/[0.08] bg-white/[0.035]',
+            )}
           >
-            <div className="font-mono text-[10px] tracking-[0.22em] text-aurora-300">{index}</div>
+            <div className="font-mono text-[10px] tracking-[0.22em] text-aurora-300">{id}</div>
             <div className="mt-1 text-micro text-ivory-300 normal-case tracking-normal">{label}</div>
           </div>
         ))}

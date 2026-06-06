@@ -62,9 +62,9 @@ export default function Guidance() {
   const [showBadges, setShowBadges] = useState(false);
 
   useDocumentSeo({
-    title: 'Guidance du jour · Zodiak — horoscope personnalisé',
+    title: 'Guidance du jour · Zodiak Astro — horoscope personnalisé',
     description:
-      'Ta lecture astrale du matin croisée à ton thème natal — transits du jour, humeur et carte du ciel sur Zodiak.',
+      'Ta lecture astrale du matin croisée à ton thème natal — transits du jour, humeur et carte du ciel sur Zodiak Astro.',
   });
 
   // Auto check-in au mount (idempotent côté hook)
@@ -109,13 +109,14 @@ export default function Guidance() {
   }, [streak, friends, recentMessages.length, profile?.created_at, evaluate]);
 
   useEffect(() => {
+    if (!todayMood) return;
     if (push.supported && !push.subscribed && push.permission === 'default') {
       if (shouldShowPushNudge()) {
-        const t = window.setTimeout(() => setShowPushNudge(true), 3500);
+        const t = window.setTimeout(() => setShowPushNudge(true), 2500);
         return () => window.clearTimeout(t);
       }
     }
-  }, [push.supported, push.subscribed, push.permission]);
+  }, [todayMood, push.supported, push.subscribed, push.permission]);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) navigate('/login', { replace: true });
@@ -226,8 +227,25 @@ export default function Guidance() {
           </motion.div>
         )}
 
-        {/* Push nudge — éditorial épuré */}
-        {showPushNudge && (
+        {/* Mood check : visible si pas encore de mood aujourd'hui */}
+        {!todayMood && (
+          <MoodCheck
+            current={todayMood?.mood}
+            onSelect={async (m) => {
+              const r = await logMood(m);
+              if (r) {
+                vibrate('success');
+                track('mood_logged', { mood: m });
+              }
+            }}
+          />
+        )}
+
+        {/* Guidance */}
+        <GuidanceContent firstName={firstName} />
+
+        {/* Push nudge — après mood + guidance (1 ask à la fois) */}
+        {showPushNudge && todayMood && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -264,23 +282,6 @@ export default function Guidance() {
             </Card>
           </motion.div>
         )}
-
-        {/* Mood check : visible si pas encore de mood aujourd'hui */}
-        {!todayMood && (
-          <MoodCheck
-            current={todayMood?.mood}
-            onSelect={async (m) => {
-              const r = await logMood(m);
-              if (r) {
-                vibrate('success');
-                track('mood_logged', { mood: m });
-              }
-            }}
-          />
-        )}
-
-        {/* Guidance */}
-        <GuidanceContent firstName={firstName} />
 
         {/* Badges (collapsible) */}
         <div className="text-center">

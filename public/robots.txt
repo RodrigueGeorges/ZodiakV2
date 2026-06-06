@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://zodiak.app/sitemap.xml
+Sitemap: https://zodiakastro.com/sitemap.xml

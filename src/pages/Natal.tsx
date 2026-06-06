@@ -20,9 +20,9 @@ export default function Natal() {
   }, [isLoading, isAuthenticated, profile, navigate]);
 
   useDocumentSeo({
-    title: 'Thème natal · carte du ciel — Zodiak',
+    title: 'Thème natal · carte du ciel — Zodiak Astro',
     description:
-      'Ta carte astronomique personnelle calculée depuis ton thème natal — positions des planètes, maisons et aspects sur Zodiak.',
+      'Ta carte astronomique personnelle calculée depuis ton thème natal — positions des planètes, maisons et aspects sur Zodiak Astro.',
   });
 
   if (isLoading) {

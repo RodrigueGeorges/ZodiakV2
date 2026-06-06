@@ -35,7 +35,7 @@ async function loadWebPush() {
     const mod = (await import('web-push')) as typeof import('web-push');
     const pub = process.env.VAPID_PUBLIC_KEY;
     const priv = process.env.VAPID_PRIVATE_KEY;
-    const subject = process.env.VAPID_SUBJECT || 'mailto:contact@zodiak.app';
+    const subject = process.env.VAPID_SUBJECT || 'mailto:contact@zodiakastro.com';
     if (!pub || !priv) {
       throw new Error('VAPID keys missing (VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY)');
     }

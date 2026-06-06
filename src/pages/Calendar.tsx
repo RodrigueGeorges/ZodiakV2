@@ -3,8 +3,10 @@ import { motion } from 'framer-motion';
 import { CalendarDays, Moon } from 'lucide-react';
 import PageLayout from '../components/PageLayout';
 import LoadingScreen from '../components/LoadingScreen';
+import PremiumGate from '../components/PremiumGate';
 import { Card } from '../components/ui/Card';
 import { useAuth } from '../lib/hooks/useAuth';
+import { usePremium } from '../lib/hooks/usePremium';
 import { moonPhasesNextDays, nextKeyMoonDates, moonPhaseAt } from '../lib/moonPhase';
 import MoonPhaseVisual from '../components/MoonPhaseVisual';
 import { cn } from '../lib/utils';
@@ -22,35 +24,79 @@ const formatLong = (iso: string) =>
     month: 'long',
   });
 
+type PhaseDay = ReturnType<typeof moonPhasesNextDays>[number];
+
+const PREVIEW_DAYS = 3;
+
+function DayCell({ p, i }: { p: PhaseDay; i: number }) {
+  const intensity = p.illumination;
+  const isFull = p.kind === 'full';
+  const isNew = p.kind === 'new';
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: i * 0.012, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      whileHover={{ scale: 1.06, transition: { duration: 0.15 } }}
+      className={cn(
+        'relative aspect-square rounded-xl flex flex-col items-center justify-center gap-1 border cursor-default',
+        'bg-night-900/60 border-ivory-50/[0.06]',
+        isFull && 'border-amber-300/40 bg-amber-500/10',
+        isNew && 'border-aurora-400/30 bg-aurora-500/10',
+      )}
+      style={{
+        boxShadow: `inset 0 -${Math.round(intensity * 30)}px 60px rgba(201,166,255,${
+          intensity * 0.35
+        })`,
+      }}
+      aria-label={`${formatLong(p.date)} — ${p.label}`}
+      title={`${formatLong(p.date)} — ${p.label}`}
+    >
+      <MoonPhaseVisual
+        phase={p}
+        size="sm"
+        variant="aurora"
+        instrumentRing={false}
+        className="scale-[0.92]"
+      />
+      <span className="text-micro tabular-nums text-ivory-300">{formatDay(p.date)}</span>
+    </motion.div>
+  );
+}
+
 /**
  * Calendrier cosmique 30 jours :
  *  - Phases lunaires day-by-day (fond illumination)
  *  - Dates clés (nouvelle, quartiers, pleine) en encart
- *  - Premium-only (preview floutée pour les free)
+ *  - Premium-only au-delà de 3 jours (preview floutée pour les free)
  */
 export default function CalendarPage() {
   const { isLoading } = useAuth();
+  const { isPremium } = usePremium();
 
   const phases = useMemo(() => moonPhasesNextDays(30), []);
   const keyDates = useMemo(() => nextKeyMoonDates(60), []);
 
   useDocumentSeo({
-    title: 'Calendrier lunaire 30 jours · Zodiak',
+    title: 'Calendrier lunaire 30 jours · Zodiak Astro',
     description:
-      'Phases de la Lune et dates clés pour t’aligner avec ton horoscope personnalisé — calendrier cosmique réservé aux abonnés Premium Zodiak (8,99 € / mois, essai sans CB).',
+      'Phases de la Lune et dates clés pour t’aligner avec ton horoscope personnalisé — calendrier cosmique réservé aux abonnés Premium Zodiak Astro (8,90 € / mois, essai 7 jours avec carte).',
   });
 
   if (isLoading) return <LoadingScreen message="Lecture du calendrier…" />;
 
-  const content = (
-    <div className="space-y-8">
-      {/* Dates clés */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      >
+  const previewPhases = phases.slice(0, PREVIEW_DAYS);
+  const lockedPhases = phases.slice(PREVIEW_DAYS);
+
+  const keyDatesBlock = (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+    >
       <Card variant="elevated" className="relative overflow-hidden">
         <div className="relative p-7 md:p-8">
           <div className="flex items-center gap-2 mb-5 text-aurora-400/90">
@@ -79,24 +125,31 @@ export default function CalendarPage() {
                 />
                 <div className="min-w-0">
                   <p className="text-body text-ivory-50 font-sans font-normal">{k.label}</p>
-                  <p className="text-caption text-ivory-300 truncate">
-                    {formatLong(k.date)}
-                  </p>
+                  <p className="text-caption text-ivory-300 truncate">{formatLong(k.date)}</p>
                 </div>
               </motion.li>
             ))}
           </ul>
         </div>
       </Card>
-      </motion.div>
+    </motion.div>
+  );
 
-      {/* Grille 30 jours */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
-        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      >
+  const gridBlock = (days: PhaseDay[], offset = 0) => (
+    <motion.div layout className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-10 gap-2">
+      {days.map((p, i) => (
+        <DayCell key={p.date} p={p} i={i + offset} />
+      ))}
+    </motion.div>
+  );
+
+  const calendarGrid = (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+    >
       <Card variant="surface">
         <div className="p-7 md:p-8">
           <div className="flex items-center gap-2 mb-5 text-aurora-400/90">
@@ -107,55 +160,33 @@ export default function CalendarPage() {
             Ton mois{' '}
             <span className="italic-editorial text-aurora-400">cosmique.</span>
           </h2>
-          <motion.div layout className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-10 gap-2">
-            {phases.map((p, i) => {
-              const intensity = p.illumination;
-              const isFull = p.kind === 'full';
-              const isNew = p.kind === 'new';
-              return (
-                <motion.div
-                  key={p.date}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.012, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                  whileHover={{ scale: 1.06, transition: { duration: 0.15 } }}
-                  className={cn(
-                    'relative aspect-square rounded-xl flex flex-col items-center justify-center gap-1 border cursor-default',
-                    'bg-night-900/60 border-ivory-50/[0.06]',
-                    isFull && 'border-amber-300/40 bg-amber-500/10',
-                    isNew && 'border-aurora-400/30 bg-aurora-500/10'
-                  )}
-                  style={{
-                    boxShadow: `inset 0 -${Math.round(intensity * 30)}px 60px rgba(201,166,255,${
-                      intensity * 0.35
-                    })`,
-                  }}
-                  aria-label={`${formatLong(p.date)} — ${p.label}`}
-                  title={`${formatLong(p.date)} — ${p.label}`}
-                >
-                  <MoonPhaseVisual
-                    phase={p}
-                    size="sm"
-                    variant="aurora"
-                    instrumentRing={false}
-                    className="scale-[0.92]"
-                  />
-                  <span className="text-micro tabular-nums text-ivory-300">
-                    {formatDay(p.date)}
-                  </span>
-                </motion.div>
-              );
-            })}
-          </motion.div>
+
+          {isPremium ? (
+            gridBlock(phases)
+          ) : (
+            <div className="space-y-6">
+              {gridBlock(previewPhases)}
+              <p className="text-caption text-ivory-400 text-center">
+                Aperçu gratuit : {PREVIEW_DAYS} premiers jours. Débloque les 30 jours avec Premium.
+              </p>
+              <PremiumGate
+                feature="calendar_30d"
+                title="Calendrier lunaire complet"
+                description="Visualise 30 jours de phases lunaires et dates clés pour aligner ton horoscope — inclus dans Zodiak Astro Premium."
+                preview
+                className="min-h-[280px]"
+              >
+                {gridBlock(lockedPhases, PREVIEW_DAYS)}
+              </PremiumGate>
+            </div>
+          )}
+
           <p className="mt-4 text-caption text-ivory-400 text-center">
-            Halo plus fort = lune plus pleine. Pleine et nouvelle lune sont mises en
-            valeur.
+            Halo plus fort = lune plus pleine. Pleine et nouvelle lune sont mises en valeur.
           </p>
         </div>
       </Card>
-      </motion.div>
-    </div>
+    </motion.div>
   );
 
   return (
@@ -167,7 +198,22 @@ export default function CalendarPage() {
       showLogo={false}
       dim
     >
-      {content}
+      <div className="space-y-8">
+        {isPremium ? (
+          keyDatesBlock
+        ) : (
+          <PremiumGate
+            feature="calendar_key_dates"
+            title="Dates clés lunaires"
+            description="Nouvelles lunes, pleines lunes et quartiers — réservés aux abonnés Premium."
+            preview
+            className="min-h-[240px]"
+          >
+            {keyDatesBlock}
+          </PremiumGate>
+        )}
+        {calendarGrid}
+      </div>
     </PageLayout>
   );
 }

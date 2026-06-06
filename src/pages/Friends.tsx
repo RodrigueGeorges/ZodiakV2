@@ -28,9 +28,9 @@ export default function Friends() {
   const [adding, setAdding] = useState(false);
 
   useDocumentSeo({
-    title: 'Mes liens · synastries & compatibilités — Zodiak',
+    title: 'Mes liens · synastries & compatibilités — Zodiak Astro',
     description:
-      'Enregistre les personnes qui comptent avec leur date de naissance et explore tes synastries à partir du thème natal — inclus dans Zodiak Premium à 8,99 € / mois, essai sans carte bancaire.',
+      'Enregistre les personnes qui comptent avec leur date de naissance et explore tes synastries à partir du thème natal — inclus dans Zodiak Astro Premium à 8,90 € / mois, essai 7 jours avec carte.',
   });
 
   if (isLoading) return <LoadingScreen message="Chargement…" />;
@@ -45,7 +45,7 @@ export default function Friends() {
     <PageLayout
       eyebrow="Synastries"
       title="Tes liens"
-      subtitle="Ajoute tes proches depuis leur thème natal — découvre comment vos deux cieux s’accordent dans Zodiak."
+      subtitle="Ajoute tes proches depuis leur thème natal — découvre comment vos deux cieux s’accordent dans Zodiak Astro."
       maxWidth="4xl"
       showLogo={false}
       dim

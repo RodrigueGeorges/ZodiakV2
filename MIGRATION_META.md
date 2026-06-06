@@ -162,7 +162,7 @@ pas casser le code legacy.
 | `VITE_SENTRY_DSN` | (optionnel, déjà existant) |
 | `VITE_NETLIFY_URL` | (optionnel, déjà existant) |
 | `VITE_ZODIAK_WHATSAPP_NUMBER` | Numéro business WhatsApp **format E.164 sans le `+`** (ex: `33612345678`). Utilisé pour le deep-link `wa.me`. |
-| `VITE_ZODIAK_INSTAGRAM_HANDLE` | Handle Instagram business **sans `@`** (ex: `zodiak.app`). |
+| `VITE_ZODIAK_INSTAGRAM_HANDLE` | Handle Instagram business **sans `@`** (ex: `zodiakastro`). |
 
 ---
 
@@ -190,7 +190,7 @@ pas casser le code legacy.
      ✦ Bonjour {{1}}, ta guidance cosmique du jour est arrivée.
      Découvre ce que les astres te disent.
      ```
-   - Bouton **URL dynamique** : `https://zodiakv2.netlify.app/g/{{1}}`
+   - Bouton **URL dynamique** : `https://zodiakastro.com/g/{{1}}`
      (le `{{1}}` du bouton sera remplacé par `short_code` envoyé via `buttonUrlSuffix` dans `_metaUtils.ts`).
    - Compter ~24-48h de validation par template.
 
@@ -204,11 +204,11 @@ pas casser le code legacy.
 ### 4.4. Webhook
 1. Dans l'App Meta → Webhooks.
 2. Ajouter un produit `WhatsApp Business Account` :
-   - URL : `https://zodiakv2.netlify.app/webhook/meta`
+   - URL : `https://zodiakastro.com/webhook/meta`
    - Verify token : ce que tu as mis dans `META_VERIFY_TOKEN`.
    - Champs : `messages`.
 3. Ajouter un produit `Instagram` :
-   - URL : `https://zodiakv2.netlify.app/webhook/meta` (même endpoint, c'est unifié)
+   - URL : `https://zodiakastro.com/webhook/meta` (même endpoint, c'est unifié)
    - Champs : `messages`, `messaging_postbacks`, `messaging_reactions`.
 
 ---
@@ -778,7 +778,7 @@ Objectif : transformer Zodiak d'app "consultation" en app "rituel quotidien".
    # → publicKey  → VITE_VAPID_PUBLIC_KEY (Netlify env, exposé client)
    # → privateKey → VAPID_PRIVATE_KEY     (Netlify env, server only)
    # + VAPID_PUBLIC_KEY (server) = même valeur que la VITE_…
-   # + VAPID_SUBJECT = mailto:contact@zodiak.app
+   # + VAPID_SUBJECT = mailto:contact@zodiakastro.com
    ```
 
 4. **PostHog (optionnel mais recommandé)** :

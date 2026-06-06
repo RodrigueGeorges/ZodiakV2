@@ -22,7 +22,7 @@ export default function PairingCode({
   channel,
   userId,
   zodiakWhatsAppNumber = '33000000000',
-  zodiakInstagramHandle = 'zodiak.app',
+  zodiakInstagramHandle = 'zodiakastro',
 }: PairingCodeProps) {
   const [code, setCode] = useState<string | null>(null);
   const [generatedAt, setGeneratedAt] = useState<number | null>(null);

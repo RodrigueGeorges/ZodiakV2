@@ -135,7 +135,7 @@ function AnimatedRoutes() {
           <Route
             path="/calendar"
             element={
-              <PrivateRoute requireActiveSubscription>
+              <PrivateRoute>
                 <Suspense fallback={<PageLoader />}>
                   <Calendar />
                 </Suspense>

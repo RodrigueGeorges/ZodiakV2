@@ -25,7 +25,7 @@ export default function SubscriptionExpiredScreen() {
     : 'Reprends ton voyage cosmique';
   const lead = isCancelled
     ? 'Tu peux le réactiver à tout moment pour retrouver guidance et chat astral.'
-    : 'Ton essai est terminé. Active Zodiak Premium pour continuer.';
+    : 'Ton essai est terminé. Active Zodiak Astro Premium pour continuer.';
 
   const handleSubscribe = () => {
     track('paywall_clicked_subscribe', { source: 'subscription_expired_screen' });
@@ -60,14 +60,14 @@ export default function SubscriptionExpiredScreen() {
             </div>
 
             <p className="eyebrow-ritual text-aurora-200/95 mb-3">
-              Zodiak Premium
+              Zodiak Astro Premium
             </p>
             <h2 className="font-display italic-editorial text-h2 text-ivory-50 leading-tight mb-4">
               {isCancelled ? 'Réactive ton accès' : 'Active ton essai 7 jours'}
             </h2>
 
             <p className="text-body text-ivory-300 mb-6 max-w-md">
-              Guidance quotidienne illimitée · 100 messages chat inclus par cycle ·
+              Guidance quotidienne illimitée · 100 messages chat inclus par mois ·
               Calendrier 30 jours · Synastries illimitées.
             </p>
 

@@ -147,7 +147,7 @@ function drawWordmark(ctx: CanvasRenderingContext2D, y: number) {
     family: 'cinzel',
     weight: 600,
   });
-  drawText(ctx, 'zodiak.app', {
+  drawText(ctx, 'zodiakastro.com', {
     x: W / 2,
     y: y + 50,
     size: 20,

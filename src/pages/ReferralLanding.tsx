@@ -44,16 +44,16 @@ export default function ReferralLanding() {
   useDocumentSeo({
     title:
       status === 'loading'
-        ? 'Invitation parrainage · Zodiak'
+        ? 'Invitation parrainage · Zodiak Astro'
         : status === 'invalid'
-          ? 'Invitation invalide · Zodiak'
-          : 'Invitation parrainage — bonus Premium · Zodiak',
+          ? 'Invitation invalide · Zodiak Astro'
+          : 'Invitation parrainage — bonus Premium · Zodiak Astro',
     description:
       status === 'loading'
-        ? 'Vérification de ton code d’invitation Zodiak : horoscope personnalisé, thème natal, guidance sur WhatsApp ou Instagram.'
+        ? 'Vérification de ton code d’invitation Zodiak Astro : horoscope personnalisé, thème natal, guidance sur WhatsApp ou Instagram.'
         : status === 'invalid'
-          ? 'Rejoins Zodiak pour ton horoscope personnalisé et ton thème natal — guidance chaque matin sur WhatsApp ou Instagram, essai sans carte bancaire, puis 8,99 € / mois.'
-          : 'Accepte ton invitation : 14 jours de Premium offerts (horoscope personnalisé, chat astral, synastries) — puis 8,99 € / mois, résiliable en un clic.',
+          ? 'Rejoins Zodiak Astro pour ton horoscope personnalisé et ton thème natal — guidance chaque matin sur WhatsApp ou Instagram, essai 7 jours avec carte, puis 8,90 € / mois.'
+          : 'Accepte ton invitation : 14 jours de Premium offerts (horoscope personnalisé, chat astral, synastries) — puis 8,90 € / mois, résiliable en un clic.',
   });
 
   if (status === 'loading') {
@@ -65,7 +65,7 @@ export default function ReferralLanding() {
       <PageLayout
         eyebrow="Invitation"
         title="Lien d'invitation invalide"
-        subtitle="Ton horoscope personnalisé et ton thème natal t’attendent — rejoins Zodiak même sans ce lien, l’expérience reste la même."
+        subtitle="Ton horoscope personnalisé et ton thème natal t’attendent — rejoins Zodiak Astro même sans ce lien, l’expérience reste la même."
         maxWidth="lg"
         showLogo
         dim
@@ -100,10 +100,10 @@ export default function ReferralLanding() {
       title={
         <>
           <span className="block text-ivory-50">Bienvenue dans</span>
-          <span className="block text-gradient-aurora">Zodiak.</span>
+          <span className="block text-gradient-aurora">Zodiak Astro.</span>
         </>
       }
-      subtitle="Horoscope quotidien sur WhatsApp ou Instagram, chat astral calé sur ton thème natal — 8,99 € / mois après l’essai, sans engagement."
+      subtitle="Horoscope quotidien sur WhatsApp ou Instagram, chat astral calé sur ton thème natal — 8,90 € / mois après l’essai, sans engagement."
       maxWidth="lg"
       showLogo
     >

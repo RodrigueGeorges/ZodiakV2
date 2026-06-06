@@ -58,16 +58,16 @@ export default function SynastryDetail() {
   useDocumentSeo({
     title:
       authLoading || loading
-        ? 'Synastrie · Zodiak'
+        ? 'Synastrie · Zodiak Astro'
         : !friend
-          ? 'Synastrie introuvable · Zodiak'
-          : `Synastrie avec ${friend.name} · Zodiak`,
+          ? 'Synastrie introuvable · Zodiak Astro'
+          : `Synastrie avec ${friend.name} · Zodiak Astro`,
     description:
       authLoading || loading
-        ? 'Compatibilité astrologique calculée depuis deux thèmes natals sur Zodiak.'
+        ? 'Compatibilité astrologique calculée depuis deux thèmes natals sur Zodiak Astro.'
         : !friend
           ? 'Ce lien de synastrie n’est plus disponible — retrouve tes compatibilités dans Mes liens.'
-          : `Analyse des aspects entre ${userFirstName} et ${friend.name} à partir de vos cartes du ciel — Zodiak Premium, 8,99 € / mois, essai sans carte bancaire.`,
+          : `Analyse des aspects entre ${userFirstName} et ${friend.name} à partir de vos cartes du ciel — Zodiak Astro Premium, 8,90 € / mois, essai 7 jours avec carte.`,
   });
 
   if (authLoading || loading) return <LoadingScreen message="Lecture des aspects…" />;
@@ -97,7 +97,7 @@ export default function SynastryDetail() {
 
   const onShare = async () => {
     track('synastry_shared', { friend_id: friend.id });
-    const shareText = `${userFirstName} × ${friend.name} — ${score}/100 · ${verdict}\n\nLis vos étoiles ensemble sur Zodiak.`;
+    const shareText = `${userFirstName} × ${friend.name} — ${score}/100 · ${verdict}\n\nLis vos étoiles ensemble sur Zodiak Astro.`;
     try {
       if (typeof navigator !== 'undefined' && 'share' in navigator) {
         await (navigator as Navigator & { share: (d: ShareData) => Promise<void> }).share({

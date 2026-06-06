@@ -100,15 +100,15 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session): Promis
       ? session.subscription
       : session.subscription?.id;
 
-    let periodResetsAt: string;
+    // ⚠️ Le quota de messages est mensuel et DÉCOUPLÉ du cycle de facturation
+    // (un abonné annuel récupère 100 msg/mois, pas 100/an). On ancre donc
+    // `period_resets_at` à +30j, peu importe l'intervalle Stripe. Le cron
+    // `generate-guidance` ré-arme ce reset chaque mois (cf. reset paresseux).
+    const periodResetsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
     let initialStatus: 'trial' | 'active' = 'active';
     if (subscriptionId) {
       const sub = await stripe.subscriptions.retrieve(subscriptionId);
-      periodResetsAt = new Date(sub.current_period_end * 1000).toISOString();
       initialStatus = sub.status === 'trialing' ? 'trial' : 'active';
-    } else {
-      // Fallback (ne devrait pas arriver)
-      periodResetsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
     }
 
     await supabase
@@ -227,11 +227,9 @@ async function handleInvoiceSucceeded(invoice: Stripe.Invoice): Promise<void> {
 
   if (!customerId) return;
 
-  // Reset du compteur de messages + mise à jour period_resets_at (anniversaire)
-  const nextPeriodEnd = invoice.lines.data[0]?.period?.end;
-  const periodResetsAt = nextPeriodEnd
-    ? new Date(nextPeriodEnd * 1000).toISOString()
-    : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+  // Reset du compteur de messages. `period_resets_at` est mensuel (+30j),
+  // découplé de l'intervalle de facturation (mensuel comme annuel).
+  const periodResetsAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
   const { error } = await supabase
     .from('profiles')

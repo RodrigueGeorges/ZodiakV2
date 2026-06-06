@@ -13,8 +13,9 @@ const supabase = createClient(
  *   - Supabase : SELECT léger sur `daily_guidance`
  *   - OpenAI : présence de la clé (sans hit l'API)
  *   - Meta : présence des configs WhatsApp / Instagram
- *   - Prokerala : présence des creds (legacy, peut être absent — astronomy-engine
- *     prend le relais pour les transits)
+ *
+ * ⚠️ Les noms de variables doivent rester alignés sur `_metaUtils.ts`
+ * (source de vérité de l'envoi). Voir `getMetaConfig()`.
  */
 export const handler: Handler = async () => {
   const startedAt = new Date().toISOString();
@@ -24,17 +25,14 @@ export const handler: Handler = async () => {
     hasOpenAIKey: Boolean(process.env.OPENAI_API_KEY),
     openAIModel: process.env.OPENAI_MODEL || 'gpt-4o-mini',
     hasWhatsAppCloud: Boolean(
-      process.env.WHATSAPP_PHONE_NUMBER_ID && process.env.WHATSAPP_TOKEN
+      process.env.WHATSAPP_PHONE_NUMBER_ID && process.env.WHATSAPP_ACCESS_TOKEN
     ),
     hasInstagram: Boolean(
-      process.env.INSTAGRAM_BUSINESS_ID && process.env.INSTAGRAM_TOKEN
+      process.env.INSTAGRAM_BUSINESS_ID && process.env.INSTAGRAM_PAGE_ACCESS_TOKEN
     ),
-    hasMetaWebhookSecret: Boolean(process.env.META_WEBHOOK_VERIFY_TOKEN),
-    /** Legacy — peut être désactivé maintenant que astronomy-engine fait les transits. */
-    hasProkeralaCreds: Boolean(
-      process.env.PROKERALA_CLIENT_ID && process.env.PROKERALA_CLIENT_SECRET
-    ),
-    appUrl: process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://zodiakv2.netlify.app',
+    hasMetaAppSecret: Boolean(process.env.META_APP_SECRET),
+    hasMetaVerifyToken: Boolean(process.env.META_VERIFY_TOKEN),
+    appUrl: process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://zodiakastro.com',
   };
 
   const checks: Record<string, unknown> = {};
@@ -49,7 +47,7 @@ export const handler: Handler = async () => {
   checks.openai = { ok: env.hasOpenAIKey, model: env.openAIModel };
   checks.whatsapp = { ok: env.hasWhatsAppCloud };
   checks.instagram = { ok: env.hasInstagram };
-  checks.metaWebhook = { ok: env.hasMetaWebhookSecret };
+  checks.metaWebhook = { ok: env.hasMetaAppSecret && env.hasMetaVerifyToken };
 
   return {
     statusCode: 200,

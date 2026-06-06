@@ -56,7 +56,7 @@ const COMMON_TIMEZONES = [
 export default function DailyGuidanceChannel({
   initial,
   zodiakWhatsAppNumber = '33000000000',
-  zodiakInstagramHandle = 'zodiak.app',
+  zodiakInstagramHandle = 'zodiakastro',
 }: DailyGuidanceChannelProps) {
   const { user, refreshProfile } = useAuth();
 

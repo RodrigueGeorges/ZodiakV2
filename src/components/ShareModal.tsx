@@ -32,7 +32,7 @@ interface ShareModalProps {
   onClose: () => void;
   guidance: string;
   userName: string;
-  /** URL canonique à partager (ex: https://zodiak.app/g/xxx). Optionnel. */
+  /** URL canonique à partager (ex: https://zodiakastro.com/g/xxx). Optionnel. */
   url?: string;
 }
 
@@ -47,7 +47,7 @@ export function ShareModal({ isOpen, onClose, guidance, userName, url }: ShareMo
     if (typeof navigator !== 'undefined' && 'share' in navigator) {
       try {
         await navigator.share({
-          title: 'Ma guidance Zodiak',
+          title: 'Ma guidance Zodiak Astro',
           text: shareText,
           ...(url ? { url } : {}),
         });

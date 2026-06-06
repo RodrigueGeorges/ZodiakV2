@@ -42,11 +42,20 @@ console.log('─'.repeat(50));
 
 const SUBSCRIPTION = {
   name: 'Zodiak Premium',
-  description: '100 messages chat astral inclus par cycle · Guidance quotidienne illimitée · Synastries illimitées · Calendrier 30j · Alertes push · Essai 7 jours',
+  description: '100 messages chat astral inclus par mois · Guidance quotidienne illimitée · Synastries illimitées · Calendrier 30j · Alertes push · Essai 7 jours',
   unitAmount: 890,   // 8,90 € en centimes
   currency: 'eur',
   interval: 'month' as const,
   trialDays: 7,
+};
+
+const SUBSCRIPTION_ANNUAL = {
+  name: 'Zodiak Premium Annuel',
+  description: 'Même accès que Premium mensuel · Facturation annuelle · 2 mois offerts · 100 messages chat inclus chaque mois',
+  unitAmount: 8900,  // 89 € en centimes
+  currency: 'eur',
+  interval: 'year' as const,
+  envKey: 'STRIPE_PRICE_PREMIUM_ANNUAL',
 };
 
 const PACKS: Array<{ name: string; label: string; description: string; unitAmount: number; size: number; envKey: string }> = [
@@ -154,6 +163,24 @@ async function main(): Promise<void> {
   envLines.push(`STRIPE_PRICE_PREMIUM=${subPriceId}`);
   console.log(`  💳 Price ID : ${subPriceId}  (${SUBSCRIPTION.unitAmount / 100} €/${SUBSCRIPTION.interval})`);
 
+  // 1b. Abonnement Premium annuel
+  console.log('\n📦 Produit : Zodiak Premium Annuel');
+  const annualProductId = await findOrCreateProduct(
+    SUBSCRIPTION_ANNUAL.name,
+    SUBSCRIPTION_ANNUAL.description,
+  );
+  const annualPriceId = await findOrCreatePrice(
+    annualProductId,
+    SUBSCRIPTION_ANNUAL.unitAmount,
+    SUBSCRIPTION_ANNUAL.currency,
+    { interval: SUBSCRIPTION_ANNUAL.interval },
+  );
+  envLines.push(`${SUBSCRIPTION_ANNUAL.envKey}=${annualPriceId}`);
+  envLines.push(`VITE_STRIPE_PRICE_PREMIUM_ANNUAL=${annualPriceId}`);
+  console.log(
+    `  💳 Price ID : ${annualPriceId}  (${SUBSCRIPTION_ANNUAL.unitAmount / 100} €/${SUBSCRIPTION_ANNUAL.interval})`,
+  );
+
   // 2. Packs extras (one-time)
   for (const pack of PACKS) {
     console.log(`\n📦 Pack : ${pack.label}`);
@@ -176,7 +203,7 @@ async function main(): Promise<void> {
 
   // 5. Rappel webhook
   console.log('🔗 N\'oubliez pas de configurer le webhook Stripe :');
-  console.log('   URL : https://zodiak.netlify.app/.netlify/functions/stripe-webhook');
+  console.log('   URL : https://zodiakastro.com/.netlify/functions/stripe-webhook');
   console.log('   Événements : checkout.session.completed, customer.subscription.*,');
   console.log('                invoice.payment_succeeded, invoice.payment_failed,');
   console.log('                customer.subscription.trial_will_end');

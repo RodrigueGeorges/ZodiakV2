@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import FAQ from '../components/FAQ';
+import GuidanceDemo from '../components/GuidanceDemo';
 import { ButtonLink } from '../components/ui/ButtonLink';
 import { APP_NAME } from '../lib/constants';
 import CosmicLoader from '../components/CosmicLoader';
@@ -41,11 +42,11 @@ const FAQ_JSON_LD = {
     },
     {
       '@type': 'Question',
-      name: 'Comment fonctionne la guidance personnalisée Zodiak ?',
+      name: 'Comment fonctionne la guidance personnalisée Zodiak Astro ?',
       acceptedAnswer: {
         '@type': 'Answer',
         text:
-          'Chaque matin, Zodiak croise les transits du jour avec ton thème natal pour générer une guidance écrite spécifiquement pour toi. Aucun texte recyclé, aucun horoscope générique.',
+          'Chaque matin, Zodiak Astro croise les transits du jour avec ton thème natal pour générer une guidance écrite spécifiquement pour toi. Aucun texte recyclé, aucun horoscope générique.',
       },
     },
     {
@@ -90,12 +91,12 @@ const FAQ_JSON_LD = {
 const PRODUCT_JSON_LD = {
   '@context': 'https://schema.org',
   '@type': 'Product',
-  name: 'Zodiak',
+  name: 'Zodiak Astro',
   description:
     "Guidance astrologique personnalisée basée sur ton thème natal, livrée chaque matin sur tes réseaux sociaux.",
   offers: {
     '@type': 'Offer',
-    price: '8.99',
+    price: '8.90',
     priceCurrency: 'EUR',
     availability: 'https://schema.org/InStock',
   },
@@ -118,7 +119,7 @@ const heroItem = {
 };
 
 /**
- * Home — landing Zodiak (SEO : un H1, sections en H2, sous-points en H3).
+ * Home — landing Zodiak Astro (SEO : un H1, sections en H2, sous-points en H3).
  */
 export default function Home() {
   const { isLoading, user } = useAuth();
@@ -224,8 +225,9 @@ export default function Home() {
             aria-label={`Accueil ${APP_NAME}`}
           >
             <Logo size="sm" composeOnLoad />
-            <span className="font-display text-h3 tracking-[-0.02em] font-medium text-shimmer-cosmic group-hover:opacity-90 transition-opacity duration-300 ease-brutal">
-              {APP_NAME}
+            <span className="font-display text-h3 tracking-[-0.02em] font-medium whitespace-nowrap group-hover:opacity-90 transition-opacity duration-300 ease-brutal">
+              <span className="text-shimmer-cosmic">Zodiak</span>
+              <span className="ml-[0.28em] font-light text-aurora-200/90">Astro</span>
             </span>
           </Link>
           <div className="flex items-center gap-3 md:gap-5">
@@ -347,10 +349,13 @@ export default function Home() {
                 Se connecter
               </ButtonLink>
             </motion.div>
+            <p className="mt-4 text-center text-caption text-ivory-400/90">
+              Carte bancaire requise · aucun débit pendant 7 jours
+            </p>
           </motion.div>
         </section>
 
-        {/* Pourquoi Zodiak */}
+        {/* Pourquoi Zodiak Astro */}
         <section
           className="relative z-10 border-t border-white/[0.09] py-20 md:py-28 px-6 reassurance-band"
           aria-labelledby="section-pourquoi"
@@ -368,7 +373,7 @@ export default function Home() {
             </h2>
             <p className="text-body-lg text-ivory-300/95 leading-[1.78] font-light">
               Un horoscope qui parle à <strong className="font-medium text-ivory-100">un douzième</strong> de la
-              population, ça ne peut pas vraiment te parler à toi. Zodiak calcule ton{' '}
+              population, ça ne peut pas vraiment te parler à toi. Zodiak Astro calcule ton{' '}
               <strong className="font-medium text-ivory-100">thème natal complet</strong> — soleil, lune, ascendant,
               planètes, maisons — et croise chaque jour les <strong className="font-medium text-ivory-100">transits du ciel</strong> avec ta carte unique.{' '}
               <span className="text-ivory-50">Résultat&nbsp;: une guidance qui te concerne vraiment.</span>
@@ -440,6 +445,40 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Aperçu vivant d'une guidance */}
+        <section
+          className="relative py-24 md:py-36 px-6 border-t border-white/[0.09] overflow-hidden"
+          aria-labelledby="section-apercu"
+        >
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-x-0 top-0 h-[60%] bg-gradient-to-b from-aurora-500/[0.06] to-transparent"
+          />
+          <div className="relative max-w-5xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div className="text-center lg:text-left max-w-xl mx-auto lg:mx-0 space-y-6">
+              <span
+                aria-hidden
+                className="mx-auto lg:mx-0 block h-px w-16 bg-gradient-to-r from-transparent via-aurora-400/35 to-transparent lg:from-aurora-400/40 lg:via-aurora-400/20"
+              />
+              <h2
+                id="section-apercu"
+                className="font-display font-extralight text-display text-ivory-50 leading-[1.02] tracking-[-0.03em]"
+              >
+                Voilà à quoi ça ressemble.
+              </h2>
+              <p className="text-body-lg text-ivory-300/95 leading-[1.78] font-light">
+                Pas un horoscope de magazine. Une lecture sensible et structurée —{' '}
+                <strong className="font-medium text-ivory-100">cœur, chantiers, vitalité</strong> — qui change chaque
+                jour avec le ciel et reste calée sur <span className="text-ivory-50">ta</span> carte de naissance.
+              </p>
+              <p className="text-caption text-ivory-400/85">
+                Exemple illustratif — ta vraie guidance est calculée sur ton thème natal.
+              </p>
+            </div>
+            <GuidanceDemo className="w-full max-w-md mx-auto" />
+          </div>
+        </section>
+
         {/* L&apos;expérience */}
         <section
           className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/[0.09] landing-features-ambient"
@@ -477,7 +516,7 @@ export default function Home() {
                 bullets={[
                   'Réponses contextualisées sur ta carte du ciel',
                   'Mémoire complète de la conversation',
-                  '100 messages inclus par cycle · packs extras disponibles',
+                  '100 messages inclus par mois · packs extras disponibles',
                 ]}
               />
             </div>
@@ -541,10 +580,10 @@ export default function Home() {
                   ),
                 },
                 {
-                  q: 'Comment fonctionne la guidance personnalisée Zodiak ?',
+                  q: 'Comment fonctionne la guidance personnalisée Zodiak Astro ?',
                   a: (
                     <>
-                      Chaque matin, Zodiak croise les transits du jour avec ton thème natal pour générer une guidance
+                      Chaque matin, Zodiak Astro croise les transits du jour avec ton thème natal pour générer une guidance
                       écrite spécifiquement pour toi. Aucun texte recyclé, aucun horoscope générique.
                     </>
                   ),
@@ -572,6 +611,15 @@ export default function Home() {
                   a: (
                     <>
                       Depuis ton espace personnel, en 1 clic. Aucune justification demandée, aucune relance.
+                    </>
+                  ),
+                },
+                {
+                  q: "Puis-je annuler pendant l'essai gratuit ?",
+                  a: (
+                    <>
+                      Oui. Tu peux résilier à tout moment pendant les 7 jours d&apos;essai — aucun débit si tu
+                      annules avant la fin de la période. La carte sert uniquement à activer l&apos;essai.
                     </>
                   ),
                 },
@@ -736,9 +784,12 @@ function RitualCard({
 }
 
 function PriceOfferCard() {
+  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
+  const isAnnual = billing === 'annual';
+
   const includes = [
     'Guidance quotidienne illimitée',
-    '100 messages chat astral inclus par cycle',
+    '100 messages chat astral inclus par mois',
     'Packs extras disponibles si besoin',
     'Calendrier 30j · alertes transits · synastries',
     'Profil basé sur ton thème natal',
@@ -763,13 +814,65 @@ function PriceOfferCard() {
       />
 
       <div className="text-center pb-8 border-b border-white/[0.08] mb-8">
+        <div
+          role="tablist"
+          aria-label="Choix de la formule"
+          className="mb-6 flex items-center gap-1 p-1 rounded-full border border-white/[0.1] bg-night-900/50 backdrop-blur-md w-full max-w-xs mx-auto"
+        >
+          {([
+            { id: 'monthly', label: 'Mensuel' },
+            { id: 'annual', label: 'Annuel' },
+          ] as const).map((opt) => {
+            const active = billing === opt.id;
+            return (
+              <button
+                key={opt.id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => setBilling(opt.id)}
+                className={cn(
+                  'relative flex-1 rounded-full px-4 py-2 text-caption font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300',
+                  active ? 'text-night-950' : 'text-ivory-300 hover:text-ivory-50',
+                )}
+              >
+                {active && (
+                  <motion.span
+                    layoutId="landing-billing-pill"
+                    className="absolute inset-0 rounded-full bg-aurora-400"
+                    transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+                  />
+                )}
+                <span className="relative z-10 inline-flex items-center gap-1.5">
+                  {opt.label}
+                  {opt.id === 'annual' && (
+                    <span
+                      className={cn(
+                        'rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide',
+                        active ? 'bg-night-950/15 text-night-950' : 'bg-aurora-500/20 text-aurora-200',
+                      )}
+                    >
+                      -17%
+                    </span>
+                  )}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
         <div className="landing-price-well rounded-xl border border-aurora-400/20 px-6 py-7 md:px-8 md:py-8">
           <div className="flex flex-wrap items-end justify-center gap-x-3 gap-y-1">
             <span className="font-display font-extralight text-[clamp(3rem,8vw,4rem)] text-ivory-50 leading-none tracking-[-0.03em]">
-              8,90&nbsp;€
+              {isAnnual ? '89\u00a0€' : '8,90\u00a0€'}
             </span>
-            <span className="pb-1 text-body text-aurora-100/90 font-medium">/ mois</span>
+            <span className="pb-1 text-body text-aurora-100/90 font-medium">
+              {isAnnual ? '/ an' : '/ mois'}
+            </span>
           </div>
+          {isAnnual && (
+            <p className="mt-2 text-caption text-aurora-200/90">Soit ≈ 7,42 € / mois — 2 mois offerts.</p>
+          )}
         </div>
       </div>
 
@@ -790,7 +893,8 @@ function PriceOfferCard() {
           <strong className="font-semibold text-aurora-100">7 jours d'essai · carte bancaire requise.</strong>
         </p>
         <p className="mt-3 text-caption text-ivory-300/95 leading-relaxed">
-          Aucun débit pendant l'essai. Si tu continues, c&apos;est 8,90&nbsp;€/mois — résiliable en 1 clic.
+          Aucun débit pendant l&apos;essai. Si tu continues, c&apos;est{' '}
+          {isAnnual ? '89 €/an' : '8,90 €/mois'} — résiliable en 1 clic.
         </p>
       </div>
 

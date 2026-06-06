@@ -113,6 +113,24 @@ export default function ProfileTab({
         </span>
       </div>
 
+      <DailyGuidanceChannel
+        initial={{
+          daily_guidance_enabled: profile.daily_guidance_enabled,
+          preferred_channel: profile.preferred_channel,
+          whatsapp_wa_id: profile.whatsapp_wa_id,
+          instagram_igsid: profile.instagram_igsid,
+          instagram_username: profile.instagram_username,
+          guidance_hour: profile.guidance_hour,
+          timezone: profile.timezone,
+        }}
+        zodiakWhatsAppNumber={
+          import.meta.env.VITE_ZODIAK_WHATSAPP_NUMBER as string | undefined
+        }
+        zodiakInstagramHandle={
+          import.meta.env.VITE_ZODIAK_INSTAGRAM_HANDLE as string | undefined
+        }
+      />
+
       <div className="grid gap-6 md:grid-cols-3">
         {/* Colonne gauche — infos personnelles */}
         <div className="md:col-span-2">
@@ -349,7 +367,7 @@ export default function ProfileTab({
                             ? 'Abonnement annulé'
                             : status === 'past_due'
                               ? 'Paiement en attente'
-                              : 'Zodiak Premium'}
+                              : 'Zodiak Astro Premium'}
                     </p>
                     <p className="font-display italic-editorial text-h3 text-ivory-50 leading-tight">
                       Mes crédits ce cycle
@@ -422,25 +440,6 @@ export default function ProfileTab({
               </div>
             </Card>
           )}
-
-          {/* Guidance quotidienne */}
-          <DailyGuidanceChannel
-            initial={{
-              daily_guidance_enabled: profile.daily_guidance_enabled,
-              preferred_channel: profile.preferred_channel,
-              whatsapp_wa_id: profile.whatsapp_wa_id,
-              instagram_igsid: profile.instagram_igsid,
-              instagram_username: profile.instagram_username,
-              guidance_hour: profile.guidance_hour,
-              timezone: profile.timezone,
-            }}
-            zodiakWhatsAppNumber={
-              import.meta.env.VITE_ZODIAK_WHATSAPP_NUMBER as string | undefined
-            }
-            zodiakInstagramHandle={
-              import.meta.env.VITE_ZODIAK_INSTAGRAM_HANDLE as string | undefined
-            }
-          />
 
           {/* Logout */}
           <Card variant="ghost">

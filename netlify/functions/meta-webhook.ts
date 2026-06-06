@@ -359,7 +359,7 @@ async function handleConversationalOptIn(msg: IncomingMessage, userId: string | 
       await reply(
         msg.channel,
         msg.fromId,
-        `✦ Parfait ! Ton compte Zodiak est maintenant lié à ${channelName}. ` +
+        `✦ Parfait ! Ton compte Zodiak Astro est maintenant lié à ${channelName}. ` +
           `Ta guidance quotidienne arrivera à l'heure que tu as choisie. ✨\n\n` +
           `Tape STOP à tout moment pour te désabonner.`
       );
@@ -369,7 +369,7 @@ async function handleConversationalOptIn(msg: IncomingMessage, userId: string | 
       await reply(
         msg.channel,
         msg.fromId,
-        '✦ Ce code est invalide ou expiré. Génère un nouveau code dans ton profil Zodiak (valable 15 minutes).'
+        '✦ Ce code est invalide ou expiré. Génère un nouveau code dans ton profil Zodiak Astro (valable 15 minutes).'
       );
       return;
     }
@@ -394,7 +394,7 @@ async function handleConversationalOptIn(msg: IncomingMessage, userId: string | 
     await reply(
       msg.channel,
       msg.fromId,
-      '✦ Bienvenue ! Pour activer ta guidance quotidienne, va dans ton profil Zodiak et copie le code à 6 chiffres affiché. Envoie-le moi ici, je te connecte instantanément.'
+      '✦ Bienvenue ! Pour activer ta guidance quotidienne, va dans ton profil Zodiak Astro et copie le code à 6 chiffres affiché. Envoie-le moi ici, je te connecte instantanément.'
     );
     return;
   }
@@ -404,7 +404,7 @@ async function handleConversationalOptIn(msg: IncomingMessage, userId: string | 
   await reply(
     msg.channel,
     msg.fromId,
-    '✦ Message bien reçu. Pour gérer ton abonnement, rends-toi sur ton profil Zodiak.'
+    '✦ Message bien reçu. Pour gérer ton abonnement, rends-toi sur ton profil Zodiak Astro.'
   );
 }
 

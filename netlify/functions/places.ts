@@ -1,6 +1,8 @@
 import type { Handler, HandlerEvent } from '@netlify/functions';
-import fetch from 'node-fetch';
-import AbortController from 'abort-controller';
+
+// Node 20+ (runtime Netlify) expose `fetch` et `AbortController` en global :
+// pas de dépendance `node-fetch` / `abort-controller` (qui n'étaient pas
+// déclarées dans package.json et cassaient le bundle esbuild de la fonction).
 
 // Fonction pour construire une réponse standardisée
 const buildResponse = (statusCode: number, body: unknown, headers: Record<string, string> = {}) => ({
@@ -22,7 +24,7 @@ const handler: Handler = async (event: HandlerEvent) => {
 
   // L'API Nominatim requiert un User-Agent spécifique pour l'identification.
   // Voir: https://operations.osmfoundation.org/policies/nominatim/
-  const userAgent = `ZodiakApp/1.0 (dev; contact-info-not-available)`;
+  const userAgent = `ZodiakAstro/1.0 (https://zodiakastro.com; contact@zodiakastro.com)`;
 
   const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=5&q=${encodeURIComponent(
     query

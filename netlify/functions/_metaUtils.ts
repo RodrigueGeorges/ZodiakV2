@@ -87,7 +87,7 @@ export function getMetaConfig() {
     appUrl:
       process.env.URL ||
       process.env.DEPLOY_PRIME_URL ||
-      'https://zodiakv2.netlify.app',
+      'https://zodiakastro.com',
   };
 }
 

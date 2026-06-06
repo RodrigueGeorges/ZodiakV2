@@ -15,11 +15,11 @@ export default function ForgotPassword() {
 
   useDocumentSeo({
     title: sent
-      ? 'Email envoyé · Zodiak — mot de passe'
-      : 'Mot de passe oublié · Zodiak',
+      ? 'Email envoyé · Zodiak Astro — mot de passe'
+      : 'Mot de passe oublié · Zodiak Astro',
     description: sent
-      ? 'Vérifie ta boîte mail : lien sécurisé pour réinitialiser ton accès à Zodiak et ta guidance personnalisée.'
-      : 'Réinitialiser ton mot de passe pour retrouver ton compte Zodiak — horoscope personnalisé et chat astral.',
+      ? 'Vérifie ta boîte mail : lien sécurisé pour réinitialiser ton accès à Zodiak Astro et ta guidance personnalisée.'
+      : 'Réinitialiser ton mot de passe pour retrouver ton compte Zodiak Astro — horoscope personnalisé et chat astral.',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {

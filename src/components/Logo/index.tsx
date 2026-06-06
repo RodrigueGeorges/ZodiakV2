@@ -48,17 +48,25 @@ const Logo = memo(function Logo({
 
   if (!withWordmark) return <span className={className}>{symbol}</span>;
 
+  // Lockup deux-tons : 1er mot en shimmer cosmique, le reste ("Astro")
+  // en accent aurora plus léger pour une signature de marque raffinée.
+  const [brandHead, ...brandTail] = APP_NAME.split(' ');
+  const brandRest = brandTail.join(' ');
+
   return (
     <span className={cn('inline-flex items-center gap-3', className)}>
       {symbol}
       <span
         className={cn(
-          'font-display tracking-[-0.02em] font-medium text-shimmer-cosmic',
+          'font-display tracking-[-0.02em] font-medium whitespace-nowrap',
           wordmarkSize[size],
           wordmarkClassName
         )}
       >
-        {APP_NAME}
+        <span className="text-shimmer-cosmic">{brandHead}</span>
+        {brandRest && (
+          <span className="ml-[0.28em] font-light text-aurora-200/90">{brandRest}</span>
+        )}
       </span>
     </span>
   );

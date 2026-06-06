@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Sparkles } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import GuidanceDisplay from '../components/GuidanceDisplay';
 import LoadingScreen from '../components/LoadingScreen';
 import EmptyState from '../components/ui/EmptyState';
 import PageLayout from '../components/PageLayout';
 import { Card } from '../components/ui/Card';
+import { ButtonLink } from '../components/ui/ButtonLink';
 import { useDocumentSeo } from '../lib/documentSeo';
 
 export default function GuidanceAccess() {
@@ -86,15 +87,15 @@ export default function GuidanceAccess() {
 
   useDocumentSeo({
     title: loading
-      ? 'Guidance partagée · Zodiak'
+      ? 'Guidance partagée · Zodiak Astro'
       : error
-        ? 'Lien de guidance invalide · Zodiak'
-        : 'Guidance du jour · lien sécurisé — Zodiak',
+        ? 'Lien de guidance invalide · Zodiak Astro'
+        : 'Guidance du jour · lien sécurisé — Zodiak Astro',
     description: loading
-      ? 'Ouverture sécurisée d’une guidance astrale quotidienne partagée sur Zodiak.'
+      ? 'Ouverture sécurisée d’une guidance astrale quotidienne partagée sur Zodiak Astro.'
       : error
-        ? 'Ce lien de guidance a expiré ou n’est plus valide — demande un nouvel envoi à la personne abonnée à Zodiak.'
-        : 'Horoscope et lecture du jour partagés sous lien sécurisé. Découvre Zodiak : guidance quotidienne sur WhatsApp ou Instagram à partir du thème natal — essai gratuit sans carte bancaire, puis 8,99 € / mois.',
+        ? 'Ce lien de guidance a expiré ou n’est plus valide — demande un nouvel envoi à la personne abonnée à Zodiak Astro.'
+        : 'Horoscope et lecture du jour partagés sous lien sécurisé. Découvre Zodiak Astro : guidance quotidienne sur WhatsApp ou Instagram à partir du thème natal — essai 7 jours avec carte, puis 8,90 € / mois.',
   });
 
   if (loading) return <LoadingScreen message="Chargement de la guidance…" />;
@@ -104,7 +105,7 @@ export default function GuidanceAccess() {
       <PageLayout
         eyebrow="Lien partagé"
         title="Lien invalide"
-        subtitle="Ce lien était valable peu de temps uniquement — la guidance personnelle quotidienne, elle, arrive chaque matin sur WhatsApp ou Instagram avec Zodiak."
+        subtitle="Ce lien était valable peu de temps uniquement — la guidance personnelle quotidienne, elle, arrive chaque matin sur WhatsApp ou Instagram avec Zodiak Astro."
         maxWidth="lg"
         showLogo
         dim
@@ -142,8 +143,23 @@ export default function GuidanceAccess() {
     >
       <GuidanceDisplay guidance={guidance} />
 
+      <div className="mt-12 flex flex-col items-center gap-4 text-center">
+        <p className="text-body text-ivory-300 max-w-md">
+          Reçois ta propre guidance chaque matin sur WhatsApp ou Instagram — calibrée sur ton thème natal.
+        </p>
+        <ButtonLink
+          to="/register"
+          variant="primary"
+          size="lg"
+          iconLeft={<Sparkles className="w-4 h-4" />}
+        >
+          Essayer Zodiak Astro — 7 jours
+        </ButtonLink>
+        <p className="text-caption text-ivory-500">Carte bancaire requise · aucun débit pendant l&apos;essai</p>
+      </div>
+
       <p className="mt-16 eyebrow-ritual text-ivory-400/80 text-center">
-        Zodiak — guide astral premium
+        Zodiak Astro — guide astral premium
       </p>
     </PageLayout>
   );

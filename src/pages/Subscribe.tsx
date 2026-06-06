@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sparkles, ArrowLeft, Check, ArrowRight, Zap } from 'lucide-react';
 import PageLayout from '../components/PageLayout';
+import OnboardingStepper from '../components/OnboardingStepper';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { cn } from '../lib/utils';
@@ -12,7 +13,7 @@ import { track } from '../lib/analytics';
 
 const PLAN_FEATURES = [
   'Guidance quotidienne illimitée · WhatsApp ou Instagram',
-  '100 messages chat astral inclus par cycle (reset anniversaire abo)',
+  '100 messages chat astral inclus chaque mois (mensuel comme annuel)',
   'Calendrier 30 jours · alertes transits push · synastries illimitées',
   'Profil fondé sur ton thème natal — données jamais revendues',
 ];
@@ -26,14 +27,19 @@ const PACKS = [
 
 export default function Subscribe() {
   useDocumentSeo({
-    title: 'Abonnement · Zodiak · 8,90 € — horoscope personnalisé & chat',
+    title: 'Abonnement · Zodiak Astro · 8,90 € — horoscope personnalisé & chat',
     description:
       'Une seule formule : guidance du jour + 100 messages chat inclus, basés sur ton thème natal. Essai 7 jours avec CB, puis 8,90 € / mois. Résiliable en un clic.',
   });
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const fromOnboarding = searchParams.get('from') === 'onboarding';
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [billing, setBilling] = useState<'monthly' | 'annual'>('monthly');
+
+  const isAnnual = billing === 'annual';
 
   const handleStart = async () => {
     if (!user?.id) {
@@ -41,7 +47,10 @@ export default function Subscribe() {
       return;
     }
 
-    track('paywall_clicked_subscribe', { plan: 'premium_monthly' });
+    track('paywall_clicked_subscribe', {
+      plan: isAnnual ? 'premium_annual' : 'premium_monthly',
+      source: fromOnboarding ? 'onboarding' : 'subscribe_page',
+    });
     setLoading(true);
 
     try {
@@ -49,11 +58,15 @@ export default function Subscribe() {
       const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY ?? '');
       if (!stripe) return;
 
+      const priceId = isAnnual
+        ? import.meta.env.VITE_STRIPE_PRICE_PREMIUM_ANNUAL
+        : import.meta.env.VITE_STRIPE_PRICE_PREMIUM;
+
       const res = await fetch('/.netlify/functions/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          priceId: import.meta.env.VITE_STRIPE_PRICE_PREMIUM,
+          priceId,
           mode: 'subscription',
           userId: user.id,
           userEmail: user.email ?? '',
@@ -74,20 +87,35 @@ export default function Subscribe() {
 
   return (
     <PageLayout
-      eyebrow="Abonnement"
-      title="Une seule formule. Tout est inclus."
+      eyebrow={fromOnboarding ? 'Étape 3 sur 3 · Essai Premium' : 'Abonnement'}
+      title={
+        fromOnboarding
+          ? 'Ta carte est prête — active ton essai.'
+          : 'Une seule formule. Tout est inclus.'
+      }
       subtitle={
-        <>
-          <span className="text-ivory-200 font-medium">8,90&nbsp;€ par mois</span> après{' '}
-          <span className="text-ivory-100 font-medium">7 jours d'essai avec carte</span> — guidance du matin +
-          100 messages chat, calibrés sur ton{' '}
-          <span className="text-aurora-200/95 font-medium">thème natal</span>. Pas de palier caché.
-        </>
+        fromOnboarding ? (
+          <>
+            Ton thème natal est calculé. Il ne reste qu&apos;à valider ton{' '}
+            <span className="text-ivory-100 font-medium">essai 7 jours</span> (carte requise) pour
+            recevoir ta première guidance demain matin sur WhatsApp ou Instagram.
+          </>
+        ) : (
+          <>
+            <span className="text-ivory-200 font-medium">8,90&nbsp;€ par mois</span> après{' '}
+            <span className="text-ivory-100 font-medium">7 jours d'essai avec carte</span> — guidance du matin +
+            100 messages chat, calibrés sur ton{' '}
+            <span className="text-aurora-200/95 font-medium">thème natal</span>. Pas de palier caché.
+          </>
+        )
       }
       maxWidth="lg"
       showLogo={false}
     >
       <div className="space-y-10">
+        {fromOnboarding && (
+          <OnboardingStepper currentStep={3} totalSteps={3} className="max-w-xs mx-auto" />
+        )}
         {/* ── Carte offre principale ── */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -109,21 +137,76 @@ export default function Subscribe() {
             />
             <div className="relative p-8 md:p-10 flex flex-col">
               <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
-                <span className="eyebrow-ritual text-aurora-200/95">Zodiak Premium</span>
+                <span className="eyebrow-ritual text-aurora-200/95">Zodiak Astro Premium</span>
                 <span className="font-mono text-[10px] uppercase tracking-[0.18em] px-3 py-1 rounded-full bg-aurora-500/15 border border-aurora-400/35 text-aurora-100">
                   Sans surprise
                 </span>
               </div>
 
+              {/* Toggle mensuel / annuel */}
+              <div
+                role="tablist"
+                aria-label="Choix de la formule"
+                className="mb-6 flex items-center gap-1 p-1 rounded-full border border-white/[0.1] bg-night-900/50 backdrop-blur-md w-full max-w-xs mx-auto"
+              >
+                {([
+                  { id: 'monthly', label: 'Mensuel' },
+                  { id: 'annual', label: 'Annuel' },
+                ] as const).map((opt) => {
+                  const active = billing === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={active}
+                      onClick={() => setBilling(opt.id)}
+                      className={cn(
+                        'relative flex-1 rounded-full px-4 py-2 text-caption font-medium transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300',
+                        active ? 'text-night-950' : 'text-ivory-300 hover:text-ivory-50',
+                      )}
+                    >
+                      {active && (
+                        <motion.span
+                          layoutId="billing-pill"
+                          className="absolute inset-0 rounded-full bg-aurora-400"
+                          transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+                        />
+                      )}
+                      <span className="relative z-10 inline-flex items-center gap-1.5">
+                        {opt.label}
+                        {opt.id === 'annual' && (
+                          <span
+                            className={cn(
+                              'rounded-full px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide',
+                              active ? 'bg-night-950/15 text-night-950' : 'bg-aurora-500/20 text-aurora-200',
+                            )}
+                          >
+                            -17%
+                          </span>
+                        )}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
               <div className="landing-price-well rounded-xl border border-aurora-400/22 px-5 py-6 md:px-6 md:py-7 mb-8">
                 <div className="flex flex-wrap items-end gap-x-3 gap-y-1">
                   <span className="font-display font-extralight text-display-xl text-ivory-50 leading-none tracking-[-0.03em]">
-                    8,90&nbsp;€
+                    {isAnnual ? '89\u00a0€' : '8,90\u00a0€'}
                   </span>
-                  <span className="text-body text-aurora-100/90 pb-1 font-medium">/ mois</span>
+                  <span className="text-body text-aurora-100/90 pb-1 font-medium">
+                    {isAnnual ? '/ an' : '/ mois'}
+                  </span>
                 </div>
+                <p className="mt-2 text-caption text-aurora-200/90">
+                  {isAnnual
+                    ? 'Soit ≈ 7,42 € / mois — 2 mois offerts.'
+                    : 'Sans engagement — résiliable à tout moment.'}
+                </p>
                 <p className="mt-3 text-caption text-ivory-300/95 leading-relaxed">
-                  Accès complet : guidance quotidienne + 100 messages chat inclus par cycle.
+                  Accès complet : guidance quotidienne + 100 messages chat inclus chaque mois.
                   Packs extras disponibles si tu en as besoin.
                 </p>
               </div>
@@ -148,7 +231,11 @@ export default function Subscribe() {
                 iconRight={<ArrowRight className="w-4 h-4" />}
                 className="landing-primary-cta-glow shadow-none"
               >
-                {loading ? 'Redirection…' : 'Commencer mon essai 7 jours'}
+                {loading
+                  ? 'Redirection…'
+                  : fromOnboarding
+                    ? 'Valider mon essai 7 jours'
+                    : 'Commencer mon essai 7 jours'}
               </Button>
 
               <p className="text-center mt-4 text-caption text-ivory-400/90 leading-relaxed">

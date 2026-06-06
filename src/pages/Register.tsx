@@ -13,7 +13,7 @@ import { useDocumentSeo } from '../lib/documentSeo';
 
 export default function Register() {
   useDocumentSeo({
-    title: 'Inscription · Zodiak — essai 7 jours avec carte',
+    title: 'Inscription · Zodiak Astro — essai 7 jours avec carte',
     description:
       'Crée ton compte pour recevoir ton horoscope personnalisé selon ton thème natal sur WhatsApp ou Instagram. Chat astral inclus. Essai 7 jours, carte bancaire requise.',
   });
@@ -58,7 +58,7 @@ export default function Register() {
 
   return (
     <AuthLayout
-      eyebrow="Étape 1 sur 2"
+      eyebrow="Étape 1 sur 3"
       title="Crée ton compte"
       subtitle="Email et mot de passe — ensuite on calcule ton thème natal pour activer ton horoscope personnalisé du matin."
       footer={
@@ -73,7 +73,7 @@ export default function Register() {
         </>
       }
     >
-      <OnboardingStepper currentStep={1} totalSteps={2} className="mb-7" />
+      <OnboardingStepper currentStep={1} totalSteps={3} className="mb-7" />
 
       <OAuthButtons mode="register" className="mb-5" />
 

@@ -20,10 +20,10 @@ export default function ResetPassword() {
 
   useDocumentSeo({
     title: ready
-      ? 'Nouveau mot de passe · Zodiak'
-      : 'Lien de réinitialisation · Zodiak',
+      ? 'Nouveau mot de passe · Zodiak Astro'
+      : 'Lien de réinitialisation · Zodiak Astro',
     description:
-      'Définis un nouveau mot de passe sécurisé pour retrouver ta guidance quotidienne et ton chat astral Zodiak.',
+      'Définis un nouveau mot de passe sécurisé pour retrouver ta guidance quotidienne et ton chat astral Zodiak Astro.',
   });
 
   // Supabase parse le hash et établit la session "recovery". On attend que ce

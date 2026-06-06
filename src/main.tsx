@@ -10,13 +10,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from './lib/errors/ErrorBoundary';
 import { PerformanceMonitor } from './lib/performance/PerformanceMonitor';
 import { registerServiceWorker } from './lib/registerServiceWorker';
-import { initAnalytics } from './lib/analytics';
+import { initSentry } from './lib/sentry';
+import AnalyticsConsentBanner from './components/AnalyticsConsentBanner';
 
 const queryClient = new QueryClient();
 
+initSentry();
 initializeApiSystems();
 PerformanceMonitor.init();
-void initAnalytics();
 
 if (import.meta.env.PROD) {
   window.addEventListener('error', (event) => {
@@ -34,6 +35,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
           <AuthProvider>
             <App />
+            <AnalyticsConsentBanner />
           </AuthProvider>
         </BrowserRouter>
       </ErrorBoundary>

@@ -1,3 +1,5 @@
+import { hasAnalyticsConsent } from './analyticsConsent';
+
 /**
  * Wrapper analytics minimaliste, déjà compatible PostHog.
  *
@@ -81,11 +83,18 @@ async function ensureInit(): Promise<void> {
 }
 
 export async function initAnalytics(): Promise<void> {
+  if (!hasAnalyticsConsent()) return;
   await ensureInit();
 }
 
+export function optOutAnalytics(): void {
+  ensureInit().then(() => {
+    posthog?.opt_out_capturing?.();
+  });
+}
+
 export function track(event: AnalyticsEvent, props?: Record<string, unknown>): void {
-  if (!KEY) {
+  if (!KEY || !hasAnalyticsConsent()) {
     if (import.meta.env.DEV) console.debug('[analytics]', event, props);
     return;
   }
@@ -95,14 +104,14 @@ export function track(event: AnalyticsEvent, props?: Record<string, unknown>): v
 }
 
 export function identify(userId: string, traits?: Record<string, unknown>): void {
-  if (!KEY) return;
+  if (!KEY || !hasAnalyticsConsent()) return;
   ensureInit().then(() => {
     posthog?.identify(userId, traits);
   });
 }
 
 export function reset(): void {
-  if (!KEY) return;
+  if (!KEY || !hasAnalyticsConsent()) return;
   ensureInit().then(() => {
     posthog?.reset();
   });

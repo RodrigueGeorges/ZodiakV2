@@ -60,6 +60,26 @@ const handler: Handler = async () => {
 
   console.log('[generate-guidance] start', { today });
 
+  // ── Reset mensuel paresseux du quota de messages ──────────────────────────
+  // Le quota "100 messages / mois" est découplé du cycle de facturation : un
+  // abonné ANNUEL doit quand même récupérer 100 messages chaque mois (pas 100
+  // par an). On reset donc ici tout profil dont `period_resets_at` est dépassé,
+  // peu importe l'intervalle Stripe. Idempotent (re-passe sans effet si déjà à jour).
+  try {
+    const nowIso = new Date().toISOString();
+    const nextPeriodIso = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    const { error: resetErr } = await supabase
+      .from('profiles')
+      .update({ messages_used_this_period: 0, period_resets_at: nextPeriodIso })
+      .lte('period_resets_at', nowIso)
+      .in('subscription_status', ['active', 'trial', 'past_due']);
+    if (resetErr) {
+      console.error('[generate-guidance] monthly message reset failed', resetErr.message);
+    }
+  } catch (e) {
+    console.error('[generate-guidance] monthly message reset threw', (e as Error).message);
+  }
+
   // Pré-génération des transits du jour (mutualisée, 1 seule fois)
   let transitsForToday: unknown = null;
   try {

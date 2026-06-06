@@ -109,7 +109,7 @@ const handler: Handler = async (event) => {
 
   const cfg = getMetaConfig();
   const firstName = profile.name?.split(' ')[0] ?? 'cher utilisateur';
-  const messageText = text || `✦ ${firstName}, ceci est un test depuis Zodiak admin.`;
+  const messageText = text || `✦ ${firstName}, ceci est un test depuis Zodiak Astro admin.`;
 
   let result;
   if (channel === 'whatsapp' && mode === 'template') {

@@ -14,6 +14,7 @@ import { useSubscription } from '../lib/hooks/useSubscription';
 import { useMood } from '../lib/hooks/useMood';
 import { ChatEnergyMeter } from '../components/ChatEnergyMeter';
 import { UpgradePackModal } from '../components/UpgradePackModal';
+import PremiumGate from '../components/PremiumGate';
 import { moonPhaseAt } from '../lib/moonPhase';
 import { vibrate } from '../lib/haptics';
 import { track } from '../lib/analytics';
@@ -125,7 +126,7 @@ export default function ChatAstro() {
     const msg: Message = subscribed
       ? {
           from: 'bot',
-          text: `Bienvenue dans Zodiak Premium, ${firstName} ! Ton abonnement est actif — tu disposes de 100 messages chat inclus par cycle. Bonne exploration ✨`,
+          text: `Bienvenue dans Zodiak Astro Premium, ${firstName} ! Ton abonnement est actif — tu disposes de 100 messages chat inclus par mois. Bonne exploration ✨`,
         }
       : {
           from: 'bot',
@@ -170,11 +171,11 @@ export default function ChatAstro() {
 
   useDocumentSeo({
     title: profileIncomplete
-      ? 'Chat astral · compléter ton profil — Zodiak'
-      : 'Chat astral & thème natal — Zodiak',
+      ? 'Chat astral · compléter ton profil — Zodiak Astro'
+      : 'Chat astral & thème natal — Zodiak Astro',
     description: profileIncomplete
-      ? 'Complète ton nom et tes données de naissance pour activer le guide astral Zodiak, calé sur ton thème natal.'
-      : 'Pose tes questions à un guide qui connaît ton thème natal et ton historique — 100 messages chat inclus par cycle avec Zodiak Premium (8,90 € / mois, essai 7 jours).',
+      ? 'Complète ton nom et tes données de naissance pour activer le guide astral Zodiak Astro, calé sur ton thème natal.'
+      : 'Pose tes questions à un guide qui connaît ton thème natal et ton historique — 100 messages chat inclus par mois avec Zodiak Astro Premium (8,90 € / mois, essai 7 jours).',
   });
 
   const send = async (suggestion?: string) => {
@@ -336,6 +337,25 @@ export default function ChatAstro() {
             </Button>
           </div>
         </Card>
+      </PageLayout>
+    );
+  }
+
+  if (!isActive) {
+    return (
+      <PageLayout
+        eyebrow="Guide astral"
+        title="Chat réservé aux abonnés"
+        subtitle="Active Zodiak Astro Premium pour poser tes questions à ton guide astral — 100 messages inclus par mois."
+        maxWidth="lg"
+        showLogo={false}
+      >
+        <PremiumGate
+          feature="chat_astral"
+          preview={false}
+          title="Débloquer le chat astral"
+          description="Guidance quotidienne + 100 messages chat par mois, calibrés sur ton thème natal. Essai 7 jours avec carte."
+        />
       </PageLayout>
     );
   }
