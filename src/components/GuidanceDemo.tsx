@@ -1,16 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactElement } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Heart, Briefcase, Flame, Quote } from 'lucide-react';
 import { Card } from './ui/Card';
 import { cn } from '../lib/utils';
-import { WhatsAppIcon, InstagramIcon } from './icons/SocialChannelIcons';
+import { WhatsAppIcon, InstagramIcon, MessengerIcon } from './icons/SocialChannelIcons';
 import type { DeliveryChannel } from './FloatingSocialChannels';
 
 /**
  * GuidanceDemo — aperçu animé d'une guidance quotidienne pour la landing.
  *
- * Séquence : bulle canal (WA/IG) → résumé → piliers → mantra.
- * Alterne WhatsApp / Instagram à chaque exemple.
+ * Séquence : bulle canal (WA / IG / Messenger) → résumé → piliers → mantra.
  */
 
 interface Pillar {
@@ -53,7 +52,7 @@ const SAMPLES: Sample[] = [
     mantra: 'Ce que j’ose aujourd’hui dessine demain.',
   },
   {
-    channel: 'whatsapp',
+    channel: 'messenger',
     greeting: 'Bonjour, Camille — ta guidance est prête ✦',
     summary: 'Jour de recueillement : la Lune te demande de ralentir pour mieux sentir.',
     pillars: [
@@ -105,7 +104,20 @@ interface DeliveryBubbleProps {
 }
 
 function DeliveryBubble({ channel, greeting, index, reduceMotion }: DeliveryBubbleProps) {
-  const isWA = channel === 'whatsapp';
+  const labels: Record<DeliveryChannel, { name: string; icon: ReactElement }> = {
+    whatsapp: {
+      name: 'WhatsApp',
+      icon: <WhatsAppIcon className="h-3 w-3 text-aurora-400 shrink-0" />,
+    },
+    instagram: {
+      name: 'Instagram',
+      icon: <InstagramIcon className="h-3 w-3 text-magenta-400/90 shrink-0" />,
+    },
+    messenger: {
+      name: 'Messenger',
+      icon: <MessengerIcon className="h-3 w-3 text-sky-300 shrink-0" />,
+    },
+  };
   const [headline, detail] = greeting.includes(' — ')
     ? greeting.split(' — ')
     : [greeting, ''];
@@ -120,13 +132,9 @@ function DeliveryBubble({ channel, greeting, index, reduceMotion }: DeliveryBubb
       className="mx-auto max-w-[280px] rounded-xl border border-white/[0.08] bg-night-900/50 overflow-hidden"
     >
       <div className="flex items-center gap-2 px-3 py-2 border-b border-white/[0.06]">
-        {isWA ? (
-          <WhatsAppIcon className="h-3 w-3 text-aurora-400/70 shrink-0" />
-        ) : (
-          <InstagramIcon className="h-3 w-3 text-magenta-400/60 shrink-0" />
-        )}
+        {labels[channel].icon}
         <span className="text-[10px] text-ivory-400/85 truncate">
-          {isWA ? 'WhatsApp' : 'Instagram'} · 8h00
+          {labels[channel].name} · 8h00
         </span>
       </div>
       <div className="px-3 py-2.5">

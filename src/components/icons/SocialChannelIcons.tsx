@@ -19,3 +19,11 @@ export function InstagramIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+
+export function MessengerIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
+      <path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.882 1.413 5.454 3.623 7.132V22l3.316-1.822c.886.245 1.823.378 2.794.378 5.523 0 10-4.145 10-9.243S17.523 2 12 2zm1.033 12.437-2.564-2.733-5.012 2.733 5.519-5.857 2.628 2.733 4.957-2.733-5.528 5.857z" />
+    </svg>
+  );
+}
