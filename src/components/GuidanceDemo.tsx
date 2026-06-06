@@ -1,19 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Heart, Briefcase, Flame, Quote, MessageCircle } from 'lucide-react';
+import { Heart, Briefcase, Flame, Quote } from 'lucide-react';
 import { Card } from './ui/Card';
 import { cn } from '../lib/utils';
+import { WhatsAppIcon, InstagramIcon } from './icons/SocialChannelIcons';
+import type { DeliveryChannel } from './FloatingSocialChannels';
 
 /**
  * GuidanceDemo — aperçu animé d'une guidance quotidienne pour la landing.
  *
- * Séquence par échantillon :
- *   1. Mini bulle WhatsApp (livraison matinale)
- *   2. Résumé en machine-à-écrire (Fraunces italique)
- *   3. Piliers qui entrent en cascade + jauges aurora
- *   4. Mantra rituel
- *
- * Contrôles : pause au survol, dots cliquables, respect `prefers-reduced-motion`.
+ * Séquence : bulle canal (WA/IG) → résumé → piliers → mantra.
+ * Alterne WhatsApp / Instagram à chaque exemple.
  */
 
 interface Pillar {
@@ -25,6 +22,7 @@ interface Pillar {
 }
 
 interface Sample {
+  channel: DeliveryChannel;
   greeting: string;
   summary: string;
   pillars: Pillar[];
@@ -33,6 +31,7 @@ interface Sample {
 
 const SAMPLES: Sample[] = [
   {
+    channel: 'whatsapp',
     greeting: 'Bonjour, Léa — ta guidance est prête ✦',
     summary: 'Une journée pour avancer sans forcer : le ciel t’invite à la nuance.',
     pillars: [
@@ -43,6 +42,7 @@ const SAMPLES: Sample[] = [
     mantra: 'Je choisis la douceur plutôt que la vitesse.',
   },
   {
+    channel: 'instagram',
     greeting: 'Bonjour, Thomas — ta guidance est prête ✦',
     summary: 'Le Soleil réchauffe ta confiance : c’est le moment de te montrer.',
     pillars: [
@@ -53,6 +53,7 @@ const SAMPLES: Sample[] = [
     mantra: 'Ce que j’ose aujourd’hui dessine demain.',
   },
   {
+    channel: 'whatsapp',
     greeting: 'Bonjour, Camille — ta guidance est prête ✦',
     summary: 'Jour de recueillement : la Lune te demande de ralentir pour mieux sentir.',
     pillars: [
@@ -96,7 +97,95 @@ function useTypewriter(text: string, active: boolean, speedMs = 28) {
   return { display, done };
 }
 
-export default function GuidanceDemo({ className = '' }: { className?: string }) {
+interface DeliveryBubbleProps {
+  channel: DeliveryChannel;
+  greeting: string;
+  index: number;
+  reduceMotion: boolean | null;
+}
+
+function DeliveryBubble({ channel, greeting, index, reduceMotion }: DeliveryBubbleProps) {
+  const isWA = channel === 'whatsapp';
+  const [headline, detail] = greeting.includes(' — ')
+    ? greeting.split(' — ')
+    : [greeting, ''];
+
+  return (
+    <motion.div
+      key={`${channel}-${index}`}
+      initial={reduceMotion ? false : { opacity: 0, y: -10, scale: 0.98 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={reduceMotion ? undefined : { opacity: 0, y: 6, scale: 0.98 }}
+      transition={{ duration: 0.5, ease }}
+      className={cn(
+        'mx-auto max-w-[290px] rounded-2xl border overflow-hidden shadow-[0_16px_48px_-28px_rgba(0,0,0,0.85)]',
+        isWA
+          ? 'border-white/[0.08] bg-[#0c1c14]/95'
+          : 'border-magenta-500/20 bg-gradient-to-b from-[#1a0d2e]/95 via-[#0d0a1f]/95 to-night-900/95',
+      )}
+    >
+      {/* Chrome header */}
+      <div
+        className={cn(
+          'flex items-center gap-2.5 px-3.5 py-2.5 border-b',
+          isWA
+            ? 'border-white/[0.06] bg-[#075e54]/90'
+            : 'border-magenta-500/15 bg-night-900/80',
+        )}
+      >
+        <span
+          className={cn(
+            'flex h-7 w-7 items-center justify-center rounded-full ring-1',
+            isWA
+              ? 'bg-aurora-500/15 ring-aurora-400/35'
+              : 'bg-magenta-500/15 ring-magenta-500/35',
+          )}
+        >
+          {isWA ? (
+            <WhatsAppIcon className="h-3.5 w-3.5 text-aurora-300" />
+          ) : (
+            <InstagramIcon className="h-3.5 w-3.5 text-magenta-300" />
+          )}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-medium text-ivory-100 truncate">Zodiak Astro</p>
+          <p className="text-[9px] text-ivory-400/85">
+            {isWA ? 'WhatsApp · en ligne' : 'Instagram · message direct'}
+          </p>
+        </div>
+        <span className="font-mono text-[9px] text-ivory-400/70 tabular-nums">8:00</span>
+      </div>
+
+      <div className="px-3.5 py-3">
+        <p
+          className={cn(
+            'text-[12.5px] leading-snug text-ivory-100/95 rounded-2xl px-3 py-2.5 border',
+            isWA
+              ? 'rounded-tl-sm bg-white/[0.06] border-white/[0.06]'
+              : 'rounded-tr-sm bg-magenta-500/[0.08] border-magenta-500/15',
+          )}
+        >
+          <span
+            className={cn(
+              'block text-[10px] font-semibold uppercase tracking-wider mb-1',
+              isWA ? 'text-aurora-300/90' : 'text-magenta-300/90',
+            )}
+          >
+            {headline}
+          </span>
+          {detail || greeting}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+interface GuidanceDemoProps {
+  className?: string;
+  onDeliveryChannelChange?: (channel: DeliveryChannel) => void;
+}
+
+export default function GuidanceDemo({ className = '', onDeliveryChannelChange }: GuidanceDemoProps) {
   const reduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -116,6 +205,10 @@ export default function GuidanceDemo({ className = '' }: { className?: string })
     reduceMotion ? 0 : 26,
   );
 
+  useEffect(() => {
+    onDeliveryChannelChange?.(sample.channel);
+  }, [sample.channel, onDeliveryChannelChange]);
+
   const goTo = useCallback((next: number) => {
     setIndex(next);
     setPhase(0);
@@ -125,7 +218,6 @@ export default function GuidanceDemo({ className = '' }: { className?: string })
     goTo((index + 1) % SAMPLES.length);
   }, [goTo, index]);
 
-  // Orchestration des phases (bulle → résumé → piliers → mantra)
   useEffect(() => {
     if (reduceMotion) {
       setPhase(3);
@@ -148,7 +240,6 @@ export default function GuidanceDemo({ className = '' }: { className?: string })
     return () => window.clearTimeout(t);
   }, [phase]);
 
-  // Auto-cycle (pause au survol)
   useEffect(() => {
     if (reduceMotion || paused) return;
     timerRef.current = window.setTimeout(nextSample, CYCLE_MS);
@@ -166,48 +257,71 @@ export default function GuidanceDemo({ className = '' }: { className?: string })
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      {/* Halo respirant */}
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-aurora-400/[0.07] blur-3xl"
-        animate={reduceMotion ? undefined : { opacity: [0.45, 0.75, 0.45], scale: [0.98, 1.02, 0.98] }}
+        className={cn(
+          'pointer-events-none absolute -inset-6 rounded-[2rem] blur-3xl transition-colors duration-700',
+          sample.channel === 'whatsapp' ? 'bg-aurora-400/[0.08]' : 'bg-magenta-500/[0.07]',
+        )}
+        animate={reduceMotion ? undefined : { opacity: [0.4, 0.72, 0.4], scale: [0.98, 1.02, 0.98] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       <Card
         variant="elevated"
-        className="relative overflow-hidden rounded-2xl border-aurora-400/35 shadow-[inset_0_1px_0_rgba(56,189,248,0.16),0_28px_72px_-44px_rgba(0,0,0,0.9)]"
+        className={cn(
+          'relative overflow-hidden rounded-2xl transition-[border-color,box-shadow] duration-700',
+          sample.channel === 'whatsapp'
+            ? 'border-aurora-400/35 shadow-[inset_0_1px_0_rgba(56,189,248,0.16),0_28px_72px_-44px_rgba(0,0,0,0.9)]'
+            : 'border-magenta-500/30 shadow-[inset_0_1px_0_rgba(201,97,155,0.12),0_28px_72px_-44px_rgba(0,0,0,0.9)]',
+        )}
       >
         <span
           aria-hidden="true"
-          className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-aurora-400/85 to-transparent"
+          className={cn(
+            'absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent to-transparent',
+            sample.channel === 'whatsapp' ? 'via-aurora-400/85' : 'via-magenta-400/70',
+          )}
         />
 
         <div className="relative p-6 md:p-9">
-          {/* Mini livraison WhatsApp */}
           <AnimatePresence mode="wait">
-            <motion.div
-              key={`wa-${index}`}
-              initial={reduceMotion ? false : { opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduceMotion ? undefined : { opacity: 0 }}
-              transition={{ duration: 0.45, ease }}
-              className="mx-auto max-w-[280px] rounded-2xl border border-white/[0.08] bg-[#0c1c14]/90 px-3.5 py-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]"
-            >
-              <div className="flex items-center gap-2 mb-2 text-[10px] text-ivory-400/80">
-                <MessageCircle className="w-3 h-3 text-[#25D366]" aria-hidden />
-                <span>WhatsApp · 8h00</span>
-              </div>
-              <p className="text-[12.5px] leading-snug text-ivory-100/95 rounded-xl rounded-tl-sm bg-white/[0.06] px-3 py-2.5 border border-white/[0.06]">
-                <span className="block text-[10px] font-semibold uppercase tracking-wider text-aurora-300/90 mb-1">
-                  {sample.greeting.split(' — ')[0]}
-                </span>
-                {sample.greeting.split(' — ')[1] ?? sample.greeting}
-              </p>
-            </motion.div>
+            <DeliveryBubble
+              channel={sample.channel}
+              greeting={sample.greeting}
+              index={index}
+              reduceMotion={reduceMotion}
+            />
           </AnimatePresence>
 
-          <p className="mt-6 eyebrow-ritual flex items-center justify-center gap-3 text-ivory-400/80">
+          {/* Indicateurs canal */}
+          <div className="mt-5 flex items-center justify-center gap-2">
+            {(['whatsapp', 'instagram'] as const).map((ch) => {
+              const active = sample.channel === ch;
+              return (
+                <span
+                  key={ch}
+                  className={cn(
+                    'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[9px] font-mono uppercase tracking-[0.16em] transition-all duration-500',
+                    active
+                      ? ch === 'whatsapp'
+                        ? 'border-aurora-400/40 bg-aurora-500/10 text-aurora-200'
+                        : 'border-magenta-500/35 bg-magenta-500/10 text-magenta-200'
+                      : 'border-white/[0.06] bg-white/[0.02] text-ivory-500/70',
+                  )}
+                >
+                  {ch === 'whatsapp' ? (
+                    <WhatsAppIcon className="h-3 w-3" />
+                  ) : (
+                    <InstagramIcon className="h-3 w-3" />
+                  )}
+                  {ch === 'whatsapp' ? 'WA' : 'IG'}
+                </span>
+              );
+            })}
+          </div>
+
+          <p className="mt-5 eyebrow-ritual flex items-center justify-center gap-3 text-ivory-400/80">
             <span aria-hidden="true" className="block h-px w-7 bg-aurora-400/45" />
             <span className="capitalize">{today} · Lecture complète</span>
             <span aria-hidden="true" className="block h-px w-7 bg-aurora-400/45" />
@@ -221,7 +335,6 @@ export default function GuidanceDemo({ className = '' }: { className?: string })
               exit={reduceMotion ? undefined : { opacity: 0 }}
               transition={{ duration: 0.35, ease }}
             >
-              {/* Résumé machine-à-écrire */}
               <h3 className="mt-5 min-h-[4.5rem] md:min-h-[5rem] text-center font-display italic-editorial text-h2 md:text-h1 text-ivory-50 leading-[1.18]">
                 {typedSummary}
                 {!summaryDone && phase >= 1 && !reduceMotion && (
@@ -234,7 +347,6 @@ export default function GuidanceDemo({ className = '' }: { className?: string })
                 )}
               </h3>
 
-              {/* Piliers */}
               <div className="mt-7 space-y-3.5">
                 {sample.pillars.map((p, i) => {
                   const Icon = p.icon;
@@ -272,7 +384,6 @@ export default function GuidanceDemo({ className = '' }: { className?: string })
                 })}
               </div>
 
-              {/* Mantra */}
               <motion.div
                 initial={reduceMotion ? false : { opacity: 0, y: 10 }}
                 animate={phase >= 3 || reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
@@ -287,23 +398,27 @@ export default function GuidanceDemo({ className = '' }: { className?: string })
             </motion.div>
           </AnimatePresence>
 
-          {/* Navigation dots (cliquables) */}
           <div
             className="mt-8 flex items-center justify-center gap-2"
             role="tablist"
             aria-label="Exemples de guidance"
           >
-            {SAMPLES.map((_, i) => (
+            {SAMPLES.map((s, i) => (
               <button
                 key={i}
                 type="button"
                 role="tab"
                 aria-selected={i === index}
-                aria-label={`Exemple ${i + 1} sur ${SAMPLES.length}`}
+                aria-label={`Exemple ${i + 1} sur ${SAMPLES.length} — ${s.channel === 'whatsapp' ? 'WhatsApp' : 'Instagram'}`}
                 onClick={() => goTo(i)}
                 className={cn(
                   'h-1.5 rounded-full transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300',
-                  i === index ? 'w-6 bg-aurora-400' : 'w-1.5 bg-white/20 hover:bg-white/35',
+                  i === index
+                    ? cn(
+                        'w-6',
+                        s.channel === 'whatsapp' ? 'bg-aurora-400' : 'bg-magenta-400',
+                      )
+                    : 'w-1.5 bg-white/20 hover:bg-white/35',
                 )}
               />
             ))}

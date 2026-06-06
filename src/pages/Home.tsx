@@ -15,7 +15,8 @@ import {
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import FAQ from '../components/FAQ';
-import GuidanceDemo from '../components/GuidanceDemo';
+import FloatingSocialChannels from '../components/FloatingSocialChannels';
+import SocialDeliveryShowcase from '../components/SocialDeliveryShowcase';
 import { ButtonLink } from '../components/ui/ButtonLink';
 import { APP_NAME } from '../lib/constants';
 import CosmicLoader from '../components/CosmicLoader';
@@ -274,6 +275,8 @@ export default function Home() {
             <span className="hero-orbit-ring" />
           </div>
 
+          <FloatingSocialChannels variant="hero" autoCycle />
+
           <motion.div
             variants={heroReveal}
             initial="hidden"
@@ -475,7 +478,7 @@ export default function Home() {
                 Exemple illustratif — ta vraie guidance est calculée sur ton thème natal.
               </p>
             </div>
-            <GuidanceDemo className="w-full max-w-md mx-auto" />
+            <SocialDeliveryShowcase />
           </div>
         </section>
 
