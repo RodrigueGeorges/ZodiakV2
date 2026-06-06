@@ -1,318 +1,125 @@
-import { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '../lib/utils';
 import { WhatsAppIcon, InstagramIcon } from './icons/SocialChannelIcons';
 
 export type DeliveryChannel = 'whatsapp' | 'instagram';
 
-type Variant = 'hero' | 'section';
+/** Positions prédéfinies — une landing, des repères discrets par section. */
+export type LandingPlacement =
+  | 'hero'
+  | 'pourquoi'
+  | 'etapes'
+  | 'apercu'
+  | 'experience'
+  | 'offre'
+  | 'faq'
+  | 'closing';
 
-interface ChannelConfig {
-  id: DeliveryChannel;
-  label: string;
-  deliveryLabel: string;
-  Icon: typeof WhatsAppIcon;
-  accent: 'aurora' | 'magenta';
-  className: string;
-  float: { y: number; rotate: number; duration: number; delay: number };
-}
-
-const HERO_CHANNELS: ChannelConfig[] = [
-  {
-    id: 'whatsapp',
-    label: 'WhatsApp',
-    deliveryLabel: 'DM · 8h00',
-    Icon: WhatsAppIcon,
-    accent: 'aurora',
-    className: 'top-[16%] left-[3%] sm:left-[7%] md:left-[11%] lg:left-[14%]',
-    float: { y: 12, rotate: 4, duration: 5.4, delay: 0 },
-  },
-  {
-    id: 'instagram',
-    label: 'Instagram',
-    deliveryLabel: 'DM · 8h00',
-    Icon: InstagramIcon,
-    accent: 'magenta',
-    className: 'top-[26%] right-[3%] sm:right-[6%] md:right-[10%] lg:right-[13%]',
-    float: { y: 14, rotate: -5, duration: 6.2, delay: 0.5 },
-  },
-];
-
-const SECTION_CHANNELS: ChannelConfig[] = [
-  {
-    id: 'whatsapp',
-    label: 'WhatsApp',
-    deliveryLabel: '8h00',
-    Icon: WhatsAppIcon,
-    accent: 'aurora',
-    className: '-left-2 sm:-left-5 top-8',
-    float: { y: 8, rotate: 3, duration: 4.6, delay: 0.15 },
-  },
-  {
-    id: 'instagram',
-    label: 'Instagram',
-    deliveryLabel: '8h00',
-    Icon: InstagramIcon,
-    accent: 'magenta',
-    className: '-right-2 sm:-right-5 top-[5.5rem]',
-    float: { y: 10, rotate: -4, duration: 5.1, delay: 0.45 },
-  },
-];
-
-const accentStyles = {
-  aurora: {
-    gradient: 'from-aurora-400/55 via-aurora-300/20 to-transparent',
-    shell: 'border-aurora-400/40 bg-aurora-500/[0.1]',
-    glow: 'shadow-[0_0_40px_-8px_rgba(56,189,248,0.55),inset_0_1px_0_rgba(255,255,255,0.12)]',
-    glowSoft: 'bg-aurora-400/25',
-    icon: 'text-aurora-200',
-    ring: 'border-aurora-400/30',
-    badge: 'bg-aurora-400 text-night-950',
-    pulse: 'rgba(56,189,248,0.45)',
-  },
-  magenta: {
-    gradient: 'from-magenta-500/50 via-magenta-400/15 to-transparent',
-    shell: 'border-magenta-500/40 bg-magenta-500/[0.1]',
-    glow: 'shadow-[0_0_40px_-8px_rgba(201,97,155,0.45),inset_0_1px_0_rgba(255,255,255,0.1)]',
-    glowSoft: 'bg-magenta-500/25',
-    icon: 'text-magenta-300',
-    ring: 'border-magenta-500/30',
-    badge: 'bg-magenta-500 text-ivory-50',
-    pulse: 'rgba(201,97,155,0.4)',
-  },
+const ICONS = {
+  whatsapp: WhatsAppIcon,
+  instagram: InstagramIcon,
 } as const;
 
+const ACCENT = {
+  whatsapp: 'text-aurora-400/55',
+  instagram: 'text-magenta-400/50',
+} as const;
+
+/** Une icône par repère, opacité basse, positions variées au scroll. */
+const PLACEMENTS: Record<
+  LandingPlacement,
+  Array<{ channel: DeliveryChannel; className: string; delay: number }>
+> = {
+  hero: [
+    { channel: 'whatsapp', className: 'top-[20%] left-[6%] md:left-[10%]', delay: 0 },
+    { channel: 'instagram', className: 'top-[34%] right-[6%] md:right-[10%]', delay: 1.2 },
+  ],
+  pourquoi: [{ channel: 'instagram', className: 'bottom-8 right-6 md:bottom-12 md:right-16', delay: 0.4 }],
+  etapes: [
+    { channel: 'whatsapp', className: 'top-10 left-3 md:left-8', delay: 0 },
+    { channel: 'instagram', className: 'bottom-6 right-3 md:bottom-10 md:right-8', delay: 0.8 },
+  ],
+  apercu: [
+    { channel: 'whatsapp', className: 'top-14 left-0 lg:left-4', delay: 0.2 },
+    { channel: 'instagram', className: 'bottom-24 right-0 lg:right-4', delay: 1 },
+  ],
+  experience: [
+    { channel: 'whatsapp', className: 'top-6 left-4 md:left-10', delay: 0.3 },
+    { channel: 'instagram', className: 'bottom-10 right-4 md:right-10', delay: 0.9 },
+  ],
+  offre: [
+    { channel: 'instagram', className: 'top-8 right-4 md:right-12', delay: 0.5 },
+    { channel: 'whatsapp', className: 'bottom-12 left-4 md:left-12', delay: 0 },
+  ],
+  faq: [{ channel: 'whatsapp', className: 'top-6 left-4 md:left-10', delay: 0.6 }],
+  closing: [
+    { channel: 'whatsapp', className: 'top-16 left-[7%]', delay: 0 },
+    { channel: 'instagram', className: 'top-28 right-[7%]', delay: 1.1 },
+  ],
+};
+
 interface FloatingSocialChannelsProps {
-  variant?: Variant;
+  placement: LandingPlacement;
   className?: string;
-  /** Canal mis en avant (sync démo). Si absent en hero, alternance auto. */
-  activeChannel?: DeliveryChannel;
-  autoCycle?: boolean;
 }
 
-function HeroSignalPath({ reduceMotion }: { reduceMotion: boolean | null }) {
-  if (reduceMotion) return null;
-
-  return (
-    <svg
-      className="absolute inset-0 w-full h-full opacity-40"
-      viewBox="0 0 100 100"
-      preserveAspectRatio="none"
-      aria-hidden
-    >
-      <defs>
-        <linearGradient id="signal-aurora" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="rgba(56,189,248,0.5)" />
-          <stop offset="50%" stopColor="rgba(56,189,248,0.08)" />
-          <stop offset="100%" stopColor="rgba(201,97,155,0.35)" />
-        </linearGradient>
-      </defs>
-      <motion.path
-        d="M 12 22 Q 50 38 88 30"
-        fill="none"
-        stroke="url(#signal-aurora)"
-        strokeWidth="0.15"
-        strokeDasharray="1.2 1.8"
-        initial={{ pathLength: 0, opacity: 0 }}
-        animate={{ pathLength: 1, opacity: 1, strokeDashoffset: [0, -6] }}
-        transition={{
-          pathLength: { duration: 1.8, ease: [0.22, 1, 0.36, 1] },
-          opacity: { duration: 1.2 },
-          strokeDashoffset: { duration: 8, repeat: Infinity, ease: 'linear' },
-        }}
-      />
-    </svg>
-  );
-}
-
-interface OrbProps {
-  config: ChannelConfig;
-  variant: Variant;
-  active: boolean;
+function WhisperOrb({
+  channel,
+  className,
+  delay,
+  reduceMotion,
+}: {
+  channel: DeliveryChannel;
+  className: string;
+  delay: number;
   reduceMotion: boolean | null;
-}
-
-function SocialOrb({ config, variant, active, reduceMotion }: OrbProps) {
-  const styles = accentStyles[config.accent];
-  const size =
-    variant === 'hero'
-      ? active
-        ? 'h-[3.25rem] w-[3.25rem] md:h-14 md:w-14'
-        : 'h-11 w-11 md:h-12 md:w-12'
-      : active
-        ? 'h-11 w-11 md:h-12 md:w-12'
-        : 'h-10 w-10 md:h-11 md:w-11';
-  const iconSize = variant === 'hero' ? 'h-5 w-5 md:h-[22px] md:w-[22px]' : 'h-[18px] w-[18px] md:h-5 md:w-5';
+}) {
+  const Icon = ICONS[channel];
 
   return (
     <motion.div
-      className={cn('absolute', config.className)}
-      initial={{ opacity: 0, scale: 0.8, filter: 'blur(6px)' }}
-      animate={{
-        opacity: active ? 1 : 0.42,
-        scale: active ? 1 : 0.92,
-        filter: 'blur(0px)',
-      }}
-      transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+      className={cn('absolute hidden sm:block', className)}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1.2, delay: 0.3 + delay * 0.15, ease: [0.22, 1, 0.36, 1] }}
     >
       <motion.div
-        animate={
-          reduceMotion
-            ? undefined
-            : {
-                y: [0, -config.float.y, 0],
-                rotate: [0, config.float.rotate, 0],
-              }
-        }
+        animate={reduceMotion ? undefined : { y: [0, -4, 0] }}
         transition={
           reduceMotion
             ? undefined
-            : {
-                duration: config.float.duration,
-                delay: config.float.delay,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }
+            : { duration: 7 + delay, delay, repeat: Infinity, ease: 'easeInOut' }
         }
-        className="relative flex flex-col items-center"
+        className={cn(
+          'flex h-8 w-8 md:h-9 md:w-9 items-center justify-center rounded-full',
+          'border border-white/[0.07] bg-night-900/35 backdrop-blur-sm',
+          'opacity-[0.22] md:opacity-[0.28]',
+        )}
       >
-        {/* Orbite active */}
-        {active && !reduceMotion && (
-          <motion.span
-            className={cn(
-              'absolute -inset-3 rounded-full border border-dashed',
-              styles.ring,
-            )}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 14, repeat: Infinity, ease: 'linear' }}
-            aria-hidden
-          />
-        )}
-
-        {/* Halo respirant */}
-        {!reduceMotion && (
-          <motion.span
-            className={cn('absolute inset-0 rounded-full blur-xl scale-150', styles.glowSoft)}
-            animate={
-              active
-                ? { opacity: [0.35, 0.75, 0.35], scale: [1.4, 1.65, 1.4] }
-                : { opacity: 0.12, scale: 1.2 }
-            }
-            transition={{ duration: active ? 3.2 : 5, repeat: Infinity, ease: 'easeInOut' }}
-            aria-hidden
-          />
-        )}
-
-        {/* Coque verre */}
-        <div
-          className={cn(
-            'relative rounded-full p-px bg-gradient-to-br transition-all duration-500',
-            styles.gradient,
-            active && styles.glow,
-          )}
-        >
-          <div
-            className={cn(
-              'relative flex items-center justify-center rounded-full border backdrop-blur-xl bg-night-900/85 transition-all duration-500',
-              size,
-              styles.shell,
-            )}
-          >
-            <config.Icon className={cn(iconSize, styles.icon, 'drop-shadow-[0_0_12px_rgba(255,255,255,0.15)]')} />
-
-            {active && (
-              <motion.span
-                className={cn(
-                  'absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full ring-2 ring-night-900',
-                  styles.badge.split(' ')[0],
-                )}
-                animate={reduceMotion ? undefined : { scale: [1, 1.25, 1] }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                aria-hidden
-              />
-            )}
-          </div>
-        </div>
-
-        {/* Labels */}
-        <div className="mt-3 flex flex-col items-center gap-0.5">
-          <span
-            className={cn(
-              'protocol-caption transition-colors duration-500',
-              active ? 'text-ivory-300' : 'text-ivory-500/80',
-            )}
-          >
-            {config.label}
-          </span>
-          {active && (
-            <motion.span
-              initial={{ opacity: 0, y: 4 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={cn(
-                'font-mono text-[9px] uppercase tracking-[0.2em]',
-                config.accent === 'aurora' ? 'text-aurora-300/90' : 'text-magenta-300/90',
-              )}
-            >
-              {config.deliveryLabel}
-            </motion.span>
-          )}
-        </div>
-
-        {/* Particule « message » (canal actif) */}
-        {active && !reduceMotion && variant === 'hero' && (
-          <motion.span
-            className="absolute top-1/2 left-1/2 h-1 w-1 rounded-full bg-ivory-50/90"
-            animate={{
-              x: [0, config.id === 'whatsapp' ? 48 : -48, 0],
-              y: [0, 28, 0],
-              opacity: [0, 1, 0],
-              scale: [0.5, 1, 0.5],
-            }}
-            transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: config.float.delay }}
-            aria-hidden
-          />
-        )}
+        <Icon className={cn('h-3.5 w-3.5 md:h-4 md:w-4', ACCENT[channel])} />
       </motion.div>
     </motion.div>
   );
 }
 
 /**
- * Orbes flottants WhatsApp + Instagram — livraison matinale, teintés charte Zodiak.
+ * Repères visuels WhatsApp / Instagram — landing uniquement, très discrets.
  */
-export default function FloatingSocialChannels({
-  variant = 'hero',
-  className,
-  activeChannel: activeChannelProp,
-  autoCycle = true,
-}: FloatingSocialChannelsProps) {
+export default function FloatingSocialChannels({ placement, className }: FloatingSocialChannelsProps) {
   const reduceMotion = useReducedMotion();
-  const channels = variant === 'hero' ? HERO_CHANNELS : SECTION_CHANNELS;
-  const [internalActive, setInternalActive] = useState<DeliveryChannel>('whatsapp');
-
-  const activeChannel = activeChannelProp ?? internalActive;
-
-  useEffect(() => {
-    if (activeChannelProp || !autoCycle || variant !== 'hero' || reduceMotion) return;
-    const id = window.setInterval(() => {
-      setInternalActive((c) => (c === 'whatsapp' ? 'instagram' : 'whatsapp'));
-    }, 4200);
-    return () => window.clearInterval(id);
-  }, [activeChannelProp, autoCycle, variant, reduceMotion]);
+  const markers = PLACEMENTS[placement];
 
   return (
     <div
-      className={cn('pointer-events-none absolute inset-0 overflow-visible', className)}
+      className={cn('pointer-events-none absolute inset-0 overflow-hidden', className)}
       aria-hidden
     >
-      {variant === 'hero' && <HeroSignalPath reduceMotion={reduceMotion} />}
-
-      {channels.map((config) => (
-        <SocialOrb
-          key={config.id}
-          config={config}
-          variant={variant}
-          active={activeChannel === config.id}
+      {markers.map(({ channel, className: pos, delay }) => (
+        <WhisperOrb
+          key={`${placement}-${channel}-${pos}`}
+          channel={channel}
+          className={pos}
+          delay={delay}
           reduceMotion={reduceMotion}
         />
       ))}

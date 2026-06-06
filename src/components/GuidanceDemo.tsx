@@ -113,66 +113,25 @@ function DeliveryBubble({ channel, greeting, index, reduceMotion }: DeliveryBubb
   return (
     <motion.div
       key={`${channel}-${index}`}
-      initial={reduceMotion ? false : { opacity: 0, y: -10, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={reduceMotion ? undefined : { opacity: 0, y: 6, scale: 0.98 }}
-      transition={{ duration: 0.5, ease }}
-      className={cn(
-        'mx-auto max-w-[290px] rounded-2xl border overflow-hidden shadow-[0_16px_48px_-28px_rgba(0,0,0,0.85)]',
-        isWA
-          ? 'border-white/[0.08] bg-[#0c1c14]/95'
-          : 'border-magenta-500/20 bg-gradient-to-b from-[#1a0d2e]/95 via-[#0d0a1f]/95 to-night-900/95',
-      )}
+      initial={reduceMotion ? false : { opacity: 0, y: -6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reduceMotion ? undefined : { opacity: 0 }}
+      transition={{ duration: 0.45, ease }}
+      className="mx-auto max-w-[280px] rounded-xl border border-white/[0.08] bg-night-900/50 overflow-hidden"
     >
-      {/* Chrome header */}
-      <div
-        className={cn(
-          'flex items-center gap-2.5 px-3.5 py-2.5 border-b',
-          isWA
-            ? 'border-white/[0.06] bg-[#075e54]/90'
-            : 'border-magenta-500/15 bg-night-900/80',
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-white/[0.06]">
+        {isWA ? (
+          <WhatsAppIcon className="h-3 w-3 text-aurora-400/70 shrink-0" />
+        ) : (
+          <InstagramIcon className="h-3 w-3 text-magenta-400/60 shrink-0" />
         )}
-      >
-        <span
-          className={cn(
-            'flex h-7 w-7 items-center justify-center rounded-full ring-1',
-            isWA
-              ? 'bg-aurora-500/15 ring-aurora-400/35'
-              : 'bg-magenta-500/15 ring-magenta-500/35',
-          )}
-        >
-          {isWA ? (
-            <WhatsAppIcon className="h-3.5 w-3.5 text-aurora-300" />
-          ) : (
-            <InstagramIcon className="h-3.5 w-3.5 text-magenta-300" />
-          )}
+        <span className="text-[10px] text-ivory-400/85 truncate">
+          {isWA ? 'WhatsApp' : 'Instagram'} · 8h00
         </span>
-        <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-medium text-ivory-100 truncate">Zodiak Astro</p>
-          <p className="text-[9px] text-ivory-400/85">
-            {isWA ? 'WhatsApp · en ligne' : 'Instagram · message direct'}
-          </p>
-        </div>
-        <span className="font-mono text-[9px] text-ivory-400/70 tabular-nums">8:00</span>
       </div>
-
-      <div className="px-3.5 py-3">
-        <p
-          className={cn(
-            'text-[12.5px] leading-snug text-ivory-100/95 rounded-2xl px-3 py-2.5 border',
-            isWA
-              ? 'rounded-tl-sm bg-white/[0.06] border-white/[0.06]'
-              : 'rounded-tr-sm bg-magenta-500/[0.08] border-magenta-500/15',
-          )}
-        >
-          <span
-            className={cn(
-              'block text-[10px] font-semibold uppercase tracking-wider mb-1',
-              isWA ? 'text-aurora-300/90' : 'text-magenta-300/90',
-            )}
-          >
-            {headline}
-          </span>
+      <div className="px-3 py-2.5">
+        <p className="text-[12px] leading-snug text-ivory-100/90 rounded-lg rounded-tl-sm bg-white/[0.04] px-2.5 py-2 border border-white/[0.05]">
+          <span className="block text-[10px] text-aurora-300/80 mb-0.5">{headline}</span>
           {detail || greeting}
         </p>
       </div>
@@ -180,12 +139,7 @@ function DeliveryBubble({ channel, greeting, index, reduceMotion }: DeliveryBubb
   );
 }
 
-interface GuidanceDemoProps {
-  className?: string;
-  onDeliveryChannelChange?: (channel: DeliveryChannel) => void;
-}
-
-export default function GuidanceDemo({ className = '', onDeliveryChannelChange }: GuidanceDemoProps) {
+export default function GuidanceDemo({ className = '' }: { className?: string }) {
   const reduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -204,10 +158,6 @@ export default function GuidanceDemo({ className = '', onDeliveryChannelChange }
     phase >= 1,
     reduceMotion ? 0 : 26,
   );
-
-  useEffect(() => {
-    onDeliveryChannelChange?.(sample.channel);
-  }, [sample.channel, onDeliveryChannelChange]);
 
   const goTo = useCallback((next: number) => {
     setIndex(next);
@@ -259,29 +209,18 @@ export default function GuidanceDemo({ className = '', onDeliveryChannelChange }
     >
       <motion.div
         aria-hidden
-        className={cn(
-          'pointer-events-none absolute -inset-6 rounded-[2rem] blur-3xl transition-colors duration-700',
-          sample.channel === 'whatsapp' ? 'bg-aurora-400/[0.08]' : 'bg-magenta-500/[0.07]',
-        )}
-        animate={reduceMotion ? undefined : { opacity: [0.4, 0.72, 0.4], scale: [0.98, 1.02, 0.98] }}
+        className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-aurora-400/[0.06] blur-3xl"
+        animate={reduceMotion ? undefined : { opacity: [0.35, 0.55, 0.35] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       <Card
         variant="elevated"
-        className={cn(
-          'relative overflow-hidden rounded-2xl transition-[border-color,box-shadow] duration-700',
-          sample.channel === 'whatsapp'
-            ? 'border-aurora-400/35 shadow-[inset_0_1px_0_rgba(56,189,248,0.16),0_28px_72px_-44px_rgba(0,0,0,0.9)]'
-            : 'border-magenta-500/30 shadow-[inset_0_1px_0_rgba(201,97,155,0.12),0_28px_72px_-44px_rgba(0,0,0,0.9)]',
-        )}
+        className="relative overflow-hidden rounded-2xl border-aurora-400/35 shadow-[inset_0_1px_0_rgba(56,189,248,0.16),0_28px_72px_-44px_rgba(0,0,0,0.9)]"
       >
         <span
           aria-hidden="true"
-          className={cn(
-            'absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent to-transparent',
-            sample.channel === 'whatsapp' ? 'via-aurora-400/85' : 'via-magenta-400/70',
-          )}
+          className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-aurora-400/85 to-transparent"
         />
 
         <div className="relative p-6 md:p-9">
@@ -294,34 +233,7 @@ export default function GuidanceDemo({ className = '', onDeliveryChannelChange }
             />
           </AnimatePresence>
 
-          {/* Indicateurs canal */}
-          <div className="mt-5 flex items-center justify-center gap-2">
-            {(['whatsapp', 'instagram'] as const).map((ch) => {
-              const active = sample.channel === ch;
-              return (
-                <span
-                  key={ch}
-                  className={cn(
-                    'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[9px] font-mono uppercase tracking-[0.16em] transition-all duration-500',
-                    active
-                      ? ch === 'whatsapp'
-                        ? 'border-aurora-400/40 bg-aurora-500/10 text-aurora-200'
-                        : 'border-magenta-500/35 bg-magenta-500/10 text-magenta-200'
-                      : 'border-white/[0.06] bg-white/[0.02] text-ivory-500/70',
-                  )}
-                >
-                  {ch === 'whatsapp' ? (
-                    <WhatsAppIcon className="h-3 w-3" />
-                  ) : (
-                    <InstagramIcon className="h-3 w-3" />
-                  )}
-                  {ch === 'whatsapp' ? 'WA' : 'IG'}
-                </span>
-              );
-            })}
-          </div>
-
-          <p className="mt-5 eyebrow-ritual flex items-center justify-center gap-3 text-ivory-400/80">
+          <p className="mt-6 eyebrow-ritual flex items-center justify-center gap-3 text-ivory-400/80">
             <span aria-hidden="true" className="block h-px w-7 bg-aurora-400/45" />
             <span className="capitalize">{today} · Lecture complète</span>
             <span aria-hidden="true" className="block h-px w-7 bg-aurora-400/45" />
@@ -403,22 +315,17 @@ export default function GuidanceDemo({ className = '', onDeliveryChannelChange }
             role="tablist"
             aria-label="Exemples de guidance"
           >
-            {SAMPLES.map((s, i) => (
+            {SAMPLES.map((_, i) => (
               <button
                 key={i}
                 type="button"
                 role="tab"
                 aria-selected={i === index}
-                aria-label={`Exemple ${i + 1} sur ${SAMPLES.length} — ${s.channel === 'whatsapp' ? 'WhatsApp' : 'Instagram'}`}
+                aria-label={`Exemple ${i + 1} sur ${SAMPLES.length}`}
                 onClick={() => goTo(i)}
                 className={cn(
                   'h-1.5 rounded-full transition-all duration-500 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-aurora-300',
-                  i === index
-                    ? cn(
-                        'w-6',
-                        s.channel === 'whatsapp' ? 'bg-aurora-400' : 'bg-magenta-400',
-                      )
-                    : 'w-1.5 bg-white/20 hover:bg-white/35',
+                  i === index ? 'w-6 bg-aurora-400' : 'w-1.5 bg-white/20 hover:bg-white/35',
                 )}
               />
             ))}

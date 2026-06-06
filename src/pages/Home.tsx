@@ -275,7 +275,7 @@ export default function Home() {
             <span className="hero-orbit-ring" />
           </div>
 
-          <FloatingSocialChannels variant="hero" autoCycle />
+          <FloatingSocialChannels placement="hero" />
 
           <motion.div
             variants={heroReveal}
@@ -360,9 +360,10 @@ export default function Home() {
 
         {/* Pourquoi Zodiak Astro */}
         <section
-          className="relative z-10 border-t border-white/[0.09] py-20 md:py-28 px-6 reassurance-band"
+          className="relative z-10 border-t border-white/[0.09] py-20 md:py-28 px-6 reassurance-band overflow-hidden"
           aria-labelledby="section-pourquoi"
         >
+          <FloatingSocialChannels placement="pourquoi" />
           <div className="max-w-2xl mx-auto text-center space-y-6">
             <span
               aria-hidden
@@ -386,9 +387,10 @@ export default function Home() {
 
         {/* Comment ça marche */}
         <section
-          className="relative py-24 md:py-36 px-6 border-t border-white/[0.09]"
+          className="relative py-24 md:py-36 px-6 border-t border-white/[0.09] overflow-hidden"
           aria-labelledby="section-etapes"
         >
+          <FloatingSocialChannels placement="etapes" />
           <div className="max-w-4xl mx-auto">
             <h2
               id="section-etapes"
@@ -453,6 +455,7 @@ export default function Home() {
           className="relative py-24 md:py-36 px-6 border-t border-white/[0.09] overflow-hidden"
           aria-labelledby="section-apercu"
         >
+          <FloatingSocialChannels placement="apercu" />
           <div
             aria-hidden
             className="pointer-events-none absolute inset-x-0 top-0 h-[60%] bg-gradient-to-b from-aurora-500/[0.06] to-transparent"
@@ -484,9 +487,10 @@ export default function Home() {
 
         {/* L&apos;expérience */}
         <section
-          className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/[0.09] landing-features-ambient"
+          className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/[0.09] landing-features-ambient overflow-hidden"
           aria-labelledby="section-experience"
         >
+          <FloatingSocialChannels placement="experience" />
           <div className="relative max-w-5xl mx-auto">
             <div className="text-center mb-14 md:mb-20 max-w-2xl mx-auto space-y-5">
               <h2
@@ -529,9 +533,10 @@ export default function Home() {
         {/* Offre */}
         <section
           id="pricing"
-          className="relative py-24 md:py-40 px-6 border-t border-white/[0.09]"
+          className="relative py-24 md:py-40 px-6 border-t border-white/[0.09] overflow-hidden"
           aria-labelledby="section-offre"
         >
+          <FloatingSocialChannels placement="offre" />
           <div className="max-w-xl mx-auto">
             <div className="text-center mb-10 md:mb-12 space-y-4">
               <h2
@@ -558,9 +563,10 @@ export default function Home() {
 
         {/* FAQ */}
         <section
-          className="relative py-24 md:py-32 px-6 border-t border-white/[0.09]"
+          className="relative py-24 md:py-32 px-6 border-t border-white/[0.09] overflow-hidden"
           aria-labelledby="section-faq"
         >
+          <FloatingSocialChannels placement="faq" />
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-14 md:mb-16">
               <h2
@@ -641,9 +647,10 @@ export default function Home() {
 
         {/* Closing */}
         <section
-          className="relative py-24 md:py-40 px-6 text-center border-t border-white/[0.09]"
+          className="relative py-24 md:py-40 px-6 text-center border-t border-white/[0.09] overflow-hidden"
           aria-labelledby="section-closing"
         >
+          <FloatingSocialChannels placement="closing" />
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
