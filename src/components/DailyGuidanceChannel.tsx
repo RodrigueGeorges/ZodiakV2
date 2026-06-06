@@ -135,7 +135,7 @@ export default function DailyGuidanceChannel({
   };
 
   return (
-    <Card variant="elevated" className="relative overflow-hidden">
+    <Card id="guidance-channel" variant="elevated" className="relative overflow-hidden scroll-mt-24">
       <div className="relative p-7 space-y-6">
         <div className="flex items-center gap-4">
           <div

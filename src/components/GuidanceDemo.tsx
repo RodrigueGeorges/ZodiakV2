@@ -3,13 +3,13 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Heart, Briefcase, Flame, Quote } from 'lucide-react';
 import { Card } from './ui/Card';
 import { cn } from '../lib/utils';
-import { WhatsAppIcon, InstagramIcon, MessengerIcon } from './icons/SocialChannelIcons';
+import { WhatsAppIcon, InstagramIcon } from './icons/SocialChannelIcons';
 import type { DeliveryChannel } from '../components/HeroSocialOrbit';
 
 /**
  * GuidanceDemo — aperçu animé d'une guidance quotidienne pour la landing.
  *
- * Séquence : bulle canal (WA / IG / Messenger) → résumé → piliers → mantra.
+ * Séquence : bulle canal (WA / IG) → page complète → piliers → mantra.
  */
 
 interface Pillar {
@@ -22,7 +22,7 @@ interface Pillar {
 
 interface Sample {
   channel: DeliveryChannel;
-  greeting: string;
+  firstName: string;
   summary: string;
   pillars: Pillar[];
   mantra: string;
@@ -31,7 +31,7 @@ interface Sample {
 const SAMPLES: Sample[] = [
   {
     channel: 'whatsapp',
-    greeting: 'Bonjour, Léa — ta guidance est prête ✦',
+    firstName: 'Léa',
     summary: 'Une journée pour avancer sans forcer : le ciel t’invite à la nuance.',
     pillars: [
       { eyebrow: 'Cœur', label: 'Amour', icon: Heart, score: 82, text: 'Vénus adoucit tes échanges — dis les choses simplement.' },
@@ -42,7 +42,7 @@ const SAMPLES: Sample[] = [
   },
   {
     channel: 'instagram',
-    greeting: 'Bonjour, Thomas — ta guidance est prête ✦',
+    firstName: 'Thomas',
     summary: 'Le Soleil réchauffe ta confiance : c’est le moment de te montrer.',
     pillars: [
       { eyebrow: 'Cœur', label: 'Amour', icon: Heart, score: 71, text: 'Un élan sincère répare plus qu’un long discours.' },
@@ -50,17 +50,6 @@ const SAMPLES: Sample[] = [
       { eyebrow: 'Vitalité', label: 'Énergie', icon: Flame, score: 79, text: 'Bouge tôt : ton corps réclame de l’air et de la lumière.' },
     ],
     mantra: 'Ce que j’ose aujourd’hui dessine demain.',
-  },
-  {
-    channel: 'messenger',
-    greeting: 'Bonjour, Camille — ta guidance est prête ✦',
-    summary: 'Jour de recueillement : la Lune te demande de ralentir pour mieux sentir.',
-    pillars: [
-      { eyebrow: 'Cœur', label: 'Amour', icon: Heart, score: 64, text: 'Écoute plus que tu ne réponds — la tendresse est dans le silence.' },
-      { eyebrow: 'Chantiers', label: 'Travail', icon: Briefcase, score: 58, text: 'Range, classe, prépare. Le grand saut, ce sera demain.' },
-      { eyebrow: 'Vitalité', label: 'Énergie', icon: Flame, score: 86, text: 'Neptune favorise le repos vrai : accorde-toi une vraie pause.' },
-    ],
-    mantra: 'Le calme aussi est une forme d’avancée.',
   },
 ];
 
@@ -98,13 +87,14 @@ function useTypewriter(text: string, active: boolean, speedMs = 28) {
 
 interface DeliveryBubbleProps {
   channel: DeliveryChannel;
-  greeting: string;
+  firstName: string;
+  summary: string;
   index: number;
   reduceMotion: boolean | null;
 }
 
-function DeliveryBubble({ channel, greeting, index, reduceMotion }: DeliveryBubbleProps) {
-  const labels: Record<DeliveryChannel, { name: string; icon: ReactElement }> = {
+function DeliveryBubble({ channel, firstName, summary, index, reduceMotion }: DeliveryBubbleProps) {
+  const labels: Record<'whatsapp' | 'instagram', { name: string; icon: ReactElement }> = {
     whatsapp: {
       name: 'WhatsApp',
       icon: <WhatsAppIcon className="h-3 w-3 text-aurora-400 shrink-0" />,
@@ -113,14 +103,9 @@ function DeliveryBubble({ channel, greeting, index, reduceMotion }: DeliveryBubb
       name: 'Instagram',
       icon: <InstagramIcon className="h-3 w-3 text-aurora-400/90 shrink-0" />,
     },
-    messenger: {
-      name: 'Messenger',
-      icon: <MessengerIcon className="h-3 w-3 text-aurora-400 shrink-0" />,
-    },
   };
-  const [headline, detail] = greeting.includes(' — ')
-    ? greeting.split(' — ')
-    : [greeting, ''];
+
+  const meta = labels[channel as 'whatsapp' | 'instagram'];
 
   return (
     <motion.div
@@ -132,16 +117,28 @@ function DeliveryBubble({ channel, greeting, index, reduceMotion }: DeliveryBubb
       className="mx-auto max-w-[280px] rounded-xl border border-white/[0.08] bg-night-900/50 overflow-hidden"
     >
       <div className="flex items-center gap-2 px-3 py-2 border-b border-white/[0.06]">
-        {labels[channel].icon}
+        {meta.icon}
         <span className="text-[10px] text-ivory-400/85 truncate">
-          {labels[channel].name} · 8h00
+          {meta.name} · 8h00
         </span>
       </div>
-      <div className="px-3 py-2.5">
-        <p className="text-[12px] leading-snug text-ivory-100/90 rounded-lg rounded-tl-sm bg-white/[0.04] px-2.5 py-2 border border-white/[0.05]">
-          <span className="block text-[10px] text-aurora-300/80 mb-0.5">{headline}</span>
-          {detail || greeting}
-        </p>
+      <div className="px-3 py-2.5 space-y-2">
+        {channel === 'whatsapp' ? (
+          <>
+            <p className="text-[12px] leading-snug text-ivory-100/90 rounded-lg rounded-tl-sm bg-white/[0.04] px-2.5 py-2 border border-white/[0.05]">
+              ✦ Bonjour {firstName}, ta guidance cosmique du jour est arrivée.
+              <br />
+              Découvre ce que les astres te disent.
+            </p>
+            <span className="inline-flex w-full items-center justify-center rounded-lg bg-aurora-500/15 border border-aurora-400/25 px-2.5 py-1.5 text-[10px] font-medium text-aurora-200">
+              Lire ma guidance
+            </span>
+          </>
+        ) : (
+          <p className="text-[12px] leading-snug text-ivory-100/90 rounded-lg rounded-tl-sm bg-white/[0.04] px-2.5 py-2 border border-white/[0.05] whitespace-pre-line">
+            {`✦ ${firstName}, ta guidance cosmique du jour est arrivée.\n\n${summary.slice(0, 120)}…\n\nLis-la complète ici 👉 zodiakastro.com/g/abc12\n(Valable 24h)`}
+          </p>
+        )}
       </div>
     </motion.div>
   );
@@ -235,13 +232,20 @@ export default function GuidanceDemo({ className = '' }: { className?: string })
           <AnimatePresence mode="wait">
             <DeliveryBubble
               channel={sample.channel}
-              greeting={sample.greeting}
+              firstName={sample.firstName}
+              summary={sample.summary}
               index={index}
               reduceMotion={reduceMotion}
             />
           </AnimatePresence>
 
-          <p className="mt-6 eyebrow-ritual flex items-center justify-center gap-3 text-ivory-400/80">
+          <p className="mt-5 eyebrow-ritual flex items-center justify-center gap-2 text-ivory-500/85">
+            <span aria-hidden="true" className="block h-px w-5 bg-white/10" />
+            Page ouverte via le lien
+            <span aria-hidden="true" className="block h-px w-5 bg-white/10" />
+          </p>
+
+          <p className="mt-4 eyebrow-ritual flex items-center justify-center gap-3 text-ivory-400/80">
             <span aria-hidden="true" className="block h-px w-7 bg-aurora-400/45" />
             <span className="capitalize">{today} · Lecture complète</span>
             <span aria-hidden="true" className="block h-px w-7 bg-aurora-400/45" />

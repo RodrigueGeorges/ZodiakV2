@@ -70,7 +70,7 @@ export default function Subscribe() {
           mode: 'subscription',
           userId: user.id,
           userEmail: user.email ?? '',
-          successUrl: `${window.location.origin}/guide-astral?subscribed=1`,
+          successUrl: `${window.location.origin}/profile?subscribed=1`,
           cancelUrl: window.location.href,
         }),
       });

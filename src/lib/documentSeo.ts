@@ -5,7 +5,7 @@ export const DEFAULT_DOC_TITLE =
   'Zodiak Astro · Horoscope personnalisé sur WhatsApp & Instagram';
 
 export const DEFAULT_META_DESCRIPTION =
-  'Horoscope personnalisé sur WhatsApp et Instagram : guidance astrologique basée sur ton thème natal chaque matin. Compte gratuit, essai Premium 7 jours (carte requise), puis 8,90 € / mois. Données en Europe.';
+  'Horoscope personnalisé sur WhatsApp et Instagram : guidance basée sur ton thème natal chaque matin. Essai 7 jours avec carte, puis 8,90 € / mois. Chat astral inclus. Données en Europe.';
 
 /**
  * Met à jour `document.title` et la meta description pour la route courante.

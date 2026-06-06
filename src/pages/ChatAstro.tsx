@@ -111,34 +111,25 @@ export default function ChatAstro() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
-  // Toast inline après paiement réussi
+  // Toast inline après achat de pack extra
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(window.location.search);
-    const subscribed = params.get('subscribed');
     const packSuccess = params.get('pack_success');
-    if (!subscribed && !packSuccess) return;
+    if (!packSuccess) return;
 
-    // Nettoie l'URL sans rechargement
     const cleanUrl = window.location.pathname;
     window.history.replaceState({}, '', cleanUrl);
 
-    const msg: Message = subscribed
-      ? {
-          from: 'bot',
-          text: `Bienvenue dans Zodiak Astro Premium, ${firstName} ! Ton abonnement est actif — tu disposes de 100 messages chat inclus par mois. Bonne exploration ✨`,
-        }
-      : {
-          from: 'bot',
-          text: `Tes crédits supplémentaires ont bien été ajoutés à ton solde. Continue à poser tes questions — ton guide est là.`,
-        };
+    const msg: Message = {
+      from: 'bot',
+      text: `Tes crédits supplémentaires ont bien été ajoutés à ton solde. Continue à poser tes questions — ton guide est là.`,
+    };
 
-    // Délai court pour laisser les messages initiaux s'afficher
     const t = setTimeout(() => {
       setMessages((m: Message[]) => [...m, msg]);
     }, 600);
     return () => clearTimeout(t);
-  // firstName peut changer après chargement du profil — on ne le met pas en dep
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

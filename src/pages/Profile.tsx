@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../lib/hooks/useAuth';
 import { StorageService } from '../lib/storage';
@@ -12,6 +13,7 @@ import SoundToggle from '../components/SoundToggle';
 import { useMood } from '../lib/hooks/useMood';
 import type { Profile } from '../lib/types/supabase';
 import { useDocumentSeo } from '../lib/documentSeo';
+import { toast } from '../lib/toast';
 
 export default function ProfilePage() {
   const { user, isLoading: authLoading, signOut } = useAuth();
@@ -19,6 +21,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { history: moodHistory } = useMood();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     let cancelled = false;
@@ -45,6 +48,21 @@ export default function ProfilePage() {
       cancelled = true;
     };
   }, [user?.id]);
+
+  useEffect(() => {
+    if (searchParams.get('subscribed') !== '1' || !profile) return;
+    const firstName = profile.name?.split(' ')[0] || 'voyageur';
+    setSearchParams({}, { replace: true });
+    toast.success(
+      `Bienvenue ${firstName} ! Connecte WhatsApp ou Instagram pour recevoir ta guidance demain matin.`,
+    );
+    window.setTimeout(() => {
+      document.getElementById('guidance-channel')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    }, 400);
+  }, [searchParams, setSearchParams, profile]);
 
   useDocumentSeo({
     title: error

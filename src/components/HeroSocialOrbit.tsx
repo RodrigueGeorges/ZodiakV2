@@ -1,8 +1,8 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '../lib/utils';
-import { WhatsAppIcon, InstagramIcon, MessengerIcon } from './icons/SocialChannelIcons';
+import { WhatsAppIcon, InstagramIcon } from './icons/SocialChannelIcons';
 
-export type DeliveryChannel = 'whatsapp' | 'instagram' | 'messenger';
+export type DeliveryChannel = 'whatsapp' | 'instagram';
 
 const ORB_STYLE = {
   ring: 'from-aurora-400/45 via-aurora-300/12 to-transparent',
@@ -20,9 +20,8 @@ const CHANNELS: Array<{
   startDeg: number;
 }> = [
   { channel: 'whatsapp', Icon: WhatsAppIcon, duration: 58, startDeg: 0 },
-  { channel: 'instagram', Icon: InstagramIcon, duration: 72, startDeg: 120 },
-  { channel: 'messenger', Icon: MessengerIcon, duration: 64, startDeg: 240 },
-};
+  { channel: 'instagram', Icon: InstagramIcon, duration: 72, startDeg: 180 },
+];
 
 function OrbitIcon({
   Icon,

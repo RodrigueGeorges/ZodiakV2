@@ -137,7 +137,7 @@ export default function ReferralLanding() {
             Activer mon bonus
           </Button>
           <p className="mt-5 eyebrow-ritual text-ivory-400/80">
-            Sans carte bancaire · annulable en 1 clic
+            Carte requise · aucun débit si tu annules avant la fin des 14 jours · résiliable en 1 clic
           </p>
         </motion.div>
       </Card>

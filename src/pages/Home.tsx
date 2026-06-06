@@ -16,7 +16,7 @@ import {
 import Logo from '../components/Logo';
 import FAQ from '../components/FAQ';
 import HeroSocialOrbit from '../components/HeroSocialOrbit';
-import SocialDeliveryShowcase from '../components/SocialDeliveryShowcase';
+import ExperienceShowcase from '../components/ExperienceShowcase';
 import { ButtonLink } from '../components/ui/ButtonLink';
 import { APP_NAME } from '../lib/constants';
 import CosmicLoader from '../components/CosmicLoader';
@@ -52,11 +52,11 @@ const FAQ_JSON_LD = {
     },
     {
       '@type': 'Question',
-      name: "Pourquoi les réseaux sociaux plutôt qu'une appli ?",
+      name: "Pourquoi la guidance arrive sur WhatsApp ou Instagram ?",
       acceptedAnswer: {
         '@type': 'Answer',
         text:
-          "Parce que tu ouvres déjà tes réseaux sociaux chaque jour. Pas besoin de télécharger une app de plus que tu vas oublier. Ta guidance arrive là où tu es déjà.",
+          "La guidance du matin arrive en DM — là où tu es déjà chaque jour. L'app sert à lire la lecture complète, chatter avec ton guide astral et gérer ton profil.",
       },
     },
     {
@@ -118,6 +118,10 @@ const heroItem = {
     transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1] },
   },
 };
+
+const TRIAL_CTA = 'Commencer mon essai 7 jours';
+const TRIAL_MICRO =
+  'Carte requise · aucun débit pendant 7 jours · résiliable en 1 clic';
 
 /**
  * Home — landing Zodiak Astro (SEO : un H1, sections en H2, sous-points en H3).
@@ -231,6 +235,20 @@ export default function Home() {
               <span className="ml-[0.28em] font-light text-aurora-200/90">Astro</span>
             </span>
           </Link>
+          <nav
+            className="hidden lg:flex items-center gap-7 text-caption text-ivory-400/90"
+            aria-label="Sections de la page"
+          >
+            <a href="#apercu" className="hover:text-ivory-50 transition-colors">
+              Aperçu
+            </a>
+            <a href="#pricing" className="hover:text-ivory-50 transition-colors">
+              Tarif
+            </a>
+            <a href="#faq" className="hover:text-ivory-50 transition-colors">
+              FAQ
+            </a>
+          </nav>
           <div className="flex items-center gap-3 md:gap-5">
             <Link
               to="/login"
@@ -243,7 +261,7 @@ export default function Home() {
               variant="cosmic"
               size="sm"
             >
-              Essayer 7 jours
+              {TRIAL_CTA}
             </ButtonLink>
           </div>
         </header>
@@ -319,7 +337,7 @@ export default function Home() {
             >
               <li className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-aurora-400 shrink-0" aria-hidden />
-                Essai 7 jours avec CB
+                7 jours offerts · carte requise
               </li>
               <li className="flex items-center gap-2">
                 <Check className="w-4 h-4 text-aurora-400 shrink-0" aria-hidden />
@@ -333,7 +351,7 @@ export default function Home() {
 
             <motion.div
               variants={heroItem}
-              className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3.5 w-full sm:w-auto"
+              className="mt-10 flex flex-col items-center justify-center w-full sm:w-auto"
             >
               <ButtonLink
                 to="/register"
@@ -342,20 +360,21 @@ export default function Home() {
                 iconLeft={<Sparkles className="w-4 h-4" />}
                 className="w-full sm:w-auto min-w-[240px] text-base"
               >
-                Démarrer mon essai
+                {TRIAL_CTA}
               </ButtonLink>
-              <ButtonLink
-                to="/login"
-                variant="cosmic"
-                size="lg"
-                className="w-full sm:w-auto min-w-[240px] text-base"
-              >
-                Se connecter
-              </ButtonLink>
+              <p className="mt-4 text-center text-caption text-ivory-400/90">
+                {TRIAL_MICRO}
+              </p>
+              <p className="mt-3 text-center text-caption text-ivory-500/85">
+                Déjà inscrit·e ?{' '}
+                <Link
+                  to="/login"
+                  className="text-aurora-300/90 hover:text-aurora-200 underline-offset-4 hover:underline"
+                >
+                  Se connecter
+                </Link>
+              </p>
             </motion.div>
-            <p className="mt-4 text-center text-caption text-ivory-400/90">
-              Carte bancaire requise · aucun débit pendant 7 jours
-            </p>
           </motion.div>
         </section>
 
@@ -422,10 +441,10 @@ export default function Home() {
                   02
                 </span>
                 <h3 className="font-display font-light text-h1 text-ivory-50 mb-4 leading-tight tracking-[-0.02em]">
-                  Tu reçois ta guidance chaque matin.
+                  Tu connectes ton réseau et reçois ta guidance.
                 </h3>
                 <p className="text-body text-ivory-400/95 leading-relaxed">
-                  Sur tes réseaux sociaux, à l&apos;heure que tu choisis. Un message court, clair, qui parle de{' '}
+                  WhatsApp ou Instagram en 30 secondes. Chaque matin, un DM avec un lien vers ta lecture complète — calée sur{' '}
                   <strong className="font-medium text-ivory-200">ta journée</strong>.
                 </p>
               </li>
@@ -437,11 +456,11 @@ export default function Home() {
                   03
                 </span>
                 <h3 className="font-display font-light text-h1 text-ivory-50 mb-4 leading-tight tracking-[-0.02em]">
-                  Tu chattes quand tu veux.
+                  Tu creuses dans le chat astral.
                 </h3>
                 <p className="text-body text-ivory-400/95 leading-relaxed">
-                  Une question sur le travail, une relation, un timing&nbsp;? Ton guide astral répond — et se souvient
-                  de vos échanges. Même fil conducteur que tes messages du matin, ancré dans{' '}
+                  Une question sur le travail, une relation, un timing&nbsp;? Ton guide répond — et se souvient
+                  de vos échanges, ancré dans{' '}
                   <span className="text-ivory-200 font-medium">ton thème natal</span>.
                 </p>
               </li>
@@ -451,7 +470,8 @@ export default function Home() {
 
         {/* Aperçu vivant d'une guidance */}
         <section
-          className="relative py-24 md:py-36 px-6 border-t border-white/[0.09] overflow-hidden"
+          id="apercu"
+          className="relative py-24 md:py-36 px-6 border-t border-white/[0.09] overflow-hidden scroll-mt-24"
           aria-labelledby="section-apercu"
         >
           <div
@@ -471,15 +491,14 @@ export default function Home() {
                 Voilà à quoi ça ressemble.
               </h2>
               <p className="text-body-lg text-ivory-300/95 leading-[1.78] font-light">
-                Pas un horoscope de magazine. Une lecture sensible et structurée —{' '}
-                <strong className="font-medium text-ivory-100">cœur, chantiers, vitalité</strong> — qui change chaque
-                jour avec le ciel et reste calée sur <span className="text-ivory-50">ta</span> carte de naissance.
+                Le matin, un DM avec un lien vers ta lecture complète — cœur, chantiers, vitalité, mantra.
+                Et dans l’app, un chat pour creuser une question précise sur ton thème.
               </p>
               <p className="text-caption text-ivory-400/85">
-                Exemple illustratif — ta vraie guidance est calculée sur ton thème natal.
+                Exemples illustratifs — contenu réel calculé sur ton thème natal.
               </p>
             </div>
-            <SocialDeliveryShowcase />
+            <ExperienceShowcase />
           </div>
         </section>
 
@@ -504,7 +523,7 @@ export default function Home() {
                 index={1}
                 icon={<Sun className="w-6 h-6 lg:w-7 lg:h-7 text-aurora-200" />}
                 title="La guidance du matin"
-                text="Ton horoscope personnalisé, chaque jour, en 30 secondes de lecture."
+                text="Ton horoscope personnalisé, chaque jour — lecture en 2 à 3 minutes."
                 bullets={[
                   'Basé sur ton thème natal et les transits du jour',
                   'Énergie, vigilances, opportunités — tout est dit',
@@ -530,7 +549,7 @@ export default function Home() {
         {/* Offre */}
         <section
           id="pricing"
-          className="relative py-24 md:py-40 px-6 border-t border-white/[0.09]"
+          className="relative py-24 md:py-40 px-6 border-t border-white/[0.09] scroll-mt-24"
           aria-labelledby="section-offre"
         >
           <div className="max-w-xl mx-auto">
@@ -559,7 +578,8 @@ export default function Home() {
 
         {/* FAQ */}
         <section
-          className="relative py-24 md:py-32 px-6 border-t border-white/[0.09]"
+          id="faq"
+          className="relative py-24 md:py-32 px-6 border-t border-white/[0.09] scroll-mt-24"
           aria-labelledby="section-faq"
         >
           <div className="max-w-3xl mx-auto">
@@ -593,11 +613,11 @@ export default function Home() {
                   ),
                 },
                 {
-                  q: "Pourquoi les réseaux sociaux plutôt qu'une appli ?",
+                  q: 'Pourquoi la guidance arrive sur WhatsApp ou Instagram ?',
                   a: (
                     <>
-                      Parce que tu ouvres déjà tes réseaux sociaux chaque jour. Pas besoin de télécharger une app de plus
-                      que tu vas oublier. Ta guidance arrive là où tu es déjà.
+                      La guidance du matin arrive en DM — là où tu es déjà chaque jour. L&apos;app sert à lire la
+                      lecture complète, chatter avec ton guide astral et gérer ton profil.
                     </>
                   ),
                 },
@@ -619,7 +639,7 @@ export default function Home() {
                   ),
                 },
                 {
-                  q: "Puis-je annuler pendant l'essai gratuit ?",
+                  q: "Puis-je annuler pendant l'essai de 7 jours ?",
                   a: (
                     <>
                       Oui. Tu peux résilier à tout moment pendant les 7 jours d&apos;essai — aucun débit si tu
@@ -665,10 +685,10 @@ export default function Home() {
               iconLeft={<Sparkles className="w-4 h-4" />}
               iconRight={<ArrowRight className="w-4 h-4" />}
             >
-              Commencer mon essai 7 jours
+              {TRIAL_CTA}
             </ButtonLink>
             <p className="mt-5 text-caption text-ivory-400/85">
-              CB requise · Résiliable en 1 clic
+              {TRIAL_MICRO}
             </p>
           </motion.div>
 
@@ -911,7 +931,7 @@ function PriceOfferCard() {
         iconRight={<ArrowRight className="w-4 h-4" />}
         className="landing-primary-cta-glow shadow-none text-night-950"
       >
-        Commencer mon essai 7 jours
+        {TRIAL_CTA}
       </ButtonLink>
     </motion.div>
   );
