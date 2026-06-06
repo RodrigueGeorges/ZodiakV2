@@ -22,7 +22,7 @@ const CHANNELS: Array<{
   { channel: 'whatsapp', Icon: WhatsAppIcon, duration: 58, startDeg: 0 },
   { channel: 'instagram', Icon: InstagramIcon, duration: 72, startDeg: 120 },
   { channel: 'messenger', Icon: MessengerIcon, duration: 64, startDeg: 240 },
-];
+};
 
 function OrbitIcon({
   Icon,
@@ -88,31 +88,45 @@ function Orb({ Icon }: { Icon: typeof WhatsAppIcon }) {
 }
 
 /**
- * Hero — 3 canaux en orbite elliptique autour de la tagline.
- * Le parent doit définir la zone (inset négatif) plus large que le texte.
+ * Hero — ellipse explicite, plus large que le H1 : les icônes tournent autour, pas dedans.
  */
 export default function HeroSocialOrbit({ className }: { className?: string }) {
   const reduceMotion = useReducedMotion();
 
   return (
-    <div className={cn('pointer-events-none absolute inset-0', className)} aria-hidden>
-      {!reduceMotion && (
-        <motion.div
-          className="absolute inset-[3%] rounded-[50%] border border-aurora-400/[0.08]"
-          animate={{ opacity: [0.15, 0.32, 0.15] }}
-          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-        />
+    <div
+      className={cn(
+        'pointer-events-none absolute inset-0 flex items-center justify-center',
+        className,
       )}
+      aria-hidden
+    >
+      <div
+        className={cn(
+          'relative',
+          'w-[min(94vw,34rem)] h-[min(52vw,11.5rem)]',
+          'sm:w-[min(92vw,38rem)] sm:h-[min(46vw,13rem)]',
+          'md:w-[min(90vw,44rem)] md:h-[min(38vw,15rem)]',
+        )}
+      >
+        {!reduceMotion && (
+          <motion.div
+            className="absolute inset-0 rounded-[50%] border border-aurora-400/[0.08]"
+            animate={{ opacity: [0.12, 0.28, 0.12] }}
+            transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        )}
 
-      {CHANNELS.map(({ channel, Icon, duration, startDeg }) => (
-        <OrbitIcon
-          key={channel}
-          Icon={Icon}
-          duration={duration}
-          startDeg={startDeg}
-          reduceMotion={reduceMotion}
-        />
-      ))}
+        {CHANNELS.map(({ channel, Icon, duration, startDeg }) => (
+          <OrbitIcon
+            key={channel}
+            Icon={Icon}
+            duration={duration}
+            startDeg={startDeg}
+            reduceMotion={reduceMotion}
+          />
+        ))}
+      </div>
     </div>
   );
 }

@@ -291,16 +291,16 @@ export default function Home() {
 
             <motion.div
               variants={heroItem}
-              className="relative w-full max-w-[40rem] mx-auto min-h-[8.5rem] sm:min-h-[9.5rem] md:min-h-[10.5rem] flex items-center justify-center px-4 sm:px-6"
+              className="relative w-full max-w-[44rem] mx-auto px-4 sm:px-6 py-10 sm:py-12 md:py-14"
             >
-              <HeroSocialOrbit className="z-0 -inset-x-10 sm:-inset-x-16 md:-inset-x-20 -inset-y-6 sm:-inset-y-8 md:-inset-y-10" />
+              <HeroSocialOrbit className="z-0" />
               <h1
                 id="hero-title"
-                className="relative z-[1] font-display font-extralight text-[clamp(2rem,5.5vw,3.15rem)] leading-[1.18] tracking-[-0.03em] text-ivory-50 max-w-[32rem] mx-auto text-center"
+                className="relative z-[1] font-display font-extralight text-[clamp(1.85rem,5vw,3rem)] leading-[1.2] tracking-[-0.03em] text-ivory-50 max-w-[26rem] sm:max-w-[30rem] mx-auto text-center"
               >
                 Ton horoscope personnalisé,
-                <br className="hidden sm:block" />
-                livré sur tes réseaux.
+                <br />
+                envoyé en DM sur ton réseau favori.
               </h1>
             </motion.div>
 
