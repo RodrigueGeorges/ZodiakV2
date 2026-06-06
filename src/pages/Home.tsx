@@ -289,11 +289,14 @@ export default function Home() {
               <Logo size="lg" withWordmark composeOnLoad />
             </motion.div>
 
-            <motion.div variants={heroItem} className="relative w-full py-10 sm:py-12 md:py-14">
-              <HeroSocialOrbit className="z-0" />
+            <motion.div
+              variants={heroItem}
+              className="relative w-full max-w-[40rem] mx-auto min-h-[11.5rem] sm:min-h-[13rem] md:min-h-[14.5rem] flex items-center justify-center px-4 sm:px-6"
+            >
+              <HeroSocialOrbit className="z-0 -inset-x-10 sm:-inset-x-16 md:-inset-x-20 -inset-y-8 sm:-inset-y-10 md:-inset-y-12" />
               <h1
                 id="hero-title"
-                className="relative z-[1] font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.22] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto"
+                className="relative z-[1] font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.22] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto text-center"
               >
                 Ton horoscope personnalisé en fonction de ton thème natal,
                 <br className="hidden sm:block" />

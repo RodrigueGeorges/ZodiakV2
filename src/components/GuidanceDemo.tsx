@@ -111,11 +111,11 @@ function DeliveryBubble({ channel, greeting, index, reduceMotion }: DeliveryBubb
     },
     instagram: {
       name: 'Instagram',
-      icon: <InstagramIcon className="h-3 w-3 text-magenta-400/90 shrink-0" />,
+      icon: <InstagramIcon className="h-3 w-3 text-aurora-400/90 shrink-0" />,
     },
     messenger: {
       name: 'Messenger',
-      icon: <MessengerIcon className="h-3 w-3 text-sky-300 shrink-0" />,
+      icon: <MessengerIcon className="h-3 w-3 text-aurora-400 shrink-0" />,
     },
   };
   const [headline, detail] = greeting.includes(' — ')

@@ -4,173 +4,114 @@ import { WhatsAppIcon, InstagramIcon, MessengerIcon } from './icons/SocialChanne
 
 export type DeliveryChannel = 'whatsapp' | 'instagram' | 'messenger';
 
-const ORBITS: Array<{
+const ORB_STYLE = {
+  ring: 'from-aurora-400/45 via-aurora-300/12 to-transparent',
+  shell: 'border-aurora-400/30 bg-aurora-500/[0.1]',
+  glow: 'bg-aurora-400/18',
+  icon: 'text-aurora-300',
+  shadow:
+    'shadow-[0_0_22px_-6px_rgba(56,189,248,0.38),inset_0_1px_0_rgba(255,255,255,0.08)]',
+} as const;
+
+const CHANNELS: Array<{
   channel: DeliveryChannel;
-  radius: number;
+  Icon: typeof WhatsAppIcon;
   duration: number;
   startDeg: number;
-  ring: string;
-  shell: string;
-  glow: string;
-  icon: string;
-  shadow: string;
-  label: string;
-  Icon: typeof WhatsAppIcon;
 }> = [
-  {
-    channel: 'whatsapp',
-    label: 'WhatsApp',
-    Icon: WhatsAppIcon,
-    radius: 148,
-    duration: 26,
-    startDeg: 0,
-    ring: 'from-aurora-400/50 via-aurora-300/15 to-transparent',
-    shell: 'border-aurora-400/35 bg-aurora-500/[0.12]',
-    glow: 'bg-aurora-400/22',
-    icon: 'text-aurora-200',
-    shadow: 'shadow-[0_0_24px_-6px_rgba(56,189,248,0.45),inset_0_1px_0_rgba(255,255,255,0.1)]',
-  },
-  {
-    channel: 'instagram',
-    label: 'Instagram',
-    Icon: InstagramIcon,
-    radius: 168,
-    duration: 32,
-    startDeg: 120,
-    ring: 'from-magenta-500/45 via-magenta-400/12 to-transparent',
-    shell: 'border-magenta-500/35 bg-magenta-500/[0.1]',
-    glow: 'bg-magenta-500/18',
-    icon: 'text-magenta-300',
-    shadow: 'shadow-[0_0_24px_-6px_rgba(201,97,155,0.38),inset_0_1px_0_rgba(255,255,255,0.08)]',
-  },
-  {
-    channel: 'messenger',
-    label: 'Messenger',
-    Icon: MessengerIcon,
-    radius: 132,
-    duration: 22,
-    startDeg: 240,
-    ring: 'from-sky-400/40 via-aurora-300/12 to-transparent',
-    shell: 'border-sky-400/30 bg-sky-500/[0.08]',
-    glow: 'bg-sky-400/16',
-    icon: 'text-sky-200',
-    shadow: 'shadow-[0_0_24px_-6px_rgba(56,189,248,0.3),inset_0_1px_0_rgba(255,255,255,0.08)]',
-  },
+  { channel: 'whatsapp', Icon: WhatsAppIcon, duration: 28, startDeg: 0 },
+  { channel: 'instagram', Icon: InstagramIcon, duration: 34, startDeg: 120 },
+  { channel: 'messenger', Icon: MessengerIcon, duration: 22, startDeg: 240 },
 ];
 
 function OrbitIcon({
-  cfg,
+  Icon,
+  duration,
+  startDeg,
   reduceMotion,
 }: {
-  cfg: (typeof ORBITS)[number];
+  Icon: typeof WhatsAppIcon;
+  duration: number;
+  startDeg: number;
   reduceMotion: boolean | null;
 }) {
-  const Icon = cfg.Icon;
-
   if (reduceMotion) {
     return (
       <div
-        className="absolute left-1/2 top-1/2 pointer-events-none"
-        style={{
-          transform: `translate(-50%, -50%) rotate(${cfg.startDeg}deg) translateY(-${cfg.radius}px)`,
-        }}
+        className="absolute inset-0"
+        style={{ transform: `rotate(${startDeg}deg)` }}
       >
-        <Orb cfg={cfg} Icon={Icon} />
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2">
+          <Orb Icon={Icon} />
+        </div>
       </div>
     );
   }
 
   return (
     <motion.div
-      className="absolute left-1/2 top-1/2"
-      style={{ width: 0, height: 0 }}
-      initial={{ rotate: cfg.startDeg }}
-      animate={{ rotate: cfg.startDeg + 360 }}
-      transition={{
-        duration: cfg.duration,
-        repeat: Infinity,
-        ease: 'linear',
-      }}
+      className="absolute inset-0"
+      initial={{ rotate: startDeg }}
+      animate={{ rotate: startDeg + 360 }}
+      transition={{ duration, repeat: Infinity, ease: 'linear' }}
     >
       <motion.div
-        className="absolute left-0 top-0"
-        style={{ transform: `translate(-50%, -50%) translateY(-${cfg.radius}px)` }}
+        className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2"
         animate={{ rotate: -360 }}
-        transition={{
-          duration: cfg.duration,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
+        transition={{ duration, repeat: Infinity, ease: 'linear' }}
       >
-        <motion.div
-          animate={{ y: [0, -5, 0] }}
-          transition={{
-            duration: 3.2 + cfg.duration * 0.05,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        >
-          <Orb cfg={cfg} Icon={Icon} />
-        </motion.div>
+        <Orb Icon={Icon} />
       </motion.div>
     </motion.div>
   );
 }
 
-function Orb({
-  cfg,
-  Icon,
-}: {
-  cfg: (typeof ORBITS)[number];
-  Icon: typeof WhatsAppIcon;
-}) {
+function Orb({ Icon }: { Icon: typeof WhatsAppIcon }) {
   return (
-    <div className="relative flex flex-col items-center gap-1.5">
-      <span className={cn('absolute inset-0 rounded-full blur-xl scale-[1.8]', cfg.glow)} aria-hidden />
-      <div className={cn('relative rounded-full p-px bg-gradient-to-br', cfg.ring, cfg.shadow)}>
+    <div className="relative">
+      <span
+        className={cn('absolute inset-0 rounded-full blur-lg scale-[1.7]', ORB_STYLE.glow)}
+        aria-hidden
+      />
+      <div className={cn('relative rounded-full p-px bg-gradient-to-br', ORB_STYLE.ring, ORB_STYLE.shadow)}>
         <div
           className={cn(
-            'flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full backdrop-blur-md',
-            cfg.shell,
+            'flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full backdrop-blur-md',
+            ORB_STYLE.shell,
           )}
         >
-          <Icon className={cn('h-[18px] w-[18px] sm:h-5 sm:w-5', cfg.icon)} />
+          <Icon className={cn('h-4 w-4 sm:h-[18px] sm:w-[18px]', ORB_STYLE.icon)} />
         </div>
       </div>
-      <span className="protocol-caption text-[9px] text-ivory-400/80 whitespace-nowrap hidden sm:block">
-        {cfg.label}
-      </span>
     </div>
   );
 }
 
 /**
- * Hero uniquement — les 3 canaux tournent autour de la tagline.
+ * Hero — 3 canaux en orbite elliptique autour de la tagline.
+ * Le parent doit définir la zone (inset négatif) plus large que le texte.
  */
 export default function HeroSocialOrbit({ className }: { className?: string }) {
   const reduceMotion = useReducedMotion();
 
   return (
-    <div
-      className={cn(
-        'pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
-        'h-[min(420px,78vw)] w-[min(420px,78vw)] sm:h-[380px] sm:w-[380px] md:h-[420px] md:w-[420px]',
-        'scale-[0.78] sm:scale-90 md:scale-100',
-        className,
-      )}
-      aria-hidden
-    >
-      {/* Anneau guide très discret */}
+    <div className={cn('pointer-events-none absolute inset-0', className)} aria-hidden>
       {!reduceMotion && (
         <motion.div
-          className="absolute inset-[12%] rounded-full border border-white/[0.04]"
-          animate={{ opacity: [0.25, 0.45, 0.25] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute inset-[3%] rounded-[50%] border border-aurora-400/[0.08]"
+          animate={{ opacity: [0.15, 0.32, 0.15] }}
+          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
         />
       )}
 
-      {ORBITS.map((cfg) => (
-        <OrbitIcon key={cfg.channel} cfg={cfg} reduceMotion={reduceMotion} />
+      {CHANNELS.map(({ channel, Icon, duration, startDeg }) => (
+        <OrbitIcon
+          key={channel}
+          Icon={Icon}
+          duration={duration}
+          startDeg={startDeg}
+          reduceMotion={reduceMotion}
+        />
       ))}
     </div>
   );
