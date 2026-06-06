@@ -19,9 +19,9 @@ const CHANNELS: Array<{
   duration: number;
   startDeg: number;
 }> = [
-  { channel: 'whatsapp', Icon: WhatsAppIcon, duration: 28, startDeg: 0 },
-  { channel: 'instagram', Icon: InstagramIcon, duration: 34, startDeg: 120 },
-  { channel: 'messenger', Icon: MessengerIcon, duration: 22, startDeg: 240 },
+  { channel: 'whatsapp', Icon: WhatsAppIcon, duration: 58, startDeg: 0 },
+  { channel: 'instagram', Icon: InstagramIcon, duration: 72, startDeg: 120 },
+  { channel: 'messenger', Icon: MessengerIcon, duration: 64, startDeg: 240 },
 ];
 
 function OrbitIcon({
@@ -100,7 +100,7 @@ export default function HeroSocialOrbit({ className }: { className?: string }) {
         <motion.div
           className="absolute inset-[3%] rounded-[50%] border border-aurora-400/[0.08]"
           animate={{ opacity: [0.15, 0.32, 0.15] }}
-          transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
         />
       )}
 

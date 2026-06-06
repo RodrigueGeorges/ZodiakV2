@@ -291,26 +291,25 @@ export default function Home() {
 
             <motion.div
               variants={heroItem}
-              className="relative w-full max-w-[40rem] mx-auto min-h-[11.5rem] sm:min-h-[13rem] md:min-h-[14.5rem] flex items-center justify-center px-4 sm:px-6"
+              className="relative w-full max-w-[40rem] mx-auto min-h-[8.5rem] sm:min-h-[9.5rem] md:min-h-[10.5rem] flex items-center justify-center px-4 sm:px-6"
             >
-              <HeroSocialOrbit className="z-0 -inset-x-10 sm:-inset-x-16 md:-inset-x-20 -inset-y-8 sm:-inset-y-10 md:-inset-y-12" />
+              <HeroSocialOrbit className="z-0 -inset-x-10 sm:-inset-x-16 md:-inset-x-20 -inset-y-6 sm:-inset-y-8 md:-inset-y-10" />
               <h1
                 id="hero-title"
-                className="relative z-[1] font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.22] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto text-center"
+                className="relative z-[1] font-display font-extralight text-[clamp(2rem,5.5vw,3.15rem)] leading-[1.18] tracking-[-0.03em] text-ivory-50 max-w-[32rem] mx-auto text-center"
               >
-                Ton horoscope personnalisé en fonction de ton thème natal,
+                Ton horoscope personnalisé,
                 <br className="hidden sm:block" />
-                dans la messagerie de tes réseaux sociaux favoris.
+                livré sur tes réseaux.
               </h1>
             </motion.div>
 
             <motion.p
               variants={heroItem}
-              className="mt-7 md:mt-9 text-[clamp(1.08rem,2.4vw,1.35rem)] leading-[1.58] font-light text-ivory-300/95 max-w-[34rem] mx-auto"
+              className="mt-5 md:mt-6 text-[clamp(1rem,2.1vw,1.2rem)] leading-[1.5] font-light text-ivory-300/90 max-w-[28rem] mx-auto"
             >
-              Pas un texte générique. Une guidance écrite pour{' '}
-              <strong className="font-medium text-ivory-100">toi seul·e</strong>, à partir de ton ciel de naissance —
-              livrée directement sur tes réseaux sociaux.
+              Guidance écrite pour{' '}
+              <strong className="font-medium text-ivory-100">toi seul·e</strong>, à partir de ton thème natal.
             </motion.p>
 
             <motion.ul
