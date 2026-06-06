@@ -4,7 +4,7 @@ import { Heart, Briefcase, Flame, Quote } from 'lucide-react';
 import { Card } from './ui/Card';
 import { cn } from '../lib/utils';
 import { WhatsAppIcon, InstagramIcon, MessengerIcon } from './icons/SocialChannelIcons';
-import type { DeliveryChannel } from './FloatingSocialChannels';
+import type { DeliveryChannel } from '../components/HeroSocialOrbit';
 
 /**
  * GuidanceDemo — aperçu animé d'une guidance quotidienne pour la landing.

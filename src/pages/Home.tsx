@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import Logo from '../components/Logo';
 import FAQ from '../components/FAQ';
-import FloatingSocialChannels from '../components/FloatingSocialChannels';
+import HeroSocialOrbit from '../components/HeroSocialOrbit';
 import SocialDeliveryShowcase from '../components/SocialDeliveryShowcase';
 import { ButtonLink } from '../components/ui/ButtonLink';
 import { APP_NAME } from '../lib/constants';
@@ -275,8 +275,6 @@ export default function Home() {
             <span className="hero-orbit-ring" />
           </div>
 
-          <FloatingSocialChannels placement="hero" />
-
           <motion.div
             variants={heroReveal}
             initial="hidden"
@@ -291,10 +289,11 @@ export default function Home() {
               <Logo size="lg" withWordmark composeOnLoad />
             </motion.div>
 
-            <motion.div variants={heroItem}>
+            <motion.div variants={heroItem} className="relative w-full py-10 sm:py-12 md:py-14">
+              <HeroSocialOrbit className="z-0" />
               <h1
                 id="hero-title"
-                className="font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.22] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto"
+                className="relative z-[1] font-display font-extralight text-[clamp(2.1rem,6.2vw,3.4rem)] leading-[1.22] tracking-[-0.03em] text-ivory-50 max-w-[38rem] mx-auto"
               >
                 Ton horoscope personnalisé en fonction de ton thème natal,
                 <br className="hidden sm:block" />
@@ -360,10 +359,9 @@ export default function Home() {
 
         {/* Pourquoi Zodiak Astro */}
         <section
-          className="relative z-10 border-t border-white/[0.09] py-20 md:py-28 px-6 reassurance-band overflow-hidden"
+          className="relative z-10 border-t border-white/[0.09] py-20 md:py-28 px-6 reassurance-band"
           aria-labelledby="section-pourquoi"
         >
-          <FloatingSocialChannels placement="pourquoi" />
           <div className="max-w-2xl mx-auto text-center space-y-6">
             <span
               aria-hidden
@@ -387,10 +385,9 @@ export default function Home() {
 
         {/* Comment ça marche */}
         <section
-          className="relative py-24 md:py-36 px-6 border-t border-white/[0.09] overflow-hidden"
+          className="relative py-24 md:py-36 px-6 border-t border-white/[0.09]"
           aria-labelledby="section-etapes"
         >
-          <FloatingSocialChannels placement="etapes" />
           <div className="max-w-4xl mx-auto">
             <h2
               id="section-etapes"
@@ -455,7 +452,6 @@ export default function Home() {
           className="relative py-24 md:py-36 px-6 border-t border-white/[0.09] overflow-hidden"
           aria-labelledby="section-apercu"
         >
-          <FloatingSocialChannels placement="apercu" />
           <div
             aria-hidden
             className="pointer-events-none absolute inset-x-0 top-0 h-[60%] bg-gradient-to-b from-aurora-500/[0.06] to-transparent"
@@ -487,10 +483,9 @@ export default function Home() {
 
         {/* L&apos;expérience */}
         <section
-          className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/[0.09] landing-features-ambient overflow-hidden"
+          className="relative py-28 md:py-44 px-5 md:px-8 border-t border-white/[0.09] landing-features-ambient"
           aria-labelledby="section-experience"
         >
-          <FloatingSocialChannels placement="experience" />
           <div className="relative max-w-5xl mx-auto">
             <div className="text-center mb-14 md:mb-20 max-w-2xl mx-auto space-y-5">
               <h2
@@ -533,10 +528,9 @@ export default function Home() {
         {/* Offre */}
         <section
           id="pricing"
-          className="relative py-24 md:py-40 px-6 border-t border-white/[0.09] overflow-hidden"
+          className="relative py-24 md:py-40 px-6 border-t border-white/[0.09]"
           aria-labelledby="section-offre"
         >
-          <FloatingSocialChannels placement="offre" />
           <div className="max-w-xl mx-auto">
             <div className="text-center mb-10 md:mb-12 space-y-4">
               <h2
@@ -563,10 +557,9 @@ export default function Home() {
 
         {/* FAQ */}
         <section
-          className="relative py-24 md:py-32 px-6 border-t border-white/[0.09] overflow-hidden"
+          className="relative py-24 md:py-32 px-6 border-t border-white/[0.09]"
           aria-labelledby="section-faq"
         >
-          <FloatingSocialChannels placement="faq" />
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-14 md:mb-16">
               <h2
@@ -647,10 +640,9 @@ export default function Home() {
 
         {/* Closing */}
         <section
-          className="relative py-24 md:py-40 px-6 text-center border-t border-white/[0.09] overflow-hidden"
+          className="relative py-24 md:py-40 px-6 text-center border-t border-white/[0.09]"
           aria-labelledby="section-closing"
         >
-          <FloatingSocialChannels placement="closing" />
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
